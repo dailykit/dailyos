@@ -238,11 +238,11 @@ const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
       saturday: false,
    })
    const [form, setForm] = React.useState({
-      cutOffTime: null,
-      leadTime: null,
-      startTime: null,
-      startDate: null,
-      endDate: null,
+      cutOffTime: '',
+      leadTime: '',
+      startTime: '',
+      startDate: '',
+      endDate: '',
    })
 
    const save = () => {
@@ -312,12 +312,19 @@ const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
          saturday: false,
       })
       setForm({
-         cutOffTime: null,
-         leadTime: null,
-         startTime: null,
-         startDate: null,
-         endDate: null,
+         cutOffTime: '',
+         leadTime: '',
+         startTime: '',
+         startDate: '',
+         endDate: '',
       })
+   }
+
+   const isValid = () => {
+      let result = false
+      result = Object.keys(days).some(key => days[key])
+      result = Object.keys(form).every(key => form[key])
+      return result
    }
 
    return (
@@ -326,7 +333,11 @@ const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
             <TunnelHeader
                title="Add Subscription"
                close={() => close()}
-               right={{ action: () => save(), title: 'Save' }}
+               right={{
+                  title: 'Save',
+                  action: () => save(),
+                  disabled: !isValid(),
+               }}
             />
             <Flex padding="16px">
                <section>

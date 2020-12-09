@@ -122,16 +122,13 @@ const ProductsSection = () => {
       if ('recipeProduct' in data) {
          compareWith = data.recipeYield.size
       }
-      if ('inventoryProduct' in data) {
-         compareWith = data.quantity
-      }
       return compareWith === parseInt(localStorage.getItem('serving_size'), 10)
    }
 
    const isValid =
       !isEmpty(state.plans.selected) &&
       !isEmpty(state.products.selected) &&
-      state.products.selected.length === state.plans.selected[0].item?.count
+      state.products.selected.length > 0
    return (
       <Wrapper>
          <Flex
@@ -144,15 +141,14 @@ const ProductsSection = () => {
                <Text as="h2">Products</Text>
                <Tooltip identifier="listing_menu_section_products_heading" />
             </Flex>
-            {isValid && (
-               <TextButton
-                  size="sm"
-                  type="outline"
-                  onClick={() => openTunnel(1)}
-               >
-                  Continue
-               </TextButton>
-            )}
+            <TextButton
+               size="sm"
+               type="outline"
+               disabled={!isValid}
+               onClick={() => openTunnel(1)}
+            >
+               Continue
+            </TextButton>
          </Flex>
          <HorizontalTabs>
             <HorizontalTabList>
@@ -192,7 +188,6 @@ const ProductsSection = () => {
                      <Inventory
                         inventoryTableRef={inventoryTableRef}
                         handleRowSelection={handleRowSelection}
-                        handleRowValidation={handleRowValidation}
                      />
                   )}
                </HorizontalTabPanel>
@@ -293,11 +288,7 @@ const ReadyToEats = ({
    )
 }
 
-const Inventory = ({
-   handleRowSelection,
-   inventoryTableRef,
-   handleRowValidation,
-}) => {
+const Inventory = ({ inventoryTableRef, handleRowSelection }) => {
    const { tooltip } = useTooltip()
    const {
       error,
@@ -343,9 +334,9 @@ const Inventory = ({
       <ReactTabulator
          columns={columns}
          ref={inventoryTableRef}
+         selectableCheck={() => true}
          rowSelected={handleRowSelection}
          rowDeselected={handleRowSelection}
-         selectableCheck={handleRowValidation}
          data={inventoryProductOptions.nodes || []}
          options={{
             ...tableOptions,
@@ -449,7 +440,11 @@ const SaveTunnel = ({
             <TunnelHeader
                title="Occurence Products"
                close={() => closeTunnel(1)}
-               right={{ action: () => save(), title: 'Save' }}
+               right={{
+                  title: 'Save',
+                  action: () => save(),
+                  disabled: !form.productCategory,
+               }}
                tooltip={<Tooltip identifier="listing_menu_tunnel_heading" />}
             />
             <Main>

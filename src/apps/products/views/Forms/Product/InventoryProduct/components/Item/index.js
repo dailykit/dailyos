@@ -1,4 +1,6 @@
 import React from 'react'
+import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 import { useMutation } from '@apollo/react-hooks'
 import {
    ButtonTile,
@@ -21,14 +23,19 @@ import {
    TextButton,
    PlusIcon,
 } from '@dailykit/ui'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'react-toastify'
+
 import { Recommendations } from '..'
 import {
    DeleteIcon,
    EditIcon,
 } from '../../../../../../../../shared/assets/icons'
-import { AddIcon } from '../../../../../../assets/icons'
+import {
+   OperationConfig,
+   Tooltip,
+} from '../../../../../../../../shared/components'
+import { Grid, StyledTable, Modifier, ItemInfo } from './styled'
+import { currencyFmt, logger } from '../../../../../../../../shared/utils'
+import { ModifiersContext } from '../../../../../../context/product/modifiers'
 import { InventoryProductContext } from '../../../../../../context/product/inventoryProduct'
 import {
    DELETE_INVENTORY_PRODUCT_OPTION,
@@ -36,7 +43,6 @@ import {
    UPDATE_INVENTORY_PRODUCT_OPTION,
 } from '../../../../../../graphql'
 // styles
-import { Grid, StyledTable, Modifier, ItemInfo } from './styled'
 import {
    ItemTypeTunnel,
    ItemTunnel,
@@ -48,12 +54,6 @@ import {
    ModifierTemplatesTunnel,
    ModifierPhotoTunnel,
 } from '../../tunnels'
-import { ModifiersContext } from '../../../../../../context/product/modifiers'
-import {
-   OperationConfig,
-   Tooltip,
-} from '../../../../../../../../shared/components'
-import { logger } from '../../../../../../../../shared/utils'
 
 const address =
    'apps.menu.views.forms.product.inventoryproduct.components.item.'
@@ -66,6 +66,8 @@ export default function Item({ state }) {
    )
    const { modifiersDispatch } = React.useContext(ModifiersContext)
 
+   const opConfigInvokedBy = React.useRef('')
+   const modifierOpConfig = React.useRef(undefined)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
    const [pricingTunnels, openPricingTunnel, closePricingTunnel] = useTunnel(1)
    const [
@@ -191,24 +193,23 @@ export default function Item({ state }) {
       openModifiersTunnel(2)
    }
    const saveOperationConfig = config => {
-      updateProductOption({
-         variables: {
-            id: productState.optionId,
-            set: {
-               operationConfigId: config.id,
+      if (opConfigInvokedBy.current === 'option') {
+         updateProductOption({
+            variables: {
+               id: productState.optionId,
+               set: {
+                  operationConfigId: config.id,
+               },
             },
-         },
-      })
+         })
+      }
+      if (opConfigInvokedBy.current === 'modifier') {
+         modifierOpConfig.current = config
+      }
    }
 
    return (
       <>
-         <OperationConfig
-            tunnels={operationConfigTunnels}
-            openTunnel={openOperationConfigTunnel}
-            closeTunnel={closeOperationConfigTunnel}
-            onSelect={saveOperationConfig}
-         />
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <ItemTypeTunnel close={closeTunnel} open={openTunnel} />
@@ -233,6 +234,11 @@ export default function Item({ state }) {
                <ModifierFormTunnel
                   open={openModifiersTunnel}
                   close={closeModifiersTunnel}
+                  openOperationConfigTunnel={value => {
+                     opConfigInvokedBy.current = 'modifier'
+                     openOperationConfigTunnel(value)
+                  }}
+                  modifierOpConfig={modifierOpConfig.current}
                />
             </Tunnel>
             <Tunnel layer={3}>
@@ -251,6 +257,12 @@ export default function Item({ state }) {
                <ModifierTemplatesTunnel close={closeModifiersTunnel} />
             </Tunnel>
          </Tunnels>
+         <OperationConfig
+            tunnels={operationConfigTunnels}
+            openTunnel={openOperationConfigTunnel}
+            closeTunnel={closeOperationConfigTunnel}
+            onSelect={saveOperationConfig}
+         />
          {state.sachetItem || state.supplierItem ? (
             <SectionTabs>
                <SectionTabList>
@@ -378,25 +390,33 @@ export default function Item({ state }) {
                                              </td>
                                              <td>{option.label}</td>
                                              <td>{option.quantity}</td>
-                                             <td>${option.price[0].value}</td>
+                                             <td>
+                                                {currencyFmt(
+                                                   Number(
+                                                      option.price[0].value
+                                                   ) || 0
+                                                )}
+                                             </td>
                                              <td>
                                                 {option.price[0].discount}%
                                              </td>
                                              <td>
-                                                $
-                                                {(
-                                                   parseFloat(
-                                                      option.price[0].value
-                                                   ) -
-                                                   parseFloat(
-                                                      option.price[0].value
-                                                   ) *
-                                                      (parseFloat(
-                                                         option.price[0]
-                                                            .discount
-                                                      ) /
-                                                         100)
-                                                ).toFixed(2) || ''}
+                                                {currencyFmt(
+                                                   Number(
+                                                      parseFloat(
+                                                         option.price[0].value
+                                                      ) -
+                                                         parseFloat(
+                                                            option.price[0]
+                                                               .value
+                                                         ) *
+                                                            (parseFloat(
+                                                               option.price[0]
+                                                                  .discount
+                                                            ) /
+                                                               100)
+                                                   ).toFixed(2)
+                                                ) || 0}
                                              </td>
                                              <td>
                                                 {option.modifier?.name ? (
@@ -479,6 +499,8 @@ export default function Item({ state }) {
                                                                      option.id,
                                                                },
                                                             })
+                                                            opConfigInvokedBy.current =
+                                                               'option'
                                                             openOperationConfigTunnel(
                                                                1
                                                             )
@@ -498,6 +520,8 @@ export default function Item({ state }) {
                                                                   option.id,
                                                             },
                                                          })
+                                                         opConfigInvokedBy.current =
+                                                            'option'
                                                          openOperationConfigTunnel(
                                                             1
                                                          )

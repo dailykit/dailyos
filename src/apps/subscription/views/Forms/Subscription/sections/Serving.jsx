@@ -278,7 +278,11 @@ const ItemCountTunnel = ({ tunnels, closeTunnel }) => {
             <TunnelHeader
                title="Add Item Count"
                close={() => closeTunnel(1)}
-               right={{ action: () => save(), title: 'Save' }}
+               right={{
+                  title: 'Save',
+                  action: () => save(),
+                  disabled: !state.item.count || !state.item.price,
+               }}
                tooltip={
                   <Tooltip identifier="form_subscription_tunnel_item_create" />
                }

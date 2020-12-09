@@ -12,11 +12,12 @@ export const Tooltip = ({
    position = null,
    identifier = null,
 }) => {
-   const { tooltip } = useTooltip()
+   const { state, tooltip } = useTooltip()
 
    if (!identifier) {
       console.error('Identifier is required!')
    }
+   if (!state.showTooltip || !tooltip(identifier)?.isActive) return null
    return (
       <Styles.Tooltip>
          <a data-tip data-for={identifier}>

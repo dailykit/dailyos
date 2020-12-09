@@ -39,7 +39,7 @@ import {
    SubscriptionInfoCard,
 } from '../../../components'
 import { PaymentTunnel, AddressTunnel } from './Tunnel'
-import { logger } from '../../../../../shared/utils'
+import { currencyFmt, logger } from '../../../../../shared/utils'
 import BrandContext from '../../../context/Brand'
 import {
    InlineLoader,
@@ -172,7 +172,7 @@ const CustomerRelation = ({ match }) => {
       table = (
          <SubscriptionTable
             id={match.params.id}
-            sid={subscriptionData[0]?.customer?.subscriptionId || ''}
+            sid={subscriptionData[0]?.customer?.subscriptionId || null}
          />
       )
    }
@@ -193,9 +193,9 @@ const CustomerRelation = ({ match }) => {
             <StyledSideBar>
                <CustomerCard
                   customer={customerData[0]?.customer}
-                  walletAmount={
+                  walletAmount={currencyFmt(
                      walletNreferral[0]?.customer?.wallet?.amount || 0
-                  }
+                  )}
                   toggle={customers[0]?.isTest}
                   toggleHandler={() => toggleHandler(!customers[0]?.isTest)}
                />
@@ -249,7 +249,9 @@ const CustomerRelation = ({ match }) => {
                      heading="Subscriber"
                   />
                   <WalletCard
-                     data={walletNreferral[0]?.customer?.wallet}
+                     data={currencyFmt(
+                        walletNreferral[0]?.customer?.wallet || 0
+                     )}
                      click={() => setActiveCard('Wallet')}
                      active={tab.data.activeCard}
                      heading="Wallet"

@@ -100,7 +100,14 @@ const LoyaltyPointsUsage = ({ update }) => {
          percentage.meta.isValid &&
          max.meta.isValid
       ) {
-         update({ id: settingId, value: { conversionRate, percentage, max } })
+         update({
+            id: settingId,
+            value: {
+               conversionRate: conversionRate.value,
+               percentage: percentage.value,
+               max: max.value,
+            },
+         })
       } else {
          toast.error('Must provide all loyalty points usage options!!')
       }

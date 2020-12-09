@@ -22,14 +22,18 @@ const ReferralPlansListing = () => {
       <StyledWrapper>
          {insights.map(insight => {
             return (
-               <Flex width="calc(100% - 64px)" margin="0 auto">
+               <Flex
+                  key={insight.identifier}
+                  width="calc(100% - 64px)"
+                  margin="0 auto"
+               >
                   <Insight
-                     key={insight.identifier}
                      identifier={insight.identifier}
                      includeChart
                      // where={{ amountPaid: { _lte: 2 } }}
                      // limit={2}
                      // order={{ amountPaid: 'desc' }}
+                     variables={{ amountVar: 90 }}
                   />
                </Flex>
             )

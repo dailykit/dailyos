@@ -14,7 +14,7 @@ import {
 import {
    COUPON_LISTING,
    COUPON_TOTAL,
-   COUPON_ACTIVE,
+   UPDATE_COUPON,
    CREATE_COUPON,
    DELETE_COUPON,
 } from '../../../graphql'
@@ -25,7 +25,7 @@ import { useLocation } from 'react-router-dom'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers'
-import { logger } from '../../../../../shared/utils'
+import { currencyFmt, logger } from '../../../../../shared/utils'
 import options from '../../tableOptions'
 
 const CouponListing = () => {
@@ -56,7 +56,7 @@ const CouponListing = () => {
    const { data: couponTotal, loading } = useSubscription(COUPON_TOTAL)
 
    // Mutation
-   const [updateCouponActive] = useMutation(COUPON_ACTIVE, {
+   const [updateCouponActive] = useMutation(UPDATE_COUPON, {
       onCompleted: () => {
          toast.info('Coupon Updated!')
       },
@@ -80,7 +80,7 @@ const CouponListing = () => {
    })
 
    if (error) {
-      toast.error('Something went wrong !')
+      toast.error('Something went wrong here !')
       logger(error)
    }
 
@@ -93,12 +93,14 @@ const CouponListing = () => {
    const toggleHandler = (toggle, id, isvalid) => {
       const val = !toggle
       if (val && !isvalid) {
-         toast.error('Coupon should be valid!')
+         toast.error(`Coupon should be valid!`)
       } else {
          updateCouponActive({
             variables: {
-               couponId: id,
-               isActive: val,
+               id: id,
+               set: {
+                  isActive: val,
+               },
             },
          })
       }
@@ -109,7 +111,7 @@ const CouponListing = () => {
       return (
          <Form.Group>
             <Form.Toggle
-               name="coupon_active"
+               name={`coupon_active${rowData.id}`}
                onChange={() =>
                   toggleHandler(rowData.active, rowData.id, rowData.isvalid)
                }
@@ -223,6 +225,7 @@ const CouponListing = () => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+         formatter: cell => currencyFmt(Number(cell.getValue()) || 0),
          width: 150,
       },
       {

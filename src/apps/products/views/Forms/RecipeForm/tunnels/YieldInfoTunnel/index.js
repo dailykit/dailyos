@@ -3,6 +3,7 @@ import { TunnelHeader, Text } from '@dailykit/ui'
 import { TunnelBody, Container } from '../styled'
 import { RecipeContext } from '../../../../../context/recipe'
 import { Nutrition, Tooltip } from '../../../../../../../shared/components'
+import { currencyFmt } from '../../../../../../../shared/utils'
 
 const InfoTunnel = ({ close }) => {
    const { recipeState } = React.useContext(RecipeContext)
@@ -18,7 +19,9 @@ const InfoTunnel = ({ close }) => {
             <Container bottom="32">
                <Text as="subtitle"> Cost </Text>
                {recipeState.serving.cost ? (
-                  <Text as="p">$ {recipeState.serving.cost}</Text>
+                  <Text as="p">
+                     {currencyFmt(Number(recipeState.serving.cost) || 0)}
+                  </Text>
                ) : (
                   <Text as="p">NA</Text>
                )}

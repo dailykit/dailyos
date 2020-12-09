@@ -192,6 +192,7 @@ const ModifierOptionsTunnel = ({ close }) => {
          },
          isAlwaysCharged: { value: false },
          unit: option.unit || null,
+         operationConfig: { value: null },
       }
       switch (modifiersState.meta.modifierProductType) {
          case 'inventoryProductOption':

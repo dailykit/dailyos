@@ -9,7 +9,7 @@ import { Flex, Form, Text, TunnelHeader, Dropdown, Spacer } from '@dailykit/ui'
 import { useConfig } from '../../context'
 import { Main, Sidebar, Content } from './styled'
 import { logger } from '../../../../shared/utils'
-import { DEVICES, UPDATE_SETTING } from '../../graphql'
+import { DEVICES, MUTATIONS } from '../../graphql'
 import { InlineLoader, Tooltip } from '../../../../shared/components'
 
 export const ConfigTunnel = () => {
@@ -83,7 +83,7 @@ const ScaleSection = () => {
 
 const WeightSimulation = () => {
    const { state } = useConfig()
-   const [update] = useMutation(UPDATE_SETTING, {
+   const [update] = useMutation(MUTATIONS.SETTING.UPDATE, {
       onCompleted: () => {
          toast.success('Successfully updated the setting!')
       },
@@ -135,7 +135,7 @@ const PrintSection = () => {
 
 const PrintSimulation = () => {
    const { state } = useConfig()
-   const [update] = useMutation(UPDATE_SETTING, {
+   const [update] = useMutation(MUTATIONS.SETTING.UPDATE, {
       onCompleted: () => {
          toast.success('Successfully updated the setting!')
       },
@@ -190,7 +190,7 @@ const KotSection = () => {
 
 const GroupByStation = () => {
    const { state } = useConfig()
-   const [update] = useMutation(UPDATE_SETTING, {
+   const [update] = useMutation(MUTATIONS.SETTING.UPDATE, {
       onCompleted: () => {
          toast.success('Successfully updated the setting!')
       },
@@ -233,7 +233,7 @@ const GroupByStation = () => {
 
 const GroupByProductType = () => {
    const { state } = useConfig()
-   const [update] = useMutation(UPDATE_SETTING, {
+   const [update] = useMutation(MUTATIONS.SETTING.UPDATE, {
       onCompleted: () => {
          toast.success('Successfully updated the setting!')
       },
@@ -276,7 +276,7 @@ const GroupByProductType = () => {
 
 const PrintAuto = () => {
    const { state } = useConfig()
-   const [update] = useMutation(UPDATE_SETTING, {
+   const [update] = useMutation(MUTATIONS.SETTING.UPDATE, {
       onCompleted: () => {
          toast.success('Successfully updated the setting!')
       },
@@ -319,7 +319,7 @@ const PrintAuto = () => {
 
 const DefaultKOTPrinter = () => {
    const { state } = useConfig()
-   const [update] = useMutation(UPDATE_SETTING, {
+   const [update] = useMutation(MUTATIONS.SETTING.UPDATE, {
       onCompleted: () => {
          toast.success('Successfully updated the setting!')
       },

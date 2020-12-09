@@ -40,7 +40,7 @@ const validator = {
       }
       if (+value < 0) {
          isValid = false
-         errors = [...errors, 'Should be greater than 0!']
+         errors = [...errors, 'Invalid value!']
       }
       return { isValid, errors }
    },

@@ -1,5 +1,3 @@
-// TODO: handle unit error handling
-
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
@@ -18,7 +16,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { EditIcon } from '../../../../../../../shared/assets/icons'
 import {
-   InlineLoader,
+   Gallery,
    NutritionTunnel,
    Tooltip,
 } from '../../../../../../../shared/components'
@@ -35,7 +33,6 @@ import { validators } from '../../../../../utils/validators'
 import AllergensTunnel from '../Allergens'
 import {
    Highlight,
-   ImageContainer,
    StyledInputGroup,
    StyledLabel,
    StyledRow,
@@ -132,7 +129,7 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
          return 'invalid par level value'
       if (!maxValue.value || !maxValue.meta.isValid)
          return 'invalid max. inventory level value'
-      if (!unit.value) return 'unit is required'
+      if (!unit.value || unit.value === ' ') return 'unit is required'
       return true
    }
 
@@ -147,23 +144,19 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                object: {
                   unit: unit.value, // string
                   yield: {
-                     value: yieldPercentage.meta.isValid
-                        ? yieldPercentage.value
-                        : '',
+                     value: yieldPercentage.value,
                   },
                   shelfLife: {
-                     unit: shelfLifeUnit.meta.value ? shelfLifeUnit.value : '',
-                     value: shelfLife.meta.isValid ? shelfLife.value : '',
+                     unit: shelfLifeUnit.value,
+                     value: shelfLife.value,
                   },
                   parLevel: +parLevel.value,
                   maxLevel: +maxValue.value,
                   labor: {
-                     value: laborTime.meta.isValid ? laborTime.value : '',
-                     unit: laborUnit.value ? laborUnit.value : '',
+                     value: laborTime.value,
+                     unit: laborUnit.value,
                   },
-                  bulkDensity: bulkDensity.meta.isValid
-                     ? +bulkDensity.value
-                     : null,
+                  bulkDensity: +bulkDensity.value,
                   allergens: allergens?.length ? allergens : [],
                },
             },
@@ -180,6 +173,17 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
             id: id || bulkItem.id,
             object: {
                nutritionInfo: data,
+            },
+         },
+      })
+   }
+
+   const addImage = images => {
+      udpateBulkItem({
+         variables: {
+            id: bulkItem.id,
+            object: {
+               image: images,
             },
          },
       })
@@ -219,7 +223,9 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                title: loading ? 'Saving...' : t(address.concat('save')),
                action: handleSave,
             }}
-            description="add more information about this bulk item"
+            description={`add more information about this ${
+               id ? 'processing' : 'Mise en place'
+            }`}
             tooltip={
                <Tooltip identifier="supplier_item_form_configure_bulkItem_tunnel" />
             }
@@ -310,15 +316,17 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                      <Form.Select
                         name="units"
                         id="units"
-                        // FIXME: change this...
-                        options={[{ id: 0, title: 'Select unit' }, ...units]}
+                        options={[
+                           { id: 0, title: 'Select unit', value: ' ' },
+                           ...units,
+                        ]}
                         value={unit.value}
-                        onChange={e =>
+                        onChange={e => {
                            setUnit({
                               value: e.target.value,
                               meta: { ...unit.meta },
                            })
-                        }
+                        }}
                      />
                   </Form.Group>
                </StyledInputGroup>
@@ -334,35 +342,25 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
             </StyledRow>
             {bulkItem?.id && (
                <StyledRow>
-                  {bulkItem?.image ? (
-                     <ImageContainer>
-                        <div>
-                           <span
-                              role="button"
-                              tabIndex="0"
-                              onClick={() => openPhotoTunnel(1)}
-                              onKeyDown={e =>
-                                 e.charCode === 13 && openPhotoTunnel(1)
-                              }
-                           >
-                              <EditIcon />
-                           </span>
-                        </div>
-                        <img src={bulkItem.image} alt="processing" />
-                     </ImageContainer>
-                  ) : (
-                     <ButtonTile
-                        type="primary"
-                        size="sm"
-                        text={t(address.concat('add photo to your processing'))}
-                        helper={t(
-                           address.concat(
-                              'upto 1MB - only JPG, PNG, PDF allowed'
-                           )
-                        )}
-                        onClick={() => openPhotoTunnel(1)}
-                     />
-                  )}
+                  <Flex width="400px">
+                     {bulkItem?.image != null && bulkItem?.image?.length ? (
+                        <Gallery
+                           list={bulkItem?.image || []}
+                           isMulti={true}
+                           onChange={images => {
+                              addImage(images)
+                           }}
+                        />
+                     ) : (
+                        <Gallery
+                           list={[]}
+                           isMulti={true}
+                           onChange={images => {
+                              addImage(images)
+                           }}
+                        />
+                     )}
+                  </Flex>
                </StyledRow>
             )}
             <StyledRow>
@@ -400,11 +398,18 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                            name="time"
                            id="time"
                            options={[
-                              { id: 1, title: t('units.hours') },
-                              { id: 2, title: t('units.minutes') },
+                              { id: 0, title: 'Select Unit', value: ' ' },
+                              { id: 1, title: 'days' },
+                              { id: 2, title: t('units.hours') },
+                              { id: 3, title: t('units.minutes') },
                            ]}
                            value={laborUnit.value}
-                           onChange={e => setLaborUnit(e.target.value)}
+                           onChange={e =>
+                              setLaborUnit({
+                                 value: e.target.value,
+                                 meta: { ...laborUnit.meta },
+                              })
+                           }
                         />
                      </Form.TextSelect>
                      {laborTime.meta.isTouched && !laborTime.meta.isValid && (
@@ -483,11 +488,18 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                            id="unit"
                            name="unit"
                            options={[
-                              { id: 1, title: t('units.hours') },
-                              { id: 2, title: t('units.minutes') },
+                              { id: 0, title: 'Select Unit', value: ' ' },
+                              { id: 1, title: 'days' },
+                              { id: 2, title: t('units.hours') },
+                              { id: 3, title: t('units.minutes') },
                            ]}
-                           value={shelfLifeUnit}
-                           onChange={e => setShelfLifeUnit(e.target.value)}
+                           value={shelfLifeUnit.value}
+                           onChange={e =>
+                              setShelfLifeUnit({
+                                 value: e.target.value,
+                                 meta: { ...shelfLifeUnit.meta },
+                              })
+                           }
                         />
                      </Form.TextSelect>
                      {shelfLife.meta.isTouched && !shelfLife.meta.isValid && (

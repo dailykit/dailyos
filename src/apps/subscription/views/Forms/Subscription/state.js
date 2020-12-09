@@ -12,13 +12,14 @@ const initialState = {
    },
    serving: {
       size: '',
-      isActive: true,
+      isActive: false,
       isDefault: false,
       meta: { errors: [], isValid: false, isTouched: false },
    },
    item: {
       count: '',
       price: '',
+      isActive: false,
    },
    subscription: { id: null },
 }

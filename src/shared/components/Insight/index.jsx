@@ -1,8 +1,8 @@
 import { ReactTabulator } from '@dailykit/react-tabulator'
-import { Filler, Flex, Form } from '@dailykit/ui'
+import { Flex, Form } from '@dailykit/ui'
 import React, { useState } from 'react'
-import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
-import 'react-tabulator/lib/styles.css'
+import '@dailykit/react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
+import '@dailykit/react-tabulator/lib/styles.css'
 import styled from 'styled-components'
 import { useInsights } from '../../hooks/useInsights'
 import '../../styled/tableStyles.css'
@@ -57,7 +57,6 @@ export default function Insight({
 
    if (loading) return <InlineLoader />
    if (error) return <ErrorState />
-   if (empty) return <Filler />
 
    return (
       <>

@@ -28,7 +28,7 @@ import {
    OperationConfig,
    Tooltip,
 } from '../../../../../../../../shared/components'
-import { logger } from '../../../../../../../../shared/utils'
+import { currencyFmt, logger } from '../../../../../../../../shared/utils'
 import { DeleteIcon, EditIcon, EyeIcon } from '../../../../../../assets/icons'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
 import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
@@ -60,6 +60,8 @@ export default function Recipe({ state }) {
    )
    const { modifiersDispatch } = React.useContext(ModifiersContext)
 
+   const opConfigInvokedBy = React.useRef('')
+   const modifierOpConfig = React.useRef(undefined)
    const [foodCostPercent, setFoodCostPercent] = React.useState({
       lowerLimit: 0,
       upperLimit: 10,
@@ -193,24 +195,23 @@ export default function Recipe({ state }) {
       openModifiersTunnel(2)
    }
    const saveOperationConfig = config => {
-      updateProductOption({
-         variables: {
-            id: productState.optionId,
-            set: {
-               operationConfigId: config.id,
+      if (opConfigInvokedBy.current === 'option') {
+         updateProductOption({
+            variables: {
+               id: productState.optionId,
+               set: {
+                  operationConfigId: config.id,
+               },
             },
-         },
-      })
+         })
+      }
+      if (opConfigInvokedBy.current === 'modifier') {
+         modifierOpConfig.current = config
+      }
    }
 
    return (
       <>
-         <OperationConfig
-            tunnels={operationConfigTunnels}
-            openTunnel={openOperationConfigTunnel}
-            closeTunnel={closeOperationConfigTunnel}
-            onSelect={saveOperationConfig}
-         />
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <RecipeTunnel state={state} close={closeTunnel} />
@@ -235,6 +236,11 @@ export default function Recipe({ state }) {
                <ModifierFormTunnel
                   open={openModifiersTunnel}
                   close={closeModifiersTunnel}
+                  openOperationConfigTunnel={value => {
+                     opConfigInvokedBy.current = 'modifier'
+                     openOperationConfigTunnel(value)
+                  }}
+                  modifierOpConfig={modifierOpConfig.current}
                />
             </Tunnel>
             <Tunnel layer={3}>
@@ -253,6 +259,12 @@ export default function Recipe({ state }) {
                <ModifierTemplatesTunnel close={closeModifiersTunnel} />
             </Tunnel>
          </Tunnels>
+         <OperationConfig
+            tunnels={operationConfigTunnels}
+            openTunnel={openOperationConfigTunnel}
+            closeTunnel={closeOperationConfigTunnel}
+            onSelect={saveOperationConfig}
+         />
          {state.simpleRecipe ? (
             <SectionTabs>
                <SectionTabList>
@@ -402,38 +414,53 @@ export default function Recipe({ state }) {
                                              </td>
                                              <td>
                                                 {option.cost
-                                                   ? `$${
-                                                        option.cost +
-                                                        (option.cost *
-                                                           foodCostPercent.lowerLimit) /
-                                                           100
-                                                     } - $${
-                                                        option.cost +
-                                                        (option.cost *
-                                                           foodCostPercent.upperLimit) /
-                                                           100
-                                                     }`
+                                                   ? `${currencyFmt(
+                                                        Number(
+                                                           option.cost +
+                                                              (option.cost *
+                                                                 foodCostPercent.lowerLimit) /
+                                                                 100
+                                                        ) || 0
+                                                     )} - ${currencyFmt(
+                                                        Number(
+                                                           option.cost +
+                                                              (option.cost *
+                                                                 foodCostPercent.upperLimit) /
+                                                                 100
+                                                        ) || 0
+                                                     )}`
                                                    : '-'}
                                              </td>
-                                             <td>${option.price[0].value} </td>
                                              <td>
-                                                {option.price[0].discount} %
+                                                {currencyFmt(
+                                                   Number(
+                                                      option.price[0].value
+                                                   ) || 0
+                                                )}
                                              </td>
                                              <td>
-                                                $
-                                                {(
-                                                   parseFloat(
-                                                      option.price[0].value
-                                                   ) -
-                                                   parseFloat(
-                                                      option.price[0].value
-                                                   ) *
-                                                      (parseFloat(
-                                                         option.price[0]
-                                                            .discount
-                                                      ) /
-                                                         100)
-                                                ).toFixed(2) || ''}
+                                                {option.price[0].discount}%
+                                             </td>
+                                             <td>
+                                                {currencyFmt(
+                                                   Number(
+                                                      (
+                                                         parseFloat(
+                                                            option.price[0]
+                                                               .value
+                                                         ) -
+                                                         parseFloat(
+                                                            option.price[0]
+                                                               .value
+                                                         ) *
+                                                            (parseFloat(
+                                                               option.price[0]
+                                                                  .discount
+                                                            ) /
+                                                               100)
+                                                      ).toFixed(2)
+                                                   ) || 0
+                                                )}
                                              </td>
                                              <td>
                                                 {option.modifier?.name ? (
@@ -516,6 +543,8 @@ export default function Recipe({ state }) {
                                                                      option.id,
                                                                },
                                                             })
+                                                            opConfigInvokedBy.current =
+                                                               'option'
                                                             openOperationConfigTunnel(
                                                                1
                                                             )
@@ -535,6 +564,8 @@ export default function Recipe({ state }) {
                                                                   option.id,
                                                             },
                                                          })
+                                                         opConfigInvokedBy.current =
+                                                            'option'
                                                          openOperationConfigTunnel(
                                                             1
                                                          )
@@ -722,6 +753,8 @@ export default function Recipe({ state }) {
                                                                      option.id,
                                                                },
                                                             })
+                                                            opConfigInvokedBy.current =
+                                                               'option'
                                                             openOperationConfigTunnel(
                                                                1
                                                             )
@@ -741,6 +774,8 @@ export default function Recipe({ state }) {
                                                                   option.id,
                                                             },
                                                          })
+                                                         opConfigInvokedBy.current =
+                                                            'option'
                                                          openOperationConfigTunnel(
                                                             1
                                                          )

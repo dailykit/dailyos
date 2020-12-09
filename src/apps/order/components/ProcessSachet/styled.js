@@ -58,24 +58,6 @@ export const StyledMain = styled.main`
    }
 `
 
-export const StyledButton = styled.button(
-   ({ disabled }) => css`
-      color: #fff;
-      height: 32px;
-      border: none;
-      padding: 0 12px;
-      cursor: pointer;
-      border-radius: 6px;
-      background: #53c22b;
-      ${disabled &&
-      css`
-         color: #9e9292;
-         background: #e2e2e2;
-         cursor: not-allowed;
-      `}
-   `
-)
-
 export const StyledWeigh = styled.section(
    ({ state }) => css`
       color: #fff;
@@ -170,25 +152,5 @@ export const StyledSOP = styled.section`
          object-fit: cover;
          position: absolute;
       }
-   }
-`
-
-export const ManualWeight = styled.section`
-   display: flex;
-   margin-top: 16px;
-   align-items: center;
-   justify-content: space-between;
-   input {
-      width: 180px;
-      height: 32px;
-      padding: 0 8px;
-      margin-right: 8px;
-      border-radius: 2px;
-      border: 1px solid rgba(0, 0, 0, 0.2);
-   }
-   button {
-      height: 32px;
-      padding: 0 8px;
-      font-size: 14px;
    }
 `

@@ -1,14 +1,20 @@
 import React from 'react'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { isEmpty } from 'lodash'
+import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
+import {
+   Flex,
+   Text,
+   Spacer,
+   IconButton,
+   TextButton,
+   ComboButton,
+} from '@dailykit/ui'
 
 import {
+   Styles,
    StyledOrderItem,
-   StyledButton,
-   StyledConsumer,
-   StyledConsumerName,
-   StyledConsumerAddress,
-   StyledConsumerContact,
    StyledCount,
    StyledProductItem,
    StyledProductTitle,
@@ -16,16 +22,12 @@ import {
    StyledServings,
    StyledStatus,
    StyledStatusBadge,
-   ListBodyItem,
    StyledTabs,
    StyledTab,
    StyledTabList,
    StyledTabPanels,
    StyledTabPanel,
-   StyledHeader,
    StyledStat,
-   StyledPrint,
-   StyledOrderType,
 } from './styled'
 
 import {
@@ -39,50 +41,62 @@ import {
    PrintIcon,
    HomeIcon,
 } from '../../assets/icons'
-import deliveryIcon from '../../assets/svgs/delivery.png'
-import pickUpIcon from '../../assets/svgs/pickup.png'
 
 import { formatDate } from '../../utils'
-
 import { useTabs, useOrder } from '../../context'
-import { ORDER_STATUSES, UPDATE_ORDER_STATUS } from '../../graphql'
+import { QUERIES, MUTATIONS } from '../../graphql'
+import pickUpIcon from '../../assets/svgs/pickup.png'
+import deliveryIcon from '../../assets/svgs/delivery.png'
+import { currencyFmt, logger } from '../../../../shared/utils'
 
 const address = 'apps.order.components.orderlistitem.'
 
 const isPickup = value => ['ONDEMAND_PICKUP', 'PREORDER_PICKUP'].includes(value)
 
-const normalize = address =>
-   `${address.line1}, ${address.line2 ? `${address.line2}, ` : ''} ${
+const normalize = address => {
+   return `${address.line1}, ${address.line2 ? `${address.line2}, ` : ''} ${
       address.city
    }, ${address.state}, ${address.zipcode}`
+}
 
 const OrderListItem = ({ containerId, order = {} }) => {
    const { t } = useTranslation()
    const { addTab } = useTabs()
    const { dispatch } = useOrder()
    const [currentPanel, setCurrentPanel] = React.useState('customer')
-   const [updateOrderStatus] = useMutation(UPDATE_ORDER_STATUS)
+   const [updateOrder] = useMutation(MUTATIONS.ORDER.UPDATE, {
+      onCompleted: () => {
+         toast.success('Successfully updated the order!')
+      },
+      onError: error => {
+         logger(error)
+         toast.error('Failed to update the order')
+      },
+   })
    const {
       data: { order_orderStatusEnum: statuses = [] } = {},
-   } = useSubscription(ORDER_STATUSES)
+   } = useSubscription(QUERIES.ORDER.STATUSES)
    const {
       id = '',
       orderStatus = '',
       orderMealKitProducts: mealkits = [],
       orderInventoryProducts: inventories = [],
       orderReadyToEatProducts: readytoeats = [],
-      deliveryInfo = {},
-      ...rest
    } = order
 
    const updateStatus = () => {
+      if (Boolean(order.isAccepted !== true && order.isRejected !== true)) {
+         toast.error('Pending order confirmation!')
+         return
+      }
+      if (orderStatus === 'DELIVERED') return
       const status_list = statuses.map(status => status.value)
       const next = status_list.indexOf(orderStatus)
       if (next + 1 < status_list.length - 1) {
-         updateOrderStatus({
+         updateOrder({
             variables: {
                id,
-               orderStatus: status_list[next + 1],
+               _set: { orderStatus: status_list[next + 1] },
             },
          })
       }
@@ -106,11 +120,12 @@ const OrderListItem = ({ containerId, order = {} }) => {
    return (
       <StyledOrderItem status={orderStatus} id={containerId}>
          <section>
-            <ListBodyItem isOpen={currentPanel === 'customer'}>
+            <Styles.Accordian isOpen={currentPanel === 'customer'}>
                <header>
-                  <span>
-                     <CustomerName data={deliveryInfo?.dropoff?.dropoffInfo} />
-                  </span>
+                  <Text as="p">
+                     {order.customer?.customerFirstName}&nbsp;
+                     {order.customer?.customerLastName}
+                  </Text>
                   <ToggleButton
                      type="customer"
                      current={currentPanel}
@@ -118,30 +133,51 @@ const OrderListItem = ({ containerId, order = {} }) => {
                   />
                </header>
                <main>
-                  {deliveryInfo?.dropoff &&
-                     Object.keys(deliveryInfo?.dropoff).length > 0 && (
-                        <StyledConsumer>
-                           <CustomerPhone
-                              data={deliveryInfo?.dropoff?.dropoffInfo}
-                           />
-                           <CustomerEmail
-                              data={deliveryInfo?.dropoff?.dropoffInfo}
-                           />
-                           {deliveryInfo?.dropoff?.dropoffInfo
-                              ?.customerAddress && (
-                              <CustomerAddress
-                                 data={deliveryInfo?.dropoff?.dropoffInfo}
-                              />
-                           )}
-                        </StyledConsumer>
-                     )}
+                  <Flex container alignItems="center">
+                     <span>
+                        <PhoneIcon size={14} color="#718096" />
+                     </span>
+                     <Spacer size="4px" xAxis />
+                     <Text as="subtitle">{order.customer?.customerPhone}</Text>
+                  </Flex>
+                  <Spacer size="8px" />
+                  <Flex container alignItems="center">
+                     <span>
+                        <EmailIcon size={14} color="#718096" />
+                     </span>
+                     <Spacer size="4px" xAxis />
+                     <Text as="subtitle">
+                        <a
+                           target="__blank"
+                           rel="noopener roreferrer"
+                           href={`mailto:${order.customer?.customerEmail}`}
+                        >
+                           {order.customer?.customerEmail}
+                        </a>
+                     </Text>
+                  </Flex>
+                  {order?.customer?.customerAddress && (
+                     <>
+                        <Spacer size="8px" />
+                        <Flex container>
+                           <span>
+                              <HomeIcon size={14} color="#718096" />
+                           </span>
+                           <Spacer size="4px" xAxis />
+                           <Text as="subtitle">
+                              {normalize(order?.customer?.customerAddress)}
+                           </Text>
+                        </Flex>
+                     </>
+                  )}
+                  <Spacer size="8px" />
                </main>
-            </ListBodyItem>
-            <ListBodyItem isOpen={currentPanel === 'billing'}>
+            </Styles.Accordian>
+            <Styles.Accordian isOpen={currentPanel === 'billing'}>
                <header>
-                  <span style={{ fontSize: 15, fontWeight: 500 }}>
-                     Amount Paid: {rest.amountPaid}
-                  </span>
+                  <Text as="p">
+                     Amount Paid: {currencyFmt(Number(order.amountPaid) || 0)}
+                  </Text>
                   <ToggleButton
                      type="billing"
                      current={currentPanel}
@@ -151,79 +187,103 @@ const OrderListItem = ({ containerId, order = {} }) => {
                <main>
                   <StyledStat>
                      <span>{t(address.concat('tax'))}</span>
-                     <span>{rest.tax}</span>
+                     <span>{currencyFmt(Number(order.tax) || 0)}</span>
                   </StyledStat>
                   <StyledStat>
                      <span>{t(address.concat('discount'))}</span>
-                     <span>{rest.discount}</span>
+                     <span>{order.discount}</span>
                   </StyledStat>
                   <StyledStat>
                      <span>{t(address.concat('delivery price'))}</span>
-                     <span>{rest.deliveryPrice}</span>
+                     <span>
+                        {currencyFmt(Number(order.deliveryPrice) || 0)}
+                     </span>
                   </StyledStat>
                   <StyledStat>
                      <span>{t(address.concat('total'))}</span>
-                     <span>{rest.amountPaid}</span>
+                     <span>{currencyFmt(Number(order.amountPaid) || 0)}</span>
                   </StyledStat>
                </main>
-            </ListBodyItem>
+            </Styles.Accordian>
          </section>
          <StyledProducts>
-            <StyledHeader>
-               <StyledOrderType>
+            <Flex as="header" container alignItems="center">
+               <Flex
+                  container
+                  width="28px"
+                  height="28px"
+                  alignItems="center"
+                  justifyContent="center"
+               >
                   {isPickup(order.fulfillmentType) ? (
-                     <img alt="Pick Up" title="Pick Up" src={pickUpIcon} />
+                     <img
+                        alt="Pick Up"
+                        width="28px"
+                        title="Pick Up"
+                        src={pickUpIcon}
+                     />
                   ) : (
-                     <img alt="Delivery" title="Delivery" src={deliveryIcon} />
+                     <img
+                        alt="Delivery"
+                        width="28px"
+                        title="Delivery"
+                        src={deliveryIcon}
+                     />
                   )}
-               </StyledOrderType>
-               <StyledButton type="button" onClick={() => createTab(id)}>
-                  ORD{order.id}
+               </Flex>
+               <Spacer size="8px" xAxis />
+               <ComboButton
+                  size="sm"
+                  type="outline"
+                  onClick={() => createTab(id)}
+               >
+                  {'ORD' + order.id}
                   <NewTabIcon size={14} />
-               </StyledButton>
-               <StyledPrint onClick={() => print()}>
+               </ComboButton>
+               <Spacer size="8px" xAxis />
+               <IconButton size="sm" type="outline" onClick={() => print()}>
                   <PrintIcon size={16} />
-               </StyledPrint>
-               {['ONDEMAND_DELIVERY', 'PREORDER_DELIVERY'].includes(
-                  order.fulfillmentType
-               ) && (
-                  <StyledButton
-                     type="button"
-                     onClick={() =>
-                        dispatch({
-                           type: 'DELIVERY_PANEL',
-                           payload: { orderId: order.id },
-                        })
-                     }
-                  >
-                     {order?.deliveryInfo?.deliveryCompany?.name
-                        ? 'View'
-                        : 'Select'}{' '}
-                     Delivery
-                  </StyledButton>
+               </IconButton>
+               {!isPickup(order.fulfillmentType) && (
+                  <>
+                     <Spacer size="8px" xAxis />
+                     <TextButton
+                        size="sm"
+                        type="outline"
+                        fallBackMessage="Pending order confirmation!"
+                        hasAccess={Boolean(
+                           order.isAccepted && !order.isRejected
+                        )}
+                        onClick={() =>
+                           dispatch({
+                              type: 'DELIVERY_PANEL',
+                              payload: { orderId: order.id },
+                           })
+                        }
+                     >
+                        {order?.deliveryCompany?.name ? 'View' : 'Select'}{' '}
+                        Delivery
+                     </TextButton>
+                  </>
                )}
-
-               <section>
+               <Spacer size="24px" xAxis />
+               <Flex as="section" container alignItems="center">
                   <StyledStatus>
                      <span>{t(address.concat('ordered on'))}:&nbsp;</span>
                      <span>{formatDate(order?.created_at)}</span>
                   </StyledStatus>
-                  &nbsp;|&nbsp;
-                  <ReadyBy data={deliveryInfo?.pickup} />
-                  &nbsp;|&nbsp;
-                  {isPickup(order.fulfillmentType) ? (
-                     <TimeSlot
-                        type={order.fulfillmentType}
-                        data={deliveryInfo?.pickup}
-                     />
-                  ) : (
-                     <TimeSlot
-                        type={order.fulfillmentType}
-                        data={deliveryInfo?.dropoff}
-                     />
-                  )}
-               </section>
-            </StyledHeader>
+                  <Spacer size="16px" xAxis />
+                  <ReadyBy data={order?.pickupWindow} />
+                  <Spacer size="16px" xAxis />
+                  <TimeSlot
+                     type={order.fulfillmentType}
+                     data={{
+                        pickup: order?.pickupWindow,
+                        dropoff: order?.dropoffWindow,
+                     }}
+                  />
+               </Flex>
+            </Flex>
             <main>
                <StyledTabs>
                   <StyledTabList>
@@ -237,18 +297,18 @@ const OrderListItem = ({ containerId, order = {} }) => {
                            &nbsp;
                         </StyledCount>
                      </StyledTab>
-                     <StyledTab>
-                        {t(address.concat('inventory'))}{' '}
-                        <StyledCount>{inventories.length || 0}</StyledCount>
-                     </StyledTab>
-                     <StyledTab>
+                     {!isEmpty(mealkits) && <StyledTab>
                         {t(address.concat('meal kits'))}{' '}
                         <StyledCount>{mealkits.length || 0}</StyledCount>
-                     </StyledTab>
-                     <StyledTab>
+                     </StyledTab>}
+                     {!isEmpty(readytoeats) && <StyledTab>
                         {t(address.concat('ready to eat'))}{' '}
                         <StyledCount>{readytoeats.length}</StyledCount>
-                     </StyledTab>
+                     </StyledTab>}
+                     {!isEmpty(inventories) && <StyledTab>
+                        {t(address.concat('inventory'))}{' '}
+                        <StyledCount>{inventories.length || 0}</StyledCount>
+                     </StyledTab>}
                   </StyledTabList>
                   <StyledTabPanels>
                      <StyledTabPanel>
@@ -333,40 +393,7 @@ const OrderListItem = ({ containerId, order = {} }) => {
                            </StyledProductItem>
                         ))}
                      </StyledTabPanel>
-                     <StyledTabPanel>
-                        {inventories.length > 0
-                           ? inventories.map(inventory => (
-                                <StyledProductItem key={inventory.id}>
-                                   <div>
-                                      <ProductTitle
-                                         data={inventory}
-                                         type="INVENTORY"
-                                      />
-                                   </div>
-                                   <StyledServings>
-                                      <span>
-                                         <UserIcon size={16} color="#555B6E" />
-                                      </span>
-                                      <span>
-                                         {
-                                            inventory?.inventoryProductOption
-                                               ?.quantity
-                                         }
-                                         &nbsp; - &nbsp;
-                                         {
-                                            inventory?.inventoryProductOption
-                                               ?.label
-                                         }
-                                      </span>
-                                   </StyledServings>
-                                   <span>
-                                      {inventory.isAssembled ? 1 : 0} / 1
-                                   </span>
-                                </StyledProductItem>
-                             ))
-                           : t(address.concat('no inventories'))}
-                     </StyledTabPanel>
-                     <StyledTabPanel>
+                     {!isEmpty(mealkits) && <StyledTabPanel>
                         {mealkits.length > 0
                            ? mealkits.map(mealkit => (
                                 <StyledProductItem key={mealkit.id}>
@@ -406,44 +433,115 @@ const OrderListItem = ({ containerId, order = {} }) => {
                                 </StyledProductItem>
                              ))
                            : t(address.concat('no meal kits'))}
-                     </StyledTabPanel>
-                     <StyledTabPanel>
+                     </StyledTabPanel>}
+                     {!isEmpty(readytoeats) && <StyledTabPanel>
                         {readytoeats.length > 0
                            ? readytoeats.map(readytoeat => (
-                                <StyledProductItem key={readytoeat.id}>
-                                   <div>
-                                      <ProductTitle
-                                         data={readytoeat}
-                                         type="READY_TO_EAT"
-                                      />
-                                   </div>
-                                   <StyledServings>
-                                      <span>
-                                         <UserIcon size={16} color="#555B6E" />
-                                      </span>
-                                      <span>
-                                         {
-                                            readytoeat
-                                               ?.simpleRecipeProductOption
-                                               ?.simpleRecipeYield?.yield
-                                               ?.serving
-                                         }
+                              <StyledProductItem key={readytoeat.id}>
+                                 <div>
+                                    <ProductTitle
+                                       data={readytoeat}
+                                       type="READY_TO_EAT"
+                                    />
+                                 </div>
+                                 <StyledServings>
+                                    <span>
+                                       <UserIcon size={16} color="#555B6E" />
+                                    </span>
+                                    <span>
+                                       {
+                                          readytoeat
+                                             ?.simpleRecipeProductOption
+                                             ?.simpleRecipeYield?.yield
+                                             ?.serving
+                                       }
                                          &nbsp; {t(address.concat('servings'))}
-                                      </span>
-                                   </StyledServings>
-                                   <span>
-                                      {readytoeat?.isAssembled ? 1 : 0} / 1
+                                    </span>
+                                 </StyledServings>
+                                 <span>
+                                    {readytoeat?.isAssembled ? 1 : 0} / 1
                                    </span>
-                                </StyledProductItem>
-                             ))
+                              </StyledProductItem>
+                           ))
                            : t(address.concat('no ready to eat'))}
-                     </StyledTabPanel>
+                     </StyledTabPanel>}
+                     {!isEmpty(inventories) && <StyledTabPanel>
+                        {inventories.length > 0
+                           ? inventories.map(inventory => (
+                              <StyledProductItem key={inventory.id}>
+                                 <div>
+                                    <ProductTitle
+                                       data={inventory}
+                                       type="INVENTORY"
+                                    />
+                                 </div>
+                                 <StyledServings>
+                                    <span>
+                                       <UserIcon size={16} color="#555B6E" />
+                                    </span>
+                                    <span>
+                                       {
+                                          inventory?.inventoryProductOption
+                                             ?.quantity
+                                       }
+                                         &nbsp; - &nbsp;
+                                         {
+                                          inventory?.inventoryProductOption
+                                             ?.label
+                                       }
+                                    </span>
+                                 </StyledServings>
+                                 <span>
+                                    {inventory.isAssembled ? 1 : 0} / 1
+                                   </span>
+                              </StyledProductItem>
+                           ))
+                           : t(address.concat('no inventories'))}
+                     </StyledTabPanel>}
                   </StyledTabPanels>
                </StyledTabs>
             </main>
          </StyledProducts>
-
-         <StyledStatusBadge status={orderStatus} onClick={() => updateStatus()}>
+         <Flex padding="8px">
+            <Text as="h3">Actions</Text>
+            <Spacer size="16px" />
+            <Flex>
+               <TextButton
+                  type="solid"
+                  disabled={order.isAccepted}
+                  onClick={() =>
+                     updateOrder({
+                        variables: {
+                           id,
+                           _set: {
+                              isAccepted: true,
+                              ...(order.isRejected && { isRejected: false }),
+                           },
+                        },
+                     })
+                  }
+               >
+                  {order.isAccepted ? 'Accepted' : 'Accept'}
+               </TextButton>
+               <Spacer size="14px" />
+               <TextButton
+                  type="ghost"
+                  onClick={() =>
+                     updateOrder({
+                        variables: {
+                           id,
+                           _set: {
+                              isRejected: !order.isRejected,
+                           },
+                        },
+                     })
+                  }
+               >
+                  {order.isRejected ? 'Un Reject' : 'Reject'}
+               </TextButton>
+            </Flex>
+         </Flex>
+         <StyledStatusBadge status={orderStatus} onClick={updateStatus}>
             {orderStatus.split('_').join(' ')}
             <span>
                <RightIcon size={20} color="#fff" />
@@ -454,57 +552,6 @@ const OrderListItem = ({ containerId, order = {} }) => {
 }
 
 export default OrderListItem
-
-const CustomerName = ({ data }) => {
-   return (
-      <StyledConsumerName>
-         {data?.customerFirstName}
-         &nbsp;
-         {data?.customerLastName}
-      </StyledConsumerName>
-   )
-}
-
-const CustomerAddress = ({ data }) => {
-   return (
-      <StyledConsumerAddress>
-         <span style={{ marginRight: 8 }}>
-            <HomeIcon size={14} color="#718096" />
-         </span>
-         <span>{normalize(data?.customerAddress)}</span>
-      </StyledConsumerAddress>
-   )
-}
-
-const CustomerPhone = ({ data }) => {
-   return (
-      <StyledConsumerContact>
-         <span>
-            <PhoneIcon size={14} color="#718096" />
-         </span>
-         <span>{data?.customerPhone}</span>
-      </StyledConsumerContact>
-   )
-}
-
-const CustomerEmail = ({ data }) => {
-   return (
-      <StyledConsumerContact>
-         <span>
-            <EmailIcon size={14} color="#718096" />
-         </span>
-         <span>
-            <a
-               target="__blank"
-               rel="noopener roreferrer"
-               href={`mailto:${data?.customerEmail}`}
-            >
-               {data?.customerEmail}
-            </a>
-         </span>
-      </StyledConsumerContact>
-   )
-}
 
 const ToggleButton = ({ type, current, toggle }) => {
    return (
@@ -523,16 +570,18 @@ const ReadyBy = ({ data = {} }) => {
       <StyledStatus>
          <span>{t(address.concat('ready by'))}:&nbsp;</span>
          <span>
-            {data?.window?.approved?.startsAt
-               ? formatDate(data?.window?.approved?.startsAt)
+            {data?.approved?.startsAt
+               ? formatDate(data?.approved?.startsAt)
                : 'N/A'}
          </span>
       </StyledStatus>
    )
 }
 
-const TimeSlot = ({ type, data = {} }) => {
+const TimeSlot = ({ type, data: { pickup, dropoff } = {} }) => {
    const { t } = useTranslation()
+
+   const data = isPickup(type) ? pickup : dropoff
    return (
       <StyledStatus>
          <span>
@@ -542,23 +591,23 @@ const TimeSlot = ({ type, data = {} }) => {
             :&nbsp;
          </span>
          <span>
-            {data?.window?.approved?.startsAt
-               ? formatDate(data?.window?.approved?.startsAt, {
+            {data?.approved?.startsAt
+               ? formatDate(data?.approved?.startsAt, {
                     month: 'short',
                     day: 'numeric',
                     year: 'numeric',
                  })
                : 'N/A'}
             ,&nbsp;
-            {data?.window?.approved?.startsAt
-               ? formatDate(data?.window?.approved?.startsAt, {
+            {data?.approved?.startsAt
+               ? formatDate(data?.approved?.startsAt, {
                     minute: 'numeric',
                     hour: 'numeric',
                  })
                : 'N/A'}
             -
-            {data?.window?.approved?.endsAt
-               ? formatDate(data?.window?.approved?.endsAt, {
+            {data?.approved?.endsAt
+               ? formatDate(data?.approved?.endsAt, {
                     minute: 'numeric',
                     hour: 'numeric',
                  })

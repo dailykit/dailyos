@@ -1,45 +1,58 @@
 import React from 'react'
-import _ from 'lodash'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import { isEmpty, isNull } from 'lodash'
 import { useTranslation } from 'react-i18next'
+import { useMutation } from '@apollo/react-hooks'
 import {
    Flex,
    Text,
    Spacer,
+   Filler,
    IconButton,
    CloseIcon,
    TextButton,
 } from '@dailykit/ui'
 
 import { useConfig } from '../../../context'
+import ProductDetails from './product_details'
 import { UserIcon } from '../../../assets/icons'
-import ProductDetails from './MealKitProductDetails'
-import {
-   Legend,
-   OrderItem,
-   OrderItems,
-   StyledServings,
-   StyledProductTitle,
-} from '../styled'
+import { MUTATIONS } from '../../../graphql'
+import ProductModifiers from './modifiers'
+import { logger } from '../../../../../shared/utils'
+import { Legend, Styles, Scroll, StyledProductTitle } from '../styled'
+import { ErrorState, InlineLoader } from '../../../../../shared/components'
 
 const address = 'apps.order.views.order.'
 
-export const MealKits = ({ mealkits }) => {
+export const MealKits = ({
+   hideModifiers,
+   data: { loading, error, mealkits },
+}) => {
    const { state } = useConfig()
    const { t } = useTranslation()
    const [label, setLabel] = React.useState('')
    const [current, setCurrent] = React.useState({})
 
+   const [update] = useMutation(MUTATIONS.ORDER.PRODUCT.MEALKIT.UPDATE, {
+      onCompleted: () => {
+         toast.success('Successfully updated the product!')
+      },
+      onError: error => {
+         logger(error)
+         toast.success('Failed to update the product!')
+      },
+   })
+
    React.useEffect(() => {
-      if (mealkits.length > 0) {
+      if (!loading && !isEmpty(mealkits)) {
          const [product] = mealkits
          setCurrent(product)
       }
-   }, [mealkits, setCurrent])
+   }, [loading, mealkits, setCurrent])
 
    const print = () => {
-      if (_.isNull(current?.labelTemplateId)) {
+      if (isNull(current?.labelTemplateId)) {
          toast.error('No template assigned!')
          return
       }
@@ -80,64 +93,82 @@ export const MealKits = ({ mealkits }) => {
       }
    }
 
-   if (mealkits.length === 0) return <div>No mealkit products!</div>
+   if (loading) return <InlineLoader />
+   if (error) return <ErrorState message="Failed to fetch mealkit products!" />
+   if (isEmpty(mealkits))
+      return <Filler message="No mealkit products available!" />
    return (
       <>
-         <OrderItems>
+         <Styles.Products>
             {mealkits.map(mealkit => (
-               <OrderItem
+               <ProductCard
                   key={mealkit.id}
+                  mealkit={mealkit}
                   isActive={current?.id === mealkit.id}
                   onClick={() => {
                      setLabel('')
                      setCurrent(mealkit)
                   }}
-               >
-                  <div>
-                     <StyledProductTitle>
-                        {mealkit?.simpleRecipeProduct?.name}
-                        {mealkit?.comboProduct?.name}
-                        &nbsp;
-                        {mealkit?.comboProductComponent?.label &&
-                           `(${mealkit?.comboProductComponent?.label})`}
-                     </StyledProductTitle>
-                  </div>
-                  <section>
-                     <span>
-                        {
-                           mealkit?.orderSachets.filter(
-                              sachet => sachet.isAssembled
-                           ).length
-                        }
-                        &nbsp;/&nbsp;
-                        {
-                           mealkit?.orderSachets.filter(
-                              sachet => sachet.status === 'PACKED'
-                           ).length
-                        }
-                        &nbsp; / {mealkit?.orderSachets?.length}
-                     </span>
-                     <StyledServings>
-                        <span>
-                           <UserIcon size={16} color="#555B6E" />
-                        </span>
-                        <span>
-                           {
-                              mealkit?.simpleRecipeProductOption
-                                 ?.simpleRecipeYield?.yield?.serving
-                           }
-                           &nbsp; {t(address.concat('servings'))}
-                        </span>
-                     </StyledServings>
-                  </section>
-               </OrderItem>
+               />
             ))}
-         </OrderItems>
-         <Flex>
+         </Styles.Products>
+         <Spacer size="16px" />
+         <Flex container alignItems="center">
             <TextButton size="sm" type="solid" onClick={print}>
                Print label
             </TextButton>
-            <Spacer size="8px" />
+            <Spacer size="16px" xAxis />
+            <TextButton
+               size="sm"
+               type="solid"
+               disabled={current?.assemblyStatus === 'COMPLETED'}
+               fallBackMessage="Pending order confirmation!"
+               hasAccess={Boolean(
+                  current?.order?.isAccepted && !current?.order?.isRejected
+               )}
+               onClick={() =>
+                  update({
+                     variables: {
+                        id: current?.id,
+                        _set: {
+                           assemblyStatus: 'COMPLETED',
+                        },
+                     },
+                  })
+               }
+            >
+               {current?.assemblyStatus === 'COMPLETED'
+                  ? 'Packed'
+                  : 'Mark Packed'}
+            </TextButton>
+            <Spacer size="16px" xAxis />
+            <TextButton
+               size="sm"
+               type="solid"
+               fallBackMessage="Pending order confirmation!"
+               hasAccess={Boolean(
+                  current?.order?.isAccepted && !current?.order?.isRejected
+               )}
+               disabled={
+                  current?.isAssembled ||
+                  current?.assemblyStatus !== 'COMPLETED'
+               }
+               onClick={() =>
+                  update({
+                     variables: {
+                        id: current?.id,
+                        _set: {
+                           isAssembled: true,
+                        },
+                     },
+                  })
+               }
+            >
+               {current?.isAssembled ? 'Assembled' : 'Mark Assembled'}
+            </TextButton>
+         </Flex>
+         <Spacer size="8px" />
+         <Flex>
             {label && (
                <>
                   <Flex
@@ -161,22 +192,105 @@ export const MealKits = ({ mealkits }) => {
                </>
             )}
          </Flex>
-         <Legend>
-            <h2>{t(address.concat('legends'))}</h2>
-            <section>
-               <span />
-               <span>{t(address.concat('pending'))}</span>
+         <Spacer size="24px" />
+         <section>
+            {!hideModifiers && (
+               <>
+                  <Scroll.Tabs>
+                     <Scroll.Tab
+                        className={
+                           window.location.hash === '#sachets' ? 'active' : ''
+                        }
+                     >
+                        <a href="#sachets">Sachets</a>
+                     </Scroll.Tab>
+                     {current?.hasModifiers && (
+                        <Scroll.Tab
+                           className={
+                              window.location.hash === '#modifiers'
+                                 ? 'active'
+                                 : ''
+                           }
+                        >
+                           <a href="#modifiers">Modifiers</a>
+                        </Scroll.Tab>
+                     )}
+                  </Scroll.Tabs>
+                  <Spacer size="16px" />
+               </>
+            )}
+            <section id="sachets">
+               <Text as="h2">Sachets</Text>
+               <Legend>
+                  <h2>{t(address.concat('legends'))}</h2>
+                  <section>
+                     <span />
+                     <span>{t(address.concat('pending'))}</span>
+                  </section>
+                  <section>
+                     <span />
+                     <span>{t(address.concat('packed'))}</span>
+                  </section>
+                  <section>
+                     <span />
+                     <span>{t(address.concat('assembled'))}</span>
+                  </section>
+               </Legend>
+               {current && <ProductDetails product={current} />}
             </section>
-            <section>
-               <span />
-               <span>{t(address.concat('packed'))}</span>
-            </section>
-            <section>
-               <span />
-               <span>{t(address.concat('assembled'))}</span>
-            </section>
-         </Legend>
-         {current && <ProductDetails product={current} />}
+            {!hideModifiers && current?.hasModifiers && (
+               <>
+                  <Spacer size="32px" />
+                  <section id="modifiers">
+                     <Text as="h2">Modifiers</Text>
+                     <Spacer size="16px" />
+                     {current && <ProductModifiers product={current} />}
+                  </section>
+               </>
+            )}
+         </section>
       </>
+   )
+}
+
+const ProductCard = ({ mealkit, isActive, onClick }) => {
+   const { t } = useTranslation()
+
+   const assembled = mealkit?.orderSachets?.filter(sachet => sachet.isAssembled)
+      .length
+   const packed = mealkit?.orderSachets?.filter(
+      sachet => sachet.status === 'PACKED'
+   ).length
+   const total = mealkit?.orderSachets?.length
+   const serving =
+      mealkit?.simpleRecipeProductOption?.simpleRecipeYield?.yield?.serving
+
+   return (
+      <Styles.ProductItem isActive={isActive} onClick={onClick}>
+         <div>
+            <StyledProductTitle>
+               {mealkit?.simpleRecipeProduct?.name}
+               {mealkit?.comboProduct?.name}
+               &nbsp;
+               {mealkit?.comboProductComponent?.label &&
+                  `(${mealkit?.comboProductComponent?.label})`}
+            </StyledProductTitle>
+         </div>
+         <Spacer size="14px" />
+         <Flex container alignItems="center" justifyContent="space-between">
+            <span>
+               {assembled} / {packed} / {total}
+            </span>
+            <Flex container alignItems="center">
+               <Flex as="span" container alignItems="center">
+                  <UserIcon size={16} color="#555B6E" />
+               </Flex>
+               <Spacer size="6px" xAxis />
+               <span>
+                  {serving} {t(address.concat('servings'))}
+               </span>
+            </Flex>
+         </Flex>
+      </Styles.ProductItem>
    )
 }

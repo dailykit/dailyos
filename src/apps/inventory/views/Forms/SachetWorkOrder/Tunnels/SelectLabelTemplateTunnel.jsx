@@ -1,22 +1,23 @@
+import { useMutation } from '@apollo/react-hooks'
 import {
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
    Tag,
    TagGroup,
-   useMultiList,
    TunnelHeader,
+   useMultiList,
 } from '@dailykit/ui'
 import React from 'react'
-import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
-import { useMutation } from '@apollo/react-hooks'
-
-import { TunnelContainer } from '../../../../components'
-import { UPDATE_SACHET_WORK_ORDER } from '../../../../graphql'
+import { toast } from 'react-toastify'
+import { Tooltip } from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
 import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
+import { UPDATE_SACHET_WORK_ORDER } from '../../../../graphql'
+import { TunnelWrapper } from '../../utils/TunnelWrapper'
 
 const address = 'apps.inventory.views.forms.sachetworkorder.tunnels.'
 
@@ -45,13 +46,16 @@ export default function SelectLabelTemplateTunnel({ close, state }) {
 
    const [list, selected, selectOption] = useMultiList(data || [])
 
-   const [updateSachetWorkOrder] = useMutation(UPDATE_SACHET_WORK_ORDER, {
-      onCompleted: () => {
-         toast.info('Work Order updated successfully!')
-         close(1)
-      },
-      onError,
-   })
+   const [updateSachetWorkOrder, { loading }] = useMutation(
+      UPDATE_SACHET_WORK_ORDER,
+      {
+         onCompleted: () => {
+            toast.info('Work Order updated successfully!')
+            close(1)
+         },
+         onError,
+      }
+   )
 
    const handleNext = () => {
       updateSachetWorkOrder({
@@ -69,9 +73,13 @@ export default function SelectLabelTemplateTunnel({ close, state }) {
          <TunnelHeader
             title={t(address.concat('select label templates'))}
             close={() => close(1)}
-            right={{ title: 'Save', action: handleNext }}
+            right={{ title: 'Save', action: handleNext, isLoading: loading }}
+            description="select label templates for this work order"
+            tooltip={
+               <Tooltip identifier="sachet_work_order_select_label_template_tunnel" />
+            }
          />
-         <TunnelContainer>
+         <TunnelWrapper>
             <List>
                <ListSearch
                   onChange={value => setSearch(value)}
@@ -90,6 +98,7 @@ export default function SelectLabelTemplateTunnel({ close, state }) {
                      ))}
                   </TagGroup>
                )}
+               <ListHeader type="MSL" label="labels" />
                <ListOptions>
                   {list
                      .filter(option =>
@@ -108,7 +117,7 @@ export default function SelectLabelTemplateTunnel({ close, state }) {
                      ))}
                </ListOptions>
             </List>
-         </TunnelContainer>
+         </TunnelWrapper>
       </>
    )
 }

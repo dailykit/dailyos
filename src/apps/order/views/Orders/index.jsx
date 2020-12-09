@@ -1,35 +1,35 @@
 import React from 'react'
+import { Filler } from '@dailykit/ui'
+import { toast } from 'react-toastify'
 import styled from 'styled-components'
-import { useHistory } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
-import { useQuery, useSubscription } from '@apollo/react-hooks'
+import { useLocation } from 'react-router-dom'
+import { useSubscription } from '@apollo/react-hooks'
 
 import { paginate } from '../../utils'
+import { QUERIES } from '../../graphql'
 import { useOrder } from '../../context'
 import { useTabs } from '../../context/tabs'
 import { OrderListItem } from '../../components'
-import { ORDERS, ORDERS_AGGREGATE } from '../../graphql'
-import { Flex, InlineLoader } from '../../../../shared/components'
+import { logger } from '../../../../shared/utils'
+import { ErrorState, Flex, InlineLoader } from '../../../../shared/components'
 
-const address = 'apps.order.views.orders.'
 const Orders = () => {
-   const { t } = useTranslation()
-   const history = useHistory()
+   const location = useLocation()
    const { tab, addTab } = useTabs()
    const { state, dispatch } = useOrder()
    const [active, setActive] = React.useState(1)
    const [orders, setOrders] = React.useState([])
    const {
       loading: loadingAggregate,
-      data: { ordersAggregate = {} } = {},
-   } = useQuery(ORDERS_AGGREGATE, {
+      data: { orders: ordersAggregate = {} } = {},
+   } = useSubscription(QUERIES.ORDERS.AGGREGATE.TOTAL, {
       variables: {
          where: {
             orderStatus: { _eq: state.orders.where.orderStatus._eq },
          },
       },
    })
-   useSubscription(ORDERS, {
+   const { loading, error } = useSubscription(QUERIES.ORDERS.LIST, {
       variables: {
          where: state.orders.where,
          ...(state.orders.limit && { limit: state.orders.limit }),
@@ -55,7 +55,17 @@ const Orders = () => {
       if (!tab) {
          addTab('Orders', '/apps/order/orders')
       }
-   }, [history, tab, addTab])
+   }, [tab, addTab])
+
+   React.useEffect(() => {
+      if (state.orders.limit === null && state.orders.offset === null) {
+         dispatch({ type: 'SET_ORDERS_STATUS', payload: true })
+         dispatch({
+            type: 'SET_PAGINATION',
+            payload: { limit: 10, offset: 0 },
+         })
+      }
+   }, [location.pathname])
 
    React.useEffect(() => {
       window.addEventListener('hashchange', () => {
@@ -70,6 +80,15 @@ const Orders = () => {
    React.useEffect(() => {
       setActive(1)
    }, [state.orders.where.orderStatus])
+
+   React.useEffect(() => {
+      if (!loading && error) {
+         logger(error)
+         toast.error('Failed to fetch order list!')
+         dispatch({ type: 'SET_ORDERS_STATUS', payload: false })
+         return <ErrorState message="Failed to fetch order list!" />
+      }
+   }, [loading, error])
 
    return (
       <div>
@@ -122,9 +141,7 @@ const Orders = () => {
                      />
                   ))
                ) : (
-                  <Flex padding="16px">
-                     {t(address.concat('no orders yet!'))}
-                  </Flex>
+                  <Filler message="No orders available!" />
                )}
             </section>
          )}

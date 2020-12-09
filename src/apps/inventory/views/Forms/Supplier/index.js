@@ -16,7 +16,7 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { ErrorState, Tooltip } from '../../../../../shared/components'
+import { ErrorState, Tooltip, Gallery } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils'
 import EditIcon from '../../../assets/icons/Edit'
 import { AddressCard } from '../../../components'
@@ -98,6 +98,12 @@ export default function SupplierForm() {
       })
    }
 
+   const addImage = images => {
+      updateSupplier({
+         variables: { id: formState.id, object: { logo: images } },
+      })
+   }
+
    if (error) {
       logger(error)
       return <ErrorState />
@@ -157,11 +163,12 @@ export default function SupplierForm() {
                      }
                      onBlur={e => {
                         const { isValid, errors } = validators.name(
-                           e.target.value
+                           e.target.value,
+                           'supplier name'
                         )
 
                         setName({
-                           value: e.target.value,
+                           ...name,
                            meta: { isValid, errors, isTouched: true },
                         })
 
@@ -185,7 +192,7 @@ export default function SupplierForm() {
                   <ShowAvailability formState={formState} />
                </Flex>
             </Flex>
-            {formState.logo ? (
+            {/* {formState.logo ? (
                <ImageContainer>
                   <div>
                      <span
@@ -211,7 +218,26 @@ export default function SupplierForm() {
                      )
                   )}
                />
-            )}
+            )} */}
+            <Flex width="500px">
+               {formState?.logo != null && formState?.logo?.length ? (
+                  <Gallery
+                     list={formState?.logo || []}
+                     isMulti={false}
+                     onChange={images => {
+                        addImage(images)
+                     }}
+                  />
+               ) : (
+                  <Gallery
+                     list={[]}
+                     isMulti={false}
+                     onChange={images => {
+                        addImage(images)
+                     }}
+                  />
+               )}
+            </Flex>
 
             <AddressView formState={formState} openTunnel={openAddressTunnel} />
 
@@ -316,6 +342,8 @@ function ShowAvailability({ formState }) {
    return (
       <Form.Group>
          <Form.Toggle
+            id="supplier_availability"
+            name="supplier_availability"
             value={formState.available}
             onChange={() => {
                updateSupplier({
@@ -326,7 +354,7 @@ function ShowAvailability({ formState }) {
                })
             }}
          >
-            {formState.available ? 'Available' : 'Unavailable'}
+            Available
          </Form.Toggle>
       </Form.Group>
    )

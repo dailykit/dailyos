@@ -7,6 +7,7 @@ import Conditions from './Conditions'
 import ErrorBoundary from './ErrorBoundary'
 import NutritionTunnel from './NutritionTunnel'
 import InsightDashboard from './InsightDashboard'
+import Gallery from './Gallery'
 
 export {
    Lang,
@@ -18,6 +19,7 @@ export {
    ErrorBoundary,
    NutritionTunnel,
    InsightDashboard,
+   Gallery,
 }
 export * from './AssetUploader'
 export * from './InlineLoader'
@@ -27,3 +29,4 @@ export * from './ScrollSection'
 export * from './OperationConfig'
 export * from './Tooltip'
 export * from './ErrorState'
+export * from './RedirectBanner'

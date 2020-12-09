@@ -13,6 +13,7 @@ import React from 'react'
 import { toast } from 'react-toastify'
 import styled from 'styled-components'
 import { EditIcon } from '../../../../../../shared/assets/icons'
+import { Tooltip } from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
 import { GENERAL_ERROR_MESSAGE } from '../../../../constants/errorMessages'
 import { PACKAGING_SPECS_SUBSCRIPTION } from '../../../../graphql'
@@ -77,7 +78,10 @@ export default function PackagingInformation({ state }) {
                      alignItems="center"
                      justifyContent="space-between"
                   >
-                     <Text as="title">Packaging Material</Text>
+                     <Flex container alignItems="center">
+                        <Text as="title">Packaging Material</Text>
+                        <Tooltip identifier="packaging_form-packaging_material" />
+                     </Flex>
                      {spec.packagingMaterial ? (
                         <IconButton
                            type="outline"
@@ -107,7 +111,10 @@ export default function PackagingInformation({ state }) {
                      alignItems="center"
                      justifyContent="space-between"
                   >
-                     <Text as="title">Other Properties</Text>
+                     <Flex container alignItems="center">
+                        <Text as="title">Other Properties</Text>
+                        <Tooltip identifier="packaging_form-otherProperties" />
+                     </Flex>
                      <IconButton
                         type="outline"
                         onClick={() => openOtherPropertiesTunnel(1)}

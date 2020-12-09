@@ -1,4 +1,6 @@
 import React from 'react'
+import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 import { useMutation } from '@apollo/react-hooks'
 import {
    ButtonTile,
@@ -16,19 +18,17 @@ import {
    Tunnels,
    useTunnel,
 } from '@dailykit/ui'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'react-toastify'
-import { logger } from '../../../../../../../../shared/utils'
-import { DeleteIcon, LinkIcon } from '../../../../../../assets/icons'
+import { ItemInfo, StyledTable } from './styled'
 import { useTabs } from '../../../../../../context'
+import { Tooltip } from '../../../../../../../../shared/components'
+import { DeleteIcon, LinkIcon } from '../../../../../../assets/icons'
+import { currencyFmt, logger } from '../../../../../../../../shared/utils'
 import { ComboProductContext } from '../../../../../../context/product/comboProduct'
 import {
    DELETE_COMBO_PRODUCT_COMPONENT,
    UPDATE_COMBO_PRODUCT_COMPONENT,
 } from '../../../../../../graphql'
 import { ItemsTunnel, ProductsTunnel, ProductTypeTunnel } from '../../tunnels'
-import { ItemInfo, StyledTable } from './styled'
-import { Tooltip } from '../../../../../../../../shared/components'
 
 const address = 'apps.menu.views.forms.product.comboproduct.components.items.'
 
@@ -296,34 +296,43 @@ const Items = ({ state }) => {
                                                          }
                                                       </td>
                                                       <td>
-                                                         $
-                                                         {option.price[0].value}{' '}
+                                                         {currencyFmt(
+                                                            Number(
+                                                               option.price[0]
+                                                                  .value
+                                                            ) || 0
+                                                         )}
                                                       </td>
                                                       <td>
                                                          {
                                                             option.price[0]
                                                                .discount
-                                                         }{' '}
+                                                         }
                                                          %
                                                       </td>
                                                       <td>
-                                                         $
-                                                         {(
-                                                            parseFloat(
-                                                               option.price[0]
-                                                                  .value
-                                                            ) -
-                                                            parseFloat(
-                                                               option.price[0]
-                                                                  .value
-                                                            ) *
-                                                               (parseFloat(
-                                                                  option
-                                                                     .price[0]
-                                                                     .discount
-                                                               ) /
-                                                                  100)
-                                                         ).toFixed(2) || ''}
+                                                         {currencyFmt(
+                                                            Number(
+                                                               (
+                                                                  parseFloat(
+                                                                     option
+                                                                        .price[0]
+                                                                        .value
+                                                                  ) -
+                                                                  parseFloat(
+                                                                     option
+                                                                        .price[0]
+                                                                        .value
+                                                                  ) *
+                                                                     (parseFloat(
+                                                                        option
+                                                                           .price[0]
+                                                                           .discount
+                                                                     ) /
+                                                                        100)
+                                                               ).toFixed(2)
+                                                            ) || 0
+                                                         )}
                                                       </td>
                                                    </tr>
                                                 ))}

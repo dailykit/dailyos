@@ -20,6 +20,7 @@ export const BRANDS = {
                id
                domain
                title
+               isDefault
                isPublished
             }
          }

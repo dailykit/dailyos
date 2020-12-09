@@ -1,12 +1,5 @@
 import Home from './Home'
 import { CollectionsListing } from './Listings'
+import { CollectionForm, RecurrencesForm } from './Forms'
 
-import { CollectionForm, StoreSettingsForm, RecurrencesForm } from './Forms'
-
-export {
-   Home,
-   CollectionForm,
-   CollectionsListing,
-   StoreSettingsForm,
-   RecurrencesForm,
-}
+export { Home, CollectionForm, CollectionsListing, RecurrencesForm }

@@ -43,27 +43,38 @@ import {
 export const LabelPrinters = ({ station }) => {
    const [tabIndex, setTabIndex] = React.useState(0)
    const [isOpen, setIsOpen] = React.useState(false)
-   const [update] = useMutation(STATIONS.LABEL_PRINTERS.UPDATE, {
-      onCompleted: () => toast.success('Successfully updated label printer!'),
-      onError: error => {
-         logger(error)
-         toast.error('Failed to update the label printer!')
-      },
-   })
-   const [remove] = useMutation(STATIONS.LABEL_PRINTERS.DELETE, {
-      onCompleted: () => toast.success('Successfully deleted label printer!'),
-      onError: error => {
-         logger(error)
-         toast.error('Failed to remove the label printer!')
-      },
-   })
-   const [updateDefault] = useMutation(STATIONS.UPDATE, {
-      onCompleted: () => toast.success('Selected printer is now default!'),
-      onError: error => {
-         logger(error)
-         toast.error('Failed to set printer as default!')
-      },
-   })
+   const [update, { loading: updatingStatus }] = useMutation(
+      STATIONS.LABEL_PRINTERS.UPDATE,
+      {
+         onCompleted: () =>
+            toast.success('Successfully updated label printer!'),
+         onError: error => {
+            logger(error)
+            toast.error('Failed to update the label printer!')
+         },
+      }
+   )
+   const [remove, { loading: removingPrinter }] = useMutation(
+      STATIONS.LABEL_PRINTERS.DELETE,
+      {
+         onCompleted: () =>
+            toast.success('Successfully deleted label printer!'),
+         onError: error => {
+            logger(error)
+            toast.error('Failed to remove the label printer!')
+         },
+      }
+   )
+   const [updateDefault, { loading: makingDefault }] = useMutation(
+      STATIONS.UPDATE,
+      {
+         onCompleted: () => toast.success('Selected printer is now default!'),
+         onError: error => {
+            logger(error)
+            toast.error('Failed to set printer as default!')
+         },
+      }
+   )
 
    const updateLabelPrinterStatus = (id, status) => {
       update({
@@ -127,6 +138,7 @@ export const LabelPrinters = ({ station }) => {
                         <ButtonGroup align="right">
                            <TextButton
                               type="solid"
+                              isLoading={updatingStatus}
                               onClick={() =>
                                  updateLabelPrinterStatus(
                                     node.labelPrinter.printNodeId,
@@ -140,6 +152,7 @@ export const LabelPrinters = ({ station }) => {
                               node.labelPrinter.printNodeId && (
                               <TextButton
                                  type="outline"
+                                 isLoading={makingDefault}
                                  onClick={() =>
                                     updateDefault({
                                        variables: {
@@ -157,6 +170,7 @@ export const LabelPrinters = ({ station }) => {
                            )}
                            <TextButton
                               type="outline"
+                              isLoading={removingPrinter}
                               onClick={() =>
                                  deleteStationLabelPrinter(
                                     node.labelPrinter.printNodeId
@@ -191,16 +205,19 @@ const AddPrinterTunnel = ({ isOpen, setIsOpen, station }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [list, selected, selectOption] = useMultiList(printers)
 
-   const [create] = useMutation(STATIONS.LABEL_PRINTERS.CREATE, {
-      onCompleted: () => {
-         setIsOpen(false)
-         toast.success('Successfully assigned the label printer!')
-      },
-      onError: () => {
-         setIsOpen(false)
-         toast.error('Failed to assign the label printer!')
-      },
-   })
+   const [create, { loading: assigningPrinter }] = useMutation(
+      STATIONS.LABEL_PRINTERS.CREATE,
+      {
+         onCompleted: () => {
+            setIsOpen(false)
+            toast.success('Successfully assigned the label printer!')
+         },
+         onError: () => {
+            setIsOpen(false)
+            toast.error('Failed to assign the label printer!')
+         },
+      }
+   )
 
    const { loading, error } = useSubscription(STATIONS.LABEL_PRINTERS.LIST, {
       variables: {
@@ -253,7 +270,12 @@ const AddPrinterTunnel = ({ isOpen, setIsOpen, station }) => {
             <TunnelHeader
                title="Add Printer"
                close={() => setIsOpen(false)}
-               right={selected.length > 0 && { action: insert, title: 'Save' }}
+               right={{
+                  action: insert,
+                  title: 'Save',
+                  isLoading: assigningPrinter,
+                  disabled: selected.length === 0,
+               }}
                tooltip={
                   <Tooltip identifier="station_section_label_printer_tunnel_add" />
                }

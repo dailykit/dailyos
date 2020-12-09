@@ -3,7 +3,6 @@ import { isEmpty, isNull } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
 import {
-   Input,
    TextButton,
    Text,
    Spacer,
@@ -137,23 +136,13 @@ export const Brand = ({ update }) => {
 
    const handleChange = e => {
       const { name, value } = e.target
-      if (name === 'name') {
-         setForm({
-            ...form,
-            name: {
-               ...form.name,
-               value: value,
-            },
-         })
-      } else {
-         setForm({
-            ...form,
-            metaDescription: {
-               ...form.metaDescription,
-               value: value,
-            },
-         })
-      }
+      setForm({
+         ...form,
+         [name]: {
+            ...form[name],
+            value,
+         },
+      })
 
       closeTunnel(1)
       setCurrent(null)
@@ -209,10 +198,10 @@ export const Brand = ({ update }) => {
                   <Form.Text
                      id="name"
                      name="name"
-                     value={form.name.value}
-                     placeholder="Enter brand name"
-                     onChange={e => handleChange(e)}
                      onBlur={onBlur}
+                     value={form.name.value}
+                     onChange={handleChange}
+                     placeholder="Enter brand name"
                   />
                   {form.name.meta.isTouched &&
                      !form.name.meta.isValid &&
@@ -230,11 +219,11 @@ export const Brand = ({ update }) => {
                <Spacer size="4px" />
                <Form.Group>
                   <Form.TextArea
-                     name="metaDescription"
-                     value={form.metaDescription.value}
-                     onChange={e => handleChange(e)}
-                     placeholder="Enter meta description for your brand"
                      onBlur={onBlur}
+                     name="metaDescription"
+                     onChange={handleChange}
+                     value={form.metaDescription.value}
+                     placeholder="Enter meta description for your brand"
                   />
                   {form.metaDescription.meta.isTouched &&
                      !form.metaDescription.meta.isValid &&
@@ -246,6 +235,7 @@ export const Brand = ({ update }) => {
             <Spacer size="24px" />
             <Flex container alignItems="center">
                <ImageItem
+                  name="favIcon"
                   alt="Fav Icon"
                   title="Fav Icon"
                   image={form.favicon}
@@ -254,6 +244,7 @@ export const Brand = ({ update }) => {
                />
                <Spacer size="16px" xAxis />
                <ImageItem
+                  name="url"
                   alt="Logo"
                   title="Logo"
                   image={form.url}
@@ -262,6 +253,7 @@ export const Brand = ({ update }) => {
                />
                <Spacer size="16px" xAxis />
                <ImageItem
+                  name="wordMark"
                   alt="Word Mark"
                   title="Word Mark"
                   image={form.wordMark}
@@ -270,6 +262,7 @@ export const Brand = ({ update }) => {
                />
                <Spacer size="16px" xAxis />
                <ImageItem
+                  name="logoMark"
                   alt="Logo Mark"
                   title="Logo Mark"
                   image={form.logoMark}
@@ -288,10 +281,16 @@ export const Brand = ({ update }) => {
                <Flex padding="16px">
                   <AssetUploader
                      onAssetUpload={data =>
-                        handleChange(current, data?.url || '')
+                        setForm(form => ({
+                           ...form,
+                           [current]: data?.url || '',
+                        }))
                      }
                      onImageSelect={data =>
-                        handleChange(current, data?.url || '')
+                        setForm(form => ({
+                           ...form,
+                           [current]: data?.url || '',
+                        }))
                      }
                   />
                </Flex>
@@ -301,7 +300,7 @@ export const Brand = ({ update }) => {
    )
 }
 
-const ImageItem = ({ image, title, alt, setCurrent, openTunnel }) => {
+const ImageItem = ({ name, image, title, alt, setCurrent, openTunnel }) => {
    return (
       <Flex>
          <Text as="h3">{title}</Text>
@@ -313,7 +312,7 @@ const ImageItem = ({ image, title, alt, setCurrent, openTunnel }) => {
                      size="sm"
                      type="solid"
                      onClick={() => {
-                        setCurrent('favicon')
+                        setCurrent(name)
                         openTunnel(1)
                      }}
                   >
@@ -329,7 +328,7 @@ const ImageItem = ({ image, title, alt, setCurrent, openTunnel }) => {
                      size="sm"
                      type="solid"
                      onClick={() => {
-                        setCurrent('favicon')
+                        setCurrent(name)
                         openTunnel(1)
                      }}
                   >
