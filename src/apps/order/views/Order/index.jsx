@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
+import htmlToReact from 'html-to-react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
@@ -34,12 +35,14 @@ import {
 const isPickup = value => ['ONDEMAND_PICKUP', 'PREORDER_PICKUP'].includes(value)
 
 const address = 'apps.order.views.order.'
+const parser = new htmlToReact.Parser(React)
 
 const Order = () => {
    const { t } = useTranslation()
    const params = useParams()
    const { tab, addTab } = useTabs()
    const { state, switchView, dispatch } = useOrder()
+   const [isThirdParty, setIsThirdParty] = React.useState(false)
    const [updateOrder] = useMutation(MUTATIONS.ORDER.UPDATE, {
       onCompleted: () => {
          toast.success('Successfully updated the order!')
@@ -139,6 +142,7 @@ const Order = () => {
 
    React.useEffect(() => {
       if (!loading && order?.id && !tab) {
+         setIsThirdParty(Boolean(order?.thirdPartyOrderId))
          addTab(`ORD${order?.id}`, `/apps/order/orders/${order?.id}`)
       }
    }, [loading, order, tab, addTab])
@@ -229,7 +233,7 @@ const Order = () => {
                   <PrintIcon size={16} />
                </IconButton>
                <Spacer size="16px" xAxis />
-               {!isPickup(order?.fulfillmentType) && (
+               {!isThirdParty && !isPickup(order?.fulfillmentType) && (
                   <TextButton
                      size="sm"
                      type="outline"
@@ -256,36 +260,41 @@ const Order = () => {
                      &nbsp;:&nbsp;{formatDate(order?.created_at)}
                   </Text>
                </Flex>
-               <Spacer size="32px" xAxis />
-               <Flex as="section" container alignItems="center">
-                  <Flex container alignItems="center">
-                     <Text as="h4">{t(address.concat('ready by'))}</Text>
-                     <Tooltip identifier="order_details_date_ready_by" />
-                  </Flex>
-                  <Text as="p">
-                     &nbsp;:&nbsp;
-                     {order?.deliveryInfo?.pickup?.window?.approved?.startsAt
-                        ? formatDate(
-                             order?.deliveryInfo?.pickup?.window?.approved
-                                ?.startsAt
-                          )
-                        : 'N/A'}
-                  </Text>
-               </Flex>
-               <Spacer size="32px" xAxis />
-               <Flex as="section" container alignItems="center">
-                  {isPickup(order?.fulfillmentType) ? (
-                     <TimeSlot
-                        type={order?.fulfillmentType}
-                        data={order?.deliveryInfo?.pickup}
-                     />
-                  ) : (
-                     <TimeSlot
-                        type={order?.fulfillmentType}
-                        data={order?.deliveryInfo?.dropoff}
-                     />
-                  )}
-               </Flex>
+               {!isThirdParty && (
+                  <>
+                     <Spacer size="32px" xAxis />
+                     <Flex as="section" container alignItems="center">
+                        <Flex container alignItems="center">
+                           <Text as="h4">{t(address.concat('ready by'))}</Text>
+                           <Tooltip identifier="order_details_date_ready_by" />
+                        </Flex>
+                        <Text as="p">
+                           &nbsp;:&nbsp;
+                           {order?.deliveryInfo?.pickup?.window?.approved
+                              ?.startsAt
+                              ? formatDate(
+                                   order?.deliveryInfo?.pickup?.window?.approved
+                                      ?.startsAt
+                                )
+                              : 'N/A'}
+                        </Text>
+                     </Flex>
+                     <Spacer size="32px" xAxis />
+                     <Flex as="section" container alignItems="center">
+                        {isPickup(order?.fulfillmentType) ? (
+                           <TimeSlot
+                              type={order?.fulfillmentType}
+                              data={order?.deliveryInfo?.pickup}
+                           />
+                        ) : (
+                           <TimeSlot
+                              type={order?.fulfillmentType}
+                              data={order?.deliveryInfo?.dropoff}
+                           />
+                        )}
+                     </Flex>
+                  </>
+               )}
             </Flex>
          </Flex>
          <Spacer size="16px" />
@@ -295,35 +304,43 @@ const Order = () => {
             alignItems="center"
             justifyContent="space-between"
          >
-            <Text as="h3">
-               {order.assembled_mealkits.aggregate.count +
-                  order.assembled_readytoeats.aggregate.count +
-                  order.assembled_inventories.aggregate.count}{' '}
-               /{' '}
-               {order.packed_mealkits.aggregate.count +
-                  order.packed_readytoeats.aggregate.count +
-                  order.packed_inventories.aggregate.count}{' '}
-               /{' '}
-               {order.total_mealkits.aggregate.count +
-                  order.total_readytoeats.aggregate.count +
-                  order.total_inventories.aggregate.count}
-               &nbsp;{t(address.concat('items'))}
-            </Text>
+            {!isThirdParty ? (
+               <Text as="h3">
+                  {order.assembled_mealkits.aggregate.count +
+                     order.assembled_readytoeats.aggregate.count +
+                     order.assembled_inventories.aggregate.count}{' '}
+                  /{' '}
+                  {order.packed_mealkits.aggregate.count +
+                     order.packed_readytoeats.aggregate.count +
+                     order.packed_inventories.aggregate.count}{' '}
+                  /{' '}
+                  {order.total_mealkits.aggregate.count +
+                     order.total_readytoeats.aggregate.count +
+                     order.total_inventories.aggregate.count}
+                  &nbsp;{t(address.concat('items'))}
+               </Text>
+            ) : (
+               <span />
+            )}
 
             <Flex container>
-               <Flex width="240px">
-                  <DropdownButton title="KOT Options">
-                     <DropdownButton.Options>
-                        <DropdownButton.Option onClick={() => printKOT()}>
-                           Print KOT
-                        </DropdownButton.Option>
-                        <DropdownButton.Option onClick={() => viewKOT()}>
-                           View in browser
-                        </DropdownButton.Option>
-                     </DropdownButton.Options>
-                  </DropdownButton>
-               </Flex>
-               <Spacer size="24px" xAxis />
+               {!isThirdParty && (
+                  <>
+                     <Flex width="240px">
+                        <DropdownButton title="KOT Options">
+                           <DropdownButton.Options>
+                              <DropdownButton.Option onClick={() => printKOT()}>
+                                 Print KOT
+                              </DropdownButton.Option>
+                              <DropdownButton.Option onClick={() => viewKOT()}>
+                                 View in browser
+                              </DropdownButton.Option>
+                           </DropdownButton.Options>
+                        </DropdownButton>
+                     </Flex>
+                     <Spacer size="24px" xAxis />
+                  </>
+               )}
                <TextButton
                   type="solid"
                   disabled={order.isAccepted}
@@ -360,58 +377,73 @@ const Order = () => {
             </Flex>
          </Flex>
          <Spacer size="16px" />
-         <HorizontalTabs>
-            <HorizontalTabList style={{ padding: '0 16px' }}>
-               {!isEmpty(mealkits) && (
-                  <HorizontalTab>Meal Kits ({mealkits.length})</HorizontalTab>
-               )}
-               {!isEmpty(inventories) && (
-                  <HorizontalTab>
-                     Inventories ({inventories.length})
-                  </HorizontalTab>
-               )}
-               {!isEmpty(readytoeats) && (
-                  <HorizontalTab>
-                     Ready To Eats ({readytoeats.length})
-                  </HorizontalTab>
-               )}
-            </HorizontalTabList>
-            <HorizontalTabPanels>
-               {!isEmpty(mealkits) && (
+         {isThirdParty ? (
+            <HorizontalTabs>
+               <HorizontalTabList style={{ padding: '0 16px' }}>
+                  <HorizontalTab>Email Content</HorizontalTab>
+               </HorizontalTabList>
+               <HorizontalTabPanels>
                   <HorizontalTabPanel>
-                     <MealKits
-                        data={{
-                           mealkits,
-                           error: mealkitsError,
-                           loading: mealkitsLoading,
-                        }}
-                     />
+                     {parser.parse(order?.thirdPartyOrder?.emailContent)}
                   </HorizontalTabPanel>
-               )}
-               {!isEmpty(inventories) && (
-                  <HorizontalTabPanel>
-                     <Inventories
-                        data={{
-                           inventories,
-                           error: inventoriesError,
-                           loading: inventoriesLoading,
-                        }}
-                     />
-                  </HorizontalTabPanel>
-               )}
-               {!isEmpty(readytoeats) && (
-                  <HorizontalTabPanel>
-                     <ReadyToEats
-                        data={{
-                           readytoeats,
-                           error: readytoeatsError,
-                           loading: readytoeatsLoading,
-                        }}
-                     />
-                  </HorizontalTabPanel>
-               )}
-            </HorizontalTabPanels>
-         </HorizontalTabs>
+               </HorizontalTabPanels>
+            </HorizontalTabs>
+         ) : (
+            <HorizontalTabs>
+               <HorizontalTabList style={{ padding: '0 16px' }}>
+                  {!isEmpty(mealkits) && (
+                     <HorizontalTab>
+                        Meal Kits ({mealkits.length})
+                     </HorizontalTab>
+                  )}
+                  {!isEmpty(inventories) && (
+                     <HorizontalTab>
+                        Inventories ({inventories.length})
+                     </HorizontalTab>
+                  )}
+                  {!isEmpty(readytoeats) && (
+                     <HorizontalTab>
+                        Ready To Eats ({readytoeats.length})
+                     </HorizontalTab>
+                  )}
+               </HorizontalTabList>
+               <HorizontalTabPanels>
+                  {!isEmpty(mealkits) && (
+                     <HorizontalTabPanel>
+                        <MealKits
+                           data={{
+                              mealkits,
+                              error: mealkitsError,
+                              loading: mealkitsLoading,
+                           }}
+                        />
+                     </HorizontalTabPanel>
+                  )}
+                  {!isEmpty(inventories) && (
+                     <HorizontalTabPanel>
+                        <Inventories
+                           data={{
+                              inventories,
+                              error: inventoriesError,
+                              loading: inventoriesLoading,
+                           }}
+                        />
+                     </HorizontalTabPanel>
+                  )}
+                  {!isEmpty(readytoeats) && (
+                     <HorizontalTabPanel>
+                        <ReadyToEats
+                           data={{
+                              readytoeats,
+                              error: readytoeatsError,
+                              loading: readytoeatsLoading,
+                           }}
+                        />
+                     </HorizontalTabPanel>
+                  )}
+               </HorizontalTabPanels>
+            </HorizontalTabs>
+         )}
       </Flex>
    )
 }

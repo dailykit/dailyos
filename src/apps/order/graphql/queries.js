@@ -21,6 +21,12 @@ export const QUERIES = {
                deliveryPrice
                transactionId
                fulfillmentType
+               thirdPartyOrderId
+               thirdPartyOrder {
+                  id
+                  source
+                  emailContent: parsedData(path: "HtmlDocument")
+               }
                total_mealkits: orderMealKitProducts_aggregate(
                   where: { assemblyStationId: $assemblyStationId }
                ) {
