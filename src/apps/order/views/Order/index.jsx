@@ -1,6 +1,6 @@
 import React from 'react'
 import axios from 'axios'
-import { isEmpty } from 'lodash'
+import { isArray, isEmpty, isNull } from 'lodash'
 import { toast } from 'react-toastify'
 import htmlToReact from 'html-to-react'
 import { useParams } from 'react-router-dom'
@@ -8,8 +8,9 @@ import { useTranslation } from 'react-i18next'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Flex,
-   Spacer,
    Text,
+   Spacer,
+   Filler,
    TextButton,
    IconButton,
    HorizontalTab,
@@ -19,11 +20,12 @@ import {
    HorizontalTabPanels,
 } from '@dailykit/ui'
 
+import { Styles } from './styled'
 import { formatDate } from '../../utils'
-import { PrintIcon } from '../../assets/icons'
 import { useOrder, useTabs } from '../../context'
-import { logger } from '../../../../shared/utils'
 import { QUERIES, MUTATIONS } from '../../graphql'
+import { PrintIcon, UserIcon } from '../../assets/icons'
+import { currencyFmt, logger } from '../../../../shared/utils'
 import { MealKits, Inventories, ReadyToEats } from './sections'
 import {
    Tooltip,
@@ -70,6 +72,11 @@ const Order = () => {
                         .assemblyStationId._eq,
                },
             }),
+         },
+         onSubscriptionData: ({
+            subscriptionData: { data: { order = {} } = {} } = {},
+         }) => {
+            setIsThirdParty(Boolean(order?.thirdPartyOrderId))
          },
       }
    )
@@ -142,7 +149,6 @@ const Order = () => {
 
    React.useEffect(() => {
       if (!loading && order?.id && !tab) {
-         setIsThirdParty(Boolean(order?.thirdPartyOrderId))
          addTab(`ORD${order?.id}`, `/apps/order/orders/${order?.id}`)
       }
    }, [loading, order, tab, addTab])
@@ -376,15 +382,52 @@ const Order = () => {
                </TextButton>
             </Flex>
          </Flex>
-         <Spacer size="16px" />
+         <Spacer size="8px" />
          {isThirdParty ? (
             <HorizontalTabs>
                <HorizontalTabList style={{ padding: '0 16px' }}>
                   <HorizontalTab>Email Content</HorizontalTab>
+                  <HorizontalTab>Products</HorizontalTab>
                </HorizontalTabList>
                <HorizontalTabPanels>
                   <HorizontalTabPanel>
                      {parser.parse(order?.thirdPartyOrder?.emailContent)}
+                  </HorizontalTabPanel>
+                  <HorizontalTabPanel>
+                     {isNull(order.thirdPartyOrder.products) ? (
+                        <Filler message="No products available." />
+                     ) : (
+                        <Styles.Products>
+                           {order.thirdPartyOrder.products.map(
+                              (product, index) => (
+                                 <Styles.ProductItem key={index} isActive>
+                                    <Flex
+                                       container
+                                       alignItems="center"
+                                       justifyContent="space-between"
+                                    >
+                                       <span>{product.label}</span>
+                                       <span>
+                                          {currencyFmt(product.price || 0)}
+                                       </span>
+                                    </Flex>
+                                    <Spacer size="14px" />
+                                    <Flex container alignItems="center">
+                                       <Flex
+                                          as="span"
+                                          container
+                                          alignItems="center"
+                                       >
+                                          <UserIcon size={16} color="#fff" />
+                                       </Flex>
+                                       <Spacer size="6px" xAxis />
+                                       <span>{product.quantity}</span>
+                                    </Flex>
+                                 </Styles.ProductItem>
+                              )
+                           )}
+                        </Styles.Products>
+                     )}
                   </HorizontalTabPanel>
                </HorizontalTabPanels>
             </HorizontalTabs>

@@ -9,22 +9,23 @@ export const QUERIES = {
          ) {
             order(id: $id) {
                id
-               created_at
-               deliveryInfo
-               orderStatus
-               paymentStatus
                tax
+               source
                discount
                itemTotal
                isAccepted
                isRejected
+               created_at
+               deliveryInfo
+               orderStatus
+               paymentStatus
                deliveryPrice
                transactionId
                fulfillmentType
                thirdPartyOrderId
                thirdPartyOrder {
                   id
-                  source
+                  products: parsedData(path: "items")
                   emailContent: parsedData(path: "HtmlDocument")
                }
                total_mealkits: orderMealKitProducts_aggregate(
