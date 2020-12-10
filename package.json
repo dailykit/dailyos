@@ -24,7 +24,7 @@
       "apollo-utilities": "1.3.3",
       "axios": "0.19.2",
       "eslint-plugin-graphql": "^4.0.0",
-      "grapejs": "^2.1.2",
+      "grapesjs": "^0.16.30",
       "graphql": "15.0.0",
       "graphql-tag": "2.10.3",
       "husky": "^5.0.0-alpha.6",
