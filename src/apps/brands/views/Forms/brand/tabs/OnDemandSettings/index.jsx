@@ -26,6 +26,7 @@ import {
    LoyaltyPoints,
    Scripts,
    NavLinks,
+   Referral,
 } from './sections'
 
 export const OnDemandSettings = () => {
@@ -110,6 +111,8 @@ export const OnDemandSettings = () => {
             </ScrollSection.Section>
             <Spacer size="48px" />
             <ScrollSection.Section hash="rewards" title="Rewards">
+               <Referral update={update} />
+               <Spacer size="24px" />
                <Coupons update={update} />
                <Spacer size="24px" />
                <Wallet update={update} />
