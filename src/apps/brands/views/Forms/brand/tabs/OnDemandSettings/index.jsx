@@ -25,6 +25,7 @@ import {
    Wallet,
    LoyaltyPoints,
    Scripts,
+   NavLinks,
 } from './sections'
 
 export const OnDemandSettings = () => {
@@ -82,6 +83,8 @@ export const OnDemandSettings = () => {
                <BrandLogo update={update} />
                <Spacer size="24px" />
                <BrandContact update={update} />
+               <Spacer size="24px" />
+               <NavLinks update={update} />
             </ScrollSection.Section>
             <Spacer size="48px" />
             <ScrollSection.Section hash="visual" title="Visual">
