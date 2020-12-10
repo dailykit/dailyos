@@ -27,6 +27,7 @@ import {
    Scripts,
    NavLinks,
    Referral,
+   FoodCostPercent,
 } from './sections'
 
 export const OnDemandSettings = () => {
@@ -122,6 +123,11 @@ export const OnDemandSettings = () => {
             <Spacer size="48px" />
             <ScrollSection.Section hash="app" title="App">
                <Scripts update={update} />
+               <Spacer size="24px" />
+            </ScrollSection.Section>
+            <Spacer size="48px" />
+            <ScrollSection.Section hash="sales" title="Sales">
+               <FoodCostPercent update={update} />
                <Spacer size="24px" />
             </ScrollSection.Section>
             <Spacer size="48px" />
