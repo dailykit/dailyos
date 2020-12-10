@@ -74,7 +74,7 @@ export const Scripts = ({ update }) => {
       <div id="Scripts">
          <Flex container alignItems="center">
             <Text as="h3">Scripts</Text>
-            <Tooltip identifier="brand_wallet_info" />
+            <Tooltip identifier="brand_app_scripts" />
          </Flex>
          <Spacer size="8px" />
          <Flex container alignItems="center" justifyContent="space-between">

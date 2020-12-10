@@ -11,6 +11,7 @@ import { logger } from '../../../../../../../shared/utils'
 import {
    BrandName,
    BrandLogo,
+   BrandContact,
    AppTitle,
    Favicon,
    Slides,
@@ -79,6 +80,8 @@ export const OnDemandSettings = () => {
                <BrandName update={update} />
                <Spacer size="24px" />
                <BrandLogo update={update} />
+               <Spacer size="24px" />
+               <BrandContact update={update} />
             </ScrollSection.Section>
             <Spacer size="48px" />
             <ScrollSection.Section hash="visual" title="Visual">

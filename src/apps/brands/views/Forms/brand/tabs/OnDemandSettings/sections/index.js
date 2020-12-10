@@ -1,5 +1,6 @@
 export * from './BrandName'
 export * from './BrandLogo'
+export * from './BrandContact'
 export * from './AppTitle'
 export * from './Favicon'
 export * from './Slides'
