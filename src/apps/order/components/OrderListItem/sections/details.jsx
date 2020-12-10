@@ -8,27 +8,22 @@ import {
    HomeIcon,
    ArrowUpIcon,
    ArrowDownIcon,
+   Notes,
 } from '../../../assets/icons'
 import { Styles, StyledStat } from './styled'
 import { currencyFmt } from '../../../../../shared/utils'
 
 const address = 'apps.order.components.orderlistitem.'
 
-const normalize = address => {
-   return `${address.line1}, ${address.line2 ? `${address.line2}, ` : ''} ${
-      address.city
-   }, ${address.state}, ${address.zipcode}`
-}
-
 export const Details = ({ order }) => {
    const { t } = useTranslation()
    const [currentPanel, setCurrentPanel] = React.useState('customer')
    return (
-      <section>
+      <aside>
          <Styles.Accordian isOpen={currentPanel === 'customer'}>
             <header>
                <Text as="p">
-                  {order.customer?.customerFirstName}&nbsp;
+                  {order.customer?.customerFirstName || 'N/A'}&nbsp;
                   {order.customer?.customerLastName}
                </Text>
                <ToggleButton
@@ -43,7 +38,9 @@ export const Details = ({ order }) => {
                      <PhoneIcon size={14} color="#718096" />
                   </span>
                   <Spacer size="4px" xAxis />
-                  <Text as="subtitle">{order.customer?.customerPhone}</Text>
+                  <Text as="subtitle">
+                     {order.customer?.customerPhone || 'N/A'}
+                  </Text>
                </Flex>
                <Spacer size="8px" />
                <Flex container alignItems="center">
@@ -51,37 +48,47 @@ export const Details = ({ order }) => {
                      <EmailIcon size={14} color="#718096" />
                   </span>
                   <Spacer size="4px" xAxis />
+                  {order.customer?.customerEmail ? (
+                     <Text as="subtitle">
+                        <a
+                           target="__blank"
+                           rel="noopener roreferrer"
+                           href={`mailto:${order.customer?.customerEmail}`}
+                        >
+                           {order.customer?.customerEmail}
+                        </a>
+                     </Text>
+                  ) : (
+                     <Text as="subtitle">N/A</Text>
+                  )}
+               </Flex>
+               <Spacer size="8px" />
+               <Flex container>
+                  <span>
+                     <HomeIcon size={14} color="#718096" />
+                  </span>
+                  <Spacer size="4px" xAxis />
                   <Text as="subtitle">
-                     <a
-                        target="__blank"
-                        rel="noopener roreferrer"
-                        href={`mailto:${order.customer?.customerEmail}`}
-                     >
-                        {order.customer?.customerEmail}
-                     </a>
+                     {normalize(order?.customer?.customerAddress) || 'N/A'}
                   </Text>
                </Flex>
-               {order?.customer?.customerAddress && (
-                  <>
-                     <Spacer size="8px" />
-                     <Flex container>
-                        <span>
-                           <HomeIcon size={14} color="#718096" />
-                        </span>
-                        <Spacer size="4px" xAxis />
-                        <Text as="subtitle">
-                           {normalize(order?.customer?.customerAddress)}
-                        </Text>
-                     </Flex>
-                  </>
-               )}
+               <Spacer size="8px" />
+               <Flex container>
+                  <span>
+                     <Notes size={14} color="#718096" />
+                  </span>
+                  <Spacer size="4px" xAxis />
+                  <Text as="subtitle">
+                     {order?.customer?.customerAddress?.notes || 'N/A'}
+                  </Text>
+               </Flex>
                <Spacer size="8px" />
             </main>
          </Styles.Accordian>
          <Styles.Accordian isOpen={currentPanel === 'billing'}>
             <header>
                <Text as="p">
-                  Amount Paid: {currencyFmt(Number(order.amountPaid) || 0)}
+                  Amount: {currencyFmt(Number(order.amountPaid) || 0)}
                </Text>
                <ToggleButton
                   type="billing"
@@ -108,7 +115,7 @@ export const Details = ({ order }) => {
                </StyledStat>
             </main>
          </Styles.Accordian>
-      </section>
+      </aside>
    )
 }
 
@@ -121,4 +128,30 @@ const ToggleButton = ({ type, current, toggle }) => {
          {current === type ? <ArrowDownIcon /> : <ArrowUpIcon />}
       </button>
    )
+}
+
+const normalize = (address = {}) => {
+   let result = ''
+   if (address?.line1) {
+      result += address.line1
+   }
+   if (address?.line2) {
+      result += ', ' + address.line2
+   }
+   if (address?.landmark) {
+      result += ', ' + address.landmark
+   }
+   if (address?.city) {
+      result += ', ' + address.city
+   }
+   if (address?.state) {
+      result += ', ' + address.state
+   }
+   if (address?.country) {
+      result += ', ' + address.country
+   }
+   if (address?.zipcode) {
+      result += ', ' + address.zipcode
+   }
+   return result
 }
