@@ -32,16 +32,29 @@ export const Styles = {
          padding: 16px;
          height: 240px;
          display: grid;
+         grid-gap: 14px;
+         position: relative;
+         border-left-width: 8px;
+         border-right-width: 8px;
          border-bottom: 1px solid #ececec;
          grid-template-columns: 220px 1fr 140px;
          border: 3px solid ${selectColor(status)};
-         border-left-width: 8px;
-         border-right-width: 8px;
-         position: relative;
+         grid-template-areas:
+            'left header right'
+            'left section right';
+         > aside:nth-of-type(1) {
+            grid-area: left;
+         }
+         > aside:nth-of-type(2) {
+            grid-area: right;
+         }
+         > header {
+            grid-area: header;
+         }
          > section {
-            :last-child {
-               padding-left: 16px;
-            }
+            overflow-y: auto;
+            grid-area: section;
+            height: calc(240px - 83px);
          }
       `
    ),

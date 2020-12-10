@@ -17,7 +17,13 @@ export const Actions = ({ order }) => {
       },
    })
    return (
-      <Flex padding="8px">
+      <Flex
+         as="aside"
+         padding="0 14px"
+         style={{
+            borderLeft: '1px solid #ececec',
+         }}
+      >
          <Text as="h3">Actions</Text>
          <Spacer size="16px" />
          <Flex>

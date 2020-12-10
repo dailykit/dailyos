@@ -1379,18 +1379,23 @@ export const QUERIES = {
                where: $where
             ) {
                id
-               created_at
-               orderStatus
-               paymentStatus
                tax
                discount
                itemTotal
                amountPaid
-               deliveryPrice
+               created_at
                isAccepted
                isRejected
+               orderStatus
+               deliveryPrice
+               paymentStatus
                transactionId
                fulfillmentType
+               thirdPartyOrder {
+                  id
+                  products: parsedData(path: "products")
+               }
+               thirdPartyOrderId
                restaurant: deliveryInfo(path: "pickup.pickupInfo")
                customer: deliveryInfo(path: "dropoff.dropoffInfo")
                pickupWindow: deliveryInfo(path: "pickup.window")

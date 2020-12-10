@@ -38,18 +38,9 @@ export const Styles = {
    ),
    Products: styled.section(
       () => css`
-         height: 202px;
          display: grid;
-         padding: 0 16px;
          grid-row-gap: 14px;
          grid-template-rows: auto 1fr;
-         border-right: 1px solid #ececec;
-         main {
-            height: 160px;
-            > div {
-               height: calc(100% - 16px);
-            }
-         }
       `
    ),
    Tabs: styled(Tabs)(
@@ -86,7 +77,7 @@ export const Styles = {
    ),
    TabPanels: styled(TabPanels)(
       () => css`
-         height: 100%;
+         height: 156px;
          overflow-y: auto;
       `
    ),

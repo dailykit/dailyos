@@ -1,4 +1,6 @@
 import React from 'react'
+import { isNull } from 'lodash'
+import { Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
@@ -6,7 +8,7 @@ import { Styles } from './styled'
 import { RightIcon } from '../../assets/icons'
 import { logger } from '../../../../shared/utils'
 import { QUERIES, MUTATIONS } from '../../graphql'
-import { Details, Products, Actions } from './sections'
+import { Details, Products, Actions, Header } from './sections'
 
 const OrderListItem = ({ containerId, order = {} }) => {
    const [updateOrder] = useMutation(MUTATIONS.ORDER.UPDATE, {
@@ -43,6 +45,7 @@ const OrderListItem = ({ containerId, order = {} }) => {
    return (
       <Styles.Order status={order.orderStatus} id={containerId}>
          <Details order={order} />
+         <Header order={order} />
          <Products order={order} />
          <Actions order={order} />
          <Styles.Status status={order.orderStatus} onClick={updateStatus}>
