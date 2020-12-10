@@ -1393,7 +1393,7 @@ export const QUERIES = {
                fulfillmentType
                thirdPartyOrder {
                   id
-                  products: parsedData(path: "products")
+                  products: parsedData(path: "items")
                }
                thirdPartyOrderId
                restaurant: deliveryInfo(path: "pickup.pickupInfo")
