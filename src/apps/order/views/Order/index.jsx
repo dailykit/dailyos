@@ -257,6 +257,35 @@ const Order = () => {
                )}
             </Flex>
             <Flex container alignItems="center" flexWrap="wrap">
+               {isThirdParty && (
+                  <Flex container alignItems="center">
+                     <Text as="h4">Source:</Text>
+                     <Spacer size="8px" xAxis />
+                     <Flex
+                        as="span"
+                        container
+                        width="24px"
+                        height="24px"
+                        alignItems="center"
+                        justifyContent="center"
+                     >
+                        <img
+                           alt={order.thirdPartyOrder?.orderSource?.title}
+                           src={order.thirdPartyOrder?.orderSource?.imageUrl}
+                           style={{
+                              height: '100%',
+                              width: '100%',
+                              objectFit: 'contain',
+                           }}
+                        />
+                     </Flex>
+                     <Spacer size="8px" xAxis />
+                     <Text as="p" style={{ textTransform: 'capitalize' }}>
+                        {order.thirdPartyOrder?.orderSource?.title}
+                     </Text>
+                  </Flex>
+               )}
+               <Spacer size="16px" xAxis />
                <Flex as="section" container alignItems="center">
                   <Flex container alignItems="center">
                      <Text as="h4">{t(address.concat('ordered'))}</Text>

@@ -1,6 +1,13 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { Flex, Spacer, IconButton, TextButton, ComboButton } from '@dailykit/ui'
+import {
+   Text,
+   Flex,
+   Spacer,
+   IconButton,
+   TextButton,
+   ComboButton,
+} from '@dailykit/ui'
 
 import { StyledStatus } from './styled'
 import { formatDate } from '../../../utils'
@@ -114,6 +121,36 @@ export const Header = ({ order }) => {
                </>
             )}
          </Flex>
+         <Spacer size="16px" xAxis />
+         {order.thirdPartyOrderId && (
+            <Flex container alignItems="center">
+               <StyledStatus>
+                  <span>Source:</span>
+               </StyledStatus>
+               <Flex
+                  as="span"
+                  container
+                  width="24px"
+                  height="24px"
+                  alignItems="center"
+                  justifyContent="center"
+               >
+                  <img
+                     alt={order.thirdPartyOrder?.orderSource?.title}
+                     src={order.thirdPartyOrder?.orderSource?.imageUrl}
+                     style={{
+                        height: '100%',
+                        width: '100%',
+                        objectFit: 'contain',
+                     }}
+                  />
+               </Flex>
+               <Spacer size="8px" xAxis />
+               <Text as="p" style={{ textTransform: 'capitalize' }}>
+                  {order.thirdPartyOrder?.orderSource?.title}
+               </Text>
+            </Flex>
+         )}
       </Flex>
    )
 }

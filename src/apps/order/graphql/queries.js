@@ -25,6 +25,10 @@ export const QUERIES = {
                thirdPartyOrderId
                thirdPartyOrder {
                   id
+                  orderSource {
+                     title
+                     imageUrl
+                  }
                   products: parsedData(path: "items")
                   emailContent: parsedData(path: "HtmlDocument")
                }
@@ -1394,6 +1398,10 @@ export const QUERIES = {
                fulfillmentType
                thirdPartyOrder {
                   id
+                  orderSource {
+                     title
+                     imageUrl
+                  }
                   products: parsedData(path: "items")
                }
                thirdPartyOrderId
