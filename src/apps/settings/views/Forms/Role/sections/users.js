@@ -87,7 +87,7 @@ export const UsersTunnel = ({ closeTunnel, selectedUsers }) => {
    return (
       <>
          <TunnelHeader
-            title="Add Apps"
+            title="Add Users"
             close={() => closeTunnel(1)}
             right={{ action: save, title: 'Save' }}
             tooltip={<Tooltip identifier="form_role_tunnel_users_heading" />}
