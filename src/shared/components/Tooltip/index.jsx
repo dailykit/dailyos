@@ -21,7 +21,9 @@ export const Tooltip = ({
    return (
       <Styles.Tooltip>
          <a data-tip data-for={identifier}>
-            <TooltipIcon />
+            <TooltipIcon
+               {...(!tooltip(identifier)?.description && { color: '#d9bcbc' })}
+            />
          </a>
          <ReactTooltip
             id={identifier}
