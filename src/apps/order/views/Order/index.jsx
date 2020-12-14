@@ -5,7 +5,7 @@ import { toast } from 'react-toastify'
 import htmlToReact from 'html-to-react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
 import {
    Flex,
    Text,
@@ -54,6 +54,15 @@ const Order = () => {
          toast.error('Failed to update the order')
       },
    })
+
+   const { loading: sourceLoading, data: { orderSource = [] } = {} } = useQuery(
+      QUERIES.ORDER.SOURCE,
+      {
+         variables: {
+            orderId: params.id,
+         },
+      }
+   )
 
    const { loading, error, data: { order = {} } = {} } = useSubscription(
       QUERIES.ORDER.DETAILS,
@@ -234,10 +243,51 @@ const Order = () => {
          >
             <Flex container alignItems="center">
                <Text as="h4">ORD{order?.id}</Text>
+               {!sourceLoading && isThirdParty && !isEmpty(orderSource) && (
+                  <>
+                     <Spacer size="16px" xAxis />
+                     <Flex container alignItems="center">
+                        <Text as="h4">Source:</Text>
+                        <Spacer size="8px" xAxis />
+                        <Flex
+                           as="span"
+                           container
+                           width="24px"
+                           height="24px"
+                           alignItems="center"
+                           justifyContent="center"
+                        >
+                           <img
+                              alt={orderSource[0]?.thirdPartyCompany?.title}
+                              src={orderSource[0]?.thirdPartyCompany?.imageUrl}
+                              style={{
+                                 height: '100%',
+                                 width: '100%',
+                                 objectFit: 'contain',
+                              }}
+                           />
+                        </Flex>
+                        <Spacer size="8px" xAxis />
+                        <Text as="p" style={{ textTransform: 'capitalize' }}>
+                           {orderSource[0]?.thirdPartyCompany?.title}
+                        </Text>
+                     </Flex>
+                     <Spacer size="16px" xAxis />
+                     <Flex container alignItems="center">
+                        <Text as="h4">Third Party Order Id:</Text>
+                        <Spacer size="8px" xAxis />
+                        <Text as="p">
+                           {order.thirdPartyOrder?.thirdPartyOrderId}
+                        </Text>
+                     </Flex>
+                  </>
+               )}
                <Spacer size="16px" xAxis />
-               <IconButton size="sm" type="outline" onClick={print}>
-                  <PrintIcon size={16} />
-               </IconButton>
+               {!isThirdParty && (
+                  <IconButton size="sm" type="outline" onClick={print}>
+                     <PrintIcon size={16} />
+                  </IconButton>
+               )}
                <Spacer size="16px" xAxis />
                {!isThirdParty && !isPickup(order?.fulfillmentType) && (
                   <TextButton
@@ -257,34 +307,6 @@ const Order = () => {
                )}
             </Flex>
             <Flex container alignItems="center" flexWrap="wrap">
-               {isThirdParty && (
-                  <Flex container alignItems="center">
-                     <Text as="h4">Source:</Text>
-                     <Spacer size="8px" xAxis />
-                     <Flex
-                        as="span"
-                        container
-                        width="24px"
-                        height="24px"
-                        alignItems="center"
-                        justifyContent="center"
-                     >
-                        <img
-                           alt={order.thirdPartyOrder?.orderSource?.title}
-                           src={order.thirdPartyOrder?.orderSource?.imageUrl}
-                           style={{
-                              height: '100%',
-                              width: '100%',
-                              objectFit: 'contain',
-                           }}
-                        />
-                     </Flex>
-                     <Spacer size="8px" xAxis />
-                     <Text as="p" style={{ textTransform: 'capitalize' }}>
-                        {order.thirdPartyOrder?.orderSource?.title}
-                     </Text>
-                  </Flex>
-               )}
                <Spacer size="16px" xAxis />
                <Flex as="section" container alignItems="center">
                   <Flex container alignItems="center">
@@ -429,7 +451,7 @@ const Order = () => {
                         <Styles.Products>
                            {order.thirdPartyOrder.products.map(
                               (product, index) => (
-                                 <Styles.ProductItem key={index} isActive>
+                                 <Styles.ProductItem key={index}>
                                     <Flex
                                        container
                                        alignItems="center"
@@ -447,7 +469,7 @@ const Order = () => {
                                           container
                                           alignItems="center"
                                        >
-                                          <UserIcon size={16} color="#fff" />
+                                          <UserIcon size={16} />
                                        </Flex>
                                        <Spacer size="6px" xAxis />
                                        <span>{product.quantity}</span>

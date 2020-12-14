@@ -2,6 +2,19 @@ import gql from 'graphql-tag'
 
 export const QUERIES = {
    ORDER: {
+      SOURCE: gql`
+         query orderSource($orderId: oid!) {
+            orderSource: order_thirdPartyOrder(
+               where: { order: { id: { _eq: $orderId } } }
+            ) {
+               id
+               thirdPartyCompany {
+                  title
+                  imageUrl
+               }
+            }
+         }
+      `,
       DETAILS: gql`
          subscription order(
             $id: oid!
@@ -25,10 +38,7 @@ export const QUERIES = {
                thirdPartyOrderId
                thirdPartyOrder {
                   id
-                  orderSource {
-                     title
-                     imageUrl
-                  }
+                  thirdPartyOrderId
                   products: parsedData(path: "items")
                   emailContent: parsedData(path: "HtmlDocument")
                }
@@ -1398,10 +1408,7 @@ export const QUERIES = {
                fulfillmentType
                thirdPartyOrder {
                   id
-                  orderSource {
-                     title
-                     imageUrl
-                  }
+                  thirdPartyOrderId
                   products: parsedData(path: "items")
                }
                thirdPartyOrderId
