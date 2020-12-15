@@ -34,6 +34,7 @@ export const BRANDS = {
             title
             isDefault
             isPublished
+            parseurMailBoxId
          }
       }
    `,
