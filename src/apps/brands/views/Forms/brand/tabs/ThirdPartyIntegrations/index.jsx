@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import styled from 'styled-components'
 import { useParams } from 'react-router-dom'
-import { Flex, Text, ComboButton, PlusIcon, Spacer } from '@dailykit/ui'
+import { Flex, Text, TextButton, Spacer } from '@dailykit/ui'
 
 import { logger } from '../../../../../../../shared/utils'
 import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
@@ -66,7 +66,29 @@ const Parseur = ({ id = '' }) => {
             logger(error)
          }
       })()
-   }, [])
+   }, [params.id])
+
+   const remove = React.useCallback(() => {
+      ;(async () => {
+         try {
+            const response = await axios({
+               method: 'DELETE',
+               url: `${process.env.REACT_APP_DAILYOS_SERVER_URI}/api/parseur`,
+               data: {
+                  brand: { id: params.id },
+                  mailbox: { id },
+               },
+            })
+            if (response.status === 200 && response.statusText === 'OK') {
+               if (!response.data.success) {
+                  throw response.data
+               }
+            }
+         } catch (error) {
+            logger(error)
+         }
+      })()
+   }, [params, id])
 
    return (
       <>
@@ -80,11 +102,14 @@ const Parseur = ({ id = '' }) => {
                <Text as="h2">Parseur</Text>
                <Tooltip identifier="brands_thirdPartyIntegrations_section_parseur" />
             </Flex>
-            {!id && (
-               <ComboButton type="outline" onClick={integrate}>
-                  <PlusIcon />
+            {id ? (
+               <TextButton type="outline" onClick={remove}>
+                  Remove Integration
+               </TextButton>
+            ) : (
+               <TextButton type="outline" onClick={integrate}>
                   Add Integration
-               </ComboButton>
+               </TextButton>
             )}
          </Flex>
          <Spacer size="12px" />
