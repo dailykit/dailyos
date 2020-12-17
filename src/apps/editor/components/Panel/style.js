@@ -3,7 +3,10 @@ import styled, { css } from 'styled-components'
 export const PanelWrapper = styled.div(
    ({ isSidePanelVisible }) => css`
       width: 100%;
-      height: 100%;
+      height: 100vh;
+      max-height: 100vh;
+      overflow: auto;
+      padding-bottom: 16px;
       display: ${isSidePanelVisible ? 'block' : 'none'};
    `
 )

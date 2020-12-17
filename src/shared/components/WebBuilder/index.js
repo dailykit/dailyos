@@ -19,8 +19,9 @@ export default function Builder({
    tempId = null,
    blocksPath = null,
    content = '',
+   onChangeContent,
+   isWebBuilderOpen,
 }) {
-   console.log('webBuilder render')
    const editorRef = useRef()
    const [mount, setMount] = useState(false)
    const [editorLoading, setEditorLoading] = useState(true)
@@ -121,6 +122,12 @@ export default function Builder({
             storeStyles: true, // Enable/Disable storing of rules in JSON format
             storeHtml: true, // Enable/Disable storing of components as HTML string
             storeCss: true, // Enable/Disable storing of rules as CSS string
+         },
+
+         canvas: {
+            styles: [
+               'https://test.dailykit.org/template/files/Riofit Meals/css/style.css',
+            ],
          },
 
          plugins: ['gjs-preset-webpage', grapesjsTabs, grapesjsCustomCode],
@@ -603,7 +610,11 @@ export default function Builder({
       })
       editorRef.current = editor
       setMount(true)
-      return () => editor.destroy()
+      return () => {
+         const code = editor.getHtml() + `<style>+ ${editor.getCss()} +</style>`
+         onChangeContent(code)
+         editor.destroy()
+      }
    }, [])
 
    if (mount && editorRef.current.editor) {
@@ -745,6 +756,29 @@ export default function Builder({
          updateCode(updatedCode, template.path)
          // onSave(editor.getHtml() + '<style>' + editor.getCss() + '</style>')
       })
+      // editor.on('change:changesCount', function (e) {
+      //    const code =
+      //       editor.getHtml() + '<style>' + editor.getCss() + '</style>'
+      //    console.log(code)
+      //   isWebBuilderOpen && onChangeContent(code)
+      //    // onSave(editor.getHtml() + '<style>' + editor.getCss() + '</style>')
+      // })
+
+      // editor.on('change:changesCount', e => {
+      //    // Change!
+      //    // console.log(
+      //    //    e.attributes.Editor.getHtml() +
+      //    //       '<style>' +
+      //    //       editor.getCss() +
+      //    //       '</style>'
+      //    // )
+      //    onChangeContent(
+      //       e.attributes.Editor.getHtml() +
+      //          '<style>' +
+      //          editor.getCss() +
+      //          '</style>'
+      //    )
+      // })
 
       if (Array.isArray(customBlocks) && customBlocks.length) {
          customBlocks.map(block => {
@@ -756,11 +790,7 @@ export default function Builder({
       }
 
       if (templatePath || tempId || blocksPath || content) {
-         editor.setComponents({
-            type: 'text',
-            classes: ['customTemplate'],
-            content: template.content || content,
-         })
+         editor.setComponents(template.content || content)
       }
 
       // // if (editor.getEl('customTemplate')) {
@@ -776,7 +806,7 @@ export default function Builder({
          <div className="editor-row">
             <div className="editor-canvas">
                <div id="gjs">
-                  <h1>Hello World Component</h1>
+                  <InlineLoader />
                </div>
             </div>
          </div>
@@ -786,6 +816,7 @@ export default function Builder({
 
 export const StyledDiv = styled.div`
    border: 2px solid #444;
+   grid-area: main;
    #gjs {
       border: none;
    }
@@ -819,7 +850,7 @@ export const StyledDiv = styled.div`
       justify-content: flex-start;
       align-items: stretch;
       flex-wrap: nowrap;
-      height: 740px;
+      height: 86vh;
    }
 
    .editor-canvas {

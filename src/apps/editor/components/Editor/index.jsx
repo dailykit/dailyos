@@ -186,6 +186,14 @@ const Editor = ({ path }) => {
    const setDarkTheme = () => {
       setIsDark(!isDark)
    }
+   // const templateAreas = ()=>{
+   //    let area = ''
+   //    if(state.isHistoryVisible ){
+   //       area = "'head head head head' 'main main main aside'"
+   //    }else if(isWebBuilderOpen){
+   //       area = ""
+   //    }
+   // }
    React.useEffect(() => {
       setTheme(isDark ? 'vs-dark' : 'vs-light')
    }, [isDark])
@@ -222,7 +230,7 @@ const Editor = ({ path }) => {
 
             {!isWebBuilderOpen ? (
                <MonacoEditor
-                  height="100vh"
+                  height="86vh"
                   width="calc(100% - 1px)"
                   language={language}
                   theme={theme}
@@ -231,7 +239,13 @@ const Editor = ({ path }) => {
                   editorDidMount={handleEditorDidMount}
                />
             ) : (
-               <WebBuilder content={code} />
+               // <div style={{ width: 'calc(100% - 1px)' }}>
+               <WebBuilder
+                  content={editorRef.current.getValue()}
+                  onChangeContent={updatedCode => setCode(updatedCode)}
+                  isWebBuilderOpen={isWebBuilderOpen}
+               />
+               // </div>
             )}
             {state.isHistoryVisible && Object.keys(file).length > 0 && (
                <History
