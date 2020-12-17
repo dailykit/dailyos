@@ -1629,17 +1629,40 @@ export const QUERIES = {
             stations(where: { assignedUsers: { user: { email: $email } } }) {
                id
                name
+               defaultKotPrinterId
                defaultKotPrinter {
                   name
                   state
                   printNodeId
                }
+               defaultLabelPrinterId
                defaultLabelPrinter {
                   name
                   state
                   printNodeId
                }
+               defaultScaleId
                defaultScale {
+                  id
+                  active
+                  deviceNum
+                  deviceName
+               }
+               attachedLabelPrinters {
+                  labelPrinter {
+                     name
+                     state
+                     printNodeId
+                  }
+               }
+               attachedKotPrinters {
+                  kotPrinter {
+                     name
+                     state
+                     printNodeId
+                  }
+               }
+               assignedScales {
                   id
                   active
                   deviceNum

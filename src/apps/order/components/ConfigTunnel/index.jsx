@@ -35,6 +35,7 @@ export const ConfigTunnel = () => {
             'print automatically',
             'default kot printer',
          ],
+         station: ['selected station'],
       }),
       []
    )
@@ -84,6 +85,11 @@ export const ConfigTunnel = () => {
                      </section>
                   </ScrollSection.Section>
                   <Spacer size="48px" />
+                  <ScrollSection.Section hash="station" title="Station">
+                     <section id="selected station">
+                        <Station />
+                     </section>
+                  </ScrollSection.Section>
                </ScrollSection.Main>
             </ScrollSection>
          </Main>
@@ -385,6 +391,60 @@ const DefaultKOTPrinter = () => {
                   />
                </Flex>
             )}
+         </Flex>
+      </div>
+   )
+}
+
+const Station = () => {
+   const [station, setStation] = React.useState({})
+   const [stations, setStations] = React.useState([])
+   const { state, dispatch } = useConfig()
+
+   const handleChange = station => {
+      dispatch({
+         type: 'SET_CURRENT_STATION',
+         payload: state.stations.find(node => node.id === station.id),
+      })
+   }
+
+   React.useEffect(() => {
+      if (!isEmpty(state.current_station)) {
+         const { id, name: title } = state.current_station
+         setStation({ id, title })
+      }
+   }, [state.current_station])
+
+   React.useEffect(() => {
+      if (!isEmpty(state.stations)) {
+         setStations(
+            state.stations.map(({ id, name }) => ({ id, title: name }))
+         )
+      }
+   }, [state.stations])
+
+   return (
+      <div>
+         <Flex container alignItems="center">
+            <Flex container alignItems="center">
+               <Text as="p">Current Station</Text>
+               <Tooltip identifier="app_order_tunnel_field_current_station" />
+            </Flex>
+            <Spacer size="48px" xAxis />
+            <Flex flex="1">
+               <Dropdown
+                  type="single"
+                  options={stations}
+                  searchedOption={() => {}}
+                  selectedOption={handleChange}
+                  placeholder="type what you're looking for..."
+                  defaultValue={
+                     stations.findIndex(node => node.id === station.id) !== -1
+                        ? stations.findIndex(node => node.id === station.id) + 1
+                        : null
+                  }
+               />
+            </Flex>
          </Flex>
       </div>
    )
