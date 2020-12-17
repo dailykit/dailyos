@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-
+import { Flex } from '@dailykit/ui'
 export const StyledWrapper = styled.div`
    margin: 0 auto;
    max-width: 1280px;
@@ -48,4 +48,13 @@ export const GridContainer = styled.div`
 `
 export const Flexible = styled.div`
    display: flex;
+`
+
+export const ResponsiveFlex = styled(Flex)`
+   @media screen and (max-width: 767px) {
+      padding: 0px 10px;
+   }
+   @media screen and (min-width: 768px) {
+      padding: 0px 40px;
+   }
 `
