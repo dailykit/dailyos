@@ -717,14 +717,6 @@ export const DEVICES = {
    },
 }
 
-export const DELETE_USERS_APPS_ROLES = gql`
-   mutation delete_users_apps_roles($where: settings_user_role_app_bool_exp!) {
-      delete_users_apps_roles(where: $where) {
-         affected_rows
-      }
-   }
-`
-
 export const PRINT_JOB = gql`
    mutation createPrintJob(
       $contentType: String!
