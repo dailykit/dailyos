@@ -13,13 +13,13 @@ import {
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../../../shared/utils'
 
-export const Wallet = ({ update }) => {
+export const Referral = ({ update }) => {
    const params = useParams()
    const [settingId, setSettingId] = React.useState(null)
    const [isAvailable, setIsAvailable] = React.useState(false)
    const { loading, error } = useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
-         identifier: { _eq: 'Wallet Availability' },
+         identifier: { _eq: 'Referral Availability' },
          type: { _eq: 'rewards' },
       },
       onSubscriptionData: ({
@@ -55,15 +55,15 @@ export const Wallet = ({ update }) => {
    }
 
    return (
-      <div id="Wallet Availability">
+      <div id="Referral Availability">
          <Flex container alignItems="center">
-            <Text as="h3">Wallet</Text>
-            <Tooltip identifier="brand_wallet_info" />
+            <Text as="h3">Referral</Text>
+            <Tooltip identifier="brand_referral_info" />
          </Flex>
          <Spacer size="8px" />
          <Flex container alignItems="center" justifyContent="space-between">
             <Form.Toggle
-               name="wallet"
+               name="referral"
                value={isAvailable}
                onChange={() => setIsAvailable(!isAvailable)}
             >

@@ -2134,6 +2134,101 @@ export const QUERIES = {
                }
             `,
             SACHET: {
+               LIST: gql`
+                  subscription ingredients($order: order_order_bool_exp = {}) {
+                     ingredients: ingredientsAggregate(
+                        where: {
+                           ingredientSachets: {
+                              orderSachets: {
+                                 orderMealKitProduct: { order: $order }
+                              }
+                           }
+                        }
+                     ) {
+                        aggregate {
+                           count
+                        }
+                        nodes {
+                           id
+                           name
+                           processings: ingredientProcessings_aggregate(
+                              where: {
+                                 ingredientSachets: {
+                                    orderSachets: {
+                                       orderMealKitProduct: { order: $order }
+                                    }
+                                 }
+                              }
+                           ) {
+                              aggregate {
+                                 count(columns: processingName)
+                              }
+                              nodes {
+                                 id
+                                 name: processingName
+                                 sachets: ingredientSachets_aggregate(
+                                    where: {
+                                       orderSachets: {
+                                          orderMealKitProduct: { order: $order }
+                                       }
+                                    }
+                                 ) {
+                                    aggregate {
+                                       count(columns: id)
+                                    }
+                                    nodes {
+                                       id
+                                       quantity
+                                       allOrderSachets: orderSachets_aggregate(
+                                          where: {
+                                             orderMealKitProduct: {
+                                                order: $order
+                                             }
+                                          }
+                                       ) {
+                                          aggregate {
+                                             count(columns: id)
+                                             sum {
+                                                quantity
+                                             }
+                                          }
+                                          nodes {
+                                             id
+                                             quantity
+                                             isAssembled
+                                             orderMealKitProduct {
+                                                id
+                                                orderId
+                                                simpleRecipeProduct {
+                                                   id
+                                                   name
+                                                }
+                                             }
+                                          }
+                                       }
+                                       completedOrderSachets: orderSachets_aggregate(
+                                          where: {
+                                             orderMealKitProduct: {
+                                                order: $order
+                                             }
+                                             status: { _eq: "COMPLETED" }
+                                          }
+                                       ) {
+                                          aggregate {
+                                             count(columns: id)
+                                             sum {
+                                                quantity
+                                             }
+                                          }
+                                       }
+                                    }
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               `,
                ONE: gql`
                   subscription ingredients($order: order_order_bool_exp = {}) {
                      ingredients: ingredientsAggregate(
