@@ -4,6 +4,7 @@ import { Context } from '../../state'
 import { useDailyGit } from '../../state/mutationFunction'
 import moment from 'moment'
 import { FileType, FormType } from '../Popup'
+import { toast } from 'react-toastify'
 
 const ContextMenu = ({ style, node }) => {
    const { state, dispatch } = React.useContext(Context)
@@ -140,6 +141,22 @@ const ContextMenu = ({ style, node }) => {
       setShowPopup2(!showPopup2)
    }
 
+   const copyToClipboard = () => {
+      const relativePath = node.path.replace(
+         process.env.REACT_APP_ROOT_FOLDER,
+         ''
+      )
+      const fileUrl = `https://test.dailykit.org/template/files${relativePath}`
+      navigator.clipboard.writeText(fileUrl).then(
+         () => {
+            toast.success('Copied!')
+         },
+         () => {
+            toast.error('Something went wrong!')
+         }
+      )
+   }
+
    return (
       <>
          <Menu style={style}>
@@ -200,6 +217,9 @@ const ContextMenu = ({ style, node }) => {
                         }}
                      >
                         Delete File
+                     </MenuOption>
+                     <MenuOption onClick={copyToClipboard}>
+                        Copy File Path
                      </MenuOption>
                   </>
                )}

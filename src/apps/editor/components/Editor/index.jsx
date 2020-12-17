@@ -12,9 +12,10 @@ import { Context } from '../../state'
 import ReferenceFile from './ReferenceFile'
 import EditorOptions from './EditorOptions'
 import History from './History'
+import { WebBuilder } from '../../../../shared/components'
 
 // Queries
-import { GET_FILE_FETCH, UPDATE_FILE, DRAFT_FILE } from '../../queries'
+import { GET_FILE_FETCH, UPDATE_FILE, DRAFT_FILE } from '../../graphql'
 
 // Styles
 import { EditorWrapper } from './styles'
@@ -48,6 +49,7 @@ const Editor = ({ path }) => {
       { id: 2, title: 'Dark', value: 'vs-dark' },
    ])
    const [isDark, setIsDark] = React.useState(false)
+   const [isWebBuilderOpen, setIsWebBuilderOpen] = React.useState(false)
 
    React.useEffect(() => {
       monaco.init().then(monaco => {
@@ -215,17 +217,22 @@ const Editor = ({ path }) => {
                publish={publish}
                draft={draft}
                lastSaved={file.lastSaved}
+               isBuilderOpen={val => setIsWebBuilderOpen(val)}
             />
 
-            <MonacoEditor
-               height="100vh"
-               width="calc(100% - 1px)"
-               language={language}
-               theme={theme}
-               value={code}
-               options={options}
-               editorDidMount={handleEditorDidMount}
-            />
+            {!isWebBuilderOpen ? (
+               <MonacoEditor
+                  height="100vh"
+                  width="calc(100% - 1px)"
+                  language={language}
+                  theme={theme}
+                  value={code}
+                  options={options}
+                  editorDidMount={handleEditorDidMount}
+               />
+            ) : (
+               <WebBuilder content={code} />
+            )}
             {state.isHistoryVisible && Object.keys(file).length > 0 && (
                <History
                   commits={file.commits}

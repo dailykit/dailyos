@@ -1,5 +1,6 @@
 import React from 'react'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useLazyQuery } from '@apollo/react-hooks'
+import { Loader } from '@dailykit/ui'
 
 // State
 import { Context } from '../../state'
@@ -12,13 +13,15 @@ import ContextMenu from '../ContextMenu'
 import { FileExplorerWrapper } from './styles'
 
 // Queries
-import { GET_EXPLORER_CONTENT } from '../../queries'
+import { GET_EXPLORER_CONTENT, GET_FILE } from '../../graphql'
+import { toast } from 'react-toastify'
 
 // Helpers
 import toggleNode from '../../utils/toggleNode'
 
 const FileExplorer = () => {
    const { state, dispatch } = React.useContext(Context)
+   const fileRef = React.useRef({})
    const [data, setData] = React.useState([])
    const nodeRef = React.useRef('')
    const [style, setStyle] = React.useState({
@@ -35,12 +38,57 @@ const FileExplorer = () => {
       variables: { path: '' },
    })
 
+   const [getFileQuery, { loading: fileLoading }] = useLazyQuery(GET_FILE, {
+      onError: error => {
+         toast.error('Something went wrong file!')
+         console.log(error)
+      },
+      onCompleted: data => {
+         console.log(state, data)
+         if (
+            data &&
+            data.constructor === Object &&
+            Object.keys(data).length !== 0 &&
+            data.editor_file.length > 0 &&
+            Object.keys(fileRef.current).length !== 0
+         ) {
+            console.log(data.editor_file[0].id)
+            dispatch({
+               type: 'ADD_TAB',
+               payload: {
+                  name: fileRef.current.name,
+                  path: fileRef.current.path.replace(
+                     process.env.REACT_APP_ROOT_FOLDER,
+                     ''
+                  ),
+                  id: data.editor_file[0].id,
+               },
+            })
+         }
+      },
+   })
+
    React.useEffect(() => {
       const { getFolderWithFiles: files } = queryData || {}
       if (files) {
          setData(files.children)
       }
    }, [queryData])
+
+   // React.useEffect(() => {
+   //    const file = fileData || {}
+   //    // if (Object.keys(file).length !== 0) {
+   //    //    console.log(file.editor_file)
+   //    // }
+   //    if (
+   //       Object.keys(file).length !== 0 &&
+   //       file.constructor === Object &&
+   //       file.editor_file.length > 0
+   //    ) {
+   //       log
+   //       setFileId(file.editor_file[0].id)
+   //    }
+   // }, [fileData])
 
    const onToggle = node => {
       const mutated = toggleNode(data, node)
@@ -50,30 +98,34 @@ const FileExplorer = () => {
    const onSelection = (node, nodeIndex) => {
       if (node.type === 'folder') {
          onToggle(node.name)
-         // if (data[nodeIndex].isOpen) {
-         dispatch({
-            type: 'ADD_ON_TOGGLE_INFO',
-            payload: {
-               name: node.name,
-               path: node.path.replace(process.env.REACT_APP_ROOT_FOLDER, ''),
-               type: node.type,
-            },
-         })
-         // } else {
-         //    dispatch({
-         //       type: 'ADD_ON_TOGGLE_INFO',
-         //       payload: {},
-         //    })
-         // }
+         if (data[nodeIndex].isOpen) {
+            console.log('here', node)
+            dispatch({
+               type: 'ADD_ON_TOGGLE_INFO',
+               payload: {
+                  name: node.name,
+                  path: node.path.replace(
+                     process.env.REACT_APP_ROOT_FOLDER,
+                     ''
+                  ),
+                  type: node.type,
+               },
+            })
+         } else {
+            dispatch({
+               type: 'ADD_ON_TOGGLE_INFO',
+               payload: {},
+            })
+         }
       }
-      if (node.type === 'file')
-         dispatch({
-            type: 'ADD_TAB',
-            payload: {
-               name: node.name,
+      if (node.type === 'file') {
+         fileRef.current = node
+         getFileQuery({
+            variables: {
                path: node.path.replace(process.env.REACT_APP_ROOT_FOLDER, ''),
             },
          })
+      }
    }
 
    const toggleMenu = command => {
@@ -99,8 +151,8 @@ const FileExplorer = () => {
       setMenuVisible(!menuVisible)
    }
 
-   if (queryLoading) {
-      return <div>Loading...</div>
+   if (queryLoading || fileLoading) {
+      return <Loader />
    }
    if (queryError) {
       return <div>Error</div>

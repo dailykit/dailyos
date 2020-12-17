@@ -11,6 +11,14 @@ const reducers = (state, action) => {
 
          return storeState(newState)
       }
+      case 'TOGGLE_SIDEPANEL': {
+         const newState = {
+            ...state,
+            isSidePanelVisible: !state.isSidePanelVisible,
+         }
+
+         return storeState(newState)
+      }
       case 'SET_DRAFT': {
          const tabs = state.tabs
          tabs[state.currentTab] = {
@@ -83,6 +91,7 @@ const reducers = (state, action) => {
                      draft: '',
                      version: null,
                      lastSaved: '',
+                     id: action.payload.id,
                   },
                ],
                currentTab: state.tabs.length === 0 ? 0 : state.currentTab + 1,
@@ -172,14 +181,12 @@ const reducers = (state, action) => {
                   type: action.payload.type,
                },
             }
-            console.log('reducer onToggle', action.payload)
             return storeState(newState)
          } else {
             const newState = {
                ...state,
                onToggleInfo: {},
             }
-            console.log('reducer offToggle', action.payload)
             return storeState(newState)
          }
       }

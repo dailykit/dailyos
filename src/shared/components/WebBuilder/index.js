@@ -1,389 +1,783 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
+import { useQuery } from '@apollo/react-hooks'
 import 'grapesjs/dist/css/grapes.min.css'
+import 'grapesjs-preset-webpage'
 import grapesjs from 'grapesjs'
 import axios from 'axios'
+import { InlineLoader } from '../InlineLoader'
 import styled from 'styled-components'
+import { toast } from 'react-toastify'
+import { TEMPLATE, BLOCKS } from './graphql'
+import { logger, randomSuffix } from '../../utils'
+import grapesjsTabs from 'grapesjs-tabs'
+import grapesjsCustomCode from 'grapesjs-custom-code'
+
 const url = `${process.env.REACT_APP_DAILYOS_SERVER_URI}/api/assets`
 
-export default function Builder() {
-   const editor = grapesjs.init({
-      // Indicate where to init the editor. You can also pass an HTMLElement
-      container: '#gjs',
-      // Get the content for the canvas directly from the element
-      // As an alternative we could use: `components: '<h1>Hello World Component!</h1>'`,
-      fromElement: true,
-      // Size of the editor
-      height: '300px',
-      width: 'auto',
-      plugins: ['grapesjstabs'],
-      pluginsOpts: {
-         grapesjstabs: {
-            tabsBlock: {
-               category: 'Extra',
+export default function Builder({
+   templatePath = null,
+   tempId = null,
+   blocksPath = null,
+   content = '',
+}) {
+   console.log('webBuilder render')
+   const editorRef = useRef()
+   const [mount, setMount] = useState(false)
+   const [editorLoading, setEditorLoading] = useState(true)
+
+   const {
+      loading: templateLoading,
+      data: { getFile: template = {} } = {},
+   } = useQuery(TEMPLATE, {
+      variables: {
+         path: templatePath,
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+      fetchPolicy: 'cache-and-network',
+      skip: !templatePath ?? tempId ?? content,
+   })
+   const {
+      loading: cssLoading,
+      data: { getFile: customCss = {} } = {},
+   } = useQuery(TEMPLATE, {
+      variables: {
+         path: '/test/temp1/style1.css',
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+
+      fetchPolicy: 'cache-and-network',
+   })
+   const {
+      loading: blockLoading,
+      data: { getFolderWithFiles: { children: customBlocks = [] } = {} } = {},
+   } = useQuery(BLOCKS, {
+      variables: {
+         path: blocksPath,
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+      fetchPolicy: 'cache-and-network',
+      skip: !blocksPath,
+   })
+
+   const updateCode = (updatedCode, path) => {
+      axios({
+         url: process.env.REACT_APP_DATA_HUB_URI,
+         method: 'POST',
+         headers: {
+            'x-hasura-admin-secret':
+               process.env.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
+         },
+         data: {
+            query: `
+         mutation updateFile($path: String!, $content: String!, $message: String!) {
+            updateFile(path: $path, content: $content, message: $message) {
+               ... on Error {
+                  success
+                  error
+               }
+               ... on Success {
+                  success
+                  message
+               }
+            }
+         }
+           `,
+            variables: {
+               path,
+               content: updatedCode,
+               message: 'update: template',
             },
          },
-      },
+      })
+         .then(data => toast.success('Template updated'))
+         .catch(error => {
+            toast.error('Failed to Add!')
+            logger(error)
+         })
+   }
 
-      // Disable the storage manager for the moment
-      storageManager: {
-         id: 'gjs-', // Prefix identifier that will be used inside storing and loading
-         type: 'local', // Type of the storage
-         autosave: true, // Store data automatically
-         autoload: false, // Autoload stored data on init
-         stepsBeforeSave: 1, // If autosave enabled, indicates how many changes are necessary before store method is triggered
-         storeComponents: true, // Enable/Disable storing of components in JSON format
-         storeStyles: true, // Enable/Disable storing of rules in JSON format
-         storeHtml: true, // Enable/Disable storing of components as HTML string
-         storeCss: true, // Enable/Disable storing of rules as CSS string
-      },
-      deviceManager: {
-         devices: [
-            {
-               name: 'Desktop',
-               width: '', // default size
-            },
-            {
-               name: 'Mobile',
-               width: '320px', // this value will be used on canvas width
-               widthMedia: '480px', // this value will be used in CSS @media
-            },
-         ],
-      },
-      blockManager: {
-         appendTo: '.blocks-container',
-         blocks: [
-            {
-               id: 'section', // id is mandatory
-               label: '<b>Section</b>', // You can use HTML/SVG inside labels
-               attributes: { class: 'gjs-block-section' },
-               content: `<section>
-               <h1>This is a simple title</h1>
-               <div>This is just a Lorem text: Lorem ipsum dolor sit amet</div>
-             </section>`,
-            },
-            {
-               id: 'text',
-               label: 'Text',
-               content: '<div data-gjs-type="text">Insert your text here</div>',
-            },
-            {
-               id: 'image',
-               label: 'Image',
-               // Select the component once it's dropped
-               select: true,
-               // You can pass components as a JSON instead of a simple HTML string,
-               // in this case we also use a defined component type `image`
-               content: { type: 'image' },
-               // This triggers `active` event on dropped components and the `image`
-               // reacts by opening the AssetManager
-               activate: true,
-            },
-         ],
-      },
-      content: {
-         tagName: 'div',
-         draggable: false,
-         attributes: { 'some-attribute': 'some-value' },
-         components: [
-            {
-               tagName: 'span',
-               content: '<b>Some static content</b>',
-            },
-            {
-               tagName: 'div',
-               // use `content` for static strings, `components` string will be parsed
-               // and transformed in Components
-               components: '<span>HTML at some point</span>',
-            },
-         ],
-      },
+   useEffect(() => {
+      const editor = grapesjs.init({
+         container: '#gjs',
+         fromElement: true,
+         height: '100%',
+         width: '100%',
+         storageManager: {
+            id: 'gjs-', // Prefix identifier that will be used inside storing and loading
+            type: 'local', // Type of the storage
+            autosave: true, // Store data automatically
+            autoload: false, // Autoload stored data on init
+            stepsBeforeSave: 5, // If autosave enabled, indicates how many changes are necessary before store method is triggered
+            storeComponents: true, // Enable/Disable storing of components in JSON format
+            storeStyles: true, // Enable/Disable storing of rules in JSON format
+            storeHtml: true, // Enable/Disable storing of components as HTML string
+            storeCss: true, // Enable/Disable storing of rules as CSS string
+         },
 
-      layerManager: {
-         appendTo: '.layers-container',
-      },
-      // We define a default panel as a sidebar to contain layers
-      panels: {
-         defaults: [
-            {
-               id: 'layers',
-               el: '.panel__left',
+         plugins: ['gjs-preset-webpage', grapesjsTabs, grapesjsCustomCode],
+         pluginsOpts: {
+            [grapesjsTabs]: {
+               tabsBlock: {
+                  category: 'Extra',
+               },
             },
-            {
-               id: 'panel-switcher',
-               el: '.panel__switcher',
-
-               buttons: [
-                  {
-                     id: 'show-layers',
-                     active: true,
-                     label: 'Layers',
-                     command: 'show-layers',
-                     // Once activated disable the possibility to turn it off
-                     togglable: false,
-                  },
-                  {
-                     id: 'show-style',
-                     active: true,
-                     label: 'Styles',
-                     command: 'show-styles',
-                     togglable: false,
-                  },
-                  {
-                     id: 'show-traits',
-                     active: true,
-                     label: 'Traits',
-                     command: 'show-traits',
-                     togglable: false,
-                  },
-                  {
-                     id: 'show-blocks',
-                     active: true,
-                     label: 'Blocks',
-                     command: 'show-blocks',
-                     togglable: false,
-                  },
-               ],
+            [grapesjsCustomCode]: {
+               blockCustomCode: {
+                  category: 'Extra',
+               },
             },
-            {
-               id: 'panel-devices',
-               el: '.panel__devices',
-               buttons: [
+            'gjs-preset-webpage': {
+               modalImportTitle: 'Import Template',
+               modalImportLabel:
+                  '<div style="margin-bottom: 10px; font-size: 13px;">Paste here your HTML/CSS and click Import</div>',
+               modalImportContent: function (editor) {
+                  return (
+                     editor.getHtml() + '<style>' + editor.getCss() + '</style>'
+                  )
+               },
+               filestackOpts: null, //{ key: 'AYmqZc2e8RLGLE7TGkX3Hz' },
+               aviaryOpts: false,
+               blocksBasicOpts: { flexGrid: 1 },
+               customStyleManager: [
                   {
-                     id: 'device-desktop',
-                     label: 'D',
-                     command: 'set-device-desktop',
-                     active: true,
-                     togglable: false,
+                     name: 'General',
+                     buildProps: [
+                        'float',
+                        'display',
+                        'position',
+                        'top',
+                        'right',
+                        'left',
+                        'bottom',
+                     ],
+                     properties: [
+                        {
+                           name: 'Alignment',
+                           property: 'float',
+                           type: 'radio',
+                           defaults: 'none',
+                           list: [
+                              { value: 'none', className: 'fa fa-times' },
+                              { value: 'left', className: 'fa fa-align-left' },
+                              {
+                                 value: 'right',
+                                 className: 'fa fa-align-right',
+                              },
+                           ],
+                        },
+                        { property: 'position', type: 'select' },
+                     ],
                   },
                   {
-                     id: 'device-mobile',
-                     label: 'M',
-                     command: 'set-device-mobile',
-                     togglable: false,
+                     name: 'Dimension',
+                     open: false,
+                     buildProps: [
+                        'width',
+                        'flex-width',
+                        'height',
+                        'max-width',
+                        'min-height',
+                        'margin',
+                        'padding',
+                     ],
+                     properties: [
+                        {
+                           id: 'flex-width',
+                           type: 'integer',
+                           name: 'Width',
+                           units: ['px', '%'],
+                           property: 'flex-basis',
+                           toRequire: 1,
+                        },
+                        {
+                           property: 'margin',
+                           properties: [
+                              { name: 'Top', property: 'margin-top' },
+                              { name: 'Right', property: 'margin-right' },
+                              { name: 'Bottom', property: 'margin-bottom' },
+                              { name: 'Left', property: 'margin-left' },
+                           ],
+                        },
+                        {
+                           property: 'padding',
+                           properties: [
+                              { name: 'Top', property: 'padding-top' },
+                              { name: 'Right', property: 'padding-right' },
+                              { name: 'Bottom', property: 'padding-bottom' },
+                              { name: 'Left', property: 'padding-left' },
+                           ],
+                        },
+                     ],
                   },
-               ],
-            },
-         ],
-      },
-      selectorManager: {
-         appendTo: '.styles-container',
-      },
-      styleManager: {
-         appendTo: '.styles-container',
-         sectors: [
-            {
-               name: 'Dimension',
-               open: false,
-               // Use built-in properties
-               buildProps: ['width', 'min-height', 'padding'],
-               // Use `properties` to define/override single property
-               properties: [
                   {
-                     // Type of the input,
-                     // options: integer | radio | select | color | slider | file | composite | stack
-                     type: 'integer',
-                     name: 'The width', // Label for the property
-                     property: 'width', // CSS property (if buildProps contains it will be extended)
-                     units: ['px', '%'], // Units, available only for 'integer' types
-                     defaults: 'auto', // Default value
-                     min: 0, // Min value, available only for 'integer' types
+                     name: 'Typography',
+                     open: false,
+                     buildProps: [
+                        'font-family',
+                        'font-size',
+                        'font-weight',
+                        'letter-spacing',
+                        'color',
+                        'line-height',
+                        'text-align',
+                        'text-decoration',
+                        'text-shadow',
+                     ],
+                     properties: [
+                        { name: 'Font', property: 'font-family' },
+                        { name: 'Weight', property: 'font-weight' },
+                        { name: 'Font color', property: 'color' },
+                        {
+                           property: 'text-align',
+                           type: 'radio',
+                           defaults: 'left',
+                           list: [
+                              {
+                                 value: 'left',
+                                 name: 'Left',
+                                 className: 'fa fa-align-left',
+                              },
+                              {
+                                 value: 'center',
+                                 name: 'Center',
+                                 className: 'fa fa-align-center',
+                              },
+                              {
+                                 value: 'right',
+                                 name: 'Right',
+                                 className: 'fa fa-align-right',
+                              },
+                              {
+                                 value: 'justify',
+                                 name: 'Justify',
+                                 className: 'fa fa-align-justify',
+                              },
+                           ],
+                        },
+                        {
+                           property: 'text-decoration',
+                           type: 'radio',
+                           defaults: 'none',
+                           list: [
+                              {
+                                 value: 'none',
+                                 name: 'None',
+                                 className: 'fa fa-times',
+                              },
+                              {
+                                 value: 'underline',
+                                 name: 'underline',
+                                 className: 'fa fa-underline',
+                              },
+                              {
+                                 value: 'line-through',
+                                 name: 'Line-through',
+                                 className: 'fa fa-strikethrough',
+                              },
+                           ],
+                        },
+                        {
+                           property: 'text-shadow',
+                           properties: [
+                              { name: 'X position', property: 'text-shadow-h' },
+                              { name: 'Y position', property: 'text-shadow-v' },
+                              { name: 'Blur', property: 'text-shadow-blur' },
+                              { name: 'Color', property: 'text-shadow-color' },
+                           ],
+                        },
+                     ],
                   },
-               ],
-            },
-            {
-               name: 'Extra',
-               open: false,
-               buildProps: ['background-color', 'box-shadow', 'custom-prop'],
-               properties: [
                   {
-                     id: 'custom-prop',
-                     name: 'Custom Label',
-                     property: 'font-size',
-                     type: 'select',
-                     defaults: '32px',
-                     // List of options, available only for 'select' and 'radio'  types
-                     options: [
-                        { value: '12px', name: 'Tiny' },
-                        { value: '18px', name: 'Medium' },
-                        { value: '32px', name: 'Big' },
+                     name: 'Decorations',
+                     open: false,
+                     buildProps: [
+                        'opacity',
+                        'border-radius',
+                        'border',
+                        'box-shadow',
+                        'background-bg',
+                     ],
+                     properties: [
+                        {
+                           type: 'slider',
+                           property: 'opacity',
+                           defaults: 1,
+                           step: 0.01,
+                           max: 1,
+                           min: 0,
+                        },
+                        {
+                           property: 'border-radius',
+                           properties: [
+                              {
+                                 name: 'Top',
+                                 property: 'border-top-left-radius',
+                              },
+                              {
+                                 name: 'Right',
+                                 property: 'border-top-right-radius',
+                              },
+                              {
+                                 name: 'Bottom',
+                                 property: 'border-bottom-left-radius',
+                              },
+                              {
+                                 name: 'Left',
+                                 property: 'border-bottom-right-radius',
+                              },
+                           ],
+                        },
+                        {
+                           property: 'box-shadow',
+                           properties: [
+                              { name: 'X position', property: 'box-shadow-h' },
+                              { name: 'Y position', property: 'box-shadow-v' },
+                              { name: 'Blur', property: 'box-shadow-blur' },
+                              { name: 'Spread', property: 'box-shadow-spread' },
+                              { name: 'Color', property: 'box-shadow-color' },
+                              {
+                                 name: 'Shadow type',
+                                 property: 'box-shadow-type',
+                              },
+                           ],
+                        },
+                        {
+                           id: 'background-bg',
+                           property: 'background',
+                           type: 'bg',
+                        },
+                     ],
+                  },
+                  {
+                     name: 'Extra',
+                     open: false,
+                     buildProps: ['transition', 'perspective', 'transform'],
+                     properties: [
+                        {
+                           property: 'transition',
+                           properties: [
+                              {
+                                 name: 'Property',
+                                 property: 'transition-property',
+                              },
+                              {
+                                 name: 'Duration',
+                                 property: 'transition-duration',
+                              },
+                              {
+                                 name: 'Easing',
+                                 property: 'transition-timing-function',
+                              },
+                           ],
+                        },
+                        {
+                           property: 'transform',
+                           properties: [
+                              {
+                                 name: 'Rotate X',
+                                 property: 'transform-rotate-x',
+                              },
+                              {
+                                 name: 'Rotate Y',
+                                 property: 'transform-rotate-y',
+                              },
+                              {
+                                 name: 'Rotate Z',
+                                 property: 'transform-rotate-z',
+                              },
+                              {
+                                 name: 'Scale X',
+                                 property: 'transform-scale-x',
+                              },
+                              {
+                                 name: 'Scale Y',
+                                 property: 'transform-scale-y',
+                              },
+                              {
+                                 name: 'Scale Z',
+                                 property: 'transform-scale-z',
+                              },
+                           ],
+                        },
+                     ],
+                  },
+                  {
+                     name: 'Flex',
+                     open: false,
+                     properties: [
+                        {
+                           name: 'Flex Container',
+                           property: 'display',
+                           type: 'select',
+                           defaults: 'cstmBlock',
+                           list: [
+                              { value: 'cstmBlock', name: 'Disable' },
+                              { value: 'flex', name: 'Enable' },
+                           ],
+                        },
+                        {
+                           name: 'Flex Parent',
+                           property: 'label-parent-flex',
+                           type: 'integer',
+                        },
+                        {
+                           name: 'Direction',
+                           property: 'flex-direction',
+                           type: 'radio',
+                           defaults: 'row',
+                           list: [
+                              {
+                                 value: 'row',
+                                 name: 'Row',
+                                 className: 'icons-flex icon-dir-row',
+                                 title: 'Row',
+                              },
+                              {
+                                 value: 'row-reverse',
+                                 name: 'Row reverse',
+                                 className: 'icons-flex icon-dir-row-rev',
+                                 title: 'Row reverse',
+                              },
+                              {
+                                 value: 'column',
+                                 name: 'Column',
+                                 title: 'Column',
+                                 className: 'icons-flex icon-dir-col',
+                              },
+                              {
+                                 value: 'column-reverse',
+                                 name: 'Column reverse',
+                                 title: 'Column reverse',
+                                 className: 'icons-flex icon-dir-col-rev',
+                              },
+                           ],
+                        },
+                        {
+                           name: 'Justify',
+                           property: 'justify-content',
+                           type: 'radio',
+                           defaults: 'flex-start',
+                           list: [
+                              {
+                                 value: 'flex-start',
+                                 className: 'icons-flex icon-just-start',
+                                 title: 'Start',
+                              },
+                              {
+                                 value: 'flex-end',
+                                 title: 'End',
+                                 className: 'icons-flex icon-just-end',
+                              },
+                              {
+                                 value: 'space-between',
+                                 title: 'Space between',
+                                 className: 'icons-flex icon-just-sp-bet',
+                              },
+                              {
+                                 value: 'space-around',
+                                 title: 'Space around',
+                                 className: 'icons-flex icon-just-sp-ar',
+                              },
+                              {
+                                 value: 'center',
+                                 title: 'Center',
+                                 className: 'icons-flex icon-just-sp-cent',
+                              },
+                           ],
+                        },
+                        {
+                           name: 'Align',
+                           property: 'align-items',
+                           type: 'radio',
+                           defaults: 'center',
+                           list: [
+                              {
+                                 value: 'flex-start',
+                                 title: 'Start',
+                                 className: 'icons-flex icon-al-start',
+                              },
+                              {
+                                 value: 'flex-end',
+                                 title: 'End',
+                                 className: 'icons-flex icon-al-end',
+                              },
+                              {
+                                 value: 'stretch',
+                                 title: 'Stretch',
+                                 className: 'icons-flex icon-al-str',
+                              },
+                              {
+                                 value: 'center',
+                                 title: 'Center',
+                                 className: 'icons-flex icon-al-center',
+                              },
+                           ],
+                        },
+                        {
+                           name: 'Flex Children',
+                           property: 'label-parent-flex',
+                           type: 'integer',
+                        },
+                        {
+                           name: 'Order',
+                           property: 'order',
+                           type: 'integer',
+                           defaults: 0,
+                           min: 0,
+                        },
+                        {
+                           name: 'Flex',
+                           property: 'flex',
+                           type: 'composite',
+                           properties: [
+                              {
+                                 name: 'Grow',
+                                 property: 'flex-grow',
+                                 type: 'integer',
+                                 defaults: 0,
+                                 min: 0,
+                              },
+                              {
+                                 name: 'Shrink',
+                                 property: 'flex-shrink',
+                                 type: 'integer',
+                                 defaults: 0,
+                                 min: 0,
+                              },
+                              {
+                                 name: 'Basis',
+                                 property: 'flex-basis',
+                                 type: 'integer',
+                                 units: ['px', '%', ''],
+                                 unit: '',
+                                 defaults: 'auto',
+                              },
+                           ],
+                        },
+                        {
+                           name: 'Align',
+                           property: 'align-self',
+                           type: 'radio',
+                           defaults: 'auto',
+                           list: [
+                              {
+                                 value: 'auto',
+                                 name: 'Auto',
+                              },
+                              {
+                                 value: 'flex-start',
+                                 title: 'Start',
+                                 className: 'icons-flex icon-al-start',
+                              },
+                              {
+                                 value: 'flex-end',
+                                 title: 'End',
+                                 className: 'icons-flex icon-al-end',
+                              },
+                              {
+                                 value: 'stretch',
+                                 title: 'Stretch',
+                                 className: 'icons-flex icon-al-str',
+                              },
+                              {
+                                 value: 'center',
+                                 title: 'Center',
+                                 className: 'icons-flex icon-al-center',
+                              },
+                           ],
+                        },
                      ],
                   },
                ],
             },
-         ],
-      },
-      traitManager: {
-         appendTo: '.traits-container',
-      },
-   })
-
-   const assetManager = editor.AssetManager
-   axios.get(`${url}?type=images`).then(data => {
-      console.log(data)
-      data.data.data.map(image => {
-         return assetManager.add(image.url)
+         },
       })
-   })
+      editorRef.current = editor
+      setMount(true)
+      return () => editor.destroy()
+   }, [])
 
-   editor.Panels.addPanel({
-      id: 'panel-top',
-      el: '.panel__top',
-   })
-   editor.Panels.addPanel({
-      id: 'basic-actions',
-      el: '.panel__basic-actions',
-      buttons: [
-         {
-            id: 'visibility',
-            active: true, // active by default
-            className: 'btn-toggle-borders',
-            label: '<u>B</u>',
-            command: 'sw-visibility', // Built-in command
-         },
-         {
-            id: 'export',
-            className: 'btn-open-export',
-            label: 'Exp',
-            command: 'export-template',
-            context: 'export-template', // For grouping context of buttons from the same panel
-         },
-         {
-            id: 'show-json',
-            className: 'btn-show-json',
-            label: 'JSON',
-            context: 'show-json',
-            command(editor) {
-               editor.Modal.setTitle('Components JSON')
-                  .setContent(
-                     `<textarea style="width:100%; height: 250px;">
-                ${JSON.stringify(editor.getComponents())}
-              </textarea>`
-                  )
-                  .open()
+   if (mount && editorRef.current.editor) {
+      const editor = editorRef.current
+      const assetManager = editor.AssetManager
+      axios.get(`${url}?type=images`).then(data => {
+         data.data.data.map(image => {
+            return assetManager.add(image.url)
+         })
+      })
+
+      if (!editor.Panels.getButton('devices-c', 'save')) {
+         editor.Panels.addButton('devices-c', [
+            {
+               id: 'save',
+               className: 'fa fa-floppy-o icon-blank',
+               command: function (editor1, sender) {
+                  const updatedCode =
+                     editor.getHtml() + '<style>' + editor.getCss() + '</style>'
+                  updateCode(updatedCode, templatePath)
+               },
+               attributes: { title: 'Save Template' },
             },
-         },
-      ],
-   })
-
-   // Define commands for style manager
-   editor.Commands.add('show-layers', {
-      getRowEl(editor) {
-         return editor.getContainer().closest('.editor-row')
-      },
-      getLayersEl(row) {
-         return row.querySelector('.layers-container')
-      },
-
-      run(editor, sender) {
-         const lmEl = this.getLayersEl(this.getRowEl(editor))
-         lmEl.style.display = ''
-      },
-      stop(editor, sender) {
-         const lmEl = this.getLayersEl(this.getRowEl(editor))
-         lmEl.style.display = 'none'
-      },
-   })
-   editor.Commands.add('show-styles', {
-      getRowEl(editor) {
-         return editor.getContainer().closest('.editor-row')
-      },
-      getStyleEl(row) {
-         return row.querySelector('.styles-container')
-      },
-
-      run(editor, sender) {
-         const smEl = this.getStyleEl(this.getRowEl(editor))
-         smEl.style.display = ''
-      },
-      stop(editor, sender) {
-         const smEl = this.getStyleEl(this.getRowEl(editor))
-         smEl.style.display = 'none'
-      },
-   })
-
-   //command for traits
-
-   editor.Commands.add('show-traits', {
-      getTraitsEl(editor) {
-         const row = editor.getContainer().closest('.editor-row')
-         return row.querySelector('.traits-container')
-      },
-      run(editor, sender) {
-         this.getTraitsEl(editor).style.display = ''
-      },
-      stop(editor, sender) {
-         this.getTraitsEl(editor).style.display = 'none'
-      },
-   })
-
-   //Command for blocks
-   editor.Commands.add('show-blocks', {
-      getRowEl(editor) {
-         return editor.getContainer().closest('.editor-row')
-      },
-      getBlockEl(row) {
-         return row.querySelector('.blocks-container')
-      },
-
-      run(editor, sender) {
-         const bmEl = this.getBlockEl(this.getRowEl(editor))
-         bmEl.style.display = ''
-      },
-      stop(editor, sender) {
-         const bmEl = this.getBlockEl(this.getRowEl(editor))
-         bmEl.style.display = 'none'
-      },
-   })
-
-   //command for responsive templates
-
-   editor.Commands.add('set-device-desktop', {
-      run: editor => editor.setDevice('Desktop'),
-   })
-   editor.Commands.add('set-device-mobile', {
-      run: editor => editor.setDevice('Mobile'),
-   })
-
-   editor.on('storage:load', function (e) {
-      console.log('Loaded ', e)
-   })
-   editor.on('storage:store', function (e) {
-      console.log(
-         'Run',
-         editor.getHtml() + '<style>' + editor.getCss() + '</style>'
-      )
-   })
-
-   editor.BlockManager.add('div', {
-      label: 'Test',
-      content: `<div class="test-div">Hello</div>
-      <style>
-      .test-div{
-      color: blue;
-      font-size: 48px;
+         ])
       }
-      </style>
-      `,
-   })
+      if (
+         !editor.Panels.getButton('devices-c', 'link-css') &&
+         customCss.content
+      ) {
+         editor.Panels.addButton('devices-c', [
+            {
+               id: 'link-css',
+               className: 'fa fa-link ',
+               command: () => {
+                  const styleSheet =
+                     '<style>' +
+                     customCss.content.replace(/['"]+/g, '') +
+                     '</style>'
+
+                  editor.addComponents(styleSheet)
+               },
+               attributes: { title: 'Link css' },
+            },
+         ])
+      }
+
+      // Define commands for style manager
+      editor.Commands.add('show-layers', {
+         getRowEl(editor) {
+            return editor.getContainer().closest('.editor-row')
+         },
+         getLayersEl(row) {
+            return row.querySelector('.layers-container')
+         },
+
+         run(editor, sender) {
+            const lmEl = this.getLayersEl(this.getRowEl(editor))
+            lmEl.style.display = ''
+         },
+         stop(editor, sender) {
+            const lmEl = this.getLayersEl(this.getRowEl(editor))
+            lmEl.style.display = 'none'
+         },
+      })
+      editor.Commands.add('show-styles', {
+         getRowEl(editor) {
+            return editor.getContainer().closest('.editor-row')
+         },
+         getStyleEl(row) {
+            return row.querySelector('.styles-container')
+         },
+
+         run(editor, sender) {
+            const smEl = this.getStyleEl(this.getRowEl(editor))
+            smEl.style.display = ''
+         },
+         stop(editor, sender) {
+            const smEl = this.getStyleEl(this.getRowEl(editor))
+            smEl.style.display = 'none'
+         },
+      })
+
+      //command for traits
+
+      editor.Commands.add('show-traits', {
+         getTraitsEl(editor) {
+            const row = editor.getContainer().closest('.editor-row')
+            return row.querySelector('.traits-container')
+         },
+         run(editor, sender) {
+            this.getTraitsEl(editor).style.display = ''
+         },
+         stop(editor, sender) {
+            this.getTraitsEl(editor).style.display = 'none'
+         },
+      })
+
+      //Command for blocks
+      editor.Commands.add('show-blocks', {
+         getRowEl(editor) {
+            return editor.getContainer().closest('.editor-row')
+         },
+         getBlockEl(row) {
+            return row.querySelector('.blocks-container')
+         },
+
+         run(editor, sender) {
+            const bmEl = this.getBlockEl(this.getRowEl(editor))
+            bmEl.style.display = ''
+         },
+         stop(editor, sender) {
+            const bmEl = this.getBlockEl(this.getRowEl(editor))
+            bmEl.style.display = 'none'
+         },
+      })
+
+      editor.Commands.add('set-device-desktop', {
+         run: function (ed) {
+            ed.setDevice('Desktop')
+         },
+         stop: function () {},
+      })
+      editor.Commands.add('set-device-tablet', {
+         run: function (ed) {
+            ed.setDevice('Tablet')
+         },
+         stop: function () {},
+      })
+      editor.Commands.add('set-device-mobile', {
+         run: function (ed) {
+            ed.setDevice('Mobile portrait')
+         },
+         stop: function () {},
+      })
+
+      editor.on('storage:store', function (e) {
+         const updatedCode =
+            editor.getHtml() + '<style>' + editor.getCss() + '</style>'
+         updateCode(updatedCode, template.path)
+         // onSave(editor.getHtml() + '<style>' + editor.getCss() + '</style>')
+      })
+
+      if (Array.isArray(customBlocks) && customBlocks.length) {
+         customBlocks.map(block => {
+            editor.BlockManager.add(`customBlck-${block.createdAt}`, {
+               label: `Custom Block-${randomSuffix()}`,
+               content: block.file[0].content,
+            })
+         })
+      }
+
+      if (templatePath || tempId || blocksPath || content) {
+         editor.setComponents({
+            type: 'text',
+            classes: ['customTemplate'],
+            content: template.content || content,
+         })
+      }
+
+      // // if (editor.getEl('customTemplate')) {
+      // // }
+      // setEditorLoading(false)
+   }
+
+   // if ([templateLoading, blockLoading, editorLoading].some(node => node))
+   //    return <InlineLoader />
 
    return (
       <StyledDiv>
-         <div className="panel__top">
-            <div className="panel__basic-actions"></div>
-            <div className="panel__devices"></div>
-            <div className="panel__switcher"></div>
-         </div>
          <div className="editor-row">
             <div className="editor-canvas">
                <div id="gjs">
                   <h1>Hello World Component</h1>
                </div>
-            </div>
-            <div className="panel__left">
-               <div className="layers-container"></div>
-               <div className="styles-container"></div>
-               <div className="traits-container"></div>
-               <div className="blocks-container"></div>
             </div>
          </div>
       </StyledDiv>
@@ -402,17 +796,12 @@ export const StyledDiv = styled.div`
       width: 100%;
       height: 100%;
    }
-   .gjs-block {
+   .gjs-cstmBlock {
       width: auto;
       height: auto;
       min-height: auto;
    }
 
-   .gjs-block {
-      width: auto;
-      height: auto;
-      min-height: auto;
-   }
    .panel__top {
       padding: 0;
       width: 100%;
@@ -430,7 +819,7 @@ export const StyledDiv = styled.div`
       justify-content: flex-start;
       align-items: stretch;
       flex-wrap: nowrap;
-      height: 300px;
+      height: 740px;
    }
 
    .editor-canvas {

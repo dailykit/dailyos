@@ -9,7 +9,7 @@ import {
    UPDATE_RECORD,
    INSERT_RECORD,
    DELETE_RECORD,
-} from '../mutation'
+} from '../graphql'
 import { toast } from 'react-toastify'
 
 export const useDailyGit = () => {

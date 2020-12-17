@@ -8,6 +8,7 @@ const initialState = storedState
         isHistoryVisible: false,
         isTabDropDownVisible: false,
         isSidebarVisible: false,
+        isSidePanelVisible: false,
         onToggleInfo: {},
      }
 

@@ -347,3 +347,21 @@ export const Pug = ({ size = 64, color = '#000000' }) => (
       <path d="M19 3v6.002c0 1.111 0.898 1.998 2.006 1.998h4.994v17.003c0 1.107-0.894 1.997-1.997 1.997h-15.005c-1.107 0-1.997-0.899-1.997-2.007v-22.985c0-1.109 0.899-2.007 2.009-2.007h9.991zM20 3v5.997c0 0.554 0.451 1.003 0.991 1.003h5.009l-6-7zM13 26l0.7-0.7-3.3-3.3 3.3-3.3-0.7-0.7-4 4 4 4zM20 26l4-4-4-4-0.7 0.7 3.3 3.3-3.3 3.3 0.7 0.7zM17 18l-2 8h1l2-8h-1z" />
    </svg>
 )
+
+export const Close = ({ size = 16, color = '#000000' }) => (
+   <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+   >
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="15" y1="9" x2="9" y2="15"></line>
+      <line x1="9" y1="9" x2="15" y2="15"></line>
+   </svg>
+)
