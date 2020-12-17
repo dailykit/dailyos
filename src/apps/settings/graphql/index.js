@@ -256,7 +256,7 @@ export const STATIONS = {
    },
    LABEL_PRINTERS: {
       LIST: gql`
-         subscription labelPrinters($type: String!, $stationId: Int!) {
+         subscription labelPrinters($type: String, $stationId: Int!) {
             labelPrinters: printers(
                where: {
                   printerType: { _eq: $type }
@@ -319,7 +319,7 @@ export const STATIONS = {
    },
    KOT_PRINTERS: {
       LIST: gql`
-         subscription kotPrinters($type: String!, $stationId: Int!) {
+         subscription kotPrinters($type: String, $stationId: Int!) {
             kotPrinters: printers(
                where: {
                   printerType: { _eq: $type }
