@@ -4,7 +4,7 @@ export const FILE_LINKS = gql`
    subscription FILE_LINKS($path: String!) {
       editor_file(where: { path: { _eq: $path } }) {
          fileId: id
-         linkedCssFiles {
+         linkedCssFiles(order_by: { created_at: asc }) {
             priority
             cssFile {
                path
@@ -13,7 +13,7 @@ export const FILE_LINKS = gql`
                id
             }
          }
-         linkedJsFiles {
+         linkedJsFiles(order_by: { created_at: asc }) {
             priority
             jsFile {
                path

@@ -12,7 +12,13 @@ import { EditorOptionsWrapper } from './styles'
 // Assets
 import { HistoryIcon } from '../../../assets/Icons'
 
-const EditorOptions = ({ lastSaved, draft, publish, isBuilderOpen }) => {
+const EditorOptions = ({
+   lastSaved,
+   draft,
+   publish,
+   isBuilderOpen,
+   language,
+}) => {
    const { state, dispatch } = React.useContext(Context)
    const [isModalVisible, setIsModalVisible] = React.useState()
    const [isWebBuilderOpen, SetIsWebBuilderOpen] = React.useState(false)
@@ -91,9 +97,11 @@ const EditorOptions = ({ lastSaved, draft, publish, isBuilderOpen }) => {
             </div>
          )}
          <div id="right">
-            <button onClick={() => SetIsWebBuilderOpen(!isWebBuilderOpen)}>
-               {isWebBuilderOpen ? 'Open in Editor' : 'Open in web builder'}
-            </button>
+            {language === 'html' && (
+               <button onClick={() => SetIsWebBuilderOpen(!isWebBuilderOpen)}>
+                  {isWebBuilderOpen ? 'Open in Editor' : 'Open in web builder'}
+               </button>
+            )}
             <button onClick={() => draft()}>Save</button>
             <button onClick={() => setIsModalVisible(!isModalVisible)}>
                Publish

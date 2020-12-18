@@ -91,6 +91,24 @@ export const GET_FILE = gql`
          fileName
          fileType
          id
+         linkedCssFiles {
+            priority
+            cssFile {
+               path
+               fileName
+               fileType
+               id
+            }
+         }
+         linkedJsFiles {
+            priority
+            jsFile {
+               path
+               fileName
+               fileType
+               id
+            }
+         }
       }
    }
 `
@@ -124,42 +142,3 @@ export const UPDATE_FILE = gql`
       }
    }
 `
-
-// export const GET_FILES = gql`
-//    query GET_FILES($fileType: String!) {
-//       editor_file_aggregate(where: { fileType: { _eq: $fileType } }) {
-//          nodes {
-//             fileName
-//             fileType
-//             id
-//             path
-//             lastSaved
-//          }
-//       }
-//    }
-// `
-// export const FILE_LINKS = gql`
-//    query FILE_LINKS($path: String!) {
-//       editor_file(where: { path: { _eq: $path } }) {
-//          fileId: id
-//          linkedCssFiles {
-//             priority
-//             cssFile {
-//                path
-//                fileName
-//                fileType
-//                id
-//             }
-//          }
-//          linkedJsFiles {
-//             priority
-//             jsFile {
-//                path
-//                fileName
-//                fileType
-//                id
-//             }
-//          }
-//       }
-//    }
-// `

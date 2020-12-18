@@ -1,5 +1,12 @@
 import React from 'react'
-import { Loader, Text, ComboButton, PlusIcon, useTunnel } from '@dailykit/ui'
+import {
+   Loader,
+   Text,
+   ComboButton,
+   PlusIcon,
+   useTunnel,
+   Filler,
+} from '@dailykit/ui'
 import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import { FILE_LINKS, REMOVE_CSS_LINK, REMOVE_JS_LINK } from '../../graphql'
 import {
@@ -64,6 +71,14 @@ const Panel = () => {
          })
          setSelectedCssFiles([...cssResult])
          setSelectedJsFiles([...jsResult])
+         dispatch({
+            type: 'UPDATE_LINKED_FILE',
+            payload: {
+               path: state?.tabs[state?.currentTab]?.path,
+               linkedCss: cssLinks,
+               linkedJs: jsLinks,
+            },
+         })
       },
       skip: !state && !state?.tabs?.length,
    })
@@ -101,21 +116,9 @@ const Panel = () => {
    if (linkLoading) return <Loader />
    return (
       <PanelWrapper isSidePanelVisible={state.isSidePanelVisible}>
-         <Parent>
-            <Node
-               isOpen={node.linkCss.isOpen}
-               onClick={() =>
-                  setNode({
-                     ...node,
-                     linkCss: {
-                        ...state.linkCss,
-                        isOpen: !node.linkCss.isOpen,
-                     },
-                  })
-               }
-            >
-               <span>Link CSS Files </span>
-               <Icon
+         {state?.tabs[state?.currentTab]?.path.split('.').pop() === 'html' ? (
+            <Parent>
+               <Node
                   isOpen={node.linkCss.isOpen}
                   onClick={() =>
                      setNode({
@@ -127,58 +130,58 @@ const Panel = () => {
                      })
                   }
                >
-                  {node.linkCss.isOpen ? <ChevronUp /> : <ChevronDown />}
-               </Icon>
-            </Node>
-
-            {node.linkCss.isOpen && (
-               <Fold>
-                  <ComboButton
-                     type="outline"
-                     size="sm"
-                     onClick={() => openCssTunnel(1)}
+                  <span>Link CSS Files </span>
+                  <Icon
+                     isOpen={node.linkCss.isOpen}
+                     onClick={() =>
+                        setNode({
+                           ...node,
+                           linkCss: {
+                              ...state.linkCss,
+                              isOpen: !node.linkCss.isOpen,
+                           },
+                        })
+                     }
                   >
-                     <PlusIcon />
-                     Add more files
-                  </ComboButton>
-                  <Children>
-                     <Text as="subtitle">Linked CSS</Text>
-                     {selectedCssFiles.map(file => {
-                        return (
-                           <Child key={file.id}>
-                              <span>{file.title}</span>
-                              <span
-                                 className="delete"
-                                 onClick={() =>
-                                    unlinkCss(
-                                       state?.tabs[state?.currentTab]?.id,
-                                       file.id
-                                    )
-                                 }
-                              >
-                                 <DeleteIcon color="black" />
-                              </span>
-                           </Child>
-                        )
-                     })}
-                  </Children>
-               </Fold>
-            )}
+                     {node.linkCss.isOpen ? <ChevronUp /> : <ChevronDown />}
+                  </Icon>
+               </Node>
 
-            <Node
-               isOpen={node.linkJs.isOpen}
-               onClick={() =>
-                  setNode({
-                     ...node,
-                     linkJs: {
-                        ...state.linkJs,
-                        isOpen: !node.linkJs.isOpen,
-                     },
-                  })
-               }
-            >
-               <span>Link JS Files </span>
-               <Icon
+               {node.linkCss.isOpen && (
+                  <Fold>
+                     <ComboButton
+                        type="outline"
+                        size="sm"
+                        onClick={() => openCssTunnel(1)}
+                     >
+                        <PlusIcon />
+                        Add more files
+                     </ComboButton>
+                     <Children>
+                        <Text as="subtitle">Linked CSS</Text>
+                        {selectedCssFiles.map(file => {
+                           return (
+                              <Child key={file.id}>
+                                 <span>{file.title}</span>
+                                 <span
+                                    className="delete"
+                                    onClick={() =>
+                                       unlinkCss(
+                                          state?.tabs[state?.currentTab]?.id,
+                                          file.id
+                                       )
+                                    }
+                                 >
+                                    <DeleteIcon color="black" />
+                                 </span>
+                              </Child>
+                           )
+                        })}
+                     </Children>
+                  </Fold>
+               )}
+
+               <Node
                   isOpen={node.linkJs.isOpen}
                   onClick={() =>
                      setNode({
@@ -190,57 +193,55 @@ const Panel = () => {
                      })
                   }
                >
-                  {node.linkJs.isOpen ? <ChevronUp /> : <ChevronDown />}
-               </Icon>
-            </Node>
-            {node.linkJs.isOpen && (
-               <Fold>
-                  <ComboButton
-                     type="outline"
-                     size="sm"
-                     onClick={() => openJsTunnel(1)}
+                  <span>Link JS Files </span>
+                  <Icon
+                     isOpen={node.linkJs.isOpen}
+                     onClick={() =>
+                        setNode({
+                           ...node,
+                           linkJs: {
+                              ...state.linkJs,
+                              isOpen: !node.linkJs.isOpen,
+                           },
+                        })
+                     }
                   >
-                     <PlusIcon />
-                     Add more Files
-                  </ComboButton>
-                  <Children>
-                     <Text as="subtitle">Linked JS</Text>
-                     {selectedJsFiles.map(file => {
-                        return (
-                           <Child key={file.id}>
-                              <span>{file.title}</span>
-                              <span className="delete">
-                                 <DeleteIcon color="black" />
-                              </span>
-                           </Child>
-                        )
-                     })}
-                  </Children>
-               </Fold>
-            )}
-         </Parent>
-         {/* <>
-            <Dropdown
-               options={cssOptions}
-               title="Link CSS file"
-               values={selectedCssFiles}
-               onChange={option => cssSelectedOption(option)}
+                     {node.linkJs.isOpen ? <ChevronUp /> : <ChevronDown />}
+                  </Icon>
+               </Node>
+               {node.linkJs.isOpen && (
+                  <Fold>
+                     <ComboButton
+                        type="outline"
+                        size="sm"
+                        onClick={() => openJsTunnel(1)}
+                     >
+                        <PlusIcon />
+                        Add more Files
+                     </ComboButton>
+                     <Children>
+                        <Text as="subtitle">Linked JS</Text>
+                        {selectedJsFiles.map(file => {
+                           return (
+                              <Child key={file.id}>
+                                 <span>{file.title}</span>
+                                 <span className="delete">
+                                    <DeleteIcon color="black" />
+                                 </span>
+                              </Child>
+                           )
+                        })}
+                     </Children>
+                  </Fold>
+               )}
+            </Parent>
+         ) : (
+            <Filler
+               message="No HTML file is selected"
+               width="250px"
+               height="250px"
             />
-            <Spacer size="16px" />
-            <Dropdown
-               options={jsOptions}
-               title="Link JS file"
-               values={selectedJsFiles}
-               onChange={option => setSelectedJsFiles(option)}
-            />
-            <Dropdown
-               type="multi"
-               options={cssOptions}
-               searchedOption={searchedOption}
-               selectedOption={cssSelectedOption}
-               placeholder="type what you're looking for..."
-            />
-         </> */}
+         )}
 
          <LinkCssTunnel
             tunnels={cssTunnels}

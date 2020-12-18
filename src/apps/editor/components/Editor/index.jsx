@@ -169,7 +169,7 @@ const Editor = ({ path }) => {
       wordWrap: true,
       quickSuggestions: true,
       autoIndent: true,
-      contextmenu: false,
+      contextmenu: true,
       formatOnType: true,
       highlightActiveIndentGuide: true,
       quickSuggestionsDelay: 100,
@@ -186,6 +186,22 @@ const Editor = ({ path }) => {
    const setDarkTheme = () => {
       setIsDark(!isDark)
    }
+
+   // const langFormatProvider = {
+   //    provideDocumentFormattingEdits(model, options, token) {
+   //       return [
+   //          {
+   //             text: YourFormatter(model.getValue()), // put formatted text here
+   //             range: model.getFullModelRange(),
+   //          },
+   //       ]
+   //    },
+   // }
+   // const languageId = language
+   // monaco.languages.registerDocumentFormattingEditProvider(
+   //    languageId,
+   //    langFormatProvider
+   // )
    // const templateAreas = ()=>{
    //    let area = ''
    //    if(state.isHistoryVisible ){
@@ -226,6 +242,7 @@ const Editor = ({ path }) => {
                draft={draft}
                lastSaved={file.lastSaved}
                isBuilderOpen={val => setIsWebBuilderOpen(val)}
+               language={language}
             />
 
             {!isWebBuilderOpen ? (
@@ -239,13 +256,13 @@ const Editor = ({ path }) => {
                   editorDidMount={handleEditorDidMount}
                />
             ) : (
-               // <div style={{ width: 'calc(100% - 1px)' }}>
                <WebBuilder
                   content={editorRef.current.getValue()}
                   onChangeContent={updatedCode => setCode(updatedCode)}
-                  isWebBuilderOpen={isWebBuilderOpen}
+                  path={state?.tabs[state?.currentTab]?.path}
+                  linkedCss={state?.tabs[state?.currentTab]?.linkedCss}
+                  linkedJs={state?.tabs[state?.currentTab]?.linkedJs}
                />
-               // </div>
             )}
             {state.isHistoryVisible && Object.keys(file).length > 0 && (
                <History

@@ -62,6 +62,8 @@ const FileExplorer = () => {
                      ''
                   ),
                   id: data.editor_file[0].id,
+                  linkedCss: data.editor_file[0].linkedCssFiles,
+                  linkedJs: data.editor_file[0].linkedJsFiles,
                },
             })
          }
@@ -74,21 +76,6 @@ const FileExplorer = () => {
          setData(files.children)
       }
    }, [queryData])
-
-   // React.useEffect(() => {
-   //    const file = fileData || {}
-   //    // if (Object.keys(file).length !== 0) {
-   //    //    console.log(file.editor_file)
-   //    // }
-   //    if (
-   //       Object.keys(file).length !== 0 &&
-   //       file.constructor === Object &&
-   //       file.editor_file.length > 0
-   //    ) {
-   //       log
-   //       setFileId(file.editor_file[0].id)
-   //    }
-   // }, [fileData])
 
    const onToggle = node => {
       const mutated = toggleNode(data, node)

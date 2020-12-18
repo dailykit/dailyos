@@ -79,6 +79,25 @@ const reducers = (state, action) => {
          }
          return storeState(newState)
       }
+      case 'UPDATE_LINKED_FILE': {
+         if (state.tabs.some(tab => tab.path === action.payload.path)) {
+            const tabId =
+               state.tabs.findIndex(tab => tab.path === action.payload.path) >=
+                  0 &&
+               state.tabs.findIndex(tab => tab.path === action.payload.path)
+            const tabs = state.tabs
+            tabs[tabId] = {
+               ...tabs[tabId],
+               linkedCss: action.payload.linkedCss,
+               linkedJs: action.payload.linkedJs,
+            }
+            const newState = {
+               ...state,
+               tabs: tabs,
+            }
+            return storeState(newState)
+         }
+      }
       case 'ADD_TAB': {
          if (!state.tabs.some(tab => tab.path === action.payload.path)) {
             const newState = {
@@ -92,6 +111,8 @@ const reducers = (state, action) => {
                      version: null,
                      lastSaved: '',
                      id: action.payload.id,
+                     linkedCss: action.payload.linkedCss,
+                     linkedJs: action.payload.linkedJs,
                   },
                ],
                currentTab: state.tabs.length === 0 ? 0 : state.currentTab + 1,
