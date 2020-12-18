@@ -52,9 +52,9 @@ export const Flexible = styled.div`
 
 export const ResponsiveFlex = styled(Flex)`
    @media screen and (max-width: 767px) {
-      padding: 0px 10px;
+      width: calc(100vw - 20px);
    }
    @media screen and (min-width: 768px) {
-      padding: 0px 40px;
+      width: calc(100vw - 64px);
    }
 `

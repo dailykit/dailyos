@@ -135,10 +135,12 @@ const CollectionsListing = () => {
          title: 'Actions',
          headerFilter: false,
          headerSort: false,
+         hozAlign: 'center',
          formatter: reactFormatter(
             <DeleteCollection onDelete={deleteCollectionHandler} />
          ),
          headerHozAlign: 'center',
+         width: 100,
       },
    ]
 
