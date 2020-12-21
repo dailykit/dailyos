@@ -1422,6 +1422,9 @@ export const QUERIES = {
                dropoffWindow: deliveryInfo(path: "dropoff.window")
                customer: deliveryInfo(path: "dropoff.dropoffInfo")
                deliveryCompany: deliveryInfo(path: "deliveryCompany")
+               cart: orderCart {
+                  transactionId
+               }
                orderMealKitProducts(
                   where: { orderModifierId: { _is_null: true } }
                ) {

@@ -98,6 +98,10 @@ export const Details = ({ order }) => {
             </header>
             <main>
                <StyledStat>
+                  <span>Item Total</span>
+                  <span>{currencyFmt(Number(order.itemTotal) || 0)}</span>
+               </StyledStat>
+               <StyledStat>
                   <span>{t(address.concat('tax'))}</span>
                   <span>{currencyFmt(Number(order.tax) || 0)}</span>
                </StyledStat>
@@ -112,6 +116,10 @@ export const Details = ({ order }) => {
                <StyledStat>
                   <span>{t(address.concat('total'))}</span>
                   <span>{currencyFmt(Number(order.amountPaid) || 0)}</span>
+               </StyledStat>
+               <StyledStat>
+                  <span style={{ flexShrink: 0 }}>Payment Id: </span>
+                  <span>{order?.cart?.transactionId || 'N/A'}</span>
                </StyledStat>
             </main>
          </Styles.Accordian>
