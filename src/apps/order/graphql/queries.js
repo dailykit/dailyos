@@ -10,7 +10,6 @@ export const QUERIES = {
             order(id: $id) {
                id
                created_at
-               deliveryInfo
                orderStatus
                paymentStatus
                tax
@@ -21,6 +20,10 @@ export const QUERIES = {
                deliveryPrice
                transactionId
                fulfillmentType
+               pickup: deliveryInfo(path: "pickup.window")
+               restaurant: deliveryInfo(path: "pickup.pickupInfo")
+               dropoff: deliveryInfo(path: "dropoff.window")
+               customer: deliveryInfo(path: "dropoff.dropoffInfo")
                total_mealkits: orderMealKitProducts_aggregate(
                   where: { assemblyStationId: $assemblyStationId }
                ) {
@@ -1649,6 +1652,7 @@ export const QUERIES = {
                   deviceName
                }
                attachedLabelPrinters {
+                  printNodeId
                   labelPrinter {
                      name
                      state
@@ -1656,6 +1660,7 @@ export const QUERIES = {
                   }
                }
                attachedKotPrinters {
+                  printNodeId
                   kotPrinter {
                      name
                      state
