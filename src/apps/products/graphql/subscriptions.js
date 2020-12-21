@@ -539,6 +539,7 @@ export const S_COMBO_PRODUCT = gql`
          name
          description
          tags
+         price
          isValid
          isPublished
          assets
