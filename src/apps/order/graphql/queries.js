@@ -2,6 +2,19 @@ import gql from 'graphql-tag'
 
 export const QUERIES = {
    ORDER: {
+      SOURCE: gql`
+         query orderSource($orderId: oid!) {
+            orderSource: order_thirdPartyOrder(
+               where: { order: { id: { _eq: $orderId } } }
+            ) {
+               id
+               thirdPartyCompany {
+                  title
+                  imageUrl
+               }
+            }
+         }
+      `,
       DETAILS: gql`
          subscription order(
             $id: oid!
@@ -9,17 +22,26 @@ export const QUERIES = {
          ) {
             order(id: $id) {
                id
-               created_at
-               orderStatus
-               paymentStatus
                tax
+               source
                discount
                itemTotal
                isAccepted
                isRejected
+               created_at
+               deliveryInfo
+               orderStatus
+               paymentStatus
                deliveryPrice
                transactionId
                fulfillmentType
+               thirdPartyOrderId
+               thirdPartyOrder {
+                  id
+                  thirdPartyOrderId
+                  products: parsedData(path: "items")
+                  emailContent: parsedData(path: "HtmlDocument")
+               }
                pickup: deliveryInfo(path: "pickup.window")
                restaurant: deliveryInfo(path: "pickup.pickupInfo")
                dropoff: deliveryInfo(path: "dropoff.window")
@@ -1376,18 +1398,24 @@ export const QUERIES = {
                where: $where
             ) {
                id
-               created_at
-               orderStatus
-               paymentStatus
                tax
                discount
                itemTotal
                amountPaid
-               deliveryPrice
+               created_at
                isAccepted
                isRejected
+               orderStatus
+               deliveryPrice
+               paymentStatus
                transactionId
                fulfillmentType
+               thirdPartyOrder {
+                  id
+                  thirdPartyOrderId
+                  products: parsedData(path: "items")
+               }
+               thirdPartyOrderId
                restaurant: deliveryInfo(path: "pickup.pickupInfo")
                customer: deliveryInfo(path: "dropoff.dropoffInfo")
                pickupWindow: deliveryInfo(path: "pickup.window")

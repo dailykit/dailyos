@@ -1,6 +1,6 @@
 import React from 'react'
-import { Filler } from '@dailykit/ui'
 import { toast } from 'react-toastify'
+import { Filler, Flex } from '@dailykit/ui'
 import styled from 'styled-components'
 import { useLocation } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
@@ -11,7 +11,7 @@ import { useOrder } from '../../context'
 import { useTabs } from '../../context/tabs'
 import { OrderListItem } from '../../components'
 import { logger } from '../../../../shared/utils'
-import { ErrorState, Flex, InlineLoader } from '../../../../shared/components'
+import { ErrorState, InlineLoader } from '../../../../shared/components'
 
 const Orders = () => {
    const location = useLocation()
@@ -81,15 +81,15 @@ const Orders = () => {
       setActive(1)
    }, [state.orders.where.orderStatus])
 
-   React.useEffect(() => {
-      if (!loading && error) {
-         logger(error)
-         toast.error('Failed to fetch order list!')
-         dispatch({ type: 'SET_ORDERS_STATUS', payload: false })
-         return <ErrorState message="Failed to fetch order list!" />
-      }
-   }, [loading, error])
-
+   if (loading) {
+      return <InlineLoader />
+   }
+   if (!loading && error) {
+      logger(error)
+      toast.error('Failed to fetch order list!')
+      dispatch({ type: 'SET_ORDERS_STATUS', payload: false })
+      return <ErrorState message="Failed to fetch order list!" />
+   }
    return (
       <div>
          <Flex
@@ -120,31 +120,26 @@ const Orders = () => {
                   ))}
             </Pagination>
          </Flex>
-         {state.orders.loading ? (
-            <InlineLoader />
-         ) : (
-            <section
-               style={{
-                  overflowY: 'auto',
-                  scrollBehavior: 'smooth',
-                  height: 'calc(100vh - 128px',
-               }}
-            >
-               {orders.length > 0 ? (
-                  orders.map((order, index) => (
-                     <OrderListItem
-                        order={order}
-                        key={order.id}
-                        containerId={`${
-                           index % 10 === 0 ? `${index / 10 + 1}` : ''
-                        }`}
-                     />
-                  ))
-               ) : (
-                  <Filler message="No orders available!" />
-               )}
-            </section>
-         )}
+         <Flex
+            as="section"
+            overflowY="auto"
+            height="calc(100vh - 128px)"
+            style={{ scrollBehavior: 'smooth' }}
+         >
+            {orders.length > 0 ? (
+               orders.map((order, index) => (
+                  <OrderListItem
+                     order={order}
+                     key={order.id}
+                     containerId={`${
+                        index % 10 === 0 ? `${index / 10 + 1}` : ''
+                     }`}
+                  />
+               ))
+            ) : (
+               <Filler message="No orders available!" />
+            )}
+         </Flex>
       </div>
    )
 }
