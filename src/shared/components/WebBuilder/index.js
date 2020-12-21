@@ -21,15 +21,18 @@ export default function Builder({
 }) {
    const editorRef = useRef()
    const linkedCssArray = linkedCss.map(file => {
-      const url = `https://test.dailykit.org/template/files${file.cssFile.path}`
-         .split(' ')
-         .join('%20')
+      let url = `https://test.dailykit.org/template/files${file.cssFile.path}`
+      if (/\s/.test(url)) {
+         url = url.split(' ').join('%20')
+      }
       return url
    })
    const linkedJsArray = linkedJs.map(file => {
-      return `https://test.dailykit.org/template/files${file.jsFile.path}`
-         .split(' ')
-         .join('%20')
+      let url = `https://test.dailykit.org/template/files${file.jsFile.path}`
+      if (/\s/.test(url)) {
+         url = url.split(' ').join('%20')
+      }
+      return url
    })
    const [mount, setMount] = useState(false)
 
@@ -81,7 +84,13 @@ export default function Builder({
    // Initialize the grapejs editor by passing config object
    useEffect(() => {
       console.log('editor initialize1')
-      const editor = grapesjs.init(config)
+      const editor = grapesjs.init({
+         ...config,
+         canvas: {
+            styles: linkedCssArray,
+            scripts: linkedJsArray,
+         },
+      })
       editorRef.current = editor
       setMount(true)
       return () => {
@@ -103,13 +112,13 @@ export default function Builder({
          })
       })
 
-      const head = editor.Canvas.getDocument().head
-      linkedCssArray.map(url => {
-         head.insertAdjacentHTML(
-            'beforeend',
-            `<link href=${url} rel="stylesheet">`
-         )
-      })
+      // editor.Canvas.getDocument().head.insertAdjacentHTML(
+      //    'beforeend',
+      //    '<link href="https://test.dailykit.org/template/files/Riofit%20Meals/css/style.css" rel="stylesheet" />'
+      // )
+      // linkedCssArray.map(url => {
+
+      // })
 
       //Adding a save button in webBuilder
       if (!editor.Panels.getButton('devices-c', 'save')) {
