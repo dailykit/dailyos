@@ -4,7 +4,12 @@ export const StyledWrapper = styled.div`
    > div {
       margin: 0 auto;
       max-width: 980px;
-      width: calc(100vw - 40px);
+      @media screen and (max-width: 767px) {
+         width: calc(100vw - 32px);
+      }
+      @media screen and (min-width: 768px) {
+         width: calc(100vw - 64px);
+      }
    }
 `
 
