@@ -119,8 +119,8 @@ export const Header = ({ order }) => {
             </StyledStatus>
             {!order.thirdPartyOrderId && (
                <>
-                  <Spacer size="16px" xAxis />
-                  <ReadyBy data={order?.pickupWindow} />
+                  {/* <Spacer size="16px" xAxis />
+                  <ReadyBy data={order?.pickupWindow} /> */}
                   <Spacer size="16px" xAxis />
                   <TimeSlot
                      type={order.fulfillmentType}
@@ -190,10 +190,18 @@ const ReadyBy = ({ data = {} }) => {
    )
 }
 
-const TimeSlot = ({ type, data: { pickup, dropoff } = {} }) => {
+const TimeSlot = ({ type, data: { pickup = {}, dropoff = {} } = {} }) => {
    const { t } = useTranslation()
 
-   const data = isPickup(type) ? pickup : dropoff
+   let startsAt = ''
+   let endsAt = ''
+   if (isPickup(type)) {
+      startsAt = pickup?.approved?.startsAt || ''
+      endsAt = pickup?.approved?.endsAt || ''
+   } else {
+      startsAt = dropoff?.requested?.startsAt || ''
+      endsAt = dropoff?.requested?.endsAt || ''
+   }
    return (
       <StyledStatus>
          <span>
@@ -203,23 +211,23 @@ const TimeSlot = ({ type, data: { pickup, dropoff } = {} }) => {
             :&nbsp;
          </span>
          <span>
-            {data?.approved?.startsAt
-               ? formatDate(data?.approved?.startsAt, {
+            {startsAt
+               ? formatDate(startsAt, {
                     month: 'short',
                     day: 'numeric',
                     year: 'numeric',
                  })
                : 'N/A'}
             ,&nbsp;
-            {data?.approved?.startsAt
-               ? formatDate(data?.approved?.startsAt, {
+            {startsAt
+               ? formatDate(startsAt, {
                     minute: 'numeric',
                     hour: 'numeric',
                  })
                : 'N/A'}
             -
-            {data?.approved?.endsAt
-               ? formatDate(data?.approved?.endsAt, {
+            {endsAt
+               ? formatDate(endsAt, {
                     minute: 'numeric',
                     hour: 'numeric',
                  })
