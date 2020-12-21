@@ -318,8 +318,9 @@ const Order = () => {
                   </Text>
                </Flex>
                {!isThirdParty && (
-                  <>
-                     <Spacer size="32px" xAxis />
+                <>
+                 {/* 
+                    <Spacer size="32px" xAxis />
                      <Flex as="section" container alignItems="center">
                         <Flex container alignItems="center">
                            <Text as="h4">{t(address.concat('ready by'))}</Text>
@@ -327,31 +328,24 @@ const Order = () => {
                         </Flex>
                         <Text as="p">
                            &nbsp;:&nbsp;
-                           {order?.deliveryInfo?.pickup?.window?.approved
-                              ?.startsAt
+                           {order?.deliveryInfo?.pickup?.window?.approved?.startsAt
                               ? formatDate(
                                    order?.deliveryInfo?.pickup?.window?.approved
                                       ?.startsAt
                                 )
                               : 'N/A'}
                         </Text>
-                     </Flex>
-                     <Spacer size="32px" xAxis />
-                     <Flex as="section" container alignItems="center">
-                        {isPickup(order?.fulfillmentType) ? (
-                           <TimeSlot
-                              type={order?.fulfillmentType}
-                              data={order?.deliveryInfo?.pickup}
-                           />
-                        ) : (
-                           <TimeSlot
-                              type={order?.fulfillmentType}
-                              data={order?.deliveryInfo?.dropoff}
-                           />
-                        )}
-                     </Flex>
-                  </>
-               )}
+                     </Flex> 
+                  */}
+                   <Spacer size="32px" xAxis />
+                   <Flex as="section" container alignItems="center">
+                      <TimeSlot
+                         type={order?.fulfillmentType}
+                         data={{ pickup: order.pickup, dropoff: order.dropoff }}
+                      />
+                   </Flex>
+                </>
+               )} 
             </Flex>
          </Flex>
          <Spacer size="16px" />
@@ -544,7 +538,16 @@ const Order = () => {
 
 export default Order
 
-const TimeSlot = ({ type, data = {} }) => {
+const TimeSlot = ({ type, data: { pickup = {}, dropoff = {} } = {} }) => {
+   let startsAt = ''
+   let endsAt = ''
+   if (isPickup(type)) {
+      startsAt = pickup?.approved?.startsAt || ''
+      endsAt = pickup?.approved?.endsAt || ''
+   } else {
+      startsAt = dropoff?.requested?.startsAt || ''
+      endsAt = dropoff?.requested?.endsAt || ''
+   }
    return (
       <Flex as="section" container alignItems="center">
          <Flex container alignItems="center">
@@ -553,23 +556,23 @@ const TimeSlot = ({ type, data = {} }) => {
          </Flex>
          <Text as="p">
             &nbsp;:&nbsp;
-            {data?.window?.approved?.startsAt
-               ? formatDate(data?.window?.approved?.startsAt, {
+            {startsAt
+               ? formatDate(startsAt, {
                     month: 'short',
                     day: 'numeric',
                     year: 'numeric',
                  })
                : 'N/A'}
             ,&nbsp;
-            {data?.window?.approved?.startsAt
-               ? formatDate(data?.window?.approved?.startsAt, {
+            {startsAt
+               ? formatDate(startsAt, {
                     minute: 'numeric',
                     hour: 'numeric',
                  })
                : 'N/A'}
             -
-            {data?.window?.approved?.endsAt
-               ? formatDate(data?.window?.approved?.endsAt, {
+            {endsAt
+               ? formatDate(endsAt, {
                     minute: 'numeric',
                     hour: 'numeric',
                  })

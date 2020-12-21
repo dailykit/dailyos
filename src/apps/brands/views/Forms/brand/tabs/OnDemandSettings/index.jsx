@@ -11,6 +11,7 @@ import { logger } from '../../../../../../../shared/utils'
 import {
    BrandName,
    BrandLogo,
+   BrandContact,
    AppTitle,
    Favicon,
    Slides,
@@ -23,6 +24,10 @@ import {
    Coupons,
    Wallet,
    LoyaltyPoints,
+   Scripts,
+   NavLinks,
+   Referral,
+   FoodCostPercent,
 } from './sections'
 
 export const OnDemandSettings = () => {
@@ -78,6 +83,10 @@ export const OnDemandSettings = () => {
                <BrandName update={update} />
                <Spacer size="24px" />
                <BrandLogo update={update} />
+               <Spacer size="24px" />
+               <BrandContact update={update} />
+               <Spacer size="24px" />
+               <NavLinks update={update} />
             </ScrollSection.Section>
             <Spacer size="48px" />
             <ScrollSection.Section hash="visual" title="Visual">
@@ -103,11 +112,23 @@ export const OnDemandSettings = () => {
             </ScrollSection.Section>
             <Spacer size="48px" />
             <ScrollSection.Section hash="rewards" title="Rewards">
+               <Referral update={update} />
+               <Spacer size="24px" />
                <Coupons update={update} />
                <Spacer size="24px" />
                <Wallet update={update} />
                <Spacer size="24px" />
                <LoyaltyPoints update={update} />
+            </ScrollSection.Section>
+            <Spacer size="48px" />
+            <ScrollSection.Section hash="app" title="App">
+               <Scripts update={update} />
+               <Spacer size="24px" />
+            </ScrollSection.Section>
+            <Spacer size="48px" />
+            <ScrollSection.Section hash="sales" title="Sales">
+               <FoodCostPercent update={update} />
+               <Spacer size="24px" />
             </ScrollSection.Section>
             <Spacer size="48px" />
          </ScrollSection.Main>

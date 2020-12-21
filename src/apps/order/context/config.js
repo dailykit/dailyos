@@ -11,6 +11,7 @@ const ConfigContext = React.createContext()
 const initialState = {
    tunnel: { visible: false },
    stations: [],
+   current_station: {},
    scale: {
       weight_simulation: {
          app: 'order',
@@ -62,7 +63,8 @@ const reducers = (state, { type, payload }) => {
             ...state,
             [payload.field]: { ...state[payload.field], ...payload.value },
          }
-
+      case 'SET_CURRENT_STATION':
+         return { ...state, current_station: payload }
       case 'SET_STATIONS':
          return { ...state, stations: payload }
       case 'TOGGLE_TUNNEL':
@@ -186,6 +188,8 @@ export const ConfigProvider = ({ children }) => {
    React.useEffect(() => {
       if (!loading && !_.isEmpty(stations)) {
          dispatch({ type: 'SET_STATIONS', payload: stations })
+         const [station] = stations
+         dispatch({ type: 'SET_CURRENT_STATION', payload: station })
       }
    }, [loading, stations])
 
