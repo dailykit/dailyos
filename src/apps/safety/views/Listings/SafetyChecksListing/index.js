@@ -96,6 +96,7 @@ function DataTable({ data, addTab, deleteCheck }) {
          title: t(address.concat('time')),
          field: 'created_at',
          headerFilter: false,
+         width: 150,
          formatter: reactFormatter(<ShowDate />),
       },
       {
