@@ -101,6 +101,7 @@ export default function SupplierListing() {
          headerFilter: true,
          cssClass: 'RowClick',
          cellClick: openForm,
+         width: 150,
          headerTooltip: col => {
             const identifier = 'suppliers_listings_supplier_name'
             return tooltip(identifier)?.description || col.getDefinition().title
@@ -112,6 +113,7 @@ export default function SupplierListing() {
          headerFilter: false,
          headerSort: false,
          hozAlign: 'left',
+         width: 150,
          formatter: reactFormatter(<ContactPerson />),
          headerTooltip: col => {
             const identifier = 'suppliers_listings_contact_person'

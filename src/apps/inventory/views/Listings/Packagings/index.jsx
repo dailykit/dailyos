@@ -12,6 +12,7 @@ import {
 } from '@dailykit/ui'
 import React from 'react'
 import { toast } from 'react-toastify'
+import styled from 'styled-components'
 import { Tooltip } from '../../../../../shared/components/Tooltip'
 import { useTooltip } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
@@ -23,6 +24,15 @@ import { StyledWrapper } from '../styled'
 import tableOptions from '../tableOption'
 import PackagingTypeTunnel from './PackagingTypeTunnel'
 
+const StyledFlex = styled(Flex)`
+   @media screen and (max-width: 767px) {
+      flex-direction: column;
+      align-items: left;
+      button {
+         margin: 4px 8px;
+      }
+   }
+`
 export default function Packagings() {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const { addTab } = useTabs()
@@ -53,6 +63,7 @@ export default function Packagings() {
          headerFilter: true,
          cssClass: 'RowClick',
          cellClick: openForm,
+         width: 150,
          headerTooltip: col => {
             const identifier = 'packagings_listings_table_name'
             return tooltip(identifier)?.description || col.getDefinition().title
@@ -144,17 +155,18 @@ export default function Packagings() {
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
-            <Flex
+            <StyledFlex
                container
-               alignItems="center"
                justifyContent="space-between"
                padding="16px 0"
             >
                <Flex container alignItems="center">
-                  <Text as="h2">Packagings</Text>
+                  <Text as="h2" textAlign="left">
+                     Packagings
+                  </Text>
                   <Tooltip identifier="packagings_listings_header_title" />
                </Flex>
-               <Flex container>
+               <StyledFlex container>
                   <ComboButton
                      type="outline"
                      onClick={() =>
@@ -169,8 +181,8 @@ export default function Packagings() {
                      <AddIcon color="#fff" size={24} />
                      Add Packaging
                   </ComboButton>
-               </Flex>
-            </Flex>
+               </StyledFlex>
+            </StyledFlex>
             <Spacer size="16px" />
             <ReactTabulator
                ref={tableRef}

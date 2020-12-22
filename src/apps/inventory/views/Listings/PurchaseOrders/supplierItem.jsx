@@ -49,6 +49,7 @@ export default function ItemPurchaseOrders() {
          field: 'id',
          headerFilter: false,
          cssClass: 'RowClick',
+         width: 100,
          cellClick: openForm,
          headerTooltip: col => {
             const identifier = 'purchase_orders_listings_table_id'
@@ -59,6 +60,7 @@ export default function ItemPurchaseOrders() {
          title: 'Item',
          field: 'supplierItem.name',
          headerFilter: false,
+         width: 150,
          headerTooltip: col => {
             const identifier = 'purchase_orders_listings_table_item_name'
             return tooltip(identifier)?.description || col.getDefinition().title
@@ -69,6 +71,7 @@ export default function ItemPurchaseOrders() {
          field: 'orderQuantity',
          formatter: reactFormatter(<RenderQuantity />),
          headerFilter: false,
+         width: 150,
          headerTooltip: col => {
             const identifier = 'purchase_orders_listings_table_order-quantity'
             return tooltip(identifier)?.description || col.getDefinition().title
@@ -78,6 +81,7 @@ export default function ItemPurchaseOrders() {
          title: 'Created at',
          field: 'created_at',
          headerFilter: false,
+         width: 150,
          formatter: reactFormatter(<ShowDate />),
          headerTooltip: col => {
             const identifier = 'purchase_orders_listings_table_order-created_at'
