@@ -550,6 +550,7 @@ export const S_COMBO_PRODUCT = gql`
          ) {
             id
             label
+            options
             customizableProduct {
                id
                name
