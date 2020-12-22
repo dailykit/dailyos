@@ -7,6 +7,7 @@ export const state = {
       productType: '',
       componentId: '',
    },
+   product: {},
 }
 
 export const reducers = (state, { type, payload }) => {
@@ -18,6 +19,12 @@ export const reducers = (state, { type, payload }) => {
                ...state.meta,
                [payload.name]: payload.value,
             },
+         }
+      }
+      case 'PRODUCT': {
+         return {
+            ...state,
+            product: payload.value,
          }
       }
       default: {

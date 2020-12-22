@@ -29,9 +29,11 @@ import { logger } from '../../../../../../../../shared/utils'
 const address =
    'apps.menu.views.forms.product.comboproduct.tunnels.productstunnel.'
 
-const ProductsTunnel = ({ close }) => {
+const ProductsTunnel = ({ close, open }) => {
    const { t } = useTranslation()
-   const { productState } = React.useContext(ComboProductContext)
+   const { productState, productDispatch } = React.useContext(
+      ComboProductContext
+   )
 
    const [search, setSearch] = React.useState('')
    const [products, setProducts] = React.useState([])
@@ -141,25 +143,27 @@ const ProductsTunnel = ({ close }) => {
 
    const select = product => {
       selectOption('id', product.id)
-      updateComboProductComponent({
-         variables: {
-            id: productState.meta.componentId,
-            set: {
-               customizableProductId:
-                  productState.meta.productType === 'customizable'
-                     ? product.id
-                     : null,
-               inventoryProductId:
-                  productState.meta.productType === 'inventory'
-                     ? product.id
-                     : null,
-               simpleRecipeProductId:
-                  productState.meta.productType === 'simple'
-                     ? product.id
-                     : null,
-            },
-         },
-      })
+      productDispatch({ type: 'PRODUCT', payload: { value: product } })
+      open(4)
+      // updateComboProductComponent({
+      //    variables: {
+      //       id: productState.meta.componentId,
+      //       set: {
+      //          customizableProductId:
+      //             productState.meta.productType === 'customizable'
+      //                ? product.id
+      //                : null,
+      //          inventoryProductId:
+      //             productState.meta.productType === 'inventory'
+      //                ? product.id
+      //                : null,
+      //          simpleRecipeProductId:
+      //             productState.meta.productType === 'simple'
+      //                ? product.id
+      //                : null,
+      //       },
+      //    },
+      // })
    }
 
    React.useEffect(() => {

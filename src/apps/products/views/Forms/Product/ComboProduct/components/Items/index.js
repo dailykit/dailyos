@@ -28,7 +28,12 @@ import {
    DELETE_COMBO_PRODUCT_COMPONENT,
    UPDATE_COMBO_PRODUCT_COMPONENT,
 } from '../../../../../../graphql'
-import { ItemsTunnel, ProductsTunnel, ProductTypeTunnel } from '../../tunnels'
+import {
+   ItemsTunnel,
+   ProductOptionsTunnel,
+   ProductsTunnel,
+   ProductTypeTunnel,
+} from '../../tunnels'
 
 const address = 'apps.menu.views.forms.product.comboproduct.components.items.'
 
@@ -37,7 +42,7 @@ const Items = ({ state }) => {
    const { addTab } = useTabs()
    const { productDispatch } = React.useContext(ComboProductContext)
 
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(4)
 
    const open = id => {
       productDispatch({
@@ -115,7 +120,14 @@ const Items = ({ state }) => {
                <ProductTypeTunnel close={closeTunnel} open={openTunnel} />
             </Tunnel>
             <Tunnel layer={3}>
-               <ProductsTunnel state={state} close={closeTunnel} />
+               <ProductsTunnel
+                  state={state}
+                  close={closeTunnel}
+                  open={openTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={4}>
+               <ProductOptionsTunnel state={state} close={closeTunnel} />
             </Tunnel>
          </Tunnels>
          {state.comboProductComponents?.length ? (
