@@ -1,4 +1,3 @@
-
 export const useDnd = () => {
    const initiatePriority = data => {
       let item = []
@@ -7,10 +6,34 @@ export const useDnd = () => {
          item[0].priority = 1000000
       }
       if (data.length > 1) {
-         const nullPriorityData = data.filter(d => d.priority === null)
+         const nullPriorityData = data.filter(
+            d => d.priority === null || d.priority === 0
+         )
          if (nullPriorityData.length === 1) {
             item = nullPriorityData
-            item[0].priority = 0
+            if (
+               data[data.length - nullPriorityData.length - 1].priority === 0
+            ) {
+               let lastItemPriority =
+                  data[data.length - nullPriorityData.length - 2].priority / 2
+               data[data.length - nullPriorityData.length - 1].priority =
+                  data[data.length - nullPriorityData.length - 2].priority / 2
+               for (let i in nullPriorityData) {
+                  if (i === nullPriorityData.length - 1) {
+                     item[i].priority = 0
+                     break
+                  } else {
+                     lastItemPriority = lastItemPriority / 2
+                     item[i].priority = lastItemPriority
+                     item[nullPriorityData.length - 1].priority = 0
+                  }
+               }
+               item = nullPriorityData
+               item[0].priority = 0
+            } else {
+               item = nullPriorityData
+               item[0].priority = 0
+            }
          }
          if (nullPriorityData.length > 1) {
             item = nullPriorityData
@@ -25,24 +48,22 @@ export const useDnd = () => {
                   }
                }
             } else {
+               let lastItemPriority =
+                  data[data.length - nullPriorityData.length - 1].priority
                for (let i in nullPriorityData) {
-                  const lastItemPriority =
-                     data[data.length - nullPriorityData.length - 1].priority
-                     if(lastItemPriority === 0){
-                        data[data.length - nullPriorityData.length - 1].priority =
-                     }
                   if (i === nullPriorityData.length - 1) {
                      item[i].priority = 0
                      break
                   } else {
-                     item[i].priority = lastItemPriority / Math.pow(2, i)
+                     lastItemPriority = lastItemPriority / 2
+                     item[i].priority = lastItemPriority
                      item[nullPriorityData.length - 1].priority = 0
                   }
                }
             }
          }
-         return item
       }
+      return item
    }
 
    return { initiatePriority }
