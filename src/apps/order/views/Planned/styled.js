@@ -1,10 +1,15 @@
 import styled from 'styled-components'
 
 export const Wrapper = styled.div`
-   padding-top: 12px;
+   height: 100%;
+   [data-reach-tab-list] {
+      height: 40px;
+      display: flex;
+      align-items: flex-end;
+   }
    [data-reach-tab-panels] {
       overflow-y: auto;
-      height: calc(100vh - 124px);
+      height: calc(100% - 40px);
    }
    [data-reach-tab-panel] {
       padding: 16px;

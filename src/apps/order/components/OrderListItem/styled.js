@@ -4,7 +4,7 @@ export const Styles = {
    Status: styled.div(
       ({ status }) => css`
          top: -3px;
-         right: -8px;
+         right: -3px;
          color: #fff;
          height: 32px;
          cursor: pointer;
@@ -52,7 +52,6 @@ export const Styles = {
             grid-area: header;
          }
          > section {
-            overflow-y: auto;
             grid-area: section;
             height: calc(240px - 83px);
          }
