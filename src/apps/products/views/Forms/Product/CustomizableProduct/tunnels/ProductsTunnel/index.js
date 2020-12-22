@@ -10,7 +10,7 @@ import {
    Tag,
    TagGroup,
    TunnelHeader,
-   useMultiList,
+   useSingleList,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -27,16 +27,14 @@ import {
 } from '../../../../../../graphql'
 import { TunnelBody } from '../styled'
 
-const address =
-   'apps.menu.views.forms.product.customizableproduct.tunnels.productstunnel.'
-
-const ProductsTunnel = ({ state, close }) => {
-   const { t } = useTranslation()
-   const { productState } = React.useContext(CustomizableProductContext)
+const ProductsTunnel = ({ close, open }) => {
+   const { productState, productDispatch } = React.useContext(
+      CustomizableProductContext
+   )
 
    const [search, setSearch] = React.useState('')
    const [products, setProducts] = React.useState([])
-   const [list, selected, selectOption] = useMultiList(products)
+   const [list, current, selectOption] = useSingleList(products)
 
    // Queries for fetching products
    const [
@@ -92,41 +90,19 @@ const ProductsTunnel = ({ state, close }) => {
       fetchPolicy: 'cache-and-network',
    })
 
-   const [
-      createCustomizableProductOptions,
-      { loading: inFlight },
-   ] = useMutation(CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS, {
-      onCompleted: () => {
-         toast.success(t(address.concat('products added!')))
-         close(2)
-         close(1)
-      },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-   })
-
-   const save = () => {
-      if (inFlight) return
-      const objects = selected.map(product => {
-         return {
-            customizableProductId: state.id,
-            inventoryProductId:
-               productState.meta.itemType === 'inventory' ? product.id : null,
-            simpleRecipeProductId:
-               productState.meta.itemType === 'simple' ? product.id : null,
-         }
-      })
-      createCustomizableProductOptions({
-         variables: {
-            objects,
+   const select = option => {
+      selectOption('id', option.id)
+      productDispatch({
+         type: 'PRODUCT',
+         payload: {
+            value: option,
          },
       })
+      open(3)
    }
 
    React.useEffect(() => {
-      if (productState.meta.itemType === 'inventory') {
+      if (productState.meta.productType === 'inventory') {
          fetchInventoryProducts()
       } else {
          fetchSimpleRecipeProducts()
@@ -136,17 +112,7 @@ const ProductsTunnel = ({ state, close }) => {
    return (
       <>
          <TunnelHeader
-            title={`${t(address.concat('select'))} 
-                  ${
-                     productState.meta.itemType === 'inventory'
-                        ? t(address.concat('inventory products'))
-                        : t(address.concat('simple recipe products'))
-                  } 
-                  ${t(address.concat('to add'))}`}
-            right={{
-               action: save,
-               title: inFlight ? 'Adding...' : 'Add',
-            }}
+            title="Select Product to Add"
             close={() => close(2)}
             tooltip={
                <Tooltip identifier="customizable_product_products_tunnel" />
@@ -159,28 +125,15 @@ const ProductsTunnel = ({ state, close }) => {
                <>
                   {products.length ? (
                      <List>
-                        <ListSearch
-                           onChange={value => setSearch(value)}
-                           placeholder={t(
-                              address.concat("type what you're looking for")
-                           )}
-                        />
-                        {selected.length > 0 && (
-                           <TagGroup style={{ margin: '8px 0' }}>
-                              {selected.map(option => (
-                                 <Tag
-                                    key={option.id}
-                                    title={option.title}
-                                    onClick={() =>
-                                       selectOption('id', option.id)
-                                    }
-                                 >
-                                    {option.title}
-                                 </Tag>
-                              ))}
-                           </TagGroup>
+                        {Object.keys(current).length > 0 ? (
+                           <ListItem type="SSL1" title={current.title} />
+                        ) : (
+                           <ListSearch
+                              onChange={value => setSearch(value)}
+                              placeholder="type what you’re looking for..."
+                           />
                         )}
-                        <ListHeader type="MSL1" label="Products" />
+                        <ListHeader type="SSL1" label="Products" />
                         <ListOptions>
                            {list
                               .filter(option =>
@@ -188,15 +141,11 @@ const ProductsTunnel = ({ state, close }) => {
                               )
                               .map(option => (
                                  <ListItem
-                                    type="MSL1"
+                                    type="SSL1"
                                     key={option.id}
                                     title={option.title}
-                                    onClick={() =>
-                                       selectOption('id', option.id)
-                                    }
-                                    isActive={selected.find(
-                                       item => item.id === option.id
-                                    )}
+                                    isActive={option.id === current.id}
+                                    onClick={() => select(option)}
                                  />
                               ))}
                         </ListOptions>

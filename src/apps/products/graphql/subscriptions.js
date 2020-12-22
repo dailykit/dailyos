@@ -506,6 +506,7 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
                   isActive
                   price
                   simpleRecipeYield {
+                     id
                      yield
                   }
                   type

@@ -4,8 +4,9 @@ export const CustomizableProductContext = React.createContext()
 
 export const state = {
    meta: {
-      itemType: 'inventory',
+      productType: 'inventory',
    },
+   product: {},
 }
 
 export const reducers = (state, { type, payload }) => {
@@ -17,6 +18,12 @@ export const reducers = (state, { type, payload }) => {
                ...state.meta,
                [payload.name]: payload.value,
             },
+         }
+      }
+      case 'PRODUCT': {
+         return {
+            ...state,
+            product: payload.value,
          }
       }
       default: {
