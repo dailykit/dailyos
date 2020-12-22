@@ -24,7 +24,7 @@ import {
 } from '../../../../graphql'
 import { StyledRule } from '../styled'
 import validator from '../validators'
-import { Assets, Description, Products } from './components'
+import { Assets, Description, Products, Pricing } from './components'
 
 const address = 'apps.menu.views.forms.product.customizableproduct.'
 
@@ -215,6 +215,10 @@ export default function CustomizableProduct() {
             <Flex as="section" container>
                <Flex flex="2">
                   <Description state={state} />
+               </Flex>
+               <Spacer xAxis size="16px" />
+               <Flex flex="1">
+                  <Pricing updateProduct={updateProduct} state={state} />
                </Flex>
                <Spacer xAxis size="16px" />
                <Flex flex="1">

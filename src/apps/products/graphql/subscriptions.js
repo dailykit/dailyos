@@ -471,6 +471,7 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
          isPublished
          description
          tags
+         price
          assets
          isPopupAllowed
          customizableProductOptions(
@@ -478,6 +479,7 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
             order_by: { created_at: desc }
          ) {
             id
+            options
             inventoryProduct {
                id
                name
