@@ -64,18 +64,18 @@ export const InventorySection = ({ setInventoryTotal }) => {
                <Product key={product.id}>
                   <Flex container alignItems="center">
                      <ProductTitle
-                        isLink
+                        // isLink
                         tabIndex="-1"
                         role="button"
                         title={product.name}
-                        onClick={() => openProduct(product.id, product.name)}
-                        onKeyPress={e =>
-                           e.charCode === 13 &&
-                           openProduct(product.id, product.name)
-                        }
+                        // onClick={() => openProduct(product.id, product.name)}
+                        // onKeyPress={e =>
+                        //    e.charCode === 13 &&
+                        //    openProduct(product.id, product.name)
+                        // }
                      >
-                        <NewTabIcon size={16} color="#b9b9b9" />
-                        &nbsp;
+                        {/* <NewTabIcon size={16} color="#b9b9b9" />
+                        &nbsp; */}
                         {product.name}
                      </ProductTitle>
                      <h3 title={product.products.aggregate.count}>
