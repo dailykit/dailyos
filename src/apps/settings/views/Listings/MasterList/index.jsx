@@ -9,6 +9,7 @@ import { MASTER } from '../../../graphql'
 import { useTabs } from '../../../context'
 import { Tooltip } from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers'
+import { ResponsiveFlex } from '../styled'
 
 const address = 'apps.settings.views.listings.masterlist.'
 
@@ -123,7 +124,7 @@ const MasterList = () => {
    }, [tab, addTab])
 
    return (
-      <Flex margin="0 auto" maxWidth="1280px" width="calc(100vw - 64px)">
+      <ResponsiveFlex margin="0 auto" maxWidth="1280px">
          <Flex
             container
             as="header"
@@ -143,7 +144,7 @@ const MasterList = () => {
             rowClick={rowClick}
             options={tableOptions}
          />
-      </Flex>
+      </ResponsiveFlex>
    )
 }
 
