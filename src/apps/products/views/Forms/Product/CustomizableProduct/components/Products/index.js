@@ -19,6 +19,7 @@ import {
    SectionTabPanels,
    SectionTabPanel,
    Flex,
+   Spacer,
 } from '@dailykit/ui'
 
 import { ItemInfo, StyledTable } from './styled'
@@ -30,7 +31,11 @@ import {
 } from '../../tunnels'
 import { Tooltip } from '../../../../../../../../shared/components'
 import { DeleteIcon, LinkIcon } from '../../../../../../assets/icons'
-import { currencyFmt, logger } from '../../../../../../../../shared/utils'
+import {
+   currencyFmt,
+   logger,
+   isIncludedInOptions,
+} from '../../../../../../../../shared/utils'
 import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
 import {
    DELETE_CUSTOMIZABLE_PRODUCT_OPTION,
@@ -44,6 +49,8 @@ const address =
 const Products = ({ state }) => {
    const { t } = useTranslation()
    const { addTab } = useTabs()
+
+   const { productDispatch } = React.useContext(CustomizableProductContext)
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
 
@@ -95,12 +102,22 @@ const Products = ({ state }) => {
       })
    }
 
-   const isIncludedInOptions = (id, options) => {
-      const option = options.find(({ optionId }) => optionId === id)
-      if (option) {
-         return true
-      }
-      return false
+   const editOptions = option => {
+      productDispatch({
+         type: 'OPTIONS_MODE',
+         payload: {
+            type: 'edit',
+            options: option.options,
+            optionId: option.id,
+         },
+      })
+      productDispatch({
+         type: 'PRODUCT',
+         payload: {
+            value: option.inventoryProduct || option.simpleRecipeProduct,
+         },
+      })
+      openTunnel(3)
    }
 
    return (
@@ -190,14 +207,23 @@ const Products = ({ state }) => {
                                  <LinkIcon color="#00A7E1" stroke={1.5} />
                               </IconButton>
                            </Flex>
-                           {Boolean(state.default !== option.id) && (
+                           <Flex container>
+                              {Boolean(state.default !== option.id) && (
+                                 <TextButton
+                                    type="ghost"
+                                    onClick={() => makeDefault(option.id)}
+                                 >
+                                    Set as Default
+                                 </TextButton>
+                              )}
+                              <Spacer xAxis size="16px" />
                               <TextButton
-                                 type="ghost"
-                                 onClick={() => makeDefault(option.id)}
+                                 type="outline"
+                                 onClick={() => editOptions(option)}
                               >
-                                 Set as Default
+                                 Edit Options
                               </TextButton>
-                           )}
+                           </Flex>
                         </Flex>
                         <StyledTable>
                            <thead>
