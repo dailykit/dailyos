@@ -167,3 +167,14 @@ export const LINK_CSS_FILES = gql`
       }
    }
 `
+
+export const UPDATE_LINK_CSS_FILES = gql`
+   mutation MyMutation($objects: [editor_cssFileLinks_update_input!]!) {
+      update_editor_cssFileLinks(objects: $objects) {
+         returning {
+            cssFileId
+            guiFileId
+         }
+      }
+   }
+`

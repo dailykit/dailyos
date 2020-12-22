@@ -8,7 +8,12 @@ import {
    Filler,
 } from '@dailykit/ui'
 import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
-import { FILE_LINKS, REMOVE_CSS_LINK, REMOVE_JS_LINK } from '../../graphql'
+import {
+   FILE_LINKS,
+   REMOVE_CSS_LINK,
+   REMOVE_JS_LINK,
+   UPDATE_LINK_CSS_FILES,
+} from '../../graphql'
 import {
    ChevronUp,
    ChevronDown,
@@ -25,9 +30,12 @@ import {
    Child,
 } from './style'
 import { LinkCssTunnel, LinkJsTunnel } from './Tunnel'
+import { DragNDrop } from '../../../../shared/components'
+import { useDnd } from '../../../../shared/components/DragNDrop/useDnd'
 import { toast } from 'react-toastify'
 
 const Panel = () => {
+   const { initiatePriority } = useDnd()
    const { state, dispatch } = React.useContext(Context)
    const [cssTunnels, openCssTunnel, closeCssTunnel] = useTunnel(1)
    const [jsTunnels, openJsTunnel, closeJsTunnel] = useTunnel(1)
@@ -35,11 +43,25 @@ const Panel = () => {
    const [selectedJsFiles, setSelectedJsFiles] = React.useState([])
    const [node, setNode] = React.useState({
       linkCss: {
+         id: 'linkCss',
          isOpen: false,
       },
       linkJs: {
+         id: 'linkJs',
          isOpen: false,
       },
+   })
+
+   //mutation for initial priority update
+   const [initialPriorityUpdate] = useMutation(UPDATE_LINK_CSS_FILES, {
+      onCompleted: () => {
+         toast.success('Priority updated!')
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         console.log(error)
+      },
+      refetchQueries: ['FILE_LINKS'],
    })
 
    //query to load all files in dropdown
@@ -59,6 +81,7 @@ const Panel = () => {
                title: file.cssFile.fileName,
                value: file.cssFile.path,
                type: file.cssFile.fileType,
+               priority: file.priority,
             }
          })
          const jsResult = jsLinks.map(file => {
@@ -67,7 +90,22 @@ const Panel = () => {
                title: file.jsFile.fileName,
                value: file.jsFile.path,
                type: file.jsFile.fileType,
+               priority: file.priority,
             }
+         })
+         const initalPriorityArray = initiatePriority(cssResult)
+         const priorityResult = initalPriorityArray.map(file => {
+            return {
+               guiFileId: state?.tabs[state?.currentTab].id,
+               cssFileId: file?.id,
+               priority: file?.priority,
+            }
+         })
+         console.log(priorityResult)
+         initialPriorityUpdate({
+            variables: {
+               objects: priorityResult,
+            },
          })
          setSelectedCssFiles([...cssResult])
          setSelectedJsFiles([...jsResult])
@@ -159,24 +197,29 @@ const Panel = () => {
                      </ComboButton>
                      <Children>
                         <Text as="subtitle">Linked CSS</Text>
-                        {selectedCssFiles.map(file => {
-                           return (
-                              <Child key={file.id}>
-                                 <span>{file.title}</span>
-                                 <span
-                                    className="delete"
-                                    onClick={() =>
-                                       unlinkCss(
-                                          state?.tabs[state?.currentTab]?.id,
-                                          file.id
-                                       )
-                                    }
-                                 >
-                                    <DeleteIcon color="black" />
-                                 </span>
-                              </Child>
-                           )
-                        })}
+                        <DragNDrop
+                           list={selectedCssFiles}
+                           droppableId={node.linkJs.id}
+                        >
+                           {selectedCssFiles.map(file => {
+                              return (
+                                 <Child>
+                                    <span>{file.title}</span>
+                                    <span
+                                       className="delete"
+                                       onClick={() =>
+                                          unlinkCss(
+                                             state?.tabs[state?.currentTab]?.id,
+                                             file.id
+                                          )
+                                       }
+                                    >
+                                       <DeleteIcon color="black" />
+                                    </span>
+                                 </Child>
+                              )
+                           })}
+                        </DragNDrop>
                      </Children>
                   </Fold>
                )}
