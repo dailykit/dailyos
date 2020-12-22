@@ -12,6 +12,7 @@ import { logger } from '../../../../../shared/utils'
 import { useTooltip } from '../../../../../shared/providers'
 import { InlineLoader, Tooltip } from '../../../../../shared/components'
 import { AddIcon, DeleteIcon } from '../../../../../shared/assets/icons'
+import { ResponsiveFlex } from '../styled'
 
 const StationsListing = () => {
    const { tooltip } = useTooltip()
@@ -83,7 +84,7 @@ const StationsListing = () => {
    }, [tab, addTab])
 
    return (
-      <Flex margin="0 auto" maxWidth="1280px" width="calc(100vw - 64px)">
+      <ResponsiveFlex margin="0 auto" maxWidth="1280px">
          <Flex
             container
             as="header"
@@ -126,7 +127,7 @@ const StationsListing = () => {
                }}
             />
          )}
-      </Flex>
+      </ResponsiveFlex>
    )
 }
 

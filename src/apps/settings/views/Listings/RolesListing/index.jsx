@@ -11,6 +11,7 @@ import { useTabs } from '../../../context'
 import { logger } from '../../../../../shared/utils'
 import { useTooltip } from '../../../../../shared/providers'
 import { InlineLoader, Tooltip } from '../../../../../shared/components'
+import { ResponsiveFlex } from '../styled'
 
 const RolesListing = () => {
    const tableRef = React.useRef()
@@ -65,7 +66,7 @@ const RolesListing = () => {
    ]
 
    return (
-      <Flex margin="0 auto" maxWidth="1280px" width="calc(100vw - 64px)">
+      <ResponsiveFlex margin="0 auto" maxWidth="1280px">
          <Flex
             container
             as="header"
@@ -91,7 +92,7 @@ const RolesListing = () => {
                }}
             />
          )}
-      </Flex>
+      </ResponsiveFlex>
    )
 }
 
