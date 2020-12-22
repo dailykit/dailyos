@@ -1,35 +1,21 @@
 import React from 'react'
 import { useLazyQuery, useMutation } from '@apollo/react-hooks'
-import {
-   Filler,
-   List,
-   ListHeader,
-   ListItem,
-   ListOptions,
-   ListSearch,
-   TunnelHeader,
-   useSingleList,
-   Flex,
-   Form,
-   Text,
-   Spacer,
-} from '@dailykit/ui'
-import { useTranslation } from 'react-i18next'
+import { Flex, Form, Spacer, Text, TunnelHeader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import {
    InlineLoader,
    Tooltip,
 } from '../../../../../../../../shared/components'
+import { logger } from '../../../../../../../../shared/utils'
 import { ComboProductContext } from '../../../../../../context/product/comboProduct'
 import {
    INVENTORY_PRODUCT_OPTIONS,
    SIMPLE_RECIPE_PRODUCT_OPTIONS,
    UPDATE_COMBO_PRODUCT_COMPONENT,
 } from '../../../../../../graphql'
-import { TunnelBody } from '../styled'
-import { logger } from '../../../../../../../../shared/utils'
-import { OptionWrapper } from './styled'
 import validators from '../../../validators'
+import { TunnelBody } from '../styled'
+import { OptionWrapper } from './styled'
 
 const ProductOptionsTunnel = ({ close }) => {
    const { productState } = React.useContext(ComboProductContext)
@@ -203,10 +189,7 @@ const ProductOptionsTunnel = ({ close }) => {
                variables: {
                   id: productState.meta.componentId,
                   set: {
-                     customizableProductId:
-                        productState.productType === 'customizable'
-                           ? productState.product.id
-                           : null,
+                     customizableProductId: null,
                      inventoryProductId:
                         productState.meta.productType === 'inventory'
                            ? productState.product.id

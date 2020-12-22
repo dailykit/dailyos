@@ -126,11 +126,11 @@ const ProductsTunnel = ({ close, open }) => {
    })
 
    // Mutation
-   const [updateComboProductComponent] = useMutation(
+   const [updateComboProductComponent, { loading: saving }] = useMutation(
       UPDATE_COMBO_PRODUCT_COMPONENT,
       {
          onCompleted: () => {
-            toast.success(t(address.concat('product added!')))
+            toast.success('Product added!')
             close(3)
             close(2)
          },
@@ -143,27 +143,21 @@ const ProductsTunnel = ({ close, open }) => {
 
    const select = product => {
       selectOption('id', product.id)
-      productDispatch({ type: 'PRODUCT', payload: { value: product } })
-      open(4)
-      // updateComboProductComponent({
-      //    variables: {
-      //       id: productState.meta.componentId,
-      //       set: {
-      //          customizableProductId:
-      //             productState.meta.productType === 'customizable'
-      //                ? product.id
-      //                : null,
-      //          inventoryProductId:
-      //             productState.meta.productType === 'inventory'
-      //                ? product.id
-      //                : null,
-      //          simpleRecipeProductId:
-      //             productState.meta.productType === 'simple'
-      //                ? product.id
-      //                : null,
-      //       },
-      //    },
-      // })
+      if (product.__typename.includes('customizableProduct')) {
+         updateComboProductComponent({
+            variables: {
+               id: productState.meta.componentId,
+               set: {
+                  customizableProductId: product.id,
+                  inventoryProductId: null,
+                  simpleRecipeProductId: null,
+               },
+            },
+         })
+      } else {
+         productDispatch({ type: 'PRODUCT', payload: { value: product } })
+         open(4)
+      }
    }
 
    React.useEffect(() => {
