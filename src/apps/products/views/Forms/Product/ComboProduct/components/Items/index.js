@@ -28,7 +28,12 @@ import {
    DELETE_COMBO_PRODUCT_COMPONENT,
    UPDATE_COMBO_PRODUCT_COMPONENT,
 } from '../../../../../../graphql'
-import { ItemsTunnel, ProductsTunnel, ProductTypeTunnel } from '../../tunnels'
+import {
+   ItemsTunnel,
+   ProductOptionsTunnel,
+   ProductsTunnel,
+   ProductTypeTunnel,
+} from '../../tunnels'
 
 const address = 'apps.menu.views.forms.product.comboproduct.components.items.'
 
@@ -37,7 +42,7 @@ const Items = ({ state }) => {
    const { addTab } = useTabs()
    const { productDispatch } = React.useContext(ComboProductContext)
 
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(4)
 
    const open = id => {
       productDispatch({
@@ -105,6 +110,14 @@ const Items = ({ state }) => {
       }
    }
 
+   const isIncludedInOptions = (id, options) => {
+      const option = options.find(({ optionId }) => optionId === id)
+      if (option) {
+         return true
+      }
+      return false
+   }
+
    return (
       <>
          <Tunnels tunnels={tunnels}>
@@ -115,7 +128,14 @@ const Items = ({ state }) => {
                <ProductTypeTunnel close={closeTunnel} open={openTunnel} />
             </Tunnel>
             <Tunnel layer={3}>
-               <ProductsTunnel state={state} close={closeTunnel} />
+               <ProductsTunnel
+                  state={state}
+                  close={closeTunnel}
+                  open={openTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={4}>
+               <ProductOptionsTunnel state={state} close={closeTunnel} />
             </Tunnel>
          </Tunnels>
          {state.comboProductComponents?.length ? (
@@ -271,8 +291,24 @@ const Items = ({ state }) => {
                                                       option.type === 'mealKit'
                                                 )
                                                 .filter(
-                                                   option => option.isActive
+                                                   option =>
+                                                      option.isActive &&
+                                                      isIncludedInOptions(
+                                                         option.id,
+                                                         component.options
+                                                      )
                                                 )
+                                                .map(option => {
+                                                   const op = component.options.find(
+                                                      ({ optionId }) =>
+                                                         optionId === option.id
+                                                   )
+                                                   return {
+                                                      ...option,
+                                                      price: op.price,
+                                                      discount: op.discount,
+                                                   }
+                                                })
                                                 .map((option, i) => (
                                                    <tr key={option.id}>
                                                       <td>
@@ -298,36 +334,25 @@ const Items = ({ state }) => {
                                                       <td>
                                                          {currencyFmt(
                                                             Number(
-                                                               option.price[0]
-                                                                  .value
+                                                               option.price
                                                             ) || 0
                                                          )}
                                                       </td>
                                                       <td>
-                                                         {
-                                                            option.price[0]
-                                                               .discount
-                                                         }
-                                                         %
+                                                         {option.discount}%
                                                       </td>
                                                       <td>
                                                          {currencyFmt(
                                                             Number(
                                                                (
                                                                   parseFloat(
-                                                                     option
-                                                                        .price[0]
-                                                                        .value
+                                                                     option.price
                                                                   ) -
                                                                   parseFloat(
-                                                                     option
-                                                                        .price[0]
-                                                                        .value
+                                                                     option.price
                                                                   ) *
                                                                      (parseFloat(
-                                                                        option
-                                                                           .price[0]
-                                                                           .discount
+                                                                        option.discount
                                                                      ) /
                                                                         100)
                                                                ).toFixed(2)
@@ -343,8 +368,24 @@ const Items = ({ state }) => {
                                                       'readyToEat'
                                                 )
                                                 .filter(
-                                                   option => option.isActive
+                                                   option =>
+                                                      option.isActive &&
+                                                      isIncludedInOptions(
+                                                         option.id,
+                                                         component.options
+                                                      )
                                                 )
+                                                .map(option => {
+                                                   const op = component.options.find(
+                                                      ({ optionId }) =>
+                                                         optionId === option.id
+                                                   )
+                                                   return {
+                                                      ...option,
+                                                      price: op.price,
+                                                      discount: op.discount,
+                                                   }
+                                                })
                                                 .map((option, i) => (
                                                    <tr key={option.id}>
                                                       <td>
@@ -368,78 +409,90 @@ const Items = ({ state }) => {
                                                          }
                                                       </td>
                                                       <td>
-                                                         $
-                                                         {option.price[0].value}{' '}
+                                                         {currencyFmt(
+                                                            Number(
+                                                               option.price
+                                                            ) || 0
+                                                         )}
                                                       </td>
                                                       <td>
-                                                         {
-                                                            option.price[0]
-                                                               .discount
-                                                         }{' '}
-                                                         %
+                                                         {option.discount}%
                                                       </td>
                                                       <td>
-                                                         $
-                                                         {(
-                                                            parseFloat(
-                                                               option.price[0]
-                                                                  .value
-                                                            ) -
-                                                            parseFloat(
-                                                               option.price[0]
-                                                                  .value
-                                                            ) *
-                                                               (parseFloat(
-                                                                  option
-                                                                     .price[0]
-                                                                     .discount
-                                                               ) /
-                                                                  100)
-                                                         ).toFixed(2) || ''}
+                                                         {currencyFmt(
+                                                            Number(
+                                                               (
+                                                                  parseFloat(
+                                                                     option.price
+                                                                  ) -
+                                                                  parseFloat(
+                                                                     option.price
+                                                                  ) *
+                                                                     (parseFloat(
+                                                                        option.discount
+                                                                     ) /
+                                                                        100)
+                                                               ).toFixed(2)
+                                                            ) || 0
+                                                         )}
                                                       </td>
                                                    </tr>
                                                 ))}
                                           </>
                                        ) : (
                                           <>
-                                             {component.inventoryProduct.inventoryProductOptions.map(
-                                                option => (
+                                             {component.inventoryProduct.inventoryProductOptions
+                                                .filter(option =>
+                                                   isIncludedInOptions(
+                                                      option.id,
+                                                      component.options
+                                                   )
+                                                )
+                                                .map(option => {
+                                                   const op = component.options.find(
+                                                      ({ optionId }) =>
+                                                         optionId === option.id
+                                                   )
+                                                   return {
+                                                      ...option,
+                                                      price: op.price,
+                                                      discount: op.discount,
+                                                   }
+                                                })
+                                                .map(option => (
                                                    <tr key={option.id}>
                                                       <td>{option.label}</td>
                                                       <td>{option.quantity}</td>
                                                       <td>
-                                                         $
-                                                         {option.price[0].value}{' '}
+                                                         {currencyFmt(
+                                                            Number(
+                                                               option.price
+                                                            ) || 0
+                                                         )}
                                                       </td>
                                                       <td>
-                                                         {
-                                                            option.price[0]
-                                                               .discount
-                                                         }{' '}
-                                                         %
+                                                         {option.discount}%
                                                       </td>
                                                       <td>
-                                                         $
-                                                         {(
-                                                            parseFloat(
-                                                               option.price[0]
-                                                                  .value
-                                                            ) -
-                                                            parseFloat(
-                                                               option.price[0]
-                                                                  .value
-                                                            ) *
-                                                               (parseFloat(
-                                                                  option
-                                                                     .price[0]
-                                                                     .discount
-                                                               ) /
-                                                                  100)
-                                                         ).toFixed(2) || ''}
+                                                         {currencyFmt(
+                                                            Number(
+                                                               (
+                                                                  parseFloat(
+                                                                     option.price
+                                                                  ) -
+                                                                  parseFloat(
+                                                                     option.price
+                                                                  ) *
+                                                                     (parseFloat(
+                                                                        option.discount
+                                                                     ) /
+                                                                        100)
+                                                               ).toFixed(2)
+                                                            ) || 0
+                                                         )}
                                                       </td>
                                                    </tr>
-                                                )
-                                             )}
+                                                ))}
                                           </>
                                        )}
                                     </tbody>
