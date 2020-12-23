@@ -6,7 +6,10 @@ import {
    InlineLoader,
    Tooltip,
 } from '../../../../../../../../shared/components'
-import { logger } from '../../../../../../../../shared/utils'
+import {
+   logger,
+   isIncludedInOptions,
+} from '../../../../../../../../shared/utils'
 import { ComboProductContext } from '../../../../../../context/product/comboProduct'
 import {
    INVENTORY_PRODUCT_OPTIONS,
@@ -21,25 +24,42 @@ const ProductOptionsTunnel = ({ close }) => {
    const { productState } = React.useContext(ComboProductContext)
    const [options, setOptions] = React.useState([])
 
+   const transformAndSetOptions = React.useCallback(options => {
+      const updatedOptions = options.map(option => {
+         const isAlreadySelected = isIncludedInOptions(
+            option.id,
+            productState.selectedOptions
+         )
+         return {
+            ...option,
+            isSelected:
+               productState.optionsMode === 'edit' ? isAlreadySelected : false,
+            price: {
+               value: isAlreadySelected
+                  ? productState.selectedOptions.find(
+                       op => op.optionId === option.id
+                    ).price
+                  : 0,
+               meta: { isValid: true, isTouched: false, errors: [] },
+            },
+            discount: {
+               value: isAlreadySelected
+                  ? productState.selectedOptions.find(
+                       op => op.optionId === option.id
+                    ).discount
+                  : 0,
+               meta: { isValid: true, isTouched: false, errors: [] },
+            },
+         }
+      })
+      setOptions([...updatedOptions])
+   }, [])
+
    const [
       fetchInventoryProductOptions,
       { loading: inventoryProductOptionsLoading },
    ] = useLazyQuery(INVENTORY_PRODUCT_OPTIONS, {
-      onCompleted: data => {
-         const updatedOptions = data.inventoryProductOptions.map(option => ({
-            ...option,
-            isSelected: false,
-            price: {
-               value: 0,
-               meta: { isValid: true, isTouched: false, errors: [] },
-            },
-            discount: {
-               value: 0,
-               meta: { isValid: true, isTouched: false, errors: [] },
-            },
-         }))
-         setOptions([...updatedOptions])
-      },
+      onCompleted: data => transformAndSetOptions(data.inventoryProductOptions),
       onError: error => {
          toast.error('Could not fetch options!')
          logger(error)
@@ -50,21 +70,8 @@ const ProductOptionsTunnel = ({ close }) => {
       fetchSimpleRecipeProductOptions,
       { loading: simpleRecipeProductOptionsLoading },
    ] = useLazyQuery(SIMPLE_RECIPE_PRODUCT_OPTIONS, {
-      onCompleted: data => {
-         const updatedOptions = data.simpleRecipeProductOptions.map(option => ({
-            ...option,
-            isSelected: false,
-            price: {
-               value: 0,
-               meta: { isValid: true, isTouched: false, errors: [] },
-            },
-            discount: {
-               value: 0,
-               meta: { isValid: true, isTouched: false, errors: [] },
-            },
-         }))
-         setOptions([...updatedOptions])
-      },
+      onCompleted: data =>
+         transformAndSetOptions(data.simpleRecipeProductOptions),
       onError: error => {
          toast.error('Could not fetch options!')
          logger(error)
@@ -76,7 +83,11 @@ const ProductOptionsTunnel = ({ close }) => {
       UPDATE_COMBO_PRODUCT_COMPONENT,
       {
          onCompleted: () => {
-            toast.success('Product added!')
+            toast.success(
+               productState.optionsMode === 'edit'
+                  ? 'Options updated!'
+                  : 'Product added!'
+            )
             close(4)
             close(3)
             close(2)
@@ -185,23 +196,36 @@ const ProductOptionsTunnel = ({ close }) => {
                   discount: +discount.value,
                })
             )
-            updateComboProductComponent({
-               variables: {
-                  id: productState.meta.componentId,
-                  set: {
-                     customizableProductId: null,
-                     inventoryProductId:
-                        productState.meta.productType === 'inventory'
-                           ? productState.product.id
-                           : null,
-                     simpleRecipeProductId:
-                        productState.meta.productType === 'simple'
-                           ? productState.product.id
-                           : null,
-                     options: finalOptions,
+            if (productState.optionsMode === 'edit') {
+               console.log(productState.componentId)
+               updateComboProductComponent({
+                  variables: {
+                     id: productState.componentId,
+                     set: {
+                        options: finalOptions,
+                     },
                   },
-               },
-            })
+               })
+            }
+            if (productState.optionsMode === 'add') {
+               updateComboProductComponent({
+                  variables: {
+                     id: productState.meta.componentId,
+                     set: {
+                        customizableProductId: null,
+                        inventoryProductId:
+                           productState.meta.productType === 'inventory'
+                              ? productState.product.id
+                              : null,
+                        simpleRecipeProductId:
+                           productState.meta.productType === 'simple'
+                              ? productState.product.id
+                              : null,
+                        options: finalOptions,
+                     },
+                  },
+               })
+            }
          } else {
             throw Error('Selected options must be valid!')
          }
@@ -213,13 +237,24 @@ const ProductOptionsTunnel = ({ close }) => {
    return (
       <>
          <TunnelHeader
-            title="Select Options to Add"
+            title={
+               productState.optionsMode === 'edit'
+                  ? 'Edit Options'
+                  : 'Select Options to Add'
+            }
             close={() => close(4)}
             tooltip={
                <Tooltip identifier="combo_product_product_options_tunnel" />
             }
             right={{
-               title: saving ? 'Adding...' : 'Add',
+               title:
+                  productState.optionsMode === 'edit'
+                     ? saving
+                        ? 'Updating...'
+                        : 'Update'
+                     : saving
+                     ? 'Adding...'
+                     : 'Add',
                action: () => !saving && save(),
             }}
          />
