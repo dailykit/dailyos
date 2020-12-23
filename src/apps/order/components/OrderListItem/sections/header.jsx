@@ -27,14 +27,6 @@ export const Header = ({ order }) => {
    const { addTab } = useTabs()
    const { t } = useTranslation()
    const { dispatch } = useOrder()
-   const { loading, data: { orderSource = [] } = {} } = useQuery(
-      QUERIES.ORDER.SOURCE,
-      {
-         variables: {
-            orderId: order.id,
-         },
-      }
-   )
    const createTab = () => {
       addTab(`ORD${order.id}`, `/apps/order/orders/${order.id}`)
    }
@@ -132,46 +124,6 @@ export const Header = ({ order }) => {
                </>
             )}
          </Flex>
-         <Spacer size="16px" xAxis />
-         {!loading && order.thirdPartyOrderId && !isEmpty(orderSource) && (
-            <>
-               <Flex container alignItems="center">
-                  <StyledStatus>
-                     <span>Source:</span>
-                  </StyledStatus>
-                  <Flex
-                     as="span"
-                     container
-                     width="24px"
-                     height="24px"
-                     alignItems="center"
-                     justifyContent="center"
-                  >
-                     <img
-                        alt={orderSource[0]?.thirdPartyCompany?.title}
-                        src={orderSource[0]?.thirdPartyCompany?.imageUrl}
-                        style={{
-                           height: '100%',
-                           width: '100%',
-                           objectFit: 'contain',
-                        }}
-                     />
-                  </Flex>
-                  <Spacer size="8px" xAxis />
-                  <Text as="p" style={{ textTransform: 'capitalize' }}>
-                     {orderSource[0]?.thirdPartyCompany?.title}
-                  </Text>
-               </Flex>
-               <Spacer size="16px" xAxis />
-               <Flex container alignItems="center">
-                  <StyledStatus>
-                     <span>Third Party Order Id:</span>
-                  </StyledStatus>
-                  <Spacer size="8px" xAxis />
-                  <Text as="p">{order.thirdPartyOrder?.thirdPartyOrderId}</Text>
-               </Flex>
-            </>
-         )}
       </Flex>
    )
 }

@@ -1399,6 +1399,7 @@ export const QUERIES = {
             ) {
                id
                tax
+               source
                discount
                itemTotal
                amountPaid
@@ -1412,6 +1413,7 @@ export const QUERIES = {
                fulfillmentType
                thirdPartyOrder {
                   id
+                  source
                   thirdPartyOrderId
                   products: parsedData(path: "items")
                }
@@ -1424,6 +1426,33 @@ export const QUERIES = {
                deliveryCompany: deliveryInfo(path: "deliveryCompany")
                cart: orderCart {
                   transactionId
+               }
+               brand {
+                  id
+                  onDemandName: onDemandSettings(
+                     where: {
+                        onDemandSetting: { identifier: { _eq: "Brand Name" } }
+                     }
+                  ) {
+                     name: value(path: "name")
+                  }
+                  onDemandLogo: onDemandSettings(
+                     where: {
+                        onDemandSetting: { identifier: { _eq: "Brand Logo" } }
+                     }
+                  ) {
+                     url: value(path: "url")
+                  }
+                  subscriptionSettings: subscriptionStoreSettings(
+                     where: {
+                        subscriptionStoreSetting: {
+                           identifier: { _eq: "theme-brand" }
+                        }
+                     }
+                  ) {
+                     name: value(path: "name")
+                     logo: value(path: "logo.url")
+                  }
                }
                orderMealKitProducts(
                   where: { orderModifierId: { _is_null: true } }

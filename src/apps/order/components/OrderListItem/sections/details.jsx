@@ -1,4 +1,5 @@
 import React from 'react'
+import { isEmpty, isNull } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { Flex, Text, Spacer } from '@dailykit/ui'
 
@@ -17,9 +18,87 @@ const address = 'apps.order.components.orderlistitem.'
 
 export const Details = ({ order }) => {
    const { t } = useTranslation()
+   const [brand, setBrand] = React.useState({
+      logo: '',
+      name: '',
+   })
    const [currentPanel, setCurrentPanel] = React.useState('customer')
+
+   React.useEffect(() => {
+      if (!isNull(order.brand) && !isEmpty(order.brand)) {
+         if (order.source === 'a-la-carte') {
+            if (!isEmpty(order.brand.onDemandName)) {
+               setBrand(brand => ({
+                  ...brand,
+                  name: order.brand.onDemandName[0].name,
+               }))
+            }
+            if (!isEmpty(order.brand.onDemandLogo)) {
+               setBrand(brand => ({
+                  ...brand,
+                  logo: order.brand.onDemandLogo[0].url,
+               }))
+            }
+         } else if (
+            order.source === 'subscription' &&
+            !isEmpty(order.brand.subscriptionSettings)
+         ) {
+            const { name = '', logo = '' } = order.brand.subscriptionSettings[0]
+            setBrand({ name, logo })
+         }
+      }
+   }, [order])
+
    return (
       <aside>
+         <Styles.Accordian isOpen={currentPanel === 'brand'}>
+            <header>
+               <Flex container alignItems="center">
+                  {brand.logo && (
+                     <>
+                        <Flex
+                           as="span"
+                           container
+                           width="24px"
+                           height="24px"
+                           alignItems="center"
+                           justifyContent="center"
+                        >
+                           <img
+                              alt={brand.name}
+                              src={brand.logo}
+                              style={{
+                                 height: '100%',
+                                 width: '100%',
+                                 objectFit: 'contain',
+                              }}
+                           />
+                        </Flex>
+                        <Spacer size="8px" xAxis />
+                     </>
+                  )}
+                  <Text as="p">{brand.name}</Text>
+               </Flex>
+               <ToggleButton
+                  type="brand"
+                  current={currentPanel}
+                  toggle={setCurrentPanel}
+               />
+            </header>
+            <main>
+               <StyledStat>
+                  <span>Source</span>
+                  <span>{order.source}</span>
+               </StyledStat>
+               <Spacer size="8px" />
+               {order.thirdPartyOrderId && (
+                  <StyledStat>
+                     <span>Third Party</span>
+                     <span>{order?.thirdPartyOrder?.source}</span>
+                  </StyledStat>
+               )}
+            </main>
+         </Styles.Accordian>
          <Styles.Accordian isOpen={currentPanel === 'customer'}>
             <header>
                <Text as="p">
