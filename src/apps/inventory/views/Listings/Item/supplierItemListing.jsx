@@ -38,7 +38,6 @@ export default function SupplierItemsListings({ tableRef }) {
          hozAlign: 'left',
          headerHozAlign: 'left',
          cssClass: 'RowClick',
-         width: 150,
          cellClick: openForm,
          headerTooltip: col => {
             const identifier = 'items_listings_item_name'
@@ -49,7 +48,6 @@ export default function SupplierItemsListings({ tableRef }) {
          title: 'Supplier',
          field: 'supplier.name',
          headerFilter: false,
-         width: 150,
          headerTooltip: col => {
             const identifier = 'items_listings_supplier'
             return tooltip(identifier)?.description || col.getDefinition().title
@@ -59,7 +57,6 @@ export default function SupplierItemsListings({ tableRef }) {
          title: 'Bulk Items count',
          field: 'bulkItems_aggregate.aggregate.count',
          headerFilter: false,
-         width: 150,
          headerTooltip: col => {
             const identifier = 'items_listings_supplier_item_bulkItemCount'
             return tooltip(identifier)?.description || col.getDefinition().title

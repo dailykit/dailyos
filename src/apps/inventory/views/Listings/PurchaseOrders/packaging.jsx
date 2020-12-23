@@ -49,7 +49,6 @@ export default function PackagingPurchaseOrders() {
          field: 'id',
          headerFilter: false,
          cssClass: 'RowClick',
-         width: 100,
          cellClick: openForm,
          headerTooltip: col => {
             const identifier = 'purchase_orders_listings_table_id'
@@ -60,7 +59,6 @@ export default function PackagingPurchaseOrders() {
          title: 'Packaging',
          field: 'packaging.name',
          headerFilter: true,
-         width: 150,
          headerTooltip: col => {
             const identifier = 'purchase_orders_listings_table_packaging_name'
             return tooltip(identifier)?.description || col.getDefinition().title
@@ -70,7 +68,6 @@ export default function PackagingPurchaseOrders() {
          title: 'Order quantity',
          field: 'orderQuantity',
          headerFilter: false,
-         width: 150,
          headerTooltip: col => {
             const identifier = 'purchase_orders_listings_table_order-quantity'
             return tooltip(identifier)?.description || col.getDefinition().title
@@ -80,7 +77,6 @@ export default function PackagingPurchaseOrders() {
          title: 'Created at',
          field: 'created_at',
          headerFilter: false,
-         width: 150,
          formatter: reactFormatter(<ShowDate />),
          headerTooltip: col => {
             const identifier = 'purchase_orders_listings_table_order-created_at'

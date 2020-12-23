@@ -54,7 +54,6 @@ export default function Packagings() {
          headerFilter: true,
          cssClass: 'RowClick',
          cellClick: openForm,
-         width: 150,
          headerTooltip: col => {
             const identifier = 'packagings_listings_table_name'
             return tooltip(identifier)?.description || col.getDefinition().title

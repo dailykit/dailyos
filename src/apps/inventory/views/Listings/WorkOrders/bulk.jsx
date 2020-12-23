@@ -51,7 +51,6 @@ export default function BulkWorkOrders() {
          headerFilter: false,
          cellClick: openForm,
          cssClass: 'RowClick',
-         width: 100,
          headerTooltip: col => {
             const identifier = 'work-orders_listings_table_id'
             return tooltip(identifier)?.description || col.getDefinition().title
@@ -64,7 +63,6 @@ export default function BulkWorkOrders() {
          formatter: reactFormatter(<ShowDate />),
          hozAlign: 'left',
          headerHozAlign: 'left',
-         width: 150,
          headerTooltip: col => {
             const identifier = 'work-orders_listings_table_scheduledOn'
             return tooltip(identifier)?.description || col.getDefinition().title
@@ -76,7 +74,6 @@ export default function BulkWorkOrders() {
          headerFilter: true,
          hozAlign: 'left',
          headerHozAlign: 'left',
-         width: 150,
          headerTooltip: col => {
             const identifier = 'work-orders_listings_table_user_assigned'
             return tooltip(identifier)?.description || col.getDefinition().title
@@ -88,7 +85,6 @@ export default function BulkWorkOrders() {
          headerFilter: true,
          hozAlign: 'left',
          headerHozAlign: 'left',
-         width: 150,
          headerTooltip: col => {
             const identifier = 'work-orders_listings_table_station_assigned'
             return tooltip(identifier)?.description || col.getDefinition().title
