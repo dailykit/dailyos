@@ -168,7 +168,7 @@ const Items = ({ state }) => {
                      </IconButton>
                   </SectionTabsListHeader>
                   {state.comboProductComponents.map(component => (
-                     <>
+                     <React.Fragment key={component.id}>
                         <Flex
                            container
                            alignItems="center"
@@ -227,7 +227,7 @@ const Items = ({ state }) => {
                               />
                            )}
                         </SectionTab>
-                     </>
+                     </React.Fragment>
                   ))}
                </SectionTabList>
                <SectionTabPanels>
