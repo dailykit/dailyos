@@ -12,7 +12,6 @@ import {
 } from '@dailykit/ui'
 import React from 'react'
 import { toast } from 'react-toastify'
-import styled from 'styled-components'
 import { Tooltip } from '../../../../../shared/components/Tooltip'
 import { useTooltip } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
@@ -23,16 +22,8 @@ import { PACKAGINGS_LISTINGS_SUBSCRIPTION } from '../../../graphql'
 import { StyledWrapper } from '../styled'
 import tableOptions from '../tableOption'
 import PackagingTypeTunnel from './PackagingTypeTunnel'
+import { HeaderFlex, StyledFlex } from './styled'
 
-const StyledFlex = styled(Flex)`
-   @media screen and (max-width: 767px) {
-      flex-direction: column;
-      align-items: left;
-      button {
-         margin: 4px 8px;
-      }
-   }
-`
 export default function Packagings() {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const { addTab } = useTabs()
@@ -155,17 +146,13 @@ export default function Packagings() {
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
-            <StyledFlex
-               container
-               justifyContent="space-between"
-               padding="16px 0"
-            >
-               <Flex container alignItems="center">
+            <StyledFlex container justifyContent="space-between">
+               <HeaderFlex container alignItems="center">
                   <Text as="h2" textAlign="left">
                      Packagings
                   </Text>
                   <Tooltip identifier="packagings_listings_header_title" />
-               </Flex>
+               </HeaderFlex>
                <StyledFlex container>
                   <ComboButton
                      type="outline"
