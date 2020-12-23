@@ -156,6 +156,14 @@ const ProductsTunnel = ({ close, open }) => {
          })
       } else {
          productDispatch({ type: 'PRODUCT', payload: { value: product } })
+         productDispatch({
+            type: 'OPTIONS_MODE',
+            payload: {
+               type: 'add',
+               componentId: undefined,
+               selectedOptions: [],
+            },
+         })
          open(4)
       }
    }

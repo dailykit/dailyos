@@ -6,6 +6,9 @@ export const state = {
    meta: {
       productType: 'inventory',
    },
+   optionsMode: 'add',
+   selectedOptions: [],
+   optionId: undefined,
    product: {},
 }
 
@@ -24,6 +27,14 @@ export const reducers = (state, { type, payload }) => {
          return {
             ...state,
             product: payload.value,
+         }
+      }
+      case 'OPTIONS_MODE': {
+         return {
+            ...state,
+            optionsMode: payload.type,
+            selectedOptions: payload.options,
+            optionId: payload.optionId,
          }
       }
       default: {

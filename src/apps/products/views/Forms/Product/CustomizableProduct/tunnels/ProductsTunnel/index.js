@@ -93,6 +93,14 @@ const ProductsTunnel = ({ close, open }) => {
    const select = option => {
       selectOption('id', option.id)
       productDispatch({
+         type: 'OPTIONS_MODE',
+         payload: {
+            type: 'add',
+            optionId: undefined,
+            selectedOptions: [],
+         },
+      })
+      productDispatch({
          type: 'PRODUCT',
          payload: {
             value: option,
