@@ -156,6 +156,7 @@ const CampaignListing = () => {
          field: 'name',
          headerFilter: true,
          hozAlign: 'left',
+         width: 150,
          headerTooltip: function (column) {
             const identifier = 'campaign_listing_name_column'
             return (

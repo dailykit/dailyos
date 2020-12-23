@@ -169,6 +169,7 @@ const CouponListing = () => {
          headerFilter: true,
          hozAlign: 'left',
          cssClass: 'rowClick',
+         width: 150,
          cellClick: (e, cell) => {
             rowClick(e, cell)
          },
