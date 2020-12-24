@@ -92,7 +92,7 @@ export const GET_FILE = gql`
          fileType
          id
          linkedCssFiles {
-            priority
+            position
             cssFile {
                path
                fileName
@@ -101,7 +101,7 @@ export const GET_FILE = gql`
             }
          }
          linkedJsFiles {
-            priority
+            position
             jsFile {
                path
                fileName
@@ -139,6 +139,13 @@ export const UPDATE_FILE = gql`
             success
             message
          }
+      }
+   }
+`
+export const PRIORITY_UPDATE = gql`
+   query PRIORITY_UPDATE($arg: jsonb!) {
+      editor_HandlePriority4(args: { arg: $arg }) {
+         id
       }
    }
 `

@@ -130,12 +130,9 @@ export const DELETE_RECORD = gql`
    }
 `
 export const REMOVE_CSS_LINK = gql`
-   mutation REMOVE_CSS_LINK($guiFileId: Int!, $cssFileId: Int!) {
+   mutation REMOVE_CSS_LINK($guiFileId: Int!, $id: Int!) {
       delete_editor_cssFileLinks(
-         where: {
-            guiFileId: { _eq: $guiFileId }
-            cssFileId: { _eq: $cssFileId }
-         }
+         where: { guiFileId: { _eq: $guiFileId }, id: { _eq: $id } }
       ) {
          returning {
             cssFileId
@@ -145,9 +142,9 @@ export const REMOVE_CSS_LINK = gql`
    }
 `
 export const REMOVE_JS_LINK = gql`
-   mutation REMOVE_JS_LINK($guiFileId: Int!, $jsFileId: Int!) {
+   mutation REMOVE_JS_LINK($guiFileId: Int!, $id: Int!) {
       delete_editor_jsFileLinks(
-         where: { guiFileId: { _eq: $guiFileId }, jsFileId: { _eq: $jsFileId } }
+         where: { guiFileId: { _eq: $guiFileId }, id: { _eq: $id } }
       ) {
          returning {
             jsFileId

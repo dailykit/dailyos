@@ -60,7 +60,6 @@ export default function LinkCss({
             objects: linkCssFiles,
          },
       })
-      console.log(linkCssFiles)
    }
 
    const selectedOptionHandler = options => {

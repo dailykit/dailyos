@@ -7,12 +7,18 @@ import {
    useTunnel,
    Filler,
 } from '@dailykit/ui'
-import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
+import {
+   useQuery,
+   useMutation,
+   useSubscription,
+   useLazyQuery,
+} from '@apollo/react-hooks'
 import {
    FILE_LINKS,
    REMOVE_CSS_LINK,
    REMOVE_JS_LINK,
    UPDATE_LINK_CSS_FILES,
+   PRIORITY_UPDATE,
 } from '../../graphql'
 import {
    ChevronUp,
@@ -53,7 +59,7 @@ const Panel = () => {
    })
 
    //mutation for initial priority update
-   const [initialPriorityUpdate] = useMutation(UPDATE_LINK_CSS_FILES, {
+   const [initialPriorityUpdate] = useLazyQuery(PRIORITY_UPDATE, {
       onCompleted: () => {
          toast.success('Priority updated!')
       },
@@ -61,7 +67,6 @@ const Panel = () => {
          toast.error('Something went wrong!')
          console.log(error)
       },
-      refetchQueries: ['FILE_LINKS'],
    })
 
    //query to load all files in dropdown
@@ -77,36 +82,59 @@ const Panel = () => {
          const jsLinks = editor_file[0].linkedJsFiles
          const cssResult = cssLinks.map(file => {
             return {
-               id: file.cssFile.id,
+               id: file.id,
+               cssFileId: file.cssFile.cssFileId,
                title: file.cssFile.fileName,
                value: file.cssFile.path,
                type: file.cssFile.fileType,
-               priority: file.priority,
+               position: file.position,
             }
          })
          const jsResult = jsLinks.map(file => {
             return {
-               id: file.jsFile.id,
+               id: file.id,
+               jsFileId: file.jsFile.jsFileId,
                title: file.jsFile.fileName,
                value: file.jsFile.path,
                type: file.jsFile.fileType,
-               priority: file.priority,
+               position: file.position,
             }
          })
-         const initalPriorityArray = initiatePriority(cssResult)
-         const priorityResult = initalPriorityArray.map(file => {
-            return {
-               guiFileId: state?.tabs[state?.currentTab].id,
-               cssFileId: file?.id,
-               priority: file?.priority,
-            }
-         })
-         console.log(priorityResult)
-         initialPriorityUpdate({
-            variables: {
-               objects: priorityResult,
-            },
-         })
+         if (cssResult.length > 0) {
+            console.log('cssResult1', cssResult)
+            const initialPriorityArray = initiatePriority({
+               tablename: 'cssFileLinks',
+               schemaname: 'editor',
+               data: cssResult,
+            })
+            // console.log(
+            //    'cssResult',
+            //    cssResult,
+            //    'initialPri',
+            //    initialPriorityArray
+            // )
+            // if (
+            //    initialPriorityArray.length > 0 &&
+            //    initialPriorityArray !== cssResult
+            // ) {
+            //    const priorityResult = initialPriorityArray.map(file => {
+            //       return {
+            //          id: file?.id,
+            //          position: file?.position,
+            //       }
+            //    })
+            //    console.log('cssResult2', priorityResult)
+            //    // initialPriorityUpdate({
+            //    //    variables: {
+            //    //       arg: {
+            //    //          tablename: 'cssFileLinks',
+            //    //          schemaname: 'editor',
+            //    //          data1: priorityResult,
+            //    //       },
+            //    //    },
+            //    // })
+            // }
+         }
          setSelectedCssFiles([...cssResult])
          setSelectedJsFiles([...jsResult])
          dispatch({
@@ -130,25 +158,22 @@ const Panel = () => {
          toast.error('Something went wrong!')
          console.log(error)
       },
-      refetchQueries: ['FILE_LINKS'],
    })
 
    const cssSelectedOption = option => {
-      console.log(option)
       setSelectedCssFiles(option)
    }
    const jsSelectedOption = option => {
       setSelectedJsFiles(option)
    }
 
-   const unlinkCss = (guiFileId, cssFileId) => {
+   const unlinkCss = (guiFileId, id) => {
       removeLinkCss({
          variables: {
             guiFileId,
-            cssFileId,
+            id,
          },
       })
-      // console.log(guiFileId, cssFileId)
    }
 
    if (linkLoading) return <Loader />
@@ -203,7 +228,7 @@ const Panel = () => {
                         >
                            {selectedCssFiles.map(file => {
                               return (
-                                 <Child>
+                                 <Child key={file.id}>
                                     <span>{file.title}</span>
                                     <span
                                        className="delete"
