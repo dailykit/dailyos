@@ -16,7 +16,7 @@ export default function LinkCss({
    const [cssOptions, setCssOptions] = React.useState([])
    const [linkCssFiles, setLinkCssFiles] = React.useState([])
    const files = linkCssIds.map(file => {
-      return file.id
+      return file.cssFileId
    })
 
    // query for loading css files in dropdown

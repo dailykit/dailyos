@@ -14,7 +14,7 @@ export const FILE_LINKS = gql`
                cssFileId: id
             }
          }
-         linkedJsFiles {
+         linkedJsFiles(order_by: { position: desc_nulls_last }) {
             position
             id
             jsFile {

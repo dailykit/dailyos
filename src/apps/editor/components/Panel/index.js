@@ -101,40 +101,20 @@ const Panel = () => {
             }
          })
          if (cssResult.length > 0) {
-            console.log('cssResult1', cssResult)
-            const initialPriorityArray = initiatePriority({
+            initiatePriority({
                tablename: 'cssFileLinks',
                schemaname: 'editor',
                data: cssResult,
             })
-            // console.log(
-            //    'cssResult',
-            //    cssResult,
-            //    'initialPri',
-            //    initialPriorityArray
-            // )
-            // if (
-            //    initialPriorityArray.length > 0 &&
-            //    initialPriorityArray !== cssResult
-            // ) {
-            //    const priorityResult = initialPriorityArray.map(file => {
-            //       return {
-            //          id: file?.id,
-            //          position: file?.position,
-            //       }
-            //    })
-            //    console.log('cssResult2', priorityResult)
-            //    // initialPriorityUpdate({
-            //    //    variables: {
-            //    //       arg: {
-            //    //          tablename: 'cssFileLinks',
-            //    //          schemaname: 'editor',
-            //    //          data1: priorityResult,
-            //    //       },
-            //    //    },
-            //    // })
-            // }
          }
+         if (jsResult.length > 0) {
+            initiatePriority({
+               tablename: 'jsFileLinks',
+               schemaname: 'editor',
+               data: jsResult,
+            })
+         }
+
          setSelectedCssFiles([...cssResult])
          setSelectedJsFiles([...jsResult])
          dispatch({
@@ -160,6 +140,17 @@ const Panel = () => {
       },
    })
 
+   //mutation for removing linked css
+   const [removeLinkJs] = useMutation(REMOVE_JS_LINK, {
+      onCompleted: () => {
+         toast.success('File unlinked successfully!')
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         console.log(error)
+      },
+   })
+
    const cssSelectedOption = option => {
       setSelectedCssFiles(option)
    }
@@ -169,6 +160,14 @@ const Panel = () => {
 
    const unlinkCss = (guiFileId, id) => {
       removeLinkCss({
+         variables: {
+            guiFileId,
+            id,
+         },
+      })
+   }
+   const unlinkJs = (guiFileId, id) => {
+      removeLinkJs({
          variables: {
             guiFileId,
             id,
@@ -224,7 +223,9 @@ const Panel = () => {
                         <Text as="subtitle">Linked CSS</Text>
                         <DragNDrop
                            list={selectedCssFiles}
-                           droppableId={node.linkCss.id}
+                           droppableId="linkCssDroppableId"
+                           tablename="cssFileLinks"
+                           schemaname="editor"
                         >
                            {selectedCssFiles.map(file => {
                               return (
@@ -289,16 +290,31 @@ const Panel = () => {
                      </ComboButton>
                      <Children>
                         <Text as="subtitle">Linked JS</Text>
-                        {selectedJsFiles.map(file => {
-                           return (
-                              <Child key={file.id}>
-                                 <span>{file.title}</span>
-                                 <span className="delete">
-                                    <DeleteIcon color="black" />
-                                 </span>
-                              </Child>
-                           )
-                        })}
+                        <DragNDrop
+                           list={selectedJsFiles}
+                           droppableId="linkJsDroppableId"
+                           tablename="jsFileLinks"
+                           schemaname="editor"
+                        >
+                           {selectedJsFiles.map(file => {
+                              return (
+                                 <Child key={file.id}>
+                                    <span>{file.title}</span>
+                                    <span
+                                       className="delete"
+                                       onClick={() =>
+                                          unlinkJs(
+                                             state?.tabs[state?.currentTab]?.id,
+                                             file.id
+                                          )
+                                       }
+                                    >
+                                       <DeleteIcon color="black" />
+                                    </span>
+                                 </Child>
+                              )
+                           })}
+                        </DragNDrop>
                      </Children>
                   </Fold>
                )}

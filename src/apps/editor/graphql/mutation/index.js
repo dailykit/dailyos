@@ -155,7 +155,7 @@ export const REMOVE_JS_LINK = gql`
 `
 
 export const LINK_CSS_FILES = gql`
-   mutation MyMutation($objects: [editor_cssFileLinks_insert_input!]!) {
+   mutation LINK_CSS_FILES($objects: [editor_cssFileLinks_insert_input!]!) {
       insert_editor_cssFileLinks(objects: $objects) {
          returning {
             cssFileId
@@ -164,9 +164,21 @@ export const LINK_CSS_FILES = gql`
       }
    }
 `
+export const LINK_JS_FILES = gql`
+   mutation LINK_JS_FILES($objects: [editor_jsFileLinks_insert_input!]!) {
+      insert_editor_jsFileLinks(objects: $objects) {
+         returning {
+            jsFileId
+            guiFileId
+         }
+      }
+   }
+`
 
 export const UPDATE_LINK_CSS_FILES = gql`
-   mutation MyMutation($objects: [editor_cssFileLinks_update_input!]!) {
+   mutation UPDATE_LINK_CSS_FILES(
+      $objects: [editor_cssFileLinks_update_input!]!
+   ) {
       update_editor_cssFileLinks(objects: $objects) {
          returning {
             cssFileId
