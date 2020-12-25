@@ -224,7 +224,7 @@ const Panel = () => {
                         <Text as="subtitle">Linked CSS</Text>
                         <DragNDrop
                            list={selectedCssFiles}
-                           droppableId={node.linkJs.id}
+                           droppableId={node.linkCss.id}
                         >
                            {selectedCssFiles.map(file => {
                               return (

@@ -97,9 +97,11 @@ export const useDnd = () => {
 
       //    return { initiatePriority }
       // }
-
       let item = []
-      if (data.length === 1 && !data[0].position) {
+      if (
+         data.length === 1 &&
+         (!data[0].position || data[0].position !== 1000000)
+      ) {
          item = data
          item[0].position = 1000000
       }
@@ -149,40 +151,40 @@ export const useDnd = () => {
             console.log('check')
             const lastItem = data[data.length - 1]
             item = [lastItem]
-            item[0].priority = 0
+            item[0].position = 0
          }
          if (nullPriorityData.length > 1) {
             item = nullPriorityData
             if (nullPriorityData.length === data.length) {
                for (let i in nullPriorityData) {
                   if (i === nullPriorityData.length - 1) {
-                     item[i].priority = 0
+                     item[i].position = 0
                      break
                   } else {
-                     item[i].priority = 1000000 / Math.pow(2, i)
-                     item[nullPriorityData.length - 1].priority = 0
+                     item[i].position = 1000000 / Math.pow(2, i)
+                     item[nullPriorityData.length - 1].position = 0
                   }
                }
             } else {
                console.log('else case')
                let lastItemPriority =
-                  data[data.length - nullPriorityData.length - 1].priority
+                  data[data.length - nullPriorityData.length - 1].position
                for (let i in nullPriorityData) {
                   if (i === nullPriorityData.length - 1) {
-                     item[i].priority = 0
+                     item[i].position = 0
                      break
                   } else {
                      console.log('else cases')
                      lastItemPriority = lastItemPriority / 2
-                     item[i].priority = lastItemPriority
-                     item[nullPriorityData.length - 1].priority = 0
+                     item[i].position = lastItemPriority
+                     item[nullPriorityData.length - 1].position = 0
                   }
                }
             }
          }
       }
       if (item.length > 0) {
-         console.log(item)
+         console.log('mutation data', data)
          InitialMutation({
             variables: {
                arg: {
