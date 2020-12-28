@@ -66,6 +66,8 @@ export default function Item({ state }) {
    )
    const { modifiersDispatch } = React.useContext(ModifiersContext)
 
+   const opConfigInvokedBy = React.useRef('')
+   const modifierOpConfig = React.useRef(undefined)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
    const [pricingTunnels, openPricingTunnel, closePricingTunnel] = useTunnel(1)
    const [
@@ -191,24 +193,23 @@ export default function Item({ state }) {
       openModifiersTunnel(2)
    }
    const saveOperationConfig = config => {
-      updateProductOption({
-         variables: {
-            id: productState.optionId,
-            set: {
-               operationConfigId: config.id,
+      if (opConfigInvokedBy.current === 'option') {
+         updateProductOption({
+            variables: {
+               id: productState.optionId,
+               set: {
+                  operationConfigId: config.id,
+               },
             },
-         },
-      })
+         })
+      }
+      if (opConfigInvokedBy.current === 'modifier') {
+         modifierOpConfig.current = config
+      }
    }
 
    return (
       <>
-         <OperationConfig
-            tunnels={operationConfigTunnels}
-            openTunnel={openOperationConfigTunnel}
-            closeTunnel={closeOperationConfigTunnel}
-            onSelect={saveOperationConfig}
-         />
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <ItemTypeTunnel close={closeTunnel} open={openTunnel} />
@@ -233,6 +234,11 @@ export default function Item({ state }) {
                <ModifierFormTunnel
                   open={openModifiersTunnel}
                   close={closeModifiersTunnel}
+                  openOperationConfigTunnel={value => {
+                     opConfigInvokedBy.current = 'modifier'
+                     openOperationConfigTunnel(value)
+                  }}
+                  modifierOpConfig={modifierOpConfig.current}
                />
             </Tunnel>
             <Tunnel layer={3}>
@@ -251,6 +257,12 @@ export default function Item({ state }) {
                <ModifierTemplatesTunnel close={closeModifiersTunnel} />
             </Tunnel>
          </Tunnels>
+         <OperationConfig
+            tunnels={operationConfigTunnels}
+            openTunnel={openOperationConfigTunnel}
+            closeTunnel={closeOperationConfigTunnel}
+            onSelect={saveOperationConfig}
+         />
          {state.sachetItem || state.supplierItem ? (
             <SectionTabs>
                <SectionTabList>
@@ -487,6 +499,8 @@ export default function Item({ state }) {
                                                                      option.id,
                                                                },
                                                             })
+                                                            opConfigInvokedBy.current =
+                                                               'option'
                                                             openOperationConfigTunnel(
                                                                1
                                                             )
@@ -506,6 +520,8 @@ export default function Item({ state }) {
                                                                   option.id,
                                                             },
                                                          })
+                                                         opConfigInvokedBy.current =
+                                                            'option'
                                                          openOperationConfigTunnel(
                                                             1
                                                          )

@@ -3,7 +3,7 @@ import { toast } from 'react-toastify'
 import { Text, Flex, Spacer } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { PLANNED } from '../../../../graphql'
+import { QUERIES } from '../../../../graphql'
 import { useOrder, useTabs } from '../../../../context'
 import { NewTabIcon } from '../../../../assets/icons'
 import { logger } from '../../../../../../shared/utils'
@@ -28,7 +28,7 @@ export const ReadyToEatSection = ({ setReadyToEatTotal }) => {
       error,
       loading,
       data: { simpleRecipeProducts = {} } = {},
-   } = useSubscription(PLANNED.READY_TO_EAT_PRODUCTS, {
+   } = useSubscription(QUERIES.PLANNED.PRODUCTS.READY_TO_EAT.LIST, {
       variables: {
          order: state.orders.where,
       },
@@ -64,18 +64,18 @@ export const ReadyToEatSection = ({ setReadyToEatTotal }) => {
                <Product key={product.id}>
                   <Flex container alignItems="center">
                      <ProductTitle
-                        isLink
+                        // isLink
                         tabIndex="-1"
                         role="button"
                         title={product.name}
-                        onClick={() => openProduct(product.id, product.name)}
-                        onKeyPress={e =>
-                           e.charCode === 13 &&
-                           openProduct(product.id, product.name)
-                        }
+                        // onClick={() => openProduct(product.id, product.name)}
+                        // onKeyPress={e =>
+                        //    e.charCode === 13 &&
+                        //    openProduct(product.id, product.name)
+                        // }
                      >
-                        <NewTabIcon size={16} color="#b9b9b9" />
-                        &nbsp;
+                        {/* <NewTabIcon size={16} color="#b9b9b9" />
+                        &nbsp; */}
                         {product.name}
                      </ProductTitle>
                   </Flex>

@@ -18,6 +18,7 @@ export const StyledWrapper = styled.div(
          grid-area: main;
          > main {
             overflow-y: auto;
+            scroll-behavior: smooth;
             height: calc(100vh - 80px);
          }
       }

@@ -4,7 +4,7 @@ import { Text, Flex, Spacer } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 
 import { NewTabIcon } from '../../../../assets/icons'
-import { PLANNED } from '../../../../graphql/queries'
+import { QUERIES } from '../../../../graphql/queries'
 import { useOrder, useTabs } from '../../../../context'
 import { logger } from '../../../../../../shared/utils'
 import {
@@ -28,7 +28,7 @@ export const InventorySection = ({ setInventoryTotal }) => {
       error,
       loading,
       data: { inventoryProducts = {} } = {},
-   } = useSubscription(PLANNED.INVENTORY_PRODUCTS, {
+   } = useSubscription(QUERIES.PLANNED.PRODUCTS.INVENTORY.LIST, {
       variables: {
          order: state.orders.where,
       },
@@ -64,18 +64,18 @@ export const InventorySection = ({ setInventoryTotal }) => {
                <Product key={product.id}>
                   <Flex container alignItems="center">
                      <ProductTitle
-                        isLink
+                        // isLink
                         tabIndex="-1"
                         role="button"
                         title={product.name}
-                        onClick={() => openProduct(product.id, product.name)}
-                        onKeyPress={e =>
-                           e.charCode === 13 &&
-                           openProduct(product.id, product.name)
-                        }
+                        // onClick={() => openProduct(product.id, product.name)}
+                        // onKeyPress={e =>
+                        //    e.charCode === 13 &&
+                        //    openProduct(product.id, product.name)
+                        // }
                      >
-                        <NewTabIcon size={16} color="#b9b9b9" />
-                        &nbsp;
+                        {/* <NewTabIcon size={16} color="#b9b9b9" />
+                        &nbsp; */}
                         {product.name}
                      </ProductTitle>
                      <h3 title={product.products.aggregate.count}>

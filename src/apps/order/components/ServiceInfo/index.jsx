@@ -2,15 +2,14 @@ import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { Card, TextButton } from '@dailykit/ui'
 
-import { DELIVERY_SERVICE } from '../../graphql'
 import { Wrapper } from './styled'
+import { QUERIES } from '../../graphql'
 
 export const ServiceInfo = ({ id }) => {
-   const {
-      loading,
-      error,
-      data: { service = {} } = {},
-   } = useQuery(DELIVERY_SERVICE, { variables: { id } })
+   const { loading, error, data: { service = {} } = {} } = useQuery(
+      QUERIES.DELIVERY.SERVICE,
+      { variables: { id } }
+   )
 
    if (loading)
       return (

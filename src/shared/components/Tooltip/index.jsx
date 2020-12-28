@@ -21,7 +21,9 @@ export const Tooltip = ({
    return (
       <Styles.Tooltip>
          <a data-tip data-for={identifier}>
-            <TooltipIcon />
+            <TooltipIcon
+               {...(!tooltip(identifier)?.description && { color: '#d9bcbc' })}
+            />
          </a>
          <ReactTooltip
             id={identifier}
@@ -47,7 +49,9 @@ export const Tooltip = ({
                   View Docs
                </a>
             )}
-            <p style={{ wordWrap: 'anywhere' }}>{identifier}</p>
+            {!tooltip(identifier)?.description && (
+               <p style={{ wordWrap: 'anywhere' }}>{identifier}</p>
+            )}
          </ReactTooltip>
       </Styles.Tooltip>
    )

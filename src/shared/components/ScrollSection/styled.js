@@ -1,9 +1,10 @@
 import styled, { css } from 'styled-components'
 
 export const Wrapper = styled.div(
-   ({ height }) => css`
+   ({ height, width }) => css`
       overflow: hidden;
       display: grid;
+      ${width && `width: ${width};`}
       grid-template-columns: 240px 1fr;
       aside,
       > main {

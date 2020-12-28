@@ -5,7 +5,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import { DashboardTile, Text, Flex, Spacer } from '@dailykit/ui'
 
 import { useTabs } from '../../context/tabs'
-import { ORDER_AGGREGATE } from '../../graphql'
+import { QUERIES } from '../../graphql'
 import { logger } from '../../../../shared/utils'
 import {
    Tooltip,
@@ -17,7 +17,9 @@ const address = 'apps.order.views.home.'
 const Home = () => {
    const { t } = useTranslation()
    const { addTab } = useTabs()
-   const { loading, error, data } = useSubscription(ORDER_AGGREGATE)
+   const { loading, error, data } = useSubscription(
+      QUERIES.ORDERS.AGGREGATE.TOTAL
+   )
 
    if (loading)
       return (

@@ -2,15 +2,16 @@ import React from 'react'
 import _ from 'lodash'
 import { useSubscription } from '@apollo/react-hooks'
 
+import { QUERIES } from '../graphql'
 import { Loader } from '../components'
 import { useAuth } from '../../../shared/providers'
-import { SETTINGS, STATIONS_BY_USER } from '../graphql'
 
 const ConfigContext = React.createContext()
 
 const initialState = {
    tunnel: { visible: false },
    stations: [],
+   current_station: {},
    scale: {
       weight_simulation: {
          app: 'order',
@@ -62,7 +63,8 @@ const reducers = (state, { type, payload }) => {
             ...state,
             [payload.field]: { ...state[payload.field], ...payload.value },
          }
-
+      case 'SET_CURRENT_STATION':
+         return { ...state, current_station: payload }
       case 'SET_STATIONS':
          return { ...state, stations: payload }
       case 'TOGGLE_TUNNEL':
@@ -76,7 +78,7 @@ export const ConfigProvider = ({ children }) => {
    const { user } = useAuth()
    const [state, dispatch] = React.useReducer(reducers, initialState)
    const { loading, data: { stations = [] } = {} } = useSubscription(
-      STATIONS_BY_USER,
+      QUERIES.STATIONS.BY_USER,
       {
          variables: {
             ...(user.email && { email: { _eq: user.email } }),
@@ -86,7 +88,7 @@ export const ConfigProvider = ({ children }) => {
    const {
       loading: loadingSettings,
       data: { settings = [] } = {},
-   } = useSubscription(SETTINGS)
+   } = useSubscription(QUERIES.SETTINGS.LIST)
 
    React.useEffect(() => {
       if (!loadingSettings && !_.isEmpty(settings)) {
@@ -186,6 +188,8 @@ export const ConfigProvider = ({ children }) => {
    React.useEffect(() => {
       if (!loading && !_.isEmpty(stations)) {
          dispatch({ type: 'SET_STATIONS', payload: stations })
+         const [station] = stations
+         dispatch({ type: 'SET_CURRENT_STATION', payload: station })
       }
    }, [loading, stations])
 

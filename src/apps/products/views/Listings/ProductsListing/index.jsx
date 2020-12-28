@@ -28,6 +28,7 @@ import {
    SimpleRecipeProducts,
 } from './components'
 import { ProductTypeTunnel } from './tunnels'
+import { ResponsiveFlex } from '../styled'
 
 const address = 'apps.menu.views.listings.productslisting.'
 
@@ -72,7 +73,7 @@ const ProductsListing = () => {
                <ProductTypeTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         <Flex maxWidth="1280px" width="calc(100vw - 64px)" margin="0 auto">
+         <ResponsiveFlex maxWidth="1280px" margin="0 auto">
             <Flex
                container
                alignItems="center"
@@ -94,7 +95,7 @@ const ProductsListing = () => {
             />
             <Spacer size="16px" />
             {renderListing()}
-         </Flex>
+         </ResponsiveFlex>
       </>
    )
 }

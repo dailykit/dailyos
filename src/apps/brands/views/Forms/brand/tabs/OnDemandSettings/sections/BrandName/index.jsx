@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
-import { Input, TextButton, Text, Spacer, Form } from '@dailykit/ui'
+import { TextButton, Text, Spacer, Form } from '@dailykit/ui'
 import validator from '../../../../../../validator'
 
 import { BRANDS } from '../../../../../../../graphql'

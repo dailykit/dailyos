@@ -63,7 +63,7 @@ export const Wallet = ({ update }) => {
          <Spacer size="8px" />
          <Flex container alignItems="center" justifyContent="space-between">
             <Form.Toggle
-               name="available"
+               name="wallet"
                value={isAvailable}
                onChange={() => setIsAvailable(!isAvailable)}
             >

@@ -5,8 +5,12 @@ import { useLocation } from 'react-router-dom'
 import { Wrapper, Sidebar, Content } from './styled'
 import { isEmpty } from 'lodash'
 
-export const ScrollSection = ({ height, children }) => {
-   return <Wrapper height={height}>{children}</Wrapper>
+export const ScrollSection = ({ height, width, children }) => {
+   return (
+      <Wrapper height={height} width={width}>
+         {children}
+      </Wrapper>
+   )
 }
 
 const Aside = ({ links = [] }) => {

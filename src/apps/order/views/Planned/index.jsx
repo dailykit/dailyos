@@ -33,18 +33,14 @@ const Planned = () => {
    return (
       <Wrapper>
          <HorizontalTabs>
-            <Flex container padding="0 16px">
-               <HorizontalTabList>
-                  <HorizontalTab>Meal Kit ({mealKitTotal})</HorizontalTab>
-                  <HorizontalTab>
-                     Ready To Eat ({readyToEatTotal})
-                  </HorizontalTab>
-                  <HorizontalTab>Inventory ({inventoryTotal})</HorizontalTab>
-                  <HorizontalTab>
-                     Meal Kit Sachets ({mealKitSachetTotal})
-                  </HorizontalTab>
-               </HorizontalTabList>
-            </Flex>
+            <HorizontalTabList style={{ padding: '0 16px' }}>
+               <HorizontalTab>Meal Kit ({mealKitTotal})</HorizontalTab>
+               <HorizontalTab>Ready To Eat ({readyToEatTotal})</HorizontalTab>
+               <HorizontalTab>Inventory ({inventoryTotal})</HorizontalTab>
+               <HorizontalTab>
+                  Meal Kit Sachets ({mealKitSachetTotal})
+               </HorizontalTab>
+            </HorizontalTabList>
             <HorizontalTabPanels>
                <HorizontalTabPanel>
                   <MealKitSection setMealKitTotal={setMealKitTotal} />

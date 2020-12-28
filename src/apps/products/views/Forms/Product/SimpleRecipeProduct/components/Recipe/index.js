@@ -60,6 +60,8 @@ export default function Recipe({ state }) {
    )
    const { modifiersDispatch } = React.useContext(ModifiersContext)
 
+   const opConfigInvokedBy = React.useRef('')
+   const modifierOpConfig = React.useRef(undefined)
    const [foodCostPercent, setFoodCostPercent] = React.useState({
       lowerLimit: 0,
       upperLimit: 10,
@@ -193,24 +195,23 @@ export default function Recipe({ state }) {
       openModifiersTunnel(2)
    }
    const saveOperationConfig = config => {
-      updateProductOption({
-         variables: {
-            id: productState.optionId,
-            set: {
-               operationConfigId: config.id,
+      if (opConfigInvokedBy.current === 'option') {
+         updateProductOption({
+            variables: {
+               id: productState.optionId,
+               set: {
+                  operationConfigId: config.id,
+               },
             },
-         },
-      })
+         })
+      }
+      if (opConfigInvokedBy.current === 'modifier') {
+         modifierOpConfig.current = config
+      }
    }
 
    return (
       <>
-         <OperationConfig
-            tunnels={operationConfigTunnels}
-            openTunnel={openOperationConfigTunnel}
-            closeTunnel={closeOperationConfigTunnel}
-            onSelect={saveOperationConfig}
-         />
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <RecipeTunnel state={state} close={closeTunnel} />
@@ -235,6 +236,11 @@ export default function Recipe({ state }) {
                <ModifierFormTunnel
                   open={openModifiersTunnel}
                   close={closeModifiersTunnel}
+                  openOperationConfigTunnel={value => {
+                     opConfigInvokedBy.current = 'modifier'
+                     openOperationConfigTunnel(value)
+                  }}
+                  modifierOpConfig={modifierOpConfig.current}
                />
             </Tunnel>
             <Tunnel layer={3}>
@@ -253,6 +259,12 @@ export default function Recipe({ state }) {
                <ModifierTemplatesTunnel close={closeModifiersTunnel} />
             </Tunnel>
          </Tunnels>
+         <OperationConfig
+            tunnels={operationConfigTunnels}
+            openTunnel={openOperationConfigTunnel}
+            closeTunnel={closeOperationConfigTunnel}
+            onSelect={saveOperationConfig}
+         />
          {state.simpleRecipe ? (
             <SectionTabs>
                <SectionTabList>
@@ -531,6 +543,8 @@ export default function Recipe({ state }) {
                                                                      option.id,
                                                                },
                                                             })
+                                                            opConfigInvokedBy.current =
+                                                               'option'
                                                             openOperationConfigTunnel(
                                                                1
                                                             )
@@ -550,6 +564,8 @@ export default function Recipe({ state }) {
                                                                   option.id,
                                                             },
                                                          })
+                                                         opConfigInvokedBy.current =
+                                                            'option'
                                                          openOperationConfigTunnel(
                                                             1
                                                          )
@@ -737,6 +753,8 @@ export default function Recipe({ state }) {
                                                                      option.id,
                                                                },
                                                             })
+                                                            opConfigInvokedBy.current =
+                                                               'option'
                                                             openOperationConfigTunnel(
                                                                1
                                                             )
@@ -756,6 +774,8 @@ export default function Recipe({ state }) {
                                                                   option.id,
                                                             },
                                                          })
+                                                         opConfigInvokedBy.current =
+                                                            'option'
                                                          openOperationConfigTunnel(
                                                             1
                                                          )

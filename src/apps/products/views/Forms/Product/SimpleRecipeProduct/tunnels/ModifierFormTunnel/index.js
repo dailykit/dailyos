@@ -1,7 +1,9 @@
 import { useMutation } from '@apollo/react-hooks'
 import {
    ButtonTile,
+   ComboButton,
    Form,
+   PlusIcon,
    RadioGroup,
    Spacer,
    Text,
@@ -9,6 +11,7 @@ import {
 } from '@dailykit/ui'
 import React from 'react'
 import { toast } from 'react-toastify'
+import { CloseIcon } from '../../../../../../../../shared/assets/icons'
 import { Tooltip } from '../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../../assets/icons'
@@ -29,12 +32,18 @@ import {
    OptionWrapper,
 } from './styled'
 
-const ModifierFormTunnel = ({ open, close }) => {
+const ModifierFormTunnel = ({
+   open,
+   close,
+   openOperationConfigTunnel,
+   modifierOpConfig,
+}) => {
    const {
       modifiersState: { modifier, meta },
       modifiersDispatch,
    } = React.useContext(ModifiersContext)
 
+   const clickedOption = React.useRef(undefined)
    const [saving, setSaving] = React.useState(false)
 
    const options = [
@@ -110,6 +119,9 @@ const ModifierFormTunnel = ({ open, close }) => {
             ) {
                return false
             }
+            if (!option.operationConfig.value) {
+               return false
+            }
             return true
          })
          if (!hasValidOptions) {
@@ -158,6 +170,7 @@ const ModifierFormTunnel = ({ open, close }) => {
                   image: option.image.value,
                   unit: option.unit,
                   productQuantity: +option.productQuantity.value,
+                  operationConfig: option.operationConfig.value,
                }))
                return cat
             })
@@ -208,6 +221,24 @@ const ModifierFormTunnel = ({ open, close }) => {
          setSaving(false)
       }
    }
+
+   React.useEffect(() => {
+      if (modifierOpConfig && clickedOption.current) {
+         console.log('Op Config: ', modifierOpConfig)
+         modifiersDispatch({
+            type: 'OPTION_VALUE',
+            payload: {
+               ...clickedOption.current,
+               field: 'operationConfig',
+               value: {
+                  id: modifierOpConfig.id,
+                  name: `${modifierOpConfig.station.name} - ${modifierOpConfig.labelTemplate.name}`,
+               },
+            },
+         })
+         clickedOption.current = undefined
+      }
+   }, [modifierOpConfig])
 
    return (
       <>
@@ -885,6 +916,39 @@ const ModifierFormTunnel = ({ open, close }) => {
                            >
                               Visible
                            </Form.Checkbox>
+                           <Flex container alignItems="center">
+                              {option?.operationConfig?.value ? (
+                                 <ComboButton
+                                    type="ghost"
+                                    size="sm"
+                                    onClick={() => {
+                                       clickedOption.current = {
+                                          index,
+                                          optionIndex,
+                                       }
+                                       openOperationConfigTunnel(1)
+                                    }}
+                                 >
+                                    <CloseIcon color="#19B7EE" />
+                                    {option.operationConfig.value.name}
+                                 </ComboButton>
+                              ) : (
+                                 <ComboButton
+                                    type="ghost"
+                                    size="sm"
+                                    onClick={() => {
+                                       clickedOption.current = {
+                                          index,
+                                          optionIndex,
+                                       }
+                                       openOperationConfigTunnel(1)
+                                    }}
+                                 >
+                                    <PlusIcon color="#19B7EE" />
+                                    Operation Config
+                                 </ComboButton>
+                              )}
+                           </Flex>
                         </OptionBottom>
                      </OptionWrapper>
                   ))}

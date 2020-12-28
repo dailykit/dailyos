@@ -1,22 +1,19 @@
 import React from 'react'
-import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
+import { Filler, Flex } from '@dailykit/ui'
 import styled from 'styled-components'
-import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
-import { useQuery, useSubscription } from '@apollo/react-hooks'
+import { useSubscription } from '@apollo/react-hooks'
 
 import { paginate } from '../../utils'
+import { QUERIES } from '../../graphql'
 import { useOrder } from '../../context'
 import { useTabs } from '../../context/tabs'
 import { OrderListItem } from '../../components'
 import { logger } from '../../../../shared/utils'
-import { ORDERS, ORDERS_AGGREGATE } from '../../graphql'
-import { ErrorState, Flex, InlineLoader } from '../../../../shared/components'
+import { ErrorState, InlineLoader } from '../../../../shared/components'
 
-const address = 'apps.order.views.orders.'
 const Orders = () => {
-   const { t } = useTranslation()
    const location = useLocation()
    const { tab, addTab } = useTabs()
    const { state, dispatch } = useOrder()
@@ -24,15 +21,15 @@ const Orders = () => {
    const [orders, setOrders] = React.useState([])
    const {
       loading: loadingAggregate,
-      data: { ordersAggregate = {} } = {},
-   } = useQuery(ORDERS_AGGREGATE, {
+      data: { orders: ordersAggregate = {} } = {},
+   } = useSubscription(QUERIES.ORDERS.AGGREGATE.TOTAL, {
       variables: {
          where: {
             orderStatus: { _eq: state.orders.where.orderStatus._eq },
          },
       },
    })
-   const { loading, error } = useSubscription(ORDERS, {
+   const { loading, error } = useSubscription(QUERIES.ORDERS.LIST, {
       variables: {
          where: state.orders.where,
          ...(state.orders.limit && { limit: state.orders.limit }),
@@ -84,15 +81,15 @@ const Orders = () => {
       setActive(1)
    }, [state.orders.where.orderStatus])
 
-   React.useEffect(() => {
-      if (!loading && error) {
-         logger(error)
-         toast.error('Failed to fetch order list!')
-         dispatch({ type: 'SET_ORDERS_STATUS', payload: false })
-         return <ErrorState message="Failed to fetch order list!" />
-      }
-   }, [loading, error])
-
+   if (loading) {
+      return <InlineLoader />
+   }
+   if (!loading && error) {
+      logger(error)
+      toast.error('Failed to fetch order list!')
+      dispatch({ type: 'SET_ORDERS_STATUS', payload: false })
+      return <ErrorState message="Failed to fetch order list!" />
+   }
    return (
       <div>
          <Flex
@@ -123,33 +120,26 @@ const Orders = () => {
                   ))}
             </Pagination>
          </Flex>
-         {state.orders.loading ? (
-            <InlineLoader />
-         ) : (
-            <section
-               style={{
-                  overflowY: 'auto',
-                  scrollBehavior: 'smooth',
-                  height: 'calc(100vh - 128px',
-               }}
-            >
-               {orders.length > 0 ? (
-                  orders.map((order, index) => (
-                     <OrderListItem
-                        order={order}
-                        key={order.id}
-                        containerId={`${
-                           index % 10 === 0 ? `${index / 10 + 1}` : ''
-                        }`}
-                     />
-                  ))
-               ) : (
-                  <Flex padding="16px">
-                     {t(address.concat('no orders yet!'))}
-                  </Flex>
-               )}
-            </section>
-         )}
+         <Flex
+            as="section"
+            overflowY="auto"
+            height="calc(100vh - 128px)"
+            style={{ scrollBehavior: 'smooth' }}
+         >
+            {orders.length > 0 ? (
+               orders.map((order, index) => (
+                  <OrderListItem
+                     order={order}
+                     key={order.id}
+                     containerId={`${
+                        index % 10 === 0 ? `${index / 10 + 1}` : ''
+                     }`}
+                  />
+               ))
+            ) : (
+               <Filler message="No orders available!" />
+            )}
+         </Flex>
       </div>
    )
 }

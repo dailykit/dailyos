@@ -10,7 +10,7 @@ import {
 } from '@dailykit/ui'
 
 import { useTabs } from '../../context'
-import { NOTIFICATIONS } from '../../graphql'
+import { QUERIES } from '../../graphql'
 import { Notifs, Notif, Main } from './styled'
 import { InlineLoader } from '../../../../shared/components'
 
@@ -20,7 +20,7 @@ export const Notifications = ({ isOpen, closePortal }) => {
       error,
       loading,
       data: { displayNotifications: notifications = [] } = {},
-   } = useSubscription(NOTIFICATIONS)
+   } = useSubscription(QUERIES.NOTIFICATION.LIST)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
    React.useEffect(() => {
