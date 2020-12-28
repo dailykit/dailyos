@@ -9,6 +9,7 @@ import {
 } from './styled'
 
 import { useTabs } from '../../context'
+import { BrandListing } from '../../components'
 
 const Sidebar = ({ visible, toggleSidebar }) => {
    const { addTab, switchTab } = useTabs()
@@ -20,12 +21,8 @@ const Sidebar = ({ visible, toggleSidebar }) => {
             <StyledListItem onClick={() => switchTab('/content')}>
                Home
             </StyledListItem>
-            <StyledListItem
-               onClick={() => addTab('Information Blocks', '/content/blocks')}
-            >
-               Information Blocks
-            </StyledListItem>
          </StyledList>
+         <BrandListing />
       </StyledSidebar>
    )
 }

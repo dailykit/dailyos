@@ -86,3 +86,44 @@ export const CONTENT_PAGE_ONE = gql`
       }
    }
 `
+
+export const BRAND_LISTING = gql`
+   subscription BRAND_LISTING {
+      brands(where: { isPublished: { _eq: true } }) {
+         id
+         domain
+         title
+         isDefault
+         subscriptionRequested
+         onDemandRequested
+         website {
+            id
+         }
+      }
+   }
+`
+export const WEBSITE_PAGES_LISTING = gql`
+   subscription WEBSITE_PAGES_LISTING($websiteId: Int!) {
+      website_websitePage(
+         where: { websiteId: { _eq: $websiteId }, isArchived: { _eq: false } }
+      ) {
+         id
+         internalPageName
+         route
+         websiteId
+         published
+      }
+   }
+`
+
+export const WEBSITE_TOTAL_PAGES = gql`
+   subscription WEBSITE_TOTAL_PAGES($websiteId: Int!) {
+      website_websitePage_aggregate(
+         where: { websiteId: { _eq: $websiteId }, isArchived: { _eq: false } }
+      ) {
+         aggregate {
+            count
+         }
+      }
+   }
+`

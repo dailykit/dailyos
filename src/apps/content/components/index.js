@@ -1,3 +1,3 @@
 import Tabs from './Tabs'
-
-export { Tabs }
+import BrandListing from './BrandListing'
+export { Tabs, BrandListing }

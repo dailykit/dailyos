@@ -1,1 +1,2 @@
-export * from './Blocks'
+import PageListing from './Pages'
+export { PageListing }

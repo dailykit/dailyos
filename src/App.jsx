@@ -124,6 +124,8 @@ const App = () => {
                         <Link to="/content">
                            <div>Content</div>
                         </Link>
+                     </AppItem>
+                     <AppItem>
                         <Link to="/editor">
                            <div>Editor</div>
                         </Link>

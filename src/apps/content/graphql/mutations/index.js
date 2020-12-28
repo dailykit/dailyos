@@ -74,3 +74,17 @@ export const FAQ_ARCHIVED = gql`
       }
    }
 `
+export const WEBPAGE_ARCHIVED = gql`
+   mutation WEBPAGE_ARCHIVED($websiteId: Int!, $pageId: Int!) {
+      update_website_websitePage(
+         where: { websiteId: { _eq: $websiteId }, id: { _eq: $pageId } }
+         _set: { isArchived: true }
+      ) {
+         returning {
+            internalPageName
+            id
+            route
+         }
+      }
+   }
+`
