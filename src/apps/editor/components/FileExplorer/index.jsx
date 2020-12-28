@@ -44,7 +44,6 @@ const FileExplorer = () => {
          console.log(error)
       },
       onCompleted: data => {
-         console.log(state, data)
          if (
             data &&
             data.constructor === Object &&
@@ -52,7 +51,6 @@ const FileExplorer = () => {
             data.editor_file.length > 0 &&
             Object.keys(fileRef.current).length !== 0
          ) {
-            console.log(data.editor_file[0].id)
             dispatch({
                type: 'ADD_TAB',
                payload: {
@@ -84,7 +82,7 @@ const FileExplorer = () => {
 
    const onSelection = (node, nodeIndex) => {
       if (node.type === 'folder') {
-         onToggle(node.name)
+         onToggle(node.path)
          if (data[nodeIndex].isOpen) {
             console.log('here', node)
             dispatch({
