@@ -1,10 +1,22 @@
+<<<<<<< HEAD
 import React, { useEffect, useState } from 'react'
+=======
+import React, { useEffect, useState, useRef } from 'react'
+import { useQuery } from '@apollo/react-hooks'
+>>>>>>> feat/editorApp
 import 'grapesjs/dist/css/grapes.min.css'
+import 'grapesjs-preset-webpage'
 import grapesjs from 'grapesjs'
 import axios from 'axios'
-import styled from 'styled-components'
+import { InlineLoader } from '../InlineLoader'
+import { toast } from 'react-toastify'
+import { TEMPLATE, BLOCKS } from './graphql'
+import { logger, randomSuffix } from '../../utils'
+import { config } from './config'
+import { StyledDiv } from './style'
 const url = `${process.env.REACT_APP_DAILYOS_SERVER_URI}/api/assets`
 
+<<<<<<< HEAD
 export default function Builder() {
    useEffect(() => {
       const editor = grapesjs.init({
@@ -266,6 +278,131 @@ export default function Builder() {
             },
          ],
       })
+=======
+export default function Builder({
+   path = '',
+   content = '',
+   onChangeContent,
+   linkedCss = [],
+   linkedJs = [],
+}) {
+   const editorRef = useRef()
+   const linkedCssArray = linkedCss.map(file => {
+      let url = `https://test.dailykit.org/template/files${file.cssFile.path}`
+      if (/\s/.test(url)) {
+         url = url.split(' ').join('%20')
+      }
+      return url
+   })
+   const linkedJsArray = linkedJs.map(file => {
+      let url = `https://test.dailykit.org/template/files${file.jsFile.path}`
+      if (/\s/.test(url)) {
+         url = url.split(' ').join('%20')
+      }
+      return url
+   })
+   const [mount, setMount] = useState(false)
+
+   console.log('before initialize', linkedCss)
+
+   // React.useEffect(() => {
+   //    setLinkedCssArray(linkedCss)
+   //    setLinkedJsArray(linkedJs)
+   // }, [CssArray, JsArray])
+
+   //mutation for saving the template
+   const updateCode = (updatedCode, path) => {
+      axios({
+         url: process.env.REACT_APP_DATA_HUB_URI,
+         method: 'POST',
+         headers: {
+            'x-hasura-admin-secret':
+               process.env.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
+         },
+         data: {
+            query: `
+         mutation updateFile($path: String!, $content: String!, $message: String!) {
+            updateFile(path: $path, content: $content, message: $message) {
+               ... on Error {
+                  success
+                  error
+               }
+               ... on Success {
+                  success
+                  message
+               }
+            }
+         }
+           `,
+            variables: {
+               path,
+               content: updatedCode,
+               message: 'update: template',
+            },
+         },
+      })
+         .then(data => toast.success('Template updated'))
+         .catch(error => {
+            toast.error('Failed to Add!')
+            logger(error)
+         })
+   }
+
+   // Initialize the grapejs editor by passing config object
+   useEffect(() => {
+      console.log('editor initialize1')
+      const editor = grapesjs.init({
+         ...config,
+         canvas: {
+            styles: linkedCssArray,
+            scripts: linkedJsArray,
+         },
+      })
+      editorRef.current = editor
+      setMount(true)
+      return () => {
+         console.log('editor initialize2')
+         editorRef.current = null
+         const code = editor.getHtml() + `<style>+ ${editor.getCss()} +</style>`
+         onChangeContent(code)
+         editor.destroy()
+      }
+   }, [])
+
+   //loading all dailykit images in webBuilder image component
+   if (mount && editorRef.current.editor) {
+      const editor = editorRef.current
+      const assetManager = editorRef.current.AssetManager
+      axios.get(`${url}?type=images`).then(data => {
+         data.data.data.map(image => {
+            return assetManager.add(image.url)
+         })
+      })
+
+      // editor.Canvas.getDocument().head.insertAdjacentHTML(
+      //    'beforeend',
+      //    '<link href="https://test.dailykit.org/template/files/Riofit%20Meals/css/style.css" rel="stylesheet" />'
+      // )
+      // linkedCssArray.map(url => {
+
+      // })
+
+      //Adding a save button in webBuilder
+      if (!editor.Panels.getButton('devices-c', 'save')) {
+         editor.Panels.addButton('devices-c', [
+            {
+               id: 'save',
+               className: 'fa fa-floppy-o icon-blank',
+               command: function (editor1, sender) {
+                  const updatedCode =
+                     editor.getHtml() + '<style>' + editor.getCss() + '</style>'
+                  updateCode(updatedCode, path)
+               },
+               attributes: { title: 'Save Template' },
+            },
+         ])
+      }
+>>>>>>> feat/editorApp
 
       // Define commands for style manager
       editor.Commands.add('show-layers', {
@@ -275,6 +412,7 @@ export default function Builder() {
          getLayersEl(row) {
             return row.querySelector('.layers-container')
          },
+<<<<<<< HEAD
 
          run(editor, sender) {
             const lmEl = this.getLayersEl(this.getRowEl(editor))
@@ -285,6 +423,20 @@ export default function Builder() {
             lmEl.style.display = 'none'
          },
       })
+=======
+
+         run(editor, sender) {
+            const lmEl = this.getLayersEl(this.getRowEl(editor))
+            lmEl.style.display = ''
+         },
+         stop(editor, sender) {
+            const lmEl = this.getLayersEl(this.getRowEl(editor))
+            lmEl.style.display = 'none'
+         },
+      })
+
+      //command for styles
+>>>>>>> feat/editorApp
       editor.Commands.add('show-styles', {
          getRowEl(editor) {
             return editor.getContainer().closest('.editor-row')
@@ -304,6 +456,7 @@ export default function Builder() {
       })
 
       //command for traits
+<<<<<<< HEAD
 
       editor.Commands.add('show-traits', {
          getTraitsEl(editor) {
@@ -368,110 +521,93 @@ export default function Builder() {
          `,
       })
    })
+=======
+      editor.Commands.add('show-traits', {
+         getTraitsEl(editor) {
+            const row = editor.getContainer().closest('.editor-row')
+            return row.querySelector('.traits-container')
+         },
+         run(editor, sender) {
+            this.getTraitsEl(editor).style.display = ''
+         },
+         stop(editor, sender) {
+            this.getTraitsEl(editor).style.display = 'none'
+         },
+      })
+
+      //Command for blocks
+      editor.Commands.add('show-blocks', {
+         getRowEl(editor) {
+            return editor.getContainer().closest('.editor-row')
+         },
+         getBlockEl(row) {
+            return row.querySelector('.blocks-container')
+         },
+
+         run(editor, sender) {
+            const bmEl = this.getBlockEl(this.getRowEl(editor))
+            bmEl.style.display = ''
+         },
+         stop(editor, sender) {
+            const bmEl = this.getBlockEl(this.getRowEl(editor))
+            bmEl.style.display = 'none'
+         },
+      })
+
+      //command for device manager
+      editor.Commands.add('set-device-desktop', {
+         run: function (ed) {
+            ed.setDevice('Desktop')
+         },
+         stop: function () {},
+      })
+      editor.Commands.add('set-device-tablet', {
+         run: function (ed) {
+            ed.setDevice('Tablet')
+         },
+         stop: function () {},
+      })
+      editor.Commands.add('set-device-mobile', {
+         run: function (ed) {
+            ed.setDevice('Mobile portrait')
+         },
+         stop: function () {},
+      })
+
+      //call mutation for storing the template
+      editor.on('storage:store', function (e) {
+         const updatedCode =
+            editor.getHtml() + '<style>' + editor.getCss() + '</style>'
+         updateCode(updatedCode, path)
+      })
+
+      // editor.Canvas.addFrame({
+      //    styles: linkedCssArray,
+      //    scripts: linkedJsArray,
+      // })
+
+      // editor.Canvas.({
+      //    styles: linkedCssArray,
+      //    scripts: linkedJsArray,
+      // })
+      // console.log(editor.Canvas.postRender)
+
+      //set the content in the editor
+      if (content) {
+         editor.setComponents(content)
+      }
+   }
+>>>>>>> feat/editorApp
 
    return (
       <StyledDiv>
-         <div className="panel__top">
-            <div className="panel__basic-actions"></div>
-            <div className="panel__devices"></div>
-            <div className="panel__switcher"></div>
-         </div>
          <div className="editor-row">
             <div className="editor-canvas">
                <div id="gjs">
-                  <h1>Hello World Component</h1>
+                  <InlineLoader />
                </div>
-            </div>
-            <div className="panel__left">
-               <div className="layers-container"></div>
-               <div className="styles-container"></div>
-               <div className="traits-container"></div>
-               <div className="blocks-container"></div>
             </div>
          </div>
       </StyledDiv>
    )
 }
-
-export const StyledDiv = styled.div`
-   border: 2px solid #444;
-   #gjs {
-      border: none;
-   }
-
-   /* Reset some default styling */
-   .gjs-cv-canvas {
-      top: 0;
-      width: 100%;
-      height: 100%;
-   }
-   .gjs-block {
-      width: auto;
-      height: auto;
-      min-height: auto;
-   }
-
-   .gjs-block {
-      width: auto;
-      height: auto;
-      min-height: auto;
-   }
-   .panel__top {
-      padding: 0;
-      width: 100%;
-      display: flex;
-      position: initial;
-      justify-content: center;
-      justify-content: space-between;
-   }
-   .panel__basic-actions {
-      position: initial;
-   }
-
-   .editor-row {
-      display: flex;
-      justify-content: flex-start;
-      align-items: stretch;
-      flex-wrap: nowrap;
-      height: 300px;
-   }
-
-   .editor-canvas {
-      flex-grow: 1;
-   }
-
-   .panel__left {
-      flex-basis: 230px;
-      position: relative;
-      overflow-y: auto;
-   }
-
-   .panel__switcher {
-      position: initial;
-   }
-
-   .panel__devices {
-      position: initial;
-   }
-
-   .gjs-one-bg {
-      background-color: white;
-   }
-
-   /* Secondary color for the text color */
-   .gjs-two-color {
-      color: black;
-   }
-
-   /* Tertiary color for the background */
-   .gjs-three-bg {
-      background: white;
-      color: black;
-   }
-
-   /* Quaternary color for the text color */
-   .gjs-four-color,
-   .gjs-four-color-h:hover {
-      color: black;
-   }
-`
