@@ -19,14 +19,23 @@ import {
    SectionTabPanels,
    SectionTabPanel,
    Flex,
+   Spacer,
 } from '@dailykit/ui'
 
 import { ItemInfo, StyledTable } from './styled'
 import { useTabs } from '../../../../../../context'
-import { ProductTypeTunnel, ProductsTunnel } from '../../tunnels'
+import {
+   ProductTypeTunnel,
+   ProductsTunnel,
+   ProductOptionsTunnel,
+} from '../../tunnels'
 import { Tooltip } from '../../../../../../../../shared/components'
 import { DeleteIcon, LinkIcon } from '../../../../../../assets/icons'
-import { currencyFmt, logger } from '../../../../../../../../shared/utils'
+import {
+   currencyFmt,
+   logger,
+   isIncludedInOptions,
+} from '../../../../../../../../shared/utils'
 import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
 import {
    DELETE_CUSTOMIZABLE_PRODUCT_OPTION,
@@ -40,11 +49,10 @@ const address =
 const Products = ({ state }) => {
    const { t } = useTranslation()
    const { addTab } = useTabs()
-   const { productState, productDispatch } = React.useContext(
-      CustomizableProductContext
-   )
 
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
+   const { productDispatch } = React.useContext(CustomizableProductContext)
+
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
 
    // Mutation
    const [deleteOption] = useMutation(DELETE_CUSTOMIZABLE_PRODUCT_OPTION, {
@@ -94,6 +102,24 @@ const Products = ({ state }) => {
       })
    }
 
+   const editOptions = option => {
+      productDispatch({
+         type: 'OPTIONS_MODE',
+         payload: {
+            type: 'edit',
+            options: option.options,
+            optionId: option.id,
+         },
+      })
+      productDispatch({
+         type: 'PRODUCT',
+         payload: {
+            value: option.inventoryProduct || option.simpleRecipeProduct,
+         },
+      })
+      openTunnel(3)
+   }
+
    return (
       <>
          <Tunnels tunnels={tunnels}>
@@ -101,7 +127,10 @@ const Products = ({ state }) => {
                <ProductTypeTunnel close={closeTunnel} open={openTunnel} />
             </Tunnel>
             <Tunnel layer={2}>
-               <ProductsTunnel state={state} close={closeTunnel} />
+               <ProductsTunnel close={closeTunnel} open={openTunnel} />
+            </Tunnel>
+            <Tunnel layer={3}>
+               <ProductOptionsTunnel state={state} close={closeTunnel} />
             </Tunnel>
          </Tunnels>
          {state.customizableProductOptions?.length ? (
@@ -178,14 +207,23 @@ const Products = ({ state }) => {
                                  <LinkIcon color="#00A7E1" stroke={1.5} />
                               </IconButton>
                            </Flex>
-                           {Boolean(state.default !== option.id) && (
+                           <Flex container>
+                              {Boolean(state.default !== option.id) && (
+                                 <TextButton
+                                    type="ghost"
+                                    onClick={() => makeDefault(option.id)}
+                                 >
+                                    Set as Default
+                                 </TextButton>
+                              )}
+                              <Spacer xAxis size="16px" />
                               <TextButton
-                                 type="ghost"
-                                 onClick={() => makeDefault(option.id)}
+                                 type="outline"
+                                 onClick={() => editOptions(option)}
                               >
-                                 Set as Default
+                                 Edit Options
                               </TextButton>
-                           )}
+                           </Flex>
                         </Flex>
                         <StyledTable>
                            <thead>
@@ -212,7 +250,25 @@ const Products = ({ state }) => {
                                  <>
                                     {option.simpleRecipeProduct.simpleRecipeProductOptions
                                        .filter(op => op.type === 'mealKit')
-                                       .filter(op => op.isActive)
+                                       .filter(
+                                          op =>
+                                             op.isActive &&
+                                             isIncludedInOptions(
+                                                op.id,
+                                                option.options
+                                             )
+                                       )
+                                       .map(op => {
+                                          const opt = option.options.find(
+                                             ({ optionId }) =>
+                                                optionId === op.id
+                                          )
+                                          return {
+                                             ...op,
+                                             price: opt.price,
+                                             discount: opt.discount,
+                                          }
+                                       })
                                        .map((op, i) => (
                                           <tr key={op.id}>
                                              <td>
@@ -236,24 +292,18 @@ const Products = ({ state }) => {
                                              </td>
                                              <td>
                                                 {currencyFmt(
-                                                   Number(op.price[0].value) ||
-                                                      0
-                                                )}{' '}
+                                                   Number(op.price) || 0
+                                                )}
                                              </td>
-                                             <td>{op.price[0].discount} %</td>
+                                             <td>{op.discount} %</td>
                                              <td>
                                                 {currencyFmt(
                                                    Number(
                                                       (
-                                                         parseFloat(
-                                                            op.price[0].value
-                                                         ) -
-                                                         parseFloat(
-                                                            op.price[0].value
-                                                         ) *
+                                                         parseFloat(op.price) -
+                                                         parseFloat(op.price) *
                                                             (parseFloat(
-                                                               op.price[0]
-                                                                  .discount
+                                                               op.discount
                                                             ) /
                                                                100)
                                                       ).toFixed(2)
@@ -264,7 +314,25 @@ const Products = ({ state }) => {
                                        ))}
                                     {option.simpleRecipeProduct.simpleRecipeProductOptions
                                        .filter(op => op.type === 'readyToEat')
-                                       .filter(op => op.isActive)
+                                       .filter(
+                                          op =>
+                                             op.isActive &&
+                                             isIncludedInOptions(
+                                                op.id,
+                                                option.options
+                                             )
+                                       )
+                                       .map(op => {
+                                          const opt = option.options.find(
+                                             ({ optionId }) =>
+                                                optionId === op.id
+                                          )
+                                          return {
+                                             ...op,
+                                             price: opt.price,
+                                             discount: opt.discount,
+                                          }
+                                       })
                                        .map((op, i) => (
                                           <tr key={op.id}>
                                              <td>
@@ -286,53 +354,75 @@ const Products = ({ state }) => {
                                                       .serving
                                                 }
                                              </td>
-                                             <td>${op.price[0].value} </td>
-                                             <td>{op.price[0].discount} %</td>
                                              <td>
-                                                $
-                                                {(
-                                                   parseFloat(
-                                                      op.price[0].value
-                                                   ) -
-                                                   parseFloat(
-                                                      op.price[0].value
-                                                   ) *
-                                                      (parseFloat(
-                                                         op.price[0].discount
-                                                      ) /
-                                                         100)
-                                                ).toFixed(2) || ''}
+                                                {currencyFmt(
+                                                   Number(op.price) || 0
+                                                )}
+                                             </td>
+                                             <td>{op.discount} %</td>
+                                             <td>
+                                                {currencyFmt(
+                                                   Number(
+                                                      (
+                                                         parseFloat(op.price) -
+                                                         parseFloat(op.price) *
+                                                            (parseFloat(
+                                                               op.discount
+                                                            ) /
+                                                               100)
+                                                      ).toFixed(2)
+                                                   ) || 0
+                                                )}
                                              </td>
                                           </tr>
                                        ))}
                                  </>
                               ) : (
                                  <>
-                                    {option.inventoryProduct.inventoryProductOptions.map(
-                                       op => (
+                                    {option.inventoryProduct.inventoryProductOptions
+                                       .filter(op =>
+                                          isIncludedInOptions(
+                                             op.id,
+                                             option.options
+                                          )
+                                       )
+                                       .map(op => {
+                                          const opt = option.options.find(
+                                             ({ optionId }) =>
+                                                optionId === op.id
+                                          )
+                                          return {
+                                             ...op,
+                                             price: opt.price,
+                                             discount: opt.discount,
+                                          }
+                                       })
+                                       .map(op => (
                                           <tr key={op.id}>
                                              <td>{op.label}</td>
                                              <td>{op.quantity}</td>
-                                             <td>${op.price[0].value} </td>
-                                             <td>{op.price[0].discount} %</td>
                                              <td>
-                                                $
-                                                {(
-                                                   parseFloat(
-                                                      op.price[0].value
-                                                   ) -
-                                                   parseFloat(
-                                                      op.price[0].value
-                                                   ) *
-                                                      (parseFloat(
-                                                         op.price[0].discount
-                                                      ) /
-                                                         100)
-                                                ).toFixed(2) || ''}
+                                                {currencyFmt(
+                                                   Number(op.price) || 0
+                                                )}
+                                             </td>
+                                             <td>{op.discount} %</td>
+                                             <td>
+                                                {currencyFmt(
+                                                   Number(
+                                                      (
+                                                         parseFloat(op.price) -
+                                                         parseFloat(op.price) *
+                                                            (parseFloat(
+                                                               op.discount
+                                                            ) /
+                                                               100)
+                                                      ).toFixed(2)
+                                                   ) || 0
+                                                )}
                                              </td>
                                           </tr>
-                                       )
-                                    )}
+                                       ))}
                                  </>
                               )}
                            </tbody>

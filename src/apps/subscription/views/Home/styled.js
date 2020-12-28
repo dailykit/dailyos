@@ -28,4 +28,7 @@ export const StyledCardList = styled.ul`
    @media (max-width: 567px) {
       grid-template-columns: 1fr;
    }
+   div {
+      width: 100%;
+   }
 `

@@ -21,7 +21,7 @@ import {
 import { S_COMBO_PRODUCT, UPDATE_COMBO_PRODUCT } from '../../../../graphql'
 import { StyledRule } from '../styled'
 import validator from '../validators'
-import { Assets, Description, Items } from './components'
+import { Assets, Description, Items, Pricing } from './components'
 
 const address = 'apps.menu.views.forms.product.comboproduct.'
 
@@ -209,6 +209,10 @@ export default function ComboProduct() {
             <Flex as="section" container>
                <Flex flex="2">
                   <Description state={state} />
+               </Flex>
+               <Spacer xAxis size="16px" />
+               <Flex flex="1">
+                  <Pricing updateProduct={updateProduct} state={state} />
                </Flex>
                <Spacer xAxis size="16px" />
                <Flex flex="1">

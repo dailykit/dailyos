@@ -1,47 +1,10 @@
 import styled, { css } from 'styled-components'
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@reach/tabs'
 
-export const Ingredients = styled.ul`
-   margin-bottom: 16px;
-   li {
-      list-style: none;
-   }
-   > li + li {
-      margin-top: 16px;
-   }
-`
-
-export const Ingredient = styled.li`
-   padding: 16px;
-   border: 1px solid #e1e1e1;
-   border-radius: 2px;
-   h2 {
-      width: 280px;
-      font-size: 16px;
-      font-weight: 500;
-      margin-right: 16px;
-      white-space: nowrap;
-      overflow: hidden;
-      cursor: pointer;
-      text-overflow: ellipsis;
-   }
-   .optionsHeader {
-      height: 32px;
-      display: flex;
-      align-items: center;
-      span {
-         width: 180px;
-         font-size: 14px;
-         padding: 0 12px;
-         color: rgb(136, 141, 157);
-      }
-   }
-`
-
 export const StyledTabs = styled(Tabs)(
    () => css`
       display: grid;
-      grid-template-columns: 180px 1fr;
+      grid-template-columns: 280px 1fr;
    `
 )
 
@@ -65,6 +28,9 @@ export const StyledTab = styled(Tab)(
       padding: 0 12px;
       text-align: left;
       background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       border-bottom: 1px solid #cac7c7;
       :focus {
          outline: none;
@@ -98,7 +64,7 @@ export const ListBodyItem = styled.div(
       grid-gap: 16px;
       cursor: pointer;
       line-height: 40px;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: 100px 1fr;
       border-bottom: 1px solid rgba(128, 128, 128, 0.3);
       background: ${isAssembled ? '#79df54' : '#f9daa8'};
       border-left: ${isActive
@@ -108,6 +74,12 @@ export const ListBodyItem = styled.div(
          padding: 0 14px;
          display: flex;
          align-items: center;
+         :last-child {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+         }
       }
    `
 )
@@ -127,5 +99,51 @@ export const StyledButton = styled.button`
    border: 1px solid rgba(0, 0, 0, 0.2);
    svg {
       margin-left: 2px;
+   }
+`
+
+export const OptionsHeader = styled.section`
+   height: 32px;
+   display: flex;
+   align-items: center;
+   span {
+      width: 280px;
+      font-size: 14px;
+      padding: 0 12px;
+      color: rgb(136, 141, 157);
+   }
+`
+
+export const ProductTitle = styled.h2(
+   ({ isLink }) => css`
+      width: 280px;
+      font-size: 16px;
+      font-weight: 500;
+      margin-right: 16px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      ${isLink && 'cursor: pointer'};
+   `
+)
+
+export const Products = styled.ul`
+   margin-bottom: 16px;
+   li {
+      list-style: none;
+   }
+   > li + li {
+      margin-top: 16px;
+   }
+`
+
+export const Product = styled.li`
+   padding: 16px;
+   border: 1px solid #e1e1e1;
+   border-radius: 2px;
+   h3 {
+      width: 180px;
+      font-size: 16px;
+      font-weight: 400;
    }
 `

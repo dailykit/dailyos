@@ -439,6 +439,19 @@ export const CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS = gql`
    }
 `
 
+export const UPDATE_CUSTOMIZABLE_PRODUCT_OPTIONS = gql`
+   mutation UpdateCustomizableProductOption(
+      $id: Int!
+      $set: products_customizableProductOption_set_input!
+   ) {
+      updateCustomizableProductOption(where: { id: { _eq: $id } }, _set: $set) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const DELETE_CUSTOMIZABLE_PRODUCT_OPTION = gql`
    mutation DeleteCustomizableProductOption($id: Int) {
       updateCustomizableProductOption(

@@ -3,6 +3,7 @@ import ItemsTunnel from './ItemsTunnel'
 import ProductTypeTunnel from './ProductTypeTunnel'
 import ProductsTunnel from './ProductsTunnel'
 import AssetsTunnel from './AssetsTunnel'
+import ProductOptionsTunnel from './ProductOptionsTunnel'
 
 export {
    DescriptionTunnel,
@@ -10,4 +11,5 @@ export {
    ProductTypeTunnel,
    ProductsTunnel,
    AssetsTunnel,
+   ProductOptionsTunnel,
 }
