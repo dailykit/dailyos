@@ -56,7 +56,7 @@ const Brands = Loadable({
 
 const Content = Loadable({
    loader: () => import('./apps/content'),
-   loading: Loade,
+   loading: Loader,
 })
 const Editor = Loadable({
    loader: () => import('./apps/editor'),
