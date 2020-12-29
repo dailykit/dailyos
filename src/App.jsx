@@ -54,6 +54,11 @@ const Brands = Loadable({
    loading: Loader,
 })
 
+const Editor = Loadable({
+   loader: () => import('./apps/editor'),
+   loading: Loader,
+})
+
 const App = () => {
    return (
       <>
@@ -111,6 +116,11 @@ const App = () => {
                            <div>Brands</div>
                         </Link>
                      </AppItem>
+                     <AppItem>
+                        <Link to="/editor">
+                           <div>Editor</div>
+                        </Link>
+                     </AppItem>
                   </AppList>
                </Route>
                <Route path="/inventory" component={Inventory} />
@@ -123,6 +133,7 @@ const App = () => {
                <Route path="/subscription" component={Subscription} />
                <Route path="/insights" component={Insights} />
                <Route path="/brands" component={Brands} />
+               <Route path="/editor" component={Editor} />
             </Switch>
          </Router>
          {!isKeycloakSupported() && <RedirectBanner />}
