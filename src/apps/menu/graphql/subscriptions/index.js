@@ -30,8 +30,9 @@ export const S_COLLECTION = gql`
          startTime
          endTime
          rrule
-         productCategories {
+         productCategories(order_by: { position: desc_nulls_last }) {
             id
+            position
             productCategoryName
             products {
                id

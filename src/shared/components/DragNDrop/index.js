@@ -9,6 +9,7 @@ export default function DragNDrop({
    children,
    tablename,
    schemaname,
+   direction,
 }) {
    const { priorityMutation } = useDnd()
    const [data, setData] = useState(list)

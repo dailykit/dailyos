@@ -28,10 +28,12 @@ import { useTabs } from '../../../context/tabs'
 import { S_COLLECTION, UPDATE_COLLECTION } from '../../../graphql'
 import validator from '../validators'
 import { Availability, Products } from './components'
+import { useDnd } from '../../../../../shared/components/DragNDrop/useDnd'
 
 const address = 'apps.menu.views.forms.collection.'
 
 const CollectionForm = () => {
+   const { initiatePriority } = useDnd()
    const { t } = useTranslation()
 
    const { setTabTitle, tab, addTab } = useTabs()
@@ -64,6 +66,13 @@ const CollectionForm = () => {
             ...title,
             value: data.subscriptionData.data.collection.name,
          })
+         if (data.subscriptionData.data.collection.productCategories.length) {
+            initiatePriority({
+               tablename: 'collection_productCategory',
+               schemaname: 'onDemand',
+               data: data.subscriptionData.data.collection.productCategories,
+            })
+         }
       },
    })
 
