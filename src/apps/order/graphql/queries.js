@@ -42,6 +42,10 @@ export const QUERIES = {
                   products: parsedData(path: "items")
                   emailContent: parsedData(path: "HtmlDocument")
                }
+               cart: orderCart {
+                  id
+                  isTest
+               }
                pickup: deliveryInfo(path: "pickup.window")
                restaurant: deliveryInfo(path: "pickup.pickupInfo")
                dropoff: deliveryInfo(path: "dropoff.window")
@@ -1425,6 +1429,7 @@ export const QUERIES = {
                customer: deliveryInfo(path: "dropoff.dropoffInfo")
                deliveryCompany: deliveryInfo(path: "deliveryCompany")
                cart: orderCart {
+                  isTest
                   transactionId
                }
                brand {

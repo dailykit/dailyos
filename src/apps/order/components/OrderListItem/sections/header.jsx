@@ -75,7 +75,7 @@ export const Header = ({ order }) => {
             type="outline"
             onClick={() => createTab(order.id)}
          >
-            {'ORD' + order.id}
+            {'ORD' + order.id + (Boolean(order?.cart?.isTest) ? '(Test)' : '')}
             <NewTabIcon size={14} />
          </ComboButton>
          <Spacer size="8px" xAxis />
