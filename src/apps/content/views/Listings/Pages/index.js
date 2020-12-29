@@ -1,5 +1,16 @@
 import React, { useRef, useState, useEffect, useContext } from 'react'
-import { Text, Loader, Flex, IconButton, Form } from '@dailykit/ui'
+import {
+   Text,
+   Loader,
+   Flex,
+   IconButton,
+   Form,
+   ComboButton,
+   Tunnels,
+   Tunnel,
+   useTunnel,
+   PlusIcon,
+} from '@dailykit/ui'
 import { useSubscription, useQuery, useMutation } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { useLocation } from 'react-router-dom'
@@ -14,6 +25,7 @@ import {
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { useTooltip } from '../../../../../shared/providers'
+import PageCreationTunnel from './Tunnel'
 
 import { currencyFmt, logger } from '../../../../../shared/utils'
 import options from '../tableOption'
@@ -21,6 +33,7 @@ import { toast } from 'react-toastify'
 
 const PageListing = () => {
    const location = useLocation()
+   const [tunnels, openTunnel, closeTunnel] = useTunnel()
    const [context, setContext] = useContext(BrandContext)
    const { addTab, tab, closeAllTabs } = useTabs()
    const { tooltip } = useTooltip()
@@ -100,8 +113,8 @@ const PageListing = () => {
    }
 
    const rowClick = (e, cell) => {
-      const { internalPageName } = cell._cell.row.data
-      const param = `${location.pathname}/${internalPageName}`
+      const { id, internalPageName } = cell._cell.row.data
+      const param = `${location.pathname}/${id}/${internalPageName}`
       addTab(internalPageName, param)
    }
 
@@ -234,12 +247,22 @@ const PageListing = () => {
    }
    return (
       <StyledWrapper>
-         <Flex container height="80px" alignItems="center">
-            <Text as="title">
-               Page(
-               {count})
-            </Text>
-            <Tooltip identifier="customer_list_heading" />
+         <Flex
+            container
+            height="80px"
+            alignItems="center"
+            justifyContent="space-between"
+         >
+            <Flex container alignItems="center">
+               <Text as="title">
+                  Page(
+                  {count})
+               </Text>
+               <Tooltip identifier="customer_list_heading" />
+            </Flex>
+            <ComboButton type="solid" size="md" onClick={() => openTunnel(1)}>
+               <PlusIcon color="#fff" /> Create Page
+            </ComboButton>
          </Flex>
 
          {Boolean(pageList) && (
@@ -248,11 +271,16 @@ const PageListing = () => {
                data={pageList}
                options={{
                   ...options,
-                  placeholder: 'No Customers Available Yet !',
+                  placeholder: 'No Pages Available Yet !',
                }}
                ref={tableRef}
             />
          )}
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1}>
+               <PageCreationTunnel close={closeTunnel} />
+            </Tunnel>
+         </Tunnels>
       </StyledWrapper>
    )
 }

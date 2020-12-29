@@ -4,8 +4,7 @@ import { BrandName } from './styled'
 import BrandContext from '../../context/Brand'
 import { ViewIcon } from '../../../../shared/assets/icons'
 // Views
-import { PageListing, Home } from '../../views'
-import { GridForm, FAQForm, Identifier } from '../../views/Forms/'
+import { PageListing, Home, PageForm } from '../../views'
 
 export default function Main() {
    const [context, setContext] = useContext(BrandContext)
@@ -18,8 +17,8 @@ export default function Main() {
             <Route path="/content/pages" exact>
                <PageListing />
             </Route>
-            <Route path="/content/pages/:pageName" exact>
-               <PageListing />
+            <Route path="/content/pages/:pageId/:pageName" exact>
+               <PageForm />
             </Route>
             {/* <Route path="/content/blocks" exact>
                <Pages />

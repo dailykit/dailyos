@@ -1,5 +1,3 @@
-import FAQForm from './FAQInfo'
-import GridForm from './GridInfo'
-import Identifier from './Identifier/Identifier'
+import PageForm from './Page'
 
-export { FAQForm, GridForm, Identifier }
+export { PageForm }

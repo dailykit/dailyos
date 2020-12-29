@@ -88,3 +88,55 @@ export const WEBPAGE_ARCHIVED = gql`
       }
    }
 `
+
+export const UPDATE_WEBPAGE = gql`
+   mutation UPDATE_WEBPAGE(
+      $pageId: Int!
+      $set: website_websitePage_set_input!
+   ) {
+      update_website_websitePage_by_pk(
+         pk_columns: { id: $pageId }
+         _set: $set
+      ) {
+         internalPageName
+         published
+         route
+         id
+      }
+   }
+`
+export const LINK_COMPONENT = gql`
+   mutation LINK_COMPONENT(
+      $objects: [website_websitePageModule_insert_input!]!
+   ) {
+      insert_website_websitePageModule(objects: $objects) {
+         returning {
+            fileId
+            websitePageId
+            moduleType
+            templateId
+            internalModuleIdentifier
+         }
+      }
+   }
+`
+export const DELETE_LINKED_COMPONENT = gql`
+   mutation DELETE_LINKED_COMPONENT(
+      $where: website_websitePageModule_bool_exp!
+   ) {
+      delete_website_websitePageModule(where: $where) {
+         returning {
+            fileId
+            id
+         }
+      }
+   }
+`
+export const CREATE_WEBPAGE = gql`
+   mutation CREATE_WEBPAGE($object: website_websitePage_insert_input!) {
+      insert_website_websitePage_one(object: $object) {
+         id
+         internalPageName
+      }
+   }
+`

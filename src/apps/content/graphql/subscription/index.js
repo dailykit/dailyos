@@ -127,3 +127,59 @@ export const WEBSITE_TOTAL_PAGES = gql`
       }
    }
 `
+export const PAGE_INFO = gql`
+   subscription PAGE_INFO($pageId: Int!) {
+      website_websitePage_by_pk(id: $pageId) {
+         internalPageName
+         published
+         route
+      }
+   }
+`
+export const GET_FILES = gql`
+   subscription GET_FILES($linkedFile: [Int!]!, $fileType: String!) {
+      editor_file_aggregate(
+         where: { id: { _nin: $linkedFile }, fileType: { _eq: $fileType } }
+      ) {
+         nodes {
+            id
+            fileName
+            fileType
+            path
+         }
+      }
+   }
+`
+
+export const GET_TEMPLATES = gql`
+   subscription GET_TEMPLATES($linkedTemplates: [Int!]!) {
+      editor_template_aggregate(where: { id: { _nin: $linkedTemplates } }) {
+         nodes {
+            id
+            name
+            route
+            type
+         }
+      }
+   }
+`
+
+export const LINKED_COMPONENT = gql`
+   subscription LINKED_COMPONENT($pageId: Int!) {
+      website_websitePageModule(
+         where: { websitePageId: { _eq: $pageId } }
+         order_by: { position: desc_nulls_last }
+      ) {
+         fileId
+         id
+         internalModuleIdentifier
+         moduleType
+         position
+         templateId
+         visibilityConditionId
+         file {
+            fileName
+         }
+      }
+   }
+`
