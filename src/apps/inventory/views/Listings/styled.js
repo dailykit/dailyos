@@ -1,14 +1,20 @@
+import { Flex } from '@dailykit/ui'
 import styled from 'styled-components'
 
 export const StyledWrapper = styled.div`
    margin: 0 auto;
    max-width: 1280px;
-   width: calc(100vw - 64px);
    h1 {
       color: #555b6e;
       font-size: 20px;
       font-weight: 500;
       line-height: 23px;
+   }
+   @media screen and (max-width: 767px) {
+      width: calc(100vw - 32px);
+   }
+   @media screen and (min-width: 768px) {
+      width: calc(100vw - 64px);
    }
 `
 
@@ -77,5 +83,13 @@ export const SolidTile = styled.button`
    &:hover {
       background-color: #f3f3f3;
       cursor: pointer;
+   }
+`
+export const ResponsiveFlex = styled(Flex)`
+   @media screen and (max-width: 767px) {
+      width: calc(100vw - 32px);
+   }
+   @media screen and (min-width: 768px) {
+      width: calc(100vw - 64px);
    }
 `

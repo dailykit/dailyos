@@ -135,7 +135,6 @@ function DataTable({
       {
          title: 'Name',
          field: 'name',
-         width: 150,
          headerFilter: true,
          cellClick: (e, cell) => {
             const { name, id } = cell._cell.row.data
@@ -149,7 +148,7 @@ function DataTable({
             )
          },
       },
-      { title: 'Category', width: 150, field: 'category', headerFilter: true },
+      { title: 'Category', field: 'category', headerFilter: true },
       {
          title: 'Processings',
          field: 'ingredientProcessings',
