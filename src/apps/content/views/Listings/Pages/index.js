@@ -39,28 +39,27 @@ const PageListing = () => {
    const { addTab, tab, closeAllTabs } = useTabs()
    const { tooltip } = useTooltip()
    const tableRef = useRef(null)
-   const [pageList, setPageList] = useState([])
-   //    const prevBrandId = useRef(context.brandId)
+   const [pageList, setPageList] = useState(undefined)
+   const prevBrandId = useRef(context.brandId)
 
-   //    Subscription
+   //    Subscription for page listing
    const { loading, error } = useSubscription(WEBSITE_PAGES_LISTING, {
       variables: {
          websiteId: context.websiteId,
       },
-      onSubscriptionData: ({
-         subscriptionData: {
-            data: { website_websitePage: websitePages = [] } = {},
-         } = {},
-      }) => {
-         const result = websitePages.map(page => {
-            return {
-               id: page.id,
-               internalPageName: page.internalPageName,
-               url: `${context.brandDomain}${page.route}`,
-               pageVisit: 'N/A',
-               published: page.published,
+      onSubscriptionData: data => {
+         const result = data.subscriptionData.data.website_websitePage.map(
+            page => {
+               return {
+                  id: page.id,
+                  internalPageName: page.internalPageName,
+                  url: `${context.brandDomain}${page.route}`,
+                  pageVisit: 'N/A',
+                  published: page.published,
+               }
             }
-         })
+         )
+         console.log(result)
          setPageList(result)
       },
    })
@@ -77,7 +76,7 @@ const PageListing = () => {
       },
    })
 
-   //    Mutation
+   //    Mutation for delete
    const [deletePage] = useMutation(WEBPAGE_ARCHIVED, {
       onCompleted: () => {
          toast.success('Page deleted!')
@@ -105,7 +104,7 @@ const PageListing = () => {
       }
    }, [addTab, tab])
 
-   // Handler
+   // delete Handler
    const deleteHandler = (e, page) => {
       e.stopPropagation()
       if (
@@ -128,6 +127,7 @@ const PageListing = () => {
       addTab(internalPageName, param)
    }
 
+   //toggle handler
    const toggleHandler = (toggle, id) => {
       const val = !toggle
       // if (val && !isvalid) {
@@ -243,9 +243,9 @@ const PageListing = () => {
       },
    ]
 
-   //    if (context.brandId !== prevBrandId.current) {
-   //       closeAllTabs()
-   //    }
+   if (context.brandId !== prevBrandId.current) {
+      closeAllTabs()
+   }
 
    if (loading || totalPagesLoading) {
       return <InlineLoader />
