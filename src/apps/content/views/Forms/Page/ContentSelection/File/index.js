@@ -93,9 +93,4 @@ const File = ({ linkedFiles, selectedOption, emptyOptions }) => {
 }
 export default File
 
-export const Wrapper = styled.div`
-   ul {
-      max-height: 400px;
-      overflow: auto;
-   }
-`
+export const Wrapper = styled.div``

@@ -65,7 +65,6 @@ const PageForm = () => {
    // form validation
    const validatePageName = (value, name) => {
       const text = value.trim()
-      console.log(`text ${text.length}`)
       let isValid = true
       let errors = []
       if (name === 'pageTitle') {
@@ -78,8 +77,11 @@ const PageForm = () => {
             isValid = false
             errors = [...errors, 'Must have atleast one letters.']
          }
+         if (!text.includes('/')) {
+            isValid = false
+            errors = [...errors, 'Invalid route!Must start with ' / '.']
+         }
       }
-      console.log(isValid)
       return { isValid, errors }
    }
 
@@ -98,7 +100,7 @@ const PageForm = () => {
             ...pageTitle,
             value: websitePage?.internalPageName || '',
          })
-         console.log(websitePage.route)
+
          setPageRoute({
             ...pageRoute,
             value: websitePage?.route || '',
@@ -107,7 +109,7 @@ const PageForm = () => {
       },
    })
 
-   // Mutation
+   // Mutation for page publish toggle
    const [updatePage] = useMutation(UPDATE_WEBPAGE, {
       onCompleted: () => {
          toast.success('Updated!')
@@ -230,8 +232,8 @@ const PageForm = () => {
                      <Tooltip identifier="page_name_info" />
                   </Flex>
                   <Form.Text
-                     id="pageName"
-                     name="pageName"
+                     id="pageTitle"
+                     name="pageTitle"
                      value={pageTitle.value}
                      placeholder="Enter the Page Name "
                      onBlur={onBlur}
@@ -295,19 +297,27 @@ const PageForm = () => {
                                     </Form.Label>
                                     <Tooltip identifier="page_route_info" />
                                  </Flex>
-                                 <Form.Text
-                                    id="pageRoute"
-                                    name="pageRoute"
-                                    value={pageRoute.value}
-                                    placeholder="Enter the Page Route "
-                                    onBlur={onBlur}
-                                    onChange={e =>
-                                       setPageRoute({
-                                          ...pageRoute,
-                                          value: e.target.value,
-                                       })
-                                    }
-                                 />
+                                 <Flex container>
+                                    <Form.Text
+                                       id="domain"
+                                       name="domain"
+                                       value={context.brandDomain}
+                                       disabled
+                                    />
+                                    <Form.Text
+                                       id="pageRoute"
+                                       name="pageRoute"
+                                       value={pageRoute.value}
+                                       placeholder="Enter the Page Route "
+                                       onBlur={onBlur}
+                                       onChange={e =>
+                                          setPageRoute({
+                                             ...pageRoute,
+                                             value: e.target.value,
+                                          })
+                                       }
+                                    />
+                                 </Flex>
                                  {pageRoute.meta.isTouched &&
                                     !pageRoute.meta.isValid &&
                                     pageRoute.meta.errors.map(
@@ -320,6 +330,9 @@ const PageForm = () => {
                               </Form.Group>
                            </Flex>
                         </div>
+                        <Spacer size="16px" />
+                        <hr style={{ color: '#e9e9e9' }} />
+                        <ContentSelection />
                      </HorizontalTabPanel>
                   </div>
                   <HorizontalTabPanel>
@@ -327,8 +340,6 @@ const PageForm = () => {
                   </HorizontalTabPanel>
                </HorizontalTabPanels>
             </HorizontalTabs>
-            <hr style={{ color: '#e9e9e9' }} />
-            <ContentSelection />
          </StyledDiv>
       </StyledWrapper>
    )

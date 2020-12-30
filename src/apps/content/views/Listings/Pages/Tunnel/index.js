@@ -33,7 +33,6 @@ export default function PageCreationTunnel({ close }) {
    // form validation
    const validatePageName = (value, name) => {
       const text = value.trim()
-      console.log(`text ${text.length}`)
       let isValid = true
       let errors = []
       if (name === 'pageTitle') {
@@ -46,8 +45,11 @@ export default function PageCreationTunnel({ close }) {
             isValid = false
             errors = [...errors, 'Must have atleast one letters.']
          }
+         if (!text.includes('/') && text.length > 0) {
+            isValid = false
+            errors = [...errors, "Invalid route..Must start with ' / '."]
+         }
       }
-      console.log(isValid)
       return { isValid, errors }
    }
 
@@ -82,12 +84,7 @@ export default function PageCreationTunnel({ close }) {
    })
 
    const onBlur = e => {
-      console.log(e.target.name)
       if (e.target.name === 'pageTitle') {
-         console.log(
-            'hwt',
-            validatePageName(e.target.value, e.target.name).isValid
-         )
          setPageTitle({
             ...pageTitle,
             meta: {
@@ -129,9 +126,7 @@ export default function PageCreationTunnel({ close }) {
          },
       })
    }
-
    const createPageHandler = () => {
-      console.log(pageTitle, pageRoute)
       if (pageTitle.meta.isValid && pageRoute.meta.isValid) {
          createPage({
             variables: {
@@ -190,19 +185,27 @@ export default function PageCreationTunnel({ close }) {
                   </Form.Label>
                   <Tooltip identifier="page_route_info" />
                </Flex>
-               <Form.Text
-                  id="pageRoute"
-                  name="pageRoute"
-                  value={pageRoute.value}
-                  placeholder="Enter the Page Route "
-                  onBlur={onBlur}
-                  onChange={e =>
-                     setPageRoute({
-                        ...pageRoute,
-                        value: e.target.value,
-                     })
-                  }
-               />
+               <Flex container>
+                  <Form.Text
+                     id="domain"
+                     name="domain"
+                     value={context.brandDomain}
+                     disabled
+                  />
+                  <Form.Text
+                     id="pageRoute"
+                     name="pageRoute"
+                     value={pageRoute.value}
+                     placeholder="Enter the Page Route "
+                     onBlur={onBlur}
+                     onChange={e =>
+                        setPageRoute({
+                           ...pageRoute,
+                           value: e.target.value,
+                        })
+                     }
+                  />
+               </Flex>
                {pageRoute.meta.isTouched &&
                   !pageRoute.meta.isValid &&
                   pageRoute.meta.errors.map((error, index) => (

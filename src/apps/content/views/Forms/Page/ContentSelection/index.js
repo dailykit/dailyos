@@ -12,6 +12,7 @@ import {
    IconButton,
    PlusIcon,
    Text,
+   Filler,
    ButtonTile,
 } from '@dailykit/ui'
 import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
@@ -160,34 +161,44 @@ const ContentSelection = () => {
    return (
       <Flex container justifyContent="space-between">
          <WrapDiv>
-            <Text as="title">Change Position </Text>
-            <DragNDrop
-               list={linkedFiles}
-               droppableId="linkFileDroppableId"
-               tablename="websitePageModule"
-               schemaname="website"
-            >
-               {linkedFiles.map(file => {
-                  return (
-                     <Child>
-                        {/* <ButtonTile
+            <Text as="title">Linked Components </Text>
+            {linkedFiles.length ? (
+               <DragNDrop
+                  list={linkedFiles}
+                  droppableId="linkFileDroppableId"
+                  tablename="websitePageModule"
+                  schemaname="website"
+               >
+                  {linkedFiles.map(file => {
+                     return (
+                        <Child>
+                           {/* <ButtonTile
                            noIcon
                            size="sm"
                            type="secondary"
                            text={file?.file?.fileName || ''}
                         /> */}
 
-                        <div className="name">{file?.file?.fileName || ''}</div>
-                        <IconButton
-                           type="ghost"
-                           onClick={() => deleteHandler(file.fileId)}
-                        >
-                           <DeleteIcon color="#FF5A52" size="20" />
-                        </IconButton>
-                     </Child>
-                  )
-               })}
-            </DragNDrop>
+                           <div className="name">
+                              {file?.file?.fileName || ''}
+                           </div>
+                           <IconButton
+                              type="ghost"
+                              onClick={() => deleteHandler(file.fileId)}
+                           >
+                              <DeleteIcon color="#FF5A52" size="20" />
+                           </IconButton>
+                        </Child>
+                     )
+                  })}
+               </DragNDrop>
+            ) : (
+               <Filler
+                  message="No component linked yet!"
+                  width="80%"
+                  height="80%"
+               />
+            )}
          </WrapDiv>
          <StyledWrapper>
             <Flex container justifyContent="flex-end">

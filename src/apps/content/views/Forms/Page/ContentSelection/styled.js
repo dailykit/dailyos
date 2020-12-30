@@ -4,8 +4,6 @@ export const WrapDiv = styled.div`
    margin: 0;
    width: 60%;
    padding: 16px;
-   max-height: 500px;
-   overflow: auto;
 `
 
 export const StyledWrapper = styled.div`

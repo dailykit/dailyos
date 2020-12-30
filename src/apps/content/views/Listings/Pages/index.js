@@ -21,6 +21,7 @@ import {
    WEBSITE_PAGES_LISTING,
    WEBSITE_TOTAL_PAGES,
    WEBPAGE_ARCHIVED,
+   UPDATE_WEBPAGE,
 } from '../../../graphql'
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
@@ -55,7 +56,7 @@ const PageListing = () => {
             return {
                id: page.id,
                internalPageName: page.internalPageName,
-               url: page.route,
+               url: `${context.brandDomain}${page.route}`,
                pageVisit: 'N/A',
                published: page.published,
             }
@@ -87,7 +88,16 @@ const PageListing = () => {
       },
    })
 
-   // Query
+   // Mutation for page publish toggle
+   const [updatePage] = useMutation(UPDATE_WEBPAGE, {
+      onCompleted: () => {
+         toast.success('Updated!')
+      },
+      onError: error => {
+         toast.error('Something went wrong')
+         logger(error)
+      },
+   })
 
    useEffect(() => {
       if (!tab) {
@@ -123,15 +133,14 @@ const PageListing = () => {
       // if (val && !isvalid) {
       //    toast.error(`Coupon should be valid!`)
       // } else {
-      //   updateWebsitePage({
-      //      variables: {
-      //         id: id,
-      //         set: {
-      //            isActive: val,
-      //         },
-      //      },
-      //   })
-      // }
+      updatePage({
+         variables: {
+            pageId: id,
+            set: {
+               published: val,
+            },
+         },
+      })
    }
 
    const DeleteButton = () => {

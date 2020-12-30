@@ -21,6 +21,7 @@ const App = () => {
       brandId: 0,
       brandName: '',
       websiteId: 0,
+      brandDomain: '',
    })
    return (
       <StyledWrapper>
