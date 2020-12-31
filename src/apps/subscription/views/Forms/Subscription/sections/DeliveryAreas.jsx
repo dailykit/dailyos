@@ -1,6 +1,6 @@
 import React from 'react'
 import { toast } from 'react-toastify'
-import { ReactTabulator } from '@dailykit/react-tabulator'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import {
    Form,
@@ -19,12 +19,14 @@ import { usePlan } from '../state'
 import tableOptions from '../../../../tableOption'
 import { logger } from '../../../../../../shared/utils'
 import { useTooltip } from '../../../../../../shared/providers'
+import { DeleteIcon } from '../../../../../../shared/assets/icons'
 import {
    Tooltip,
    ErrorState,
    InlineLoader,
 } from '../../../../../../shared/components'
 import {
+   ZIPCODE,
    SUBSCRIPTION_ZIPCODES,
    INSERT_SUBSCRIPTION_ZIPCODES,
 } from '../../../../graphql'
@@ -33,6 +35,15 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
    const tableRef = React.useRef()
    const { tooltip } = useTooltip()
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
+   const [remove] = useMutation(ZIPCODE.DELETE, {
+      onCompleted: () => {
+         toast.success('Successfully deleted the zipcode!')
+      },
+      onError: error => {
+         toast.success('Failed to delete the zipcode!')
+         logger(error)
+      },
+   })
    const {
       error,
       loading,
@@ -100,6 +111,15 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+      },
+      {
+         width: 150,
+         title: 'Actions',
+         headerFilter: false,
+         headerSort: false,
+         hozAlign: 'center',
+         cssClass: 'center-text',
+         formatter: reactFormatter(<Delete remove={remove} />),
       },
    ]
 
@@ -258,5 +278,22 @@ const AreasTunnel = ({ tunnels, closeTunnel }) => {
             </Flex>
          </Tunnel>
       </Tunnels>
+   )
+}
+
+const Delete = ({ cell, remove }) => {
+   const removeItem = () => {
+      const { subscriptionId, zipcode } = cell.getData()
+      if (
+         window.confirm(`Are your sure you want to delete ${zipcode} zipcode?`)
+      ) {
+         remove({ variables: { subscriptionId, zipcode } })
+      }
+   }
+
+   return (
+      <IconButton size="sm" type="ghost" onClick={removeItem}>
+         <DeleteIcon color="#FF5A52" />
+      </IconButton>
    )
 }

@@ -100,3 +100,16 @@ export const UPDATE_SUBSCRIPTION = gql`
       }
    }
 `
+
+export const ZIPCODE = {
+   DELETE: gql`
+      mutation deleteZipcode($subscriptionId: Int!, $zipcode: String!) {
+         deleteZipcode: delete_subscription_subscription_zipcode_by_pk(
+            subscriptionId: $subscriptionId
+            zipcode: $zipcode
+         ) {
+            zipcode
+         }
+      }
+   `,
+}

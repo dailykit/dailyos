@@ -204,6 +204,7 @@ export const SUBSCRIPTION_ZIPCODES = gql`
          isActive
          deliveryTime
          deliveryPrice
+         subscriptionId
       }
    }
 `
