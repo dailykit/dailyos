@@ -202,6 +202,7 @@ export const SUBSCRIPTION_ZIPCODES = gql`
       ) {
          zipcode
          isActive
+         deliveryTime
          deliveryPrice
       }
    }

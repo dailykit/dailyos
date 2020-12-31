@@ -69,6 +69,28 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
          },
       },
       {
+         title: 'Delivery From',
+         headerFilter: true,
+         headerTooltip: column => {
+            const identifier = 'listing_delivery_from_column_zipcode'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+         formatter: cell => cell.getData().deliveryTime.from,
+      },
+      {
+         title: 'Delivery To',
+         headerFilter: true,
+         headerTooltip: column => {
+            const identifier = 'listing_delivery_from_column_zipcode'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+         formatter: cell => cell.getData().deliveryTime.to,
+      },
+      {
          field: 'isActive',
          title: 'Active',
          formatter: 'tick',
@@ -116,9 +138,11 @@ export default DeliveryAreas
 
 const AreasTunnel = ({ tunnels, closeTunnel }) => {
    const { state } = usePlan()
+   const [from, setFrom] = React.useState('')
+   const [to, setTo] = React.useState('')
    const [price, setPrice] = React.useState('')
    const [zipcodes, setZipcodes] = React.useState('')
-   const [insertSubscriptionZipcodes] = useMutation(
+   const [insertSubscriptionZipcodes, { loading }] = useMutation(
       INSERT_SUBSCRIPTION_ZIPCODES,
       {
          onCompleted: () => {
@@ -137,6 +161,10 @@ const AreasTunnel = ({ tunnels, closeTunnel }) => {
       const objects = zips.map(zip => ({
          zipcode: zip,
          deliveryPrice: Number(price),
+         deliveryTime: {
+            from,
+            to,
+         },
          subscriptionId: state.subscription.id,
       }))
       insertSubscriptionZipcodes({
@@ -152,7 +180,12 @@ const AreasTunnel = ({ tunnels, closeTunnel }) => {
             <TunnelHeader
                title="Add Zipcodes"
                close={() => closeTunnel(1)}
-               right={{ action: () => save(), title: 'Save' }}
+               right={{
+                  title: 'Save',
+                  isLoading: loading,
+                  action: () => save(),
+                  disabled: !zipcodes || !price || !from || !to,
+               }}
                tooltip={
                   <Tooltip identifier="form_subscription_tunnel_zipcode_heading" />
                }
@@ -188,6 +221,38 @@ const AreasTunnel = ({ tunnels, closeTunnel }) => {
                      value={price}
                      placeholder="Enter the price"
                      onChange={e => setPrice(e.target.value)}
+                  />
+               </Form.Group>
+               <Spacer size="24px" />
+               <Form.Group>
+                  <Form.Label htmlFor="from" title="from">
+                     <Flex container alignItems="center">
+                        Delivery From*
+                        <Tooltip identifier="form_subscription_tunnel_zipcode_field_delivery_from" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Time
+                     id="from"
+                     name="from"
+                     value={from}
+                     placeholder="Enter delivery from"
+                     onChange={e => setFrom(e.target.value)}
+                  />
+               </Form.Group>
+               <Spacer size="24px" />
+               <Form.Group>
+                  <Form.Label htmlFor="to" title="to">
+                     <Flex container alignItems="center">
+                        Delivery To*
+                        <Tooltip identifier="form_subscription_tunnel_zipcode_field_delivery_to" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Time
+                     id="to"
+                     name="to"
+                     value={to}
+                     placeholder="Enter delivery to"
+                     onChange={e => setTo(e.target.value)}
                   />
                </Form.Group>
             </Flex>
