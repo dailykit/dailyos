@@ -17,9 +17,11 @@ const initialState = {
       meta: { errors: [], isValid: false, isTouched: false },
    },
    item: {
+      tax: 0,
       count: '',
       price: '',
       isActive: false,
+      isTaxIncluded: false,
    },
    subscription: { id: null },
 }
