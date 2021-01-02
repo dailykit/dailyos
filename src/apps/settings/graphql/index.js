@@ -902,3 +902,52 @@ export const APPS = {
       }
    `,
 }
+
+export const NOTIFICATIONS = {
+   AGGREGATE: gql`
+      subscription displayNotificationsAggregate {
+         displayNotificationsAggregate {
+            aggregate {
+               count
+            }
+         }
+      }
+   `,
+   LIST: gql`
+      subscription listNotificationTypes {
+         notificationTypes(order_by: { app: asc }) {
+            app
+            audioUrl
+            description
+         }
+      }
+   `,
+   CREATE: gql`
+      mutation insertNotificationType(
+         $object: notifications_type_insert_input!
+      ) {
+         createNotificationType(object: $object) {
+            app
+            audioUrl
+            description
+            name
+            table
+            schema
+            op
+            fields
+            template
+         }
+      }
+   `,
+
+   DELETE: gql`
+      mutation DeleteNotifications($ids: [uuid!]!) {
+         deleteNotificationTypes(where: { id: { _in: $ids } }) {
+            returning {
+               id
+            }
+         }
+      }
+   `,
+
+}

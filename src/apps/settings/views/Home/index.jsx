@@ -9,7 +9,7 @@ import { useTabs } from '../../context'
 
 import { StyledHome, StyledCardList } from './styled'
 
-import { STATIONS, ROLES, USERS } from '../../graphql'
+import { STATIONS, ROLES, USERS, NOTIFICATIONS } from '../../graphql'
 
 const address = 'apps.settings.views.home.'
 
@@ -31,12 +31,19 @@ const Home = () => {
       error: usersError,
       data: { settings_user_aggregate = {} } = {},
    } = useSubscription(USERS.AGGREGATE)
+   const {
+      loading: notificationsLoading,
+      error: notificationsError,
+      data: { notificationsAggregate = {} } = {},
+   } = useSubscription(NOTIFICATIONS.AGGREGATE)
 
    if (stationsLoading || usersLoading || rolesLoading) return <Loader />
    if (stationsError) return <div>{stationsError.message}</div>
    if (usersError) return <div>{usersError.message}</div>
    if (rolesError) return <div>{rolesError.message}</div>
+   if (notificationsError) return <div>{notificationsError.message}</div>
    return (
+
       <StyledHome>
          <Text as="h1">{t(address.concat('settings app'))}</Text>
          <StyledCardList>
@@ -70,6 +77,15 @@ const Home = () => {
                conf="All active"
                onClick={() => addTab('Master Lists', '/settings/master-lists')}
             />
+ 
+           <DashboardTile
+               title={t(address.concat('notifications'))}
+               count="5"
+               conf="All active"
+               onClick={() => addTab('Notifications', '/settings/notifications')}
+            />
+ 
+ 
          </StyledCardList>
       </StyledHome>
    )

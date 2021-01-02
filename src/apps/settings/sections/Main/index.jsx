@@ -15,6 +15,8 @@ import {
    StationsListing,
    StationForm,
    MasterList,
+   NotificationForm,
+   NotificationsListing
 } from '../../views'
 import { useAccess } from '../../../../shared/providers'
 import { ErrorBoundary, Flex } from '../../../../shared/components'
@@ -99,6 +101,22 @@ const Main = () => {
                   message="You do not have sufficient permission to see master list details"
                >
                   <MasterListForm />
+               </AccessCheck>
+            </Route>
+            <Route path="/settings/notifications" exact>
+               <AccessCheck
+                  title="notifications"
+                  message="You do not have sufficient permission to see apps listing."
+               >
+                  <NotificationsListing />
+               </AccessCheck>
+            </Route>
+            <Route path="/settings/notifications/:id">
+               <AccessCheck
+                  title="station"
+                  message="You do not have sufficient permission to see station details."
+               >
+                  <NotificationForm />
                </AccessCheck>
             </Route>
          </Switch>
