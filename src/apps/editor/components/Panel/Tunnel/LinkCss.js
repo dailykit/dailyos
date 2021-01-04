@@ -26,9 +26,11 @@ export default function LinkCss({
          linkedCss: files,
       },
       onSubscriptionData: ({
-         subscriptionData: { data: { editor_file_aggregate = [] } = {} } = {},
+         subscriptionData: {
+            data: { editor_file_aggregate: { nodes = [] } = {} } = {},
+         } = {},
       }) => {
-         const cssResult = editor_file_aggregate?.nodes.map(file => {
+         const cssResult = nodes.map(file => {
             return {
                id: file.id,
                title: file.fileName,
