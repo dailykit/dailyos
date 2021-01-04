@@ -10,6 +10,7 @@ import {
    Spacer,
    Text,
    ButtonTile,
+   useTunnel,
 } from '@dailykit/ui'
 import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
@@ -34,8 +35,10 @@ import moment from 'moment'
 import { CloseIcon, TickIcon } from '../../../../../shared/assets/icons'
 import ContentSelection from './ContentSelection'
 import BrandContext from '../../../context/Brand'
+import { PagePreviewTunnel } from './Tunnel'
 
 const PageForm = () => {
+   const [tunnels, openTunnel, closeTunnel] = useTunnel()
    const { addTab, tab, setTitle: setTabTitle, closeAllTabs } = useTabs()
    const [context, setContext] = useContext(BrandContext)
    const prevBrandId = useRef(context.brandId)
@@ -251,7 +254,9 @@ const PageForm = () => {
                      ))}
                </Form.Group>
                <Flex container alignItems="center" height="100%">
-                  <Highlight>Preview Page</Highlight>
+                  <Highlight onClick={() => openTunnel(1)}>
+                     Preview Page
+                  </Highlight>
                   {/* {state.isCouponValid?.status ? (
                         <>
                            <TickIcon color="#00ff00" stroke={2} />
@@ -341,6 +346,12 @@ const PageForm = () => {
                </HorizontalTabPanels>
             </HorizontalTabs>
          </StyledDiv>
+         <PagePreviewTunnel
+            tunnels={tunnels}
+            openTunnel={openTunnel}
+            closeTunnel={closeTunnel}
+            pageRoute={pageRoute}
+         />
       </StyledWrapper>
    )
 }
