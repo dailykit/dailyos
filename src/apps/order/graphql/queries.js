@@ -1587,7 +1587,14 @@ export const QUERIES = {
             subscription orderByStatus {
                orderByStatus: order_orderStatusEnum(order_by: { index: asc }) {
                   value
-                  orders: orders_aggregate {
+                  orders: orders_aggregate(
+                     where: {
+                        _or: [
+                           { isRejected: { _eq: false } }
+                           { isRejected: { _is_null: true } }
+                        ]
+                     }
+                  ) {
                      aggregate {
                         count
                         sum {

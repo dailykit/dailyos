@@ -70,18 +70,6 @@ const Order = () => {
       {
          variables: {
             id: params.id,
-            ...(!isEmpty(state.orders.where?._or) && {
-               packingStationId: {
-                  _eq:
-                     state.orders.where?._or[0].orderInventoryProducts
-                        .assemblyStationId._eq,
-               },
-               assemblyStationId: {
-                  _eq:
-                     state.orders.where?._or[0].orderInventoryProducts
-                        .assemblyStationId._eq,
-               },
-            }),
          },
          onSubscriptionData: ({
             subscriptionData: { data: { order = {} } = {} } = {},
@@ -98,18 +86,6 @@ const Order = () => {
    } = useSubscription(QUERIES.ORDER.MEALKITS, {
       variables: {
          orderId: params.id,
-         ...(!isEmpty(state.orders.where?._or) && {
-            packingStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-            assemblyStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-         }),
       },
    })
 
@@ -120,18 +96,6 @@ const Order = () => {
    } = useSubscription(QUERIES.ORDER.READY_TO_EAT.LIST, {
       variables: {
          orderId: params.id,
-         ...(!isEmpty(state.orders.where?._or) && {
-            packingStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-            assemblyStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-         }),
       },
    })
 
@@ -142,18 +106,6 @@ const Order = () => {
    } = useSubscription(QUERIES.ORDER.INVENTORY.LIST, {
       variables: {
          orderId: params.id,
-         ...(!isEmpty(state.orders.where?._or) && {
-            packingStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-            assemblyStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-         }),
       },
    })
 
