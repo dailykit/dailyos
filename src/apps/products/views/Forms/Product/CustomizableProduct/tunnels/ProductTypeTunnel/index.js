@@ -16,7 +16,7 @@ const ProductTypeTunnel = ({ close, open }) => {
       productDispatch({
          type: 'META',
          payload: {
-            name: 'itemType',
+            name: 'productType',
             value: type,
          },
       })

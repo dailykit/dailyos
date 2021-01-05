@@ -7,6 +7,11 @@ export const state = {
       productType: '',
       componentId: '',
    },
+   optionsMode: 'add',
+   selectedOptions: [],
+   // this componentId is for editing
+   componentId: '',
+   product: {},
 }
 
 export const reducers = (state, { type, payload }) => {
@@ -18,6 +23,20 @@ export const reducers = (state, { type, payload }) => {
                ...state.meta,
                [payload.name]: payload.value,
             },
+         }
+      }
+      case 'PRODUCT': {
+         return {
+            ...state,
+            product: payload.value,
+         }
+      }
+      case 'OPTIONS_MODE': {
+         return {
+            ...state,
+            optionsMode: payload.type,
+            selectedOptions: payload.options,
+            componentId: payload.componentId,
          }
       }
       default: {

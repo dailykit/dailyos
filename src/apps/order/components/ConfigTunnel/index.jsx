@@ -10,7 +10,11 @@ import { useConfig } from '../../context'
 import { Main, Sidebar, Content } from './styled'
 import { logger } from '../../../../shared/utils'
 import { DEVICES, MUTATIONS } from '../../graphql'
-import { InlineLoader, Tooltip } from '../../../../shared/components'
+import {
+   InlineLoader,
+   Tooltip,
+   ScrollSection,
+} from '../../../../shared/components'
 
 export const ConfigTunnel = () => {
    const { dispatch } = useConfig()
@@ -20,6 +24,21 @@ export const ConfigTunnel = () => {
          type: 'TOGGLE_TUNNEL',
          payload: { tunnel: false },
       })
+
+   const links = React.useMemo(
+      () => ({
+         scale: ['weight simulation'],
+         print: ['print simulation'],
+         kot: [
+            'group by stations',
+            'group by product type',
+            'print automatically',
+            'default kot printer',
+         ],
+         station: ['selected station'],
+      }),
+      []
+   )
 
    return (
       <>
@@ -33,51 +52,48 @@ export const ConfigTunnel = () => {
             tooltip={<Tooltip identifier="app_order_tunnel_config_heading" />}
          />
          <Main>
-            <Sidebar>
-               <Navbar />
-            </Sidebar>
-            <Content>
-               <ScaleSection />
-               <PrintSection />
-               <KotSection />
-            </Content>
+            <ScrollSection height="calc(100vh - 104px)" width="100vw">
+               <ScrollSection.Aside links={links} />
+               <ScrollSection.Main>
+                  <ScrollSection.Section hash="scale" title="Scale">
+                     <section id="weight simulation">
+                        <WeightSimulation />
+                     </section>
+                  </ScrollSection.Section>
+                  <Spacer size="48px" />
+                  <ScrollSection.Section hash="print" title="Print">
+                     <section id="print simulation">
+                        <PrintSimulation />
+                     </section>
+                  </ScrollSection.Section>
+                  <Spacer size="48px" />
+                  <ScrollSection.Section hash="kot" title="KOT">
+                     <section id="group by station">
+                        <GroupByStation />
+                     </section>
+                     <Spacer size="16px" />
+                     <section id="group by product type">
+                        <GroupByProductType />
+                     </section>
+                     <Spacer size="16px" />
+                     <section id="print automatically">
+                        <PrintAuto />
+                     </section>
+                     <Spacer size="16px" />
+                     <section id="default kot printer">
+                        <DefaultKOTPrinter />
+                     </section>
+                  </ScrollSection.Section>
+                  <Spacer size="48px" />
+                  <ScrollSection.Section hash="station" title="Station">
+                     <section id="selected station">
+                        <Station />
+                     </section>
+                  </ScrollSection.Section>
+               </ScrollSection.Main>
+            </ScrollSection>
          </Main>
       </>
-   )
-}
-
-const Navbar = () => {
-   const location = useLocation()
-   const [active, setActive] = React.useState('#scale')
-   const [links] = React.useState([
-      { to: '#scale', title: 'Scale' },
-      { to: '#print', title: 'Print' },
-      { to: '#kot', title: 'KOT' },
-   ])
-
-   React.useEffect(() => {
-      setActive(location.hash)
-   }, [location.hash])
-
-   return (
-      <ul>
-         {links.map((link, index) => (
-            <li key={`${link}-${index}`}>
-               <a href={link.to} className={active === link.to ? 'active' : ''}>
-                  {link.title}
-               </a>
-            </li>
-         ))}
-      </ul>
-   )
-}
-
-const ScaleSection = () => {
-   return (
-      <section id="scale">
-         <Text as="title">Scale</Text>
-         <WeightSimulation />
-      </section>
    )
 }
 
@@ -124,15 +140,6 @@ const WeightSimulation = () => {
    )
 }
 
-const PrintSection = () => {
-   return (
-      <section id="print">
-         <Text as="title">Print</Text>
-         <PrintSimulation />
-      </section>
-   )
-}
-
 const PrintSimulation = () => {
    const { state } = useConfig()
    const [update] = useMutation(MUTATIONS.SETTING.UPDATE, {
@@ -173,18 +180,6 @@ const PrintSimulation = () => {
             </Flex>
          </Form.Toggle>
       </div>
-   )
-}
-
-const KotSection = () => {
-   return (
-      <section id="kot">
-         <Text as="title">KOT</Text>
-         <GroupByStation />
-         <GroupByProductType />
-         <PrintAuto />
-         <DefaultKOTPrinter />
-      </section>
    )
 }
 
@@ -401,8 +396,56 @@ const DefaultKOTPrinter = () => {
    )
 }
 
-const Title = styled.span`
-   color: #555b6e;
-   cursor: pointer;
-   margin-right: 8px;
-`
+const Station = () => {
+   const [station, setStation] = React.useState({})
+   const [stations, setStations] = React.useState([])
+   const { state, dispatch } = useConfig()
+
+   const handleChange = station => {
+      dispatch({
+         type: 'SET_CURRENT_STATION',
+         payload: state.stations.find(node => node.id === station.id),
+      })
+   }
+
+   React.useEffect(() => {
+      if (!isEmpty(state.current_station)) {
+         const { id, name: title } = state.current_station
+         setStation({ id, title })
+      }
+   }, [state.current_station])
+
+   React.useEffect(() => {
+      if (!isEmpty(state.stations)) {
+         setStations(
+            state.stations.map(({ id, name }) => ({ id, title: name }))
+         )
+      }
+   }, [state.stations])
+
+   return (
+      <div>
+         <Flex container alignItems="center">
+            <Flex container alignItems="center">
+               <Text as="p">Current Station</Text>
+               <Tooltip identifier="app_order_tunnel_field_current_station" />
+            </Flex>
+            <Spacer size="48px" xAxis />
+            <Flex flex="1">
+               <Dropdown
+                  type="single"
+                  options={stations}
+                  searchedOption={() => {}}
+                  selectedOption={handleChange}
+                  placeholder="type what you're looking for..."
+                  defaultValue={
+                     stations.findIndex(node => node.id === station.id) !== -1
+                        ? stations.findIndex(node => node.id === station.id) + 1
+                        : null
+                  }
+               />
+            </Flex>
+         </Flex>
+      </div>
+   )
+}

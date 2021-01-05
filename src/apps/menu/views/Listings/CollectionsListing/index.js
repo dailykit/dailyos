@@ -26,7 +26,9 @@ import {
    S_COLLECTIONS,
 } from '../../../graphql'
 import tableOptions from '../tableOption'
+import styled from 'styled-components'
 
+import { ResponsiveFlex } from '../styled'
 const address = 'apps.menu.views.listings.collectionslisting.'
 
 const CollectionsListing = () => {
@@ -147,7 +149,7 @@ const CollectionsListing = () => {
    }
 
    return (
-      <Flex maxWidth="1280px" width="calc(100vw - 64px)" margin="0 auto">
+      <ResponsiveFlex maxWidth="1280px" margin="0 auto">
          <Flex
             container
             alignItems="center"
@@ -181,7 +183,7 @@ const CollectionsListing = () => {
                options={tableOptions}
             />
          )}
-      </Flex>
+      </ResponsiveFlex>
    )
 }
 

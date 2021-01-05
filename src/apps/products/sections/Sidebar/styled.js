@@ -11,6 +11,9 @@ export const StyledSidebar = styled.aside(
       transition: 0.3s ease-in-out;
       transform: translateX(${visible ? '0' : '-240px'});
       z-index: 100;
+      @media screen and (max-width: 767px) {
+         width: ${visible ? '100%' : null};
+      }
    `
 )
 

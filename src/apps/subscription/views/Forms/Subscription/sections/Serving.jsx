@@ -263,9 +263,10 @@ const ItemCountTunnel = ({ tunnels, closeTunnel }) => {
       upsertItemCount({
          variables: {
             object: {
+               tax: Number(state.item.tax),
                count: Number(state.item.count),
                price: Number(state.item.price),
-               subscriptionServingId: state.serving.id,
+               ...state.item,
                ...(state.item.id && { id: state.item.id }),
             },
          },
@@ -333,6 +334,44 @@ const ItemCountTunnel = ({ tunnels, closeTunnel }) => {
                      placeholder="Enter the item price"
                   />
                </Form.Group>
+               <Spacer size="16px" />
+               <Form.Group>
+                  <Form.Label htmlFor="tax" title="tax">
+                     Tax*
+                  </Form.Label>
+                  <Form.Number
+                     id="tax"
+                     name="tax"
+                     value={state.item.tax}
+                     onChange={e =>
+                        dispatch({
+                           type: 'SET_ITEM',
+                           payload: {
+                              tax: Number(e.target.value) || '',
+                           },
+                        })
+                     }
+                     placeholder="Enter the tax"
+                  />
+               </Form.Group>
+               <Spacer size="16px" />
+               <Flex container alignItems="center">
+                  <Form.Toggle
+                     onChange={() =>
+                        dispatch({
+                           type: 'SET_ITEM',
+                           payload: {
+                              isTaxIncluded: !state.item.isTaxIncluded,
+                           },
+                        })
+                     }
+                     value={state.item.isTaxIncluded}
+                     name="itemCount_toggle_isTaxIncluded"
+                  >
+                     Is tax Included?
+                  </Form.Toggle>
+                  <Tooltip identifier="form_subscription_section_item_count_isTaxIncluded" />
+               </Flex>
             </Flex>
          </Tunnel>
       </Tunnels>

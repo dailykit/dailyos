@@ -63,7 +63,7 @@ export const Delivery = ({ update }) => {
          <Spacer size="8px" />
          <Flex container alignItems="center" justifyContent="space-between">
             <Form.Toggle
-               name="available"
+               name="delivery"
                value={isAvailable}
                onChange={() => setIsAvailable(!isAvailable)}
             >

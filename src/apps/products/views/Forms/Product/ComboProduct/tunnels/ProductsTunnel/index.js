@@ -29,9 +29,11 @@ import { logger } from '../../../../../../../../shared/utils'
 const address =
    'apps.menu.views.forms.product.comboproduct.tunnels.productstunnel.'
 
-const ProductsTunnel = ({ close }) => {
+const ProductsTunnel = ({ close, open }) => {
    const { t } = useTranslation()
-   const { productState } = React.useContext(ComboProductContext)
+   const { productState, productDispatch } = React.useContext(
+      ComboProductContext
+   )
 
    const [search, setSearch] = React.useState('')
    const [products, setProducts] = React.useState([])
@@ -124,11 +126,11 @@ const ProductsTunnel = ({ close }) => {
    })
 
    // Mutation
-   const [updateComboProductComponent] = useMutation(
+   const [updateComboProductComponent, { loading: saving }] = useMutation(
       UPDATE_COMBO_PRODUCT_COMPONENT,
       {
          onCompleted: () => {
-            toast.success(t(address.concat('product added!')))
+            toast.success('Product added!')
             close(3)
             close(2)
          },
@@ -141,25 +143,29 @@ const ProductsTunnel = ({ close }) => {
 
    const select = product => {
       selectOption('id', product.id)
-      updateComboProductComponent({
-         variables: {
-            id: productState.meta.componentId,
-            set: {
-               customizableProductId:
-                  productState.meta.productType === 'customizable'
-                     ? product.id
-                     : null,
-               inventoryProductId:
-                  productState.meta.productType === 'inventory'
-                     ? product.id
-                     : null,
-               simpleRecipeProductId:
-                  productState.meta.productType === 'simple'
-                     ? product.id
-                     : null,
+      if (product.__typename.includes('customizableProduct')) {
+         updateComboProductComponent({
+            variables: {
+               id: productState.meta.componentId,
+               set: {
+                  customizableProductId: product.id,
+                  inventoryProductId: null,
+                  simpleRecipeProductId: null,
+               },
             },
-         },
-      })
+         })
+      } else {
+         productDispatch({ type: 'PRODUCT', payload: { value: product } })
+         productDispatch({
+            type: 'OPTIONS_MODE',
+            payload: {
+               type: 'add',
+               componentId: undefined,
+               selectedOptions: [],
+            },
+         })
+         open(4)
+      }
    }
 
    React.useEffect(() => {

@@ -12,6 +12,7 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Tooltip } from '../../../../../shared/components/Tooltip'
 import { AddIcon } from '../../../assets/icons'
+import { ResponsiveFlex } from '../styled'
 import PackagingPurchaseOrders from './packaging'
 import SelectPurchaseOrderTypeTunnel from './SelectPurchaseOrderTypeTunnel'
 import ItemPurchaseOrders from './supplierItem'
@@ -31,7 +32,7 @@ export default function PurchaseOrders() {
                <SelectPurchaseOrderTypeTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         <Flex margin="0 auto" maxWidth="1280px" width="calc(100vw - 64px)">
+         <ResponsiveFlex margin="0 auto" maxWidth="1280px">
             <Flex container alignItems="center" justifyContent="space-between">
                <Flex container alignItems="center">
                   <Text as="h2">{t(address.concat('purchase orders'))}</Text>
@@ -67,7 +68,7 @@ export default function PurchaseOrders() {
             ) : (
                <PackagingPurchaseOrders />
             )}
-         </Flex>
+         </ResponsiveFlex>
       </>
    )
 }

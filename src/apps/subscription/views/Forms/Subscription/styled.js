@@ -19,7 +19,7 @@ export const Header = styled.header`
 
 export const Section = styled.section`
    padding: 16px;
-   height: calc(100vh - 128px);
+   height: calc(100vh - 145px);
 
    [data-reach-tab] {
       height: 56px;
@@ -55,7 +55,7 @@ export const ItemCountsSection = styled.section`
 export const ItemCountSection = styled.section`
    padding: 16px;
    background: #e3e3e3;
-   height: calc(100vh - 394px);
+   height: calc(100vh - 412px);
    [data-reach-tab-panels] {
       height: unset;
    }

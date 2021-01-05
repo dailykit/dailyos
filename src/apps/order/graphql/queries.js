@@ -2,6 +2,19 @@ import gql from 'graphql-tag'
 
 export const QUERIES = {
    ORDER: {
+      SOURCE: gql`
+         query orderSource($orderId: oid!) {
+            orderSource: order_thirdPartyOrder(
+               where: { order: { id: { _eq: $orderId } } }
+            ) {
+               id
+               thirdPartyCompany {
+                  title
+                  imageUrl
+               }
+            }
+         }
+      `,
       DETAILS: gql`
          subscription order(
             $id: oid!
@@ -9,18 +22,34 @@ export const QUERIES = {
          ) {
             order(id: $id) {
                id
-               created_at
-               deliveryInfo
-               orderStatus
-               paymentStatus
                tax
+               source
                discount
                itemTotal
                isAccepted
                isRejected
+               created_at
+               deliveryInfo
+               orderStatus
+               paymentStatus
                deliveryPrice
                transactionId
                fulfillmentType
+               thirdPartyOrderId
+               thirdPartyOrder {
+                  id
+                  thirdPartyOrderId
+                  products: parsedData(path: "items")
+                  emailContent: parsedData(path: "HtmlDocument")
+               }
+               cart: orderCart {
+                  id
+                  isTest
+               }
+               pickup: deliveryInfo(path: "pickup.window")
+               restaurant: deliveryInfo(path: "pickup.pickupInfo")
+               dropoff: deliveryInfo(path: "dropoff.window")
+               customer: deliveryInfo(path: "dropoff.dropoffInfo")
                total_mealkits: orderMealKitProducts_aggregate(
                   where: { assemblyStationId: $assemblyStationId }
                ) {
@@ -1373,24 +1402,63 @@ export const QUERIES = {
                where: $where
             ) {
                id
-               created_at
-               orderStatus
-               paymentStatus
                tax
+               source
                discount
                itemTotal
                amountPaid
-               deliveryPrice
+               created_at
                isAccepted
                isRejected
+               orderStatus
+               deliveryPrice
+               paymentStatus
                transactionId
                fulfillmentType
+               thirdPartyOrder {
+                  id
+                  source
+                  thirdPartyOrderId
+                  products: parsedData(path: "items")
+               }
+               thirdPartyOrderId
                restaurant: deliveryInfo(path: "pickup.pickupInfo")
                customer: deliveryInfo(path: "dropoff.dropoffInfo")
                pickupWindow: deliveryInfo(path: "pickup.window")
                dropoffWindow: deliveryInfo(path: "dropoff.window")
                customer: deliveryInfo(path: "dropoff.dropoffInfo")
                deliveryCompany: deliveryInfo(path: "deliveryCompany")
+               cart: orderCart {
+                  isTest
+                  transactionId
+               }
+               brand {
+                  id
+                  onDemandName: onDemandSettings(
+                     where: {
+                        onDemandSetting: { identifier: { _eq: "Brand Name" } }
+                     }
+                  ) {
+                     name: value(path: "name")
+                  }
+                  onDemandLogo: onDemandSettings(
+                     where: {
+                        onDemandSetting: { identifier: { _eq: "Brand Logo" } }
+                     }
+                  ) {
+                     url: value(path: "url")
+                  }
+                  subscriptionSettings: subscriptionStoreSettings(
+                     where: {
+                        subscriptionStoreSetting: {
+                           identifier: { _eq: "theme-brand" }
+                        }
+                     }
+                  ) {
+                     name: value(path: "name")
+                     logo: value(path: "logo.url")
+                  }
+               }
                orderMealKitProducts(
                   where: { orderModifierId: { _is_null: true } }
                ) {
@@ -1629,17 +1697,42 @@ export const QUERIES = {
             stations(where: { assignedUsers: { user: { email: $email } } }) {
                id
                name
+               defaultKotPrinterId
                defaultKotPrinter {
                   name
                   state
                   printNodeId
                }
+               defaultLabelPrinterId
                defaultLabelPrinter {
                   name
                   state
                   printNodeId
                }
+               defaultScaleId
                defaultScale {
+                  id
+                  active
+                  deviceNum
+                  deviceName
+               }
+               attachedLabelPrinters {
+                  printNodeId
+                  labelPrinter {
+                     name
+                     state
+                     printNodeId
+                  }
+               }
+               attachedKotPrinters {
+                  printNodeId
+                  kotPrinter {
+                     name
+                     state
+                     printNodeId
+                  }
+               }
+               assignedScales {
                   id
                   active
                   deviceNum
@@ -2134,6 +2227,101 @@ export const QUERIES = {
                }
             `,
             SACHET: {
+               LIST: gql`
+                  subscription ingredients($order: order_order_bool_exp = {}) {
+                     ingredients: ingredientsAggregate(
+                        where: {
+                           ingredientSachets: {
+                              orderSachets: {
+                                 orderMealKitProduct: { order: $order }
+                              }
+                           }
+                        }
+                     ) {
+                        aggregate {
+                           count
+                        }
+                        nodes {
+                           id
+                           name
+                           processings: ingredientProcessings_aggregate(
+                              where: {
+                                 ingredientSachets: {
+                                    orderSachets: {
+                                       orderMealKitProduct: { order: $order }
+                                    }
+                                 }
+                              }
+                           ) {
+                              aggregate {
+                                 count(columns: processingName)
+                              }
+                              nodes {
+                                 id
+                                 name: processingName
+                                 sachets: ingredientSachets_aggregate(
+                                    where: {
+                                       orderSachets: {
+                                          orderMealKitProduct: { order: $order }
+                                       }
+                                    }
+                                 ) {
+                                    aggregate {
+                                       count(columns: id)
+                                    }
+                                    nodes {
+                                       id
+                                       quantity
+                                       allOrderSachets: orderSachets_aggregate(
+                                          where: {
+                                             orderMealKitProduct: {
+                                                order: $order
+                                             }
+                                          }
+                                       ) {
+                                          aggregate {
+                                             count(columns: id)
+                                             sum {
+                                                quantity
+                                             }
+                                          }
+                                          nodes {
+                                             id
+                                             quantity
+                                             isAssembled
+                                             orderMealKitProduct {
+                                                id
+                                                orderId
+                                                simpleRecipeProduct {
+                                                   id
+                                                   name
+                                                }
+                                             }
+                                          }
+                                       }
+                                       completedOrderSachets: orderSachets_aggregate(
+                                          where: {
+                                             orderMealKitProduct: {
+                                                order: $order
+                                             }
+                                             status: { _eq: "COMPLETED" }
+                                          }
+                                       ) {
+                                          aggregate {
+                                             count(columns: id)
+                                             sum {
+                                                quantity
+                                             }
+                                          }
+                                       }
+                                    }
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               `,
                ONE: gql`
                   subscription ingredients($order: order_order_bool_exp = {}) {
                      ingredients: ingredientsAggregate(
