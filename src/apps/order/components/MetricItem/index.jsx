@@ -19,8 +19,25 @@ export const MetricItem = ({
          type: 'SET_FILTER',
          payload: {
             orderStatus: {
-               ...(title !== 'ALL' && { _eq: title.split(' ').join('_') }),
+               ...(!['ALL', 'REJECTED OR CANCELLED'].includes(title) && {
+                  _eq: title.split(' ').join('_'),
+               }),
             },
+            ...(title === 'REJECTED OR CANCELLED'
+               ? { _or: [{ isRejected: { _eq: true } }] }
+               : {
+                    _or: [
+                       { isRejected: { _eq: false } },
+                       { isRejected: { _is_null: true } },
+                    ],
+                 }),
+            ...(title === 'ALL' && {
+               _or: [
+                  { isRejected: { _eq: false } },
+                  { isRejected: { _eq: true } },
+                  { isRejected: { _is_null: true } },
+               ],
+            }),
          },
       })
       dispatch({

@@ -1429,6 +1429,7 @@ export const QUERIES = {
                customer: deliveryInfo(path: "dropoff.dropoffInfo")
                deliveryCompany: deliveryInfo(path: "deliveryCompany")
                cart: orderCart {
+                  id
                   isTest
                   transactionId
                }
@@ -1603,6 +1604,21 @@ export const QUERIES = {
          TOTAL: gql`
             subscription orders($where: order_order_bool_exp = {}) {
                orders: ordersAggregate(where: $where) {
+                  aggregate {
+                     count
+                     sum {
+                        amountPaid
+                     }
+                     avg {
+                        amountPaid
+                     }
+                  }
+               }
+            }
+         `,
+         CANCELLED: gql`
+            subscription orders {
+               orders: ordersAggregate(where: { isRejected: { _eq: true } }) {
                   aggregate {
                      count
                      sum {
