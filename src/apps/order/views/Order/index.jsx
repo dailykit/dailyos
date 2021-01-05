@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
 import {
+   Tag,
    Flex,
    Text,
    Spacer,
@@ -243,6 +244,12 @@ const Order = () => {
          >
             <Flex container alignItems="center">
                <Text as="h4">ORD{order?.id}</Text>
+               {!isThirdParty && Boolean(order?.cart?.isTest) && (
+                  <>
+                     <Spacer size="8px" xAxis />
+                     <Tag>Test</Tag>
+                  </>
+               )}
                {!sourceLoading && isThirdParty && !isEmpty(orderSource) && (
                   <>
                      <Spacer size="16px" xAxis />
@@ -318,8 +325,8 @@ const Order = () => {
                   </Text>
                </Flex>
                {!isThirdParty && (
-                <>
-                 {/* 
+                  <>
+                     {/* 
                     <Spacer size="32px" xAxis />
                      <Flex as="section" container alignItems="center">
                         <Flex container alignItems="center">
@@ -337,15 +344,18 @@ const Order = () => {
                         </Text>
                      </Flex> 
                   */}
-                   <Spacer size="32px" xAxis />
-                   <Flex as="section" container alignItems="center">
-                      <TimeSlot
-                         type={order?.fulfillmentType}
-                         data={{ pickup: order.pickup, dropoff: order.dropoff }}
-                      />
-                   </Flex>
-                </>
-               )} 
+                     <Spacer size="32px" xAxis />
+                     <Flex as="section" container alignItems="center">
+                        <TimeSlot
+                           type={order?.fulfillmentType}
+                           data={{
+                              pickup: order.pickup,
+                              dropoff: order.dropoff,
+                           }}
+                        />
+                     </Flex>
+                  </>
+               )}
             </Flex>
          </Flex>
          <Spacer size="16px" />
