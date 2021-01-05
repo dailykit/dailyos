@@ -30,6 +30,7 @@ import {
    EditIcon,
 } from '../../../../../../../../shared/assets/icons'
 import {
+   DragNDrop,
    OperationConfig,
    Tooltip,
 } from '../../../../../../../../shared/components'
@@ -373,123 +374,157 @@ export default function Item({ state }) {
                                     </tr>
                                  </thead>
                                  <tbody>
-                                    {state.inventoryProductOptions?.map(
-                                       option => (
-                                          <tr key={option.id}>
-                                             <td>
-                                                <input
-                                                   type="radio"
-                                                   checked={
-                                                      option.id ===
-                                                      state.default
-                                                   }
-                                                   onClick={() =>
-                                                      changeDefault(option)
-                                                   }
-                                                />
-                                             </td>
-                                             <td>{option.label}</td>
-                                             <td>{option.quantity}</td>
-                                             <td>
-                                                {currencyFmt(
-                                                   Number(
-                                                      option.price[0].value
-                                                   ) || 0
-                                                )}
-                                             </td>
-                                             <td>
-                                                {option.price[0].discount}%
-                                             </td>
-                                             <td>
-                                                {currencyFmt(
-                                                   Number(
-                                                      parseFloat(
+                                    <DragNDrop
+                                       list={state.inventoryProductOptions}
+                                       droppableId="inventoryProductOptionsDroppableId"
+                                       tablename="inventoryProductOption"
+                                       schemaname="products"
+                                    >
+                                       {state.inventoryProductOptions?.map(
+                                          option => (
+                                             <tr key={option.id}>
+                                                <td>
+                                                   <input
+                                                      type="radio"
+                                                      checked={
+                                                         option.id ===
+                                                         state.default
+                                                      }
+                                                      onClick={() =>
+                                                         changeDefault(option)
+                                                      }
+                                                   />
+                                                </td>
+                                                <td>{option.label}</td>
+                                                <td>{option.quantity}</td>
+                                                <td>
+                                                   {currencyFmt(
+                                                      Number(
                                                          option.price[0].value
-                                                      ) -
+                                                      ) || 0
+                                                   )}
+                                                </td>
+                                                <td>
+                                                   {option.price[0].discount}%
+                                                </td>
+                                                <td>
+                                                   {currencyFmt(
+                                                      Number(
                                                          parseFloat(
                                                             option.price[0]
                                                                .value
-                                                         ) *
-                                                            (parseFloat(
+                                                         ) -
+                                                            parseFloat(
                                                                option.price[0]
-                                                                  .discount
-                                                            ) /
-                                                               100)
-                                                   ).toFixed(2)
-                                                ) || 0}
-                                             </td>
-                                             <td>
-                                                {option.modifier?.name ? (
-                                                   <Modifier>
-                                                      <span>
-                                                         <span
-                                                            tabIndex="0"
-                                                            role="button"
-                                                            onKeyPress={() =>
-                                                               editModifier(
-                                                                  option.modifier
-                                                               )
-                                                            }
-                                                            onClick={() =>
-                                                               editModifier(
-                                                                  option.modifier
-                                                               )
-                                                            }
-                                                         >
-                                                            <EditIcon
-                                                               color="#00A7E1"
-                                                               size={14}
-                                                            />
+                                                                  .value
+                                                            ) *
+                                                               (parseFloat(
+                                                                  option
+                                                                     .price[0]
+                                                                     .discount
+                                                               ) /
+                                                                  100)
+                                                      ).toFixed(2)
+                                                   ) || 0}
+                                                </td>
+                                                <td>
+                                                   {option.modifier?.name ? (
+                                                      <Modifier>
+                                                         <span>
+                                                            <span
+                                                               tabIndex="0"
+                                                               role="button"
+                                                               onKeyPress={() =>
+                                                                  editModifier(
+                                                                     option.modifier
+                                                                  )
+                                                               }
+                                                               onClick={() =>
+                                                                  editModifier(
+                                                                     option.modifier
+                                                                  )
+                                                               }
+                                                            >
+                                                               <EditIcon
+                                                                  color="#00A7E1"
+                                                                  size={14}
+                                                               />
+                                                            </span>
+                                                            <span
+                                                               tabIndex="0"
+                                                               role="button"
+                                                               onKeyPress={() =>
+                                                                  removeModifier(
+                                                                     option.id
+                                                                  )
+                                                               }
+                                                               onClick={() =>
+                                                                  removeModifier(
+                                                                     option.id
+                                                                  )
+                                                               }
+                                                            >
+                                                               <DeleteIcon
+                                                                  color="#FF5A52"
+                                                                  size={14}
+                                                               />
+                                                            </span>
                                                          </span>
+                                                         {option.modifier.name}
+                                                      </Modifier>
+                                                   ) : (
+                                                      <IconButton
+                                                         type="ghost"
+                                                         onClick={() => {
+                                                            modifiersDispatch({
+                                                               type: 'META',
+                                                               payload: {
+                                                                  name:
+                                                                     'optionId',
+                                                                  value:
+                                                                     option.id,
+                                                               },
+                                                            })
+                                                            openModifiersTunnel(
+                                                               1
+                                                            )
+                                                         }}
+                                                      >
+                                                         <PlusIcon color="#36B6E2" />
+                                                      </IconButton>
+                                                   )}
+                                                </td>
+                                                <td>
+                                                   {option.operationConfig ? (
+                                                      <Flex
+                                                         container
+                                                         alignItems="center"
+                                                         justifyContent="space-between"
+                                                      >
+                                                         {`${option.operationConfig.station.name} - ${option.operationConfig.labelTemplate.name}`}
                                                          <span
-                                                            tabIndex="0"
-                                                            role="button"
-                                                            onKeyPress={() =>
-                                                               removeModifier(
-                                                                  option.id
+                                                            onClick={() => {
+                                                               productDispatch({
+                                                                  type:
+                                                                     'OPTION_ID',
+                                                                  payload: {
+                                                                     optionId:
+                                                                        option.id,
+                                                                  },
+                                                               })
+                                                               opConfigInvokedBy.current =
+                                                                  'option'
+                                                               openOperationConfigTunnel(
+                                                                  1
                                                                )
-                                                            }
-                                                            onClick={() =>
-                                                               removeModifier(
-                                                                  option.id
-                                                               )
-                                                            }
+                                                            }}
                                                          >
-                                                            <DeleteIcon
-                                                               color="#FF5A52"
-                                                               size={14}
-                                                            />
+                                                            <EditIcon color="#36B6E2" />
                                                          </span>
-                                                      </span>
-                                                      {option.modifier.name}
-                                                   </Modifier>
-                                                ) : (
-                                                   <IconButton
-                                                      type="ghost"
-                                                      onClick={() => {
-                                                         modifiersDispatch({
-                                                            type: 'META',
-                                                            payload: {
-                                                               name: 'optionId',
-                                                               value: option.id,
-                                                            },
-                                                         })
-                                                         openModifiersTunnel(1)
-                                                      }}
-                                                   >
-                                                      <PlusIcon color="#36B6E2" />
-                                                   </IconButton>
-                                                )}
-                                             </td>
-                                             <td>
-                                                {option.operationConfig ? (
-                                                   <Flex
-                                                      container
-                                                      alignItems="center"
-                                                      justifyContent="space-between"
-                                                   >
-                                                      {`${option.operationConfig.station.name} - ${option.operationConfig.labelTemplate.name}`}
-                                                      <span
+                                                      </Flex>
+                                                   ) : (
+                                                      <TextButton
+                                                         type="ghost"
                                                          onClick={() => {
                                                             productDispatch({
                                                                type:
@@ -506,54 +541,34 @@ export default function Item({ state }) {
                                                             )
                                                          }}
                                                       >
-                                                         <EditIcon color="#36B6E2" />
-                                                      </span>
-                                                   </Flex>
-                                                ) : (
-                                                   <TextButton
-                                                      type="ghost"
-                                                      onClick={() => {
-                                                         productDispatch({
-                                                            type: 'OPTION_ID',
-                                                            payload: {
-                                                               optionId:
-                                                                  option.id,
-                                                            },
-                                                         })
-                                                         opConfigInvokedBy.current =
-                                                            'option'
-                                                         openOperationConfigTunnel(
-                                                            1
-                                                         )
-                                                      }}
-                                                   >
-                                                      <PlusIcon color="#36B6E2" />
-                                                   </TextButton>
-                                                )}
-                                             </td>
-                                             <td>
-                                                <Grid>
-                                                   <IconButton
-                                                      type="ghost"
-                                                      onClick={() =>
-                                                         editOption(option)
-                                                      }
-                                                   >
-                                                      <EditIcon color="#00A7E1" />
-                                                   </IconButton>
-                                                   <IconButton
-                                                      type="ghost"
-                                                      onClick={() =>
-                                                         remove(option)
-                                                      }
-                                                   >
-                                                      <DeleteIcon color="#FF5A52" />
-                                                   </IconButton>
-                                                </Grid>
-                                             </td>
-                                          </tr>
-                                       )
-                                    )}
+                                                         <PlusIcon color="#36B6E2" />
+                                                      </TextButton>
+                                                   )}
+                                                </td>
+                                                <td>
+                                                   <Grid>
+                                                      <IconButton
+                                                         type="ghost"
+                                                         onClick={() =>
+                                                            editOption(option)
+                                                         }
+                                                      >
+                                                         <EditIcon color="#00A7E1" />
+                                                      </IconButton>
+                                                      <IconButton
+                                                         type="ghost"
+                                                         onClick={() =>
+                                                            remove(option)
+                                                         }
+                                                      >
+                                                         <DeleteIcon color="#FF5A52" />
+                                                      </IconButton>
+                                                   </Grid>
+                                                </td>
+                                             </tr>
+                                          )
+                                       )}
+                                    </DragNDrop>
                                  </tbody>
                               </StyledTable>
                               <ButtonTile

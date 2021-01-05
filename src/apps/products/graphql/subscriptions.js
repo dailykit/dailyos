@@ -420,12 +420,13 @@ export const S_INVENTORY_PRODUCT = gql`
          }
          inventoryProductOptions(
             where: { isArchived: { _eq: false } }
-            order_by: { created_at: desc }
+            order_by: { position: desc_nulls_last }
          ) {
             id
             label
             price
             quantity
+            position
             operationConfig {
                id
                station {
