@@ -1616,6 +1616,21 @@ export const QUERIES = {
                }
             }
          `,
+         CANCELLED: gql`
+            subscription orders {
+               orders: ordersAggregate(where: { isRejected: { _eq: true } }) {
+                  aggregate {
+                     count
+                     sum {
+                        amountPaid
+                     }
+                     avg {
+                        amountPaid
+                     }
+                  }
+               }
+            }
+         `,
       },
    },
    DELIVERY: {
