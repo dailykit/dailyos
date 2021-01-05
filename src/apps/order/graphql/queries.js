@@ -1429,6 +1429,7 @@ export const QUERIES = {
                customer: deliveryInfo(path: "dropoff.dropoffInfo")
                deliveryCompany: deliveryInfo(path: "deliveryCompany")
                cart: orderCart {
+                  id
                   isTest
                   transactionId
                }
