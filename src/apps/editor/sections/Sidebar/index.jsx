@@ -5,10 +5,12 @@ import { Context } from '../../state'
 import { Flex } from '@dailykit/ui'
 // Components
 import { FileExplorer } from '../../components'
+import moment from 'moment'
 
 // Styles
 import { SidebarWrapper, SidebarActions, Header } from './styles'
-
+import { useQuery } from '@apollo/react-hooks'
+import { GET_NESTED_FOLDER } from '../../graphql'
 import { toast } from 'react-toastify'
 import { FormType, FileType } from '../../components/Popup'
 
@@ -17,64 +19,77 @@ import { ExpandIcon, CollapseIcon, Folder, File } from '../../assets/Icons'
 import { useDailyGit } from '../../state/mutationFunction'
 
 const Sidebar = () => {
-   const { createFile, createFolder } = useDailyGit()
+   const now = moment().toISOString()
+   const { createFile, createFolder, recordFile } = useDailyGit()
    const { state, dispatch } = React.useContext(Context)
    const [showPopup1, setShowPopup1] = React.useState(false)
    const [showPopup2, setShowPopup2] = React.useState(false)
    const [type, setType] = React.useState('')
+   const [node, setNode] = React.useState({})
    const [name, setName] = React.useState('')
+   const [path, setPath] = React.useState('')
    const fileType = React.useRef('js')
 
+   const {
+      loading: queryLoading2,
+      error: queryError2,
+      data: { getNestedFolders: { children: nestedFolders = [] } = {} } = {},
+   } = useQuery(GET_NESTED_FOLDER, {
+      variables: { path: '' },
+   })
+
    const createClick = createType => {
-      if (
-         state.tabs.length ||
-         Object.entries(state.onToggleInfo).length ||
-         createType === 'Folder'
-      ) {
-         createType === 'Folder'
-            ? setShowPopup2(!showPopup2)
-            : setShowPopup1(!showPopup1)
+      if (createType === 'Folder') {
+         setShowPopup2(!showPopup2)
       } else {
-         toast.error('No folder selected!')
+         setShowPopup1(!showPopup1)
       }
       setType(createType)
+      setNode(state.onToggleInfo)
    }
 
    const createFolderHandler = () => {
       setShowPopup2(!showPopup2)
-      if (state.tabs.length || Object.entries(state.onToggleInfo).length) {
-         const filePath = state.onToggleInfo.path
-         createFolder({
-            variables: {
-               path: `${filePath}/${name}`,
-            },
-         })
-      } else {
-         console.log('outside')
-         createFolder({
-            variables: {
-               path: `/${name}`,
-            },
-         })
-      }
+      const folderPath = `${path.replace(
+         process.env.REACT_APP_ROOT_FOLDER,
+         ''
+      )}/${name}`
+      createFolder({
+         variables: {
+            path: folderPath,
+         },
+      })
       setName('')
       setType('')
+      setNode({})
    }
    const createFileHandler = () => {
       setShowPopup2(!showPopup2)
-      if (state.tabs.length || state.onToggleInfo) {
-         const filePath = `${state.onToggleInfo.path}/${name}.${fileType.current}`
-         createFile({
-            variables: {
-               path: `${filePath}/${name}`,
-               content: `Start writing content of file here... `,
+      const filePath = `${path.replace(
+         process.env.REACT_APP_ROOT_FOLDER,
+         ''
+      )}/${name}.${fileType.current}`
+      console.log(filePath)
+      createFile({
+         variables: {
+            path: filePath,
+            content: `Start writing content of file here...`,
+         },
+      })
+      recordFile({
+         variables: {
+            object: {
+               fileType: fileType.current,
+               fileName: `${name}.${fileType.current}`,
+               path: filePath,
+               lastSaved: now,
             },
-         })
-      } else {
-         toast.error('No folder selected!')
-      }
+         },
+      })
+
       setName('')
       setType('')
+      setNode({})
    }
 
    const stopDot = e => {
@@ -137,9 +152,12 @@ const Sidebar = () => {
          <FormType
             showPopup={showPopup2}
             action="Create"
+            treeViewData={nestedFolders}
+            nodePath={node?.path?.replace('/', '')}
             nodeType={type}
             name={name}
             setName={name => setName(name)}
+            setPath={path => setPath(path)}
             stopDot={e => stopDot(e)}
             cancelPopup={() => setShowPopup2(!showPopup2)}
             mutationHandler={(action, type) =>

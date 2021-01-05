@@ -6,11 +6,12 @@ import moment from 'moment'
 import { FileType, FormType } from '../Popup'
 import { toast } from 'react-toastify'
 
-const ContextMenu = ({ style, node }) => {
+const ContextMenu = ({ style, node, treeViewData }) => {
    const { state, dispatch } = React.useContext(Context)
    const [showPopup1, setShowPopup1] = React.useState(false)
    const [showPopup2, setShowPopup2] = React.useState(false)
    const [name, setName] = React.useState('')
+   const [path, setPath] = React.useState('')
    const actionRef = React.useRef('Create')
    const fileType = React.useRef('js')
    const nodeTypeRef = React.useRef(node.type)
@@ -29,8 +30,8 @@ const ContextMenu = ({ style, node }) => {
    const mutationHandler = (type, nodeType) => {
       if (type === 'Create') {
          if (nodeType === 'FILE') {
-            const filePath = `${node.path.replace(
-               /.\/templates/g,
+            const filePath = `${path.replace(
+               process.env.REACT_APP_ROOT_FOLDER,
                ''
             )}/${name}.${fileType.current}`
             createFile({
@@ -51,8 +52,8 @@ const ContextMenu = ({ style, node }) => {
             })
             fileType.current = ''
          } else {
-            const folderPath = `${node.path.replace(
-               /.\/templates/g,
+            const folderPath = `${path.replace(
+               process.env.REACT_APP_ROOT_FOLDER,
                ''
             )}/${name}`
             createFolder({
@@ -235,9 +236,12 @@ const ContextMenu = ({ style, node }) => {
             showPopup={showPopup2}
             cancelPopup={cancelPopup}
             action={actionRef.current}
+            treeViewData={treeViewData}
+            nodePath={node?.path}
             nodeType={nodeTypeRef.current}
             name={name}
             setName={name => setName(name)}
+            setPath={path => setPath(path)}
             stopDot={e => stopDot(e)}
             mutationHandler={(action, type) => mutationHandler(action, type)}
          />

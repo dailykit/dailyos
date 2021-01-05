@@ -85,6 +85,74 @@ export const GET_EXPLORER_CONTENT = gql`
       }
    }
 `
+export const GET_NESTED_FOLDER = gql`
+   query getNestedFolders($path: String) {
+      getNestedFolders(path: $path) {
+         title: name
+         value: path
+         type
+         size
+         createdAt
+         children {
+            title: name
+            value: path
+            type
+            size
+            createdAt
+            children {
+               title: name
+               value: path
+               type
+               size
+               createdAt
+               children {
+                  title: name
+                  value: path
+                  type
+                  size
+                  createdAt
+                  children {
+                     title: name
+                     value: path
+                     type
+                     size
+                     createdAt
+                     children {
+                        title: name
+                        value: path
+                        type
+                        size
+                        createdAt
+                        children {
+                           title: name
+                           value: path
+                           type
+                           size
+                           createdAt
+                           children {
+                              title: name
+                              value: path
+                              type
+                              size
+                              createdAt
+                              children {
+                                 title: name
+                                 value: path
+                                 type
+                                 size
+                                 createdAt
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+`
+
 export const GET_FILE = gql`
    query GET_FILE($path: String!) {
       editor_file(where: { path: { _eq: $path } }) {

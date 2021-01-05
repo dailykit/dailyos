@@ -7,6 +7,8 @@ import {
    ButtonGroup,
    Form,
 } from '@dailykit/ui'
+import { TreeSelect } from 'antd'
+import 'antd/dist/antd.css'
 
 export default function FormType({
    showPopup,
@@ -17,7 +19,45 @@ export default function FormType({
    cancelPopup,
    stopDot,
    name,
+   treeViewData,
+   nodePath,
+   setPath,
 }) {
+   const { TreeNode } = TreeSelect
+   const [selected, setSelected] = React.useState(null)
+   const [treeViewNodes, setTreeViewNodes] = React.useState([])
+   const nodePathRef = React.useRef('')
+   const onChange = value => {
+      setSelected(value)
+      setPath(value)
+   }
+   const cancelPopupHandler = () => {
+      nodePathRef.current = ''
+      cancelPopup()
+   }
+   const mutationFunc = () => {
+      mutationHandler(action, nodeType.toUpperCase())
+      nodePathRef.current = ''
+   }
+
+   React.useEffect(() => {
+      if (treeViewData !== undefined) {
+         const result = [
+            {
+               title: 'Root',
+               value: './templates',
+            },
+            ...treeViewData,
+         ]
+         setTreeViewNodes(result)
+      }
+   }, [treeViewData])
+   React.useEffect(() => {
+      if (nodePath || nodePathRef.current) {
+         nodePathRef.current = nodePath
+         setSelected(nodePathRef.current)
+      }
+   }, [nodePath, nodePathRef.current])
    return (
       <Popup show={showPopup}>
          {action !== 'Delete' ? (
@@ -39,19 +79,26 @@ export default function FormType({
                            value={name}
                            onKeyDown={e => stopDot(e)}
                         />
+                        <Spacer size="16px" />
+                        <Form.Label>Select the folder to keep it</Form.Label>
+                        <TreeSelect
+                           showSearch
+                           style={{ width: '100%' }}
+                           value={selected}
+                           dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                           placeholder="Please select"
+                           allowClear
+                           onChange={onChange}
+                           treeData={treeViewNodes}
+                        />
                      </Form.Group>
                   </Flex>
                   <Spacer size="16px" />
                   <ButtonGroup>
-                     <TextButton
-                        type="solid"
-                        onClick={() =>
-                           mutationHandler(action, nodeType.toUpperCase())
-                        }
-                     >
+                     <TextButton type="solid" onClick={mutationFunc}>
                         Create
                      </TextButton>
-                     <TextButton type="ghost" onClick={cancelPopup}>
+                     <TextButton type="ghost" onClick={cancelPopupHandler}>
                         Cancel
                      </TextButton>
                   </ButtonGroup>
@@ -72,15 +119,10 @@ export default function FormType({
                   </Form.Group>
                   <Spacer size="16px" />
                   <ButtonGroup>
-                     <TextButton
-                        type="solid"
-                        onClick={() =>
-                           mutationHandler(action, nodeType.toUpperCase())
-                        }
-                     >
+                     <TextButton type="solid" onClick={mutationFunc}>
                         Rename
                      </TextButton>
-                     <TextButton type="ghost" onClick={cancelPopup}>
+                     <TextButton type="ghost" onClick={cancelPopupHandler}>
                         Cancel
                      </TextButton>
                   </ButtonGroup>
@@ -93,15 +135,10 @@ export default function FormType({
                </Popup.Text>
                <Popup.Actions>
                   <ButtonGroup align="left">
-                     <TextButton
-                        type="solid"
-                        onClick={() =>
-                           mutationHandler(action, nodeType.toUpperCase())
-                        }
-                     >
+                     <TextButton type="solid" onClick={mutationFunc}>
                         Yes! delete this {nodeType}
                      </TextButton>
-                     <TextButton type="ghost" onClick={cancelPopup}>
+                     <TextButton type="ghost" onClick={cancelPopupHandler}>
                         Cancel
                      </TextButton>
                   </ButtonGroup>

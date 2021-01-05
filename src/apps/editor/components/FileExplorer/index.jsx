@@ -13,7 +13,11 @@ import ContextMenu from '../ContextMenu'
 import { FileExplorerWrapper } from './styles'
 
 // Queries
-import { GET_EXPLORER_CONTENT, GET_FILE } from '../../graphql'
+import {
+   GET_EXPLORER_CONTENT,
+   GET_NESTED_FOLDER,
+   GET_FILE,
+} from '../../graphql'
 import { toast } from 'react-toastify'
 
 // Helpers
@@ -35,6 +39,13 @@ const FileExplorer = () => {
       error: queryError,
       data: queryData,
    } = useQuery(GET_EXPLORER_CONTENT, {
+      variables: { path: '' },
+   })
+   const {
+      loading: queryLoading2,
+      error: queryError2,
+      data: { getNestedFolders: { children: nestedFolders = [] } = {} } = {},
+   } = useQuery(GET_NESTED_FOLDER, {
       variables: { path: '' },
    })
 
@@ -153,7 +164,11 @@ const FileExplorer = () => {
             onToggle={onToggle}
             showContextMenu={(e, node) => showContextMenu(e, node, 'show')}
          />
-         <ContextMenu style={style} node={nodeRef.current} />
+         <ContextMenu
+            style={style}
+            node={nodeRef.current}
+            treeViewData={nestedFolders}
+         />
       </FileExplorerWrapper>
    )
 }
