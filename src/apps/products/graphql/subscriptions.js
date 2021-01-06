@@ -543,6 +543,7 @@ export const S_COMBO_PRODUCT = gql`
       comboProduct(id: $id) {
          id
          name
+         additionalText
          description
          tags
          price
