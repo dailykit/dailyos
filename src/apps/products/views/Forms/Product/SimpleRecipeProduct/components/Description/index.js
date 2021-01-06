@@ -33,7 +33,7 @@ const Description = ({ state }) => {
             </Tunnel>
          </Tunnels>
          <>
-            {state.description || state.tags?.length ? (
+            {state.additionalText || state.description || state.tags?.length ? (
                <StyledContainer>
                   <StyledAction>
                      <IconButton type="ghost" onClick={() => openTunnel(1)}>

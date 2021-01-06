@@ -387,6 +387,7 @@ export const S_INVENTORY_PRODUCT = gql`
       inventoryProduct(id: $id) {
          id
          name
+         additionalText
          assets
          recommendations
          isValid
