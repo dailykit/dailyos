@@ -326,6 +326,7 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
       simpleRecipeProduct(id: $id) {
          id
          name
+         additionalText
          assets
          isValid
          isPublished

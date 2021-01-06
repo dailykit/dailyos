@@ -41,6 +41,12 @@ const Description = ({ state }) => {
                      </IconButton>
                   </StyledAction>
                   <Flex container alignItems="center">
+                     <Text as="subtitle">Additional Text</Text>
+                     <Tooltip identifier="simple_recipe_product_additional_text" />
+                  </Flex>
+                  <Text as="p">{state.additionalText || 'NA'}</Text>
+                  <Spacer size="16px" />
+                  <Flex container alignItems="center">
                      <Text as="subtitle">Tags</Text>
                      <Tooltip identifier="simple_recipe_product_tags" />
                   </Flex>
