@@ -42,7 +42,7 @@ const Description = ({ state }) => {
                   </StyledAction>
                   <Flex container alignItems="center">
                      <Text as="subtitle">Additional Text</Text>
-                     <Tooltip identifier="inventory_product_additional_text" />
+                     <Tooltip identifier="combo_product_additional_text" />
                   </Flex>
                   <Text as="p">{state.additionalText || 'NA'}</Text>
                   <Spacer size="16px" />
