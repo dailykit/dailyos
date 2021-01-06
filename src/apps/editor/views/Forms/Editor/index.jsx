@@ -1,29 +1,32 @@
 import React, { useRef } from 'react'
+import { useParams } from 'react-router-dom'
 import MonacoEditor, { monaco } from '@monaco-editor/react'
 import { useMutation } from '@apollo/react-hooks'
 import { Flex, Form } from '@dailykit/ui'
 import PropTypes from 'prop-types'
 import { toast } from 'react-toastify'
+import { useQuery } from '@apollo/react-hooks'
 
 // State
-import { Context } from '../../state'
+import { Context } from '../../../state'
 
 // Components
 import ReferenceFile from './ReferenceFile'
 import EditorOptions from './EditorOptions'
 import History from './History'
-import { WebBuilder } from '../../../../shared/components'
+import { WebBuilder } from '../../../../../shared/components'
 
 // Queries
-import { GET_FILE_FETCH, UPDATE_FILE, DRAFT_FILE } from '../../graphql'
+import { GET_FILE_FETCH, UPDATE_FILE, DRAFT_FILE } from '../../../graphql'
 
 // Styles
 import { EditorWrapper } from './styles'
 
 // Helpers
-import fetchCall from '../../utils/fetchCall'
+import fetchCall from '../../../utils/fetchCall'
 
-const Editor = ({ path }) => {
+const Editor = () => {
+   const { path } = useParams()
    const monacoRef = useRef()
    const editorRef = useRef()
 
@@ -51,20 +54,11 @@ const Editor = ({ path }) => {
    const [isDark, setIsDark] = React.useState(false)
    const [isWebBuilderOpen, setIsWebBuilderOpen] = React.useState(false)
 
-   React.useEffect(() => {
-      monaco.init().then(monaco => {
-         monacoRef.current = monaco
-      })
-   }, [])
-
-   React.useEffect(() => {
-      const body = JSON.stringify({
-         query: GET_FILE_FETCH,
-         variables: {
-            path: path,
-         },
-      })
-      fetchCall(body).then(({ data }) => {
+   const { loading } = useQuery(GET_FILE_FETCH, {
+      variables: {
+         path: `/${path}`,
+      },
+      onCompleted: data => {
          const { getFile } = data
          const fileType = getFile.path.split('.').pop()
          switch (fileType) {
@@ -84,8 +78,47 @@ const Editor = ({ path }) => {
          }
          setCode(getFile.content)
          setFile(getFile)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         console.log(error)
+      },
+   })
+   React.useEffect(() => {
+      monaco.init().then(monaco => {
+         monacoRef.current = monaco
       })
-   }, [path])
+   }, [])
+
+   // React.useEffect(() => {
+   //    const body = JSON.stringify({
+   //       query: GET_FILE_FETCH,
+   //       variables: {
+   //          path: `/${path}`,
+   //       },
+   //    })
+   //    fetchCall(body).then(({ data }) => {
+   //       const { getFile } = data
+   //       const fileType = getFile.path.split('.').pop()
+   //       switch (fileType) {
+   //          case 'js':
+   //             console.log(fileType)
+   //             setLanguage('javascript')
+   //             break
+   //          case 'html':
+   //             setLanguage(fileType)
+   //             break
+   //          case 'css':
+   //             setLanguage(fileType)
+   //             break
+   //          case 'pug':
+   //             setLanguage(fileType)
+   //             break
+   //       }
+   //       setCode(getFile.content)
+   //       setFile(getFile)
+   //    })
+   // }, [path])
 
    const selectFile = async path => {
       toggleModal(false)

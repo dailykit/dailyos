@@ -1,14 +1,17 @@
 import React from 'react'
 import { ThemeProvider } from 'styled-components'
+import { BrowserRouter as Router } from 'react-router-dom'
 
 // State
 import { Context, initialState, reducers } from './state'
 
 // Sections
-import { Sidebar, Main, SidePanel } from './sections'
+import { Sidebar, Main, SidePanel, Header } from './sections'
+import ErrorBoundary from '../../shared/components/ErrorBoundary'
 
 // Styles
 import { Wrapper } from './styles'
+import { StyledWrapper } from '../../styled'
 
 const theme = {
    basePt: 8,
@@ -25,6 +28,7 @@ const theme = {
 
 const App = () => {
    const [state, dispatch] = React.useReducer(reducers, initialState)
+   const [isSidebarVisible, toggleSidebar] = React.useState(false)
    const gridColumns = () => {
       let column = '240px 1fr 240px'
       if (state.isSidebarVisible && state.isSidePanelVisible) {
@@ -39,15 +43,30 @@ const App = () => {
       return column
    }
    return (
-      <ThemeProvider theme={theme}>
-         <Context.Provider value={{ state, dispatch }}>
-            <Wrapper column={gridColumns()}>
-               <Sidebar />
-               <Main />
-               <SidePanel />
-            </Wrapper>
-         </Context.Provider>
-      </ThemeProvider>
+      <StyledWrapper>
+         <ThemeProvider theme={theme}>
+            <Context.Provider value={{ state, dispatch }}>
+               {/* <Router basename={process.env.PUBLIC_URL}>
+                  <Header toggleSidebar={toggleSidebar} />
+                  <Wrapper column={gridColumns()}>
+                  <Sidebar />
+                  <Main />
+                  <SidePanel />
+                  </Wrapper>
+               </Router> */}
+               <Router basename={process.env.PUBLIC_URL}>
+                  <Header toggleSidebar={toggleSidebar} />
+                  <Sidebar
+                     visible={isSidebarVisible}
+                     toggleSidebar={toggleSidebar}
+                  />
+                  <ErrorBoundary rootRoute="/apps/crm">
+                     <Main />
+                  </ErrorBoundary>
+               </Router>
+            </Context.Provider>
+         </ThemeProvider>
+      </StyledWrapper>
    )
 }
 

@@ -1,6 +1,7 @@
 import React from 'react'
 import { useQuery, useLazyQuery } from '@apollo/react-hooks'
 import { Loader } from '@dailykit/ui'
+import { useTabs } from '../../context'
 
 // State
 import { Context } from '../../state'
@@ -24,6 +25,7 @@ import { toast } from 'react-toastify'
 import toggleNode from '../../utils/toggleNode'
 
 const FileExplorer = () => {
+   const { addTab } = useTabs()
    const { state, dispatch } = React.useContext(Context)
    const fileRef = React.useRef({})
    const [data, setData] = React.useState([])
@@ -62,19 +64,35 @@ const FileExplorer = () => {
             data.editor_file.length > 0 &&
             Object.keys(fileRef.current).length !== 0
          ) {
-            dispatch({
-               type: 'ADD_TAB',
-               payload: {
-                  name: fileRef.current.name,
-                  path: fileRef.current.path.replace(
-                     process.env.REACT_APP_ROOT_FOLDER,
-                     ''
-                  ),
-                  id: data.editor_file[0].id,
-                  linkedCss: data.editor_file[0].linkedCssFiles,
-                  linkedJs: data.editor_file[0].linkedJsFiles,
-               },
-            })
+            const name = fileRef.current.name
+            const path = fileRef.current.path.replace(
+               process.env.REACT_APP_ROOT_FOLDER,
+               ''
+            )
+            const payload = {
+               name: fileRef.current.name,
+               path: fileRef.current.path.replace(
+                  process.env.REACT_APP_ROOT_FOLDER,
+                  ''
+               ),
+               id: data.editor_file[0].id,
+               linkedCss: data.editor_file[0].linkedCssFiles,
+               linkedJs: data.editor_file[0].linkedJsFiles,
+            }
+            addTab(payload.name, `/editor${payload.path}`)
+            // dispatch({
+            //    type: 'ADD_TAB',
+            //    payload: {
+            //       name: fileRef.current.name,
+            //       path: fileRef.current.path.replace(
+            //          process.env.REACT_APP_ROOT_FOLDER,
+            //          ''
+            //       ),
+            //       id: data.editor_file[0].id,
+            //       linkedCss: data.editor_file[0].linkedCssFiles,
+            //       linkedJs: data.editor_file[0].linkedJsFiles,
+            //    },
+            // })
          }
       },
    })
@@ -154,10 +172,7 @@ const FileExplorer = () => {
       return <div>Error</div>
    }
    return (
-      <FileExplorerWrapper
-         isSidebarVisible={state.isSidebarVisible}
-         onClick={clickHandler}
-      >
+      <FileExplorerWrapper onClick={clickHandler}>
          <TreeView
             data={data}
             onSelection={onSelection}

@@ -124,6 +124,7 @@ const PageListing = () => {
    const rowClick = (e, cell) => {
       const { id, internalPageName } = cell._cell.row.data
       const param = `${location.pathname}/${id}/${internalPageName}`
+      console.log(param)
       addTab(internalPageName, param)
    }
 

@@ -1,11 +1,12 @@
 import React from 'react'
 import { TabPanels } from '@reach/tabs'
-
+import { Switch, Route } from 'react-router-dom'
 // State
 import { Context } from '../../state'
+import { useTabs } from '../../context'
 
 // Components
-import { Editor } from '../../components'
+import { Home, Editor } from '../../views'
 
 // Styles
 import {
@@ -28,6 +29,7 @@ import {
 } from '../../assets/Icons'
 
 const Main = () => {
+   const { tab, tabs } = useTabs()
    const { state, dispatch } = React.useContext(Context)
    const mainWidth = () => {
       let width = '100vw'
@@ -43,21 +45,24 @@ const Main = () => {
       return width
    }
 
-   if (state.tabs.length === 0) {
-      return (
-         <MainWrapper id="main">Select a file from the explorer.</MainWrapper>
-      )
-   }
+   // if (tabs.length === 0) {
+   //    return <main id="main">Select a file from the explorer.</main>
+   // }
    return (
-      <MainWrapper width={mainWidth()}>
-         <StyledTabs
-            index={state.currentTab}
-            onChange={index =>
-               dispatch({ type: 'SET_TAB_INDEX', payload: index })
-            }
-         >
-            <StyledTabList>
-               {state.tabs.map((tab, index) => (
+      // <MainWrapper width={mainWidth()}>
+      <main>
+         <Switch>
+            <Route path="/editor" component={Home} exact />
+            <Route path="/editor/:path+" component={Editor} exact />
+         </Switch>
+         {/* <StyledTabs
+         index={state.currentTab}
+         onChange={() =>
+            dispatch({ type: 'SET_TAB_INDEX', payload: currentTab })
+         }
+         > */}
+         {/* <StyledTabList>
+               {tabs.map((tab, index) => (
                   <StyledTab key={index}>
                      <span title={tab.name}>{`${
                         tab.name.length > 12
@@ -77,17 +82,17 @@ const Main = () => {
                      </span>
                   </StyledTab>
                ))}
-            </StyledTabList>
+            </StyledTabList> */}
 
-            <TabPanels>
-               {state.tabs.map((tab, index) => (
+         {/* <TabPanels>
+               {tabs.map((tab, index) => (
                   <StyledTabPanel key={index}>
                      <Editor {...tab} />
                   </StyledTabPanel>
                ))}
             </TabPanels>
-         </StyledTabs>
-         <TabsNav>
+         </StyledTabs> */}
+         {/* <TabsNav>
             <span onClick={() => dispatch({ type: 'LEFT_TAB' })}>
                {CaretLeftIcon}
             </span>
@@ -113,8 +118,9 @@ const Main = () => {
                   </ul>
                </TabOptions>
             )}
-         </TabsNav>
-      </MainWrapper>
+         </TabsNav> */}
+         {/* </MainWrapper> */}
+      </main>
    )
 }
 

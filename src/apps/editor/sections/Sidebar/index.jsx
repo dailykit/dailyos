@@ -8,7 +8,13 @@ import { FileExplorer } from '../../components'
 import moment from 'moment'
 
 // Styles
-import { SidebarWrapper, SidebarActions, Header } from './styles'
+import {
+   SidebarWrapper,
+   SidebarActions,
+   Header,
+   StyledSidebar,
+   StyledHeading,
+} from './styles'
 import { useQuery } from '@apollo/react-hooks'
 import { GET_NESTED_FOLDER } from '../../graphql'
 import { toast } from 'react-toastify'
@@ -18,7 +24,7 @@ import { FormType, FileType } from '../../components/Popup'
 import { ExpandIcon, CollapseIcon, Folder, File } from '../../assets/Icons'
 import { useDailyGit } from '../../state/mutationFunction'
 
-const Sidebar = () => {
+const Sidebar = ({ visible, toggleSidebar }) => {
    const now = moment().toISOString()
    const { createFile, createFolder, recordFile } = useDailyGit()
    const { state, dispatch } = React.useContext(Context)
@@ -105,44 +111,43 @@ const Sidebar = () => {
    }
 
    return (
-      <SidebarWrapper>
-         <Header>
-            <SidebarActions>
-               {state.isSidebarVisible ? (
-                  <Flex
-                     container
-                     alignItems="center"
-                     justifyContent="space-around"
-                  >
-                     <span
+      <StyledSidebar visible={visible}>
+         {/* <SidebarWrapper> */}
+         <StyledHeading>
+            {/* <Header> */}
+            {/* <SidebarActions> */}
+            {/* {state.isSidebarVisible ? ( */}
+            <Flex container alignItems="center" justifyContent="flex-start">
+               {/* <span
                         className="sideBarArrow"
                         onClick={() => dispatch({ type: 'TOGGLE_SIDEBAR' })}
                      >
                         <ExpandIcon color="#9a8484" />
-                     </span>
-                     <span
-                        className="sideBarIcon"
-                        onClick={() => createClick('Folder')}
-                     >
-                        <Folder size="20px" color="#120136" />
-                     </span>
-                     <span
-                        className="sideBarIcon"
-                        onClick={() => createClick('File')}
-                     >
-                        <File size="20px" color="#120136" />
-                     </span>
-                  </Flex>
-               ) : (
+                     </span> */}
+               <span
+                  className="sideBarIcon"
+                  onClick={() => createClick('Folder')}
+               >
+                  <Folder size="20px" color="#120136" />
+               </span>
+               <span
+                  className="sideBarIcon"
+                  onClick={() => createClick('File')}
+               >
+                  <File size="20px" color="#120136" />
+               </span>
+            </Flex>
+            {/* ) : (
                   <span
                      className="sideBarArrow"
                      onClick={() => dispatch({ type: 'TOGGLE_SIDEBAR' })}
                   >
                      <CollapseIcon color="#9a8484" />
                   </span>
-               )}
-            </SidebarActions>
-         </Header>
+               )} */}
+            {/* </SidebarActions> */}
+            {/* </Header> */}
+         </StyledHeading>
          <FileExplorer />
          <FileType
             showPopup={showPopup1}
@@ -164,7 +169,8 @@ const Sidebar = () => {
                type === 'FOLDER' ? createFolderHandler() : createFileHandler()
             }
          />
-      </SidebarWrapper>
+         {/* </SidebarWrapper> */}
+      </StyledSidebar>
    )
 }
 

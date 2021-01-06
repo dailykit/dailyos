@@ -180,16 +180,16 @@ export const GET_FILE = gql`
       }
    }
 `
-export const GET_FILE_FETCH = `
-query getFile($path: String!) {
-    getFile(path: $path) {
-        size
-        name
-        createdAt
-        content
-        path			
-    }
-}
+export const GET_FILE_FETCH = gql`
+   query getFile($path: String!) {
+      getFile(path: $path) {
+         size
+         name
+         createdAt
+         content
+         path
+      }
+   }
 `
 export const SEARCH_FILES = gql`
    query searchFiles($fileName: String!) {
