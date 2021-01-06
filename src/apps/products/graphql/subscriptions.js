@@ -468,6 +468,7 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
       customizableProduct(id: $id) {
          id
          name
+         additionalText
          default
          isValid
          isPublished
