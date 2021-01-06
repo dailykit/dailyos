@@ -33,13 +33,19 @@ const Description = ({ state }) => {
             </Tunnel>
          </Tunnels>
          <>
-            {state.description || state.tags?.length ? (
+            {state.additionalText || state.description || state.tags?.length ? (
                <StyledContainer>
                   <StyledAction>
                      <IconButton type="ghost" onClick={() => openTunnel(1)}>
                         <EditIcon color="#00A7E1" />
                      </IconButton>
                   </StyledAction>
+                  <Flex container alignItems="center">
+                     <Text as="subtitle">Additional Text</Text>
+                     <Tooltip identifier="combo_product_additional_text" />
+                  </Flex>
+                  <Text as="p">{state.additionalText || 'NA'}</Text>
+                  <Spacer size="16px" />
                   <Flex container alignItems="center">
                      <Text as="subtitle">Tags</Text>
                      <Tooltip identifier="combo_product_tags" />
