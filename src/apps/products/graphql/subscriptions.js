@@ -478,10 +478,11 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
          isPopupAllowed
          customizableProductOptions(
             where: { isArchived: { _eq: false } }
-            order_by: { created_at: desc }
+            order_by: { position: desc_nulls_last }
          ) {
             id
             options
+            position
             inventoryProduct {
                id
                name
