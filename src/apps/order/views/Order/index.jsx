@@ -23,9 +23,9 @@ import {
 
 import { Styles } from './styled'
 import { formatDate } from '../../utils'
-import { useOrder, useTabs } from '../../context'
 import { QUERIES, MUTATIONS } from '../../graphql'
 import { PrintIcon, UserIcon } from '../../assets/icons'
+import { useConfig, useOrder, useTabs } from '../../context'
 import { currencyFmt, logger } from '../../../../shared/utils'
 import { MealKits, Inventories, ReadyToEats } from './sections'
 import {
@@ -44,6 +44,7 @@ const Order = () => {
    const { t } = useTranslation()
    const params = useParams()
    const { tab, addTab } = useTabs()
+   const { state: config } = useConfig()
    const { state, switchView, dispatch } = useOrder()
    const [isThirdParty, setIsThirdParty] = React.useState(false)
    const [updateOrder] = useMutation(MUTATIONS.ORDER.UPDATE, {
@@ -70,6 +71,11 @@ const Order = () => {
       {
          variables: {
             id: params.id,
+            ...(config.current_station?.id && {
+               assemblyStationId: {
+                  _eq: config.current_station?.id,
+               },
+            }),
          },
          onSubscriptionData: ({
             subscriptionData: { data: { order = {} } = {} } = {},
@@ -86,6 +92,11 @@ const Order = () => {
    } = useSubscription(QUERIES.ORDER.MEALKITS, {
       variables: {
          orderId: params.id,
+         ...(config.current_station?.id && {
+            packingStationId: {
+               _eq: config.current_station?.id,
+            },
+         }),
       },
    })
 
@@ -96,6 +107,11 @@ const Order = () => {
    } = useSubscription(QUERIES.ORDER.READY_TO_EAT.LIST, {
       variables: {
          orderId: params.id,
+         ...(config.current_station?.id && {
+            packingStationId: {
+               _eq: config.current_station?.id,
+            },
+         }),
       },
    })
 
@@ -106,6 +122,11 @@ const Order = () => {
    } = useSubscription(QUERIES.ORDER.INVENTORY.LIST, {
       variables: {
          orderId: params.id,
+         ...(config.current_station?.id && {
+            packingStationId: {
+               _eq: config.current_station?.id,
+            },
+         }),
       },
    })
 
