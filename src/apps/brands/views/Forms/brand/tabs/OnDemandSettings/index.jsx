@@ -28,6 +28,7 @@ import {
    NavLinks,
    Referral,
    FoodCostPercent,
+   TermsAndConditions,
 } from './sections'
 
 export const OnDemandSettings = () => {
@@ -87,6 +88,8 @@ export const OnDemandSettings = () => {
                <BrandContact update={update} />
                <Spacer size="24px" />
                <NavLinks update={update} />
+               <Spacer size="24px" />
+               <TermsAndConditions update={update} />
             </ScrollSection.Section>
             <Spacer size="48px" />
             <ScrollSection.Section hash="visual" title="Visual">
