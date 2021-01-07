@@ -22,6 +22,8 @@ import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../../../shared/utils'
 
 export const PrivacyPolicy = ({ update }) => {
+   const title = 'Privacy Policy'
+
    const params = useParams()
    const [text, setText] = React.useState({})
    const [settingId, setSettingId] = React.useState(null)
@@ -61,9 +63,9 @@ export const PrivacyPolicy = ({ update }) => {
    }
 
    return (
-      <div id="TermsAndConditions">
+      <div id={title}>
          <Flex container alignItems="flex-start">
-            <Text as="h3">Privacy Policy</Text>
+            <Text as="h3">{title}</Text>
             <Tooltip identifier="brand_privacy_policy" />
          </Flex>
          <Spacer size="16px" />
@@ -75,7 +77,7 @@ export const PrivacyPolicy = ({ update }) => {
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="md">
                <RichTextEditorTunnel
-                  title="Privacy Policy"
+                  title={title}
                   update={update}
                   text={text}
                   settingId={settingId}

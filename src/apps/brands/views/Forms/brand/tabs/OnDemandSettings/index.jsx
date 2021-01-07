@@ -31,6 +31,7 @@ import {
    TermsAndConditions,
    PrivacyPolicy,
 } from './sections'
+import { RefundPolicy } from './sections/RefundPolicy'
 
 export const OnDemandSettings = () => {
    const params = useParams()
@@ -93,6 +94,8 @@ export const OnDemandSettings = () => {
                <TermsAndConditions update={update} />
                <Spacer size="24px" />
                <PrivacyPolicy update={update} />
+               <Spacer size="24px" />
+               <RefundPolicy update={update} />
             </ScrollSection.Section>
             <Spacer size="48px" />
             <ScrollSection.Section hash="visual" title="Visual">

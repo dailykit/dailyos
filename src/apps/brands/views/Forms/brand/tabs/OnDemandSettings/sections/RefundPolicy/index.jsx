@@ -21,8 +21,8 @@ import {
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../../../shared/utils'
 
-export const TermsAndConditions = ({ update }) => {
-   const title = 'Terms and Conditions'
+export const RefundPolicy = ({ update }) => {
+   const title = 'Refund Policy'
 
    const params = useParams()
    const [text, setText] = React.useState({})
@@ -31,7 +31,7 @@ export const TermsAndConditions = ({ update }) => {
 
    const { loading, error } = useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
-         identifier: { _eq: 'Terms and Conditions' },
+         identifier: { _eq: 'Refund Policy' },
          type: { _eq: 'brand' },
       },
       onSubscriptionData: ({
@@ -66,7 +66,7 @@ export const TermsAndConditions = ({ update }) => {
       <div id={title}>
          <Flex container alignItems="flex-start">
             <Text as="h3">{title}</Text>
-            <Tooltip identifier="brand_terms_and_conditions" />
+            <Tooltip identifier="brand_refund_policy" />
          </Flex>
          <Spacer size="16px" />
          <Flex container alignItems="center" justifyContent="space-between">
