@@ -43,7 +43,6 @@ const SingleImage = ({ imageUrl, openTunnel, removeImage, editImage }) => {
                size="sm"
                text="Add a Photo"
                onClick={() => openTunnel(1)}
-               style={{ margin: '16px' }}
             />
          )}
       </>

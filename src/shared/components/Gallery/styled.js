@@ -53,7 +53,6 @@ export const Image = styled.img`
 export const Wrapper = styled.div`
    display: flex;
    flex-direction: row;
-   margin: 0 32px;
 `
 
 export const Trail = styled.div`
