@@ -10,6 +10,7 @@ import InsightDashboard from './InsightDashboard'
 import Gallery from './Gallery'
 import WebBuilder from './WebBuilder'
 import DragNDrop from './DragNDrop'
+import Popup from './Popup'
 
 export {
    Lang,
@@ -24,6 +25,7 @@ export {
    Gallery,
    WebBuilder,
    DragNDrop,
+   Popup,
 }
 export * from './AssetUploader'
 export * from './InlineLoader'

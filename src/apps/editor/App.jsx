@@ -2,8 +2,7 @@ import React from 'react'
 import { ThemeProvider } from 'styled-components'
 import { BrowserRouter as Router } from 'react-router-dom'
 
-// State
-import { Context, initialState, reducers } from './state'
+import { useGlobalContext } from './context'
 
 // Sections
 import { Sidebar, Main, SidePanel, Header } from './sections'
@@ -27,15 +26,25 @@ const theme = {
 }
 
 const App = () => {
-   const [state, dispatch] = React.useReducer(reducers, initialState)
-   const [isSidebarVisible, toggleSidebar] = React.useState(false)
+   const { toggleSideBar, globalState } = useGlobalContext()
+   const [isSidebarVisible, setIsSidebarVisible] = React.useState(false)
+   const sideBarHandler = () => {
+      setIsSidebarVisible(!isSidebarVisible)
+      toggleSideBar()
+   }
    const gridColumns = () => {
       let column = '240px 1fr 240px'
-      if (state.isSidebarVisible && state.isSidePanelVisible) {
+      if (globalState.isSidebarVisible && globalState.isSidePanelVisible) {
          column = '200px 1fr 280px'
-      } else if (state.isSidebarVisible && !state.isSidePanelVisible) {
+      } else if (
+         globalState.isSidebarVisible &&
+         !globalState.isSidePanelVisible
+      ) {
          column = '240px 1fr 40px'
-      } else if (!state.isSidebarVisible && state.isSidePanelVisible) {
+      } else if (
+         !globalState.isSidebarVisible &&
+         globalState.isSidePanelVisible
+      ) {
          column = '40px 1fr 280px'
       } else {
          column = '40px 1fr 40px'
@@ -45,26 +54,26 @@ const App = () => {
    return (
       <StyledWrapper>
          <ThemeProvider theme={theme}>
-            <Context.Provider value={{ state, dispatch }}>
-               {/* <Router basename={process.env.PUBLIC_URL}>
-                  <Header toggleSidebar={toggleSidebar} />
+            {/* <Context.Provider value={{ state, dispatch }}> */}
+            {/* <Router basename={process.env.PUBLIC_URL}>
+                  <Header toggleSidebar={setIsSidebarVisible} />
                   <Wrapper column={gridColumns()}>
                   <Sidebar />
                   <Main />
                   <SidePanel />
                   </Wrapper>
                </Router> */}
-               <Router basename={process.env.PUBLIC_URL}>
-                  <Header toggleSidebar={toggleSidebar} />
-                  <Sidebar
-                     visible={isSidebarVisible}
-                     toggleSidebar={toggleSidebar}
-                  />
-                  <ErrorBoundary rootRoute="/apps/crm">
-                     <Main />
-                  </ErrorBoundary>
-               </Router>
-            </Context.Provider>
+            <Router basename={process.env.PUBLIC_URL}>
+               <Header toggleSidebar={sideBarHandler} />
+               <Sidebar
+                  visible={isSidebarVisible}
+                  toggleSidebar={sideBarHandler}
+               />
+               <ErrorBoundary rootRoute="/apps/crm">
+                  <Main />
+               </ErrorBoundary>
+            </Router>
+            {/* </Context.Provider> */}
          </ThemeProvider>
       </StyledWrapper>
    )

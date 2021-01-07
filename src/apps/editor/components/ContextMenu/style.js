@@ -3,9 +3,10 @@ import styled from 'styled-components'
 export const Menu = styled.div`
    box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2);
    position: absolute;
+   width: 100%;
    display: none;
    z-index: 100;
-   background-color: #ebebeb;
+   background-color: #d9e9f1;
 `
 
 export const MenuOptions = styled.ul`
@@ -14,12 +15,16 @@ export const MenuOptions = styled.ul`
 `
 
 export const MenuOption = styled.li`
+   display: flex;
+   align-items: center;
    font-weight: 500;
    font-size: 14px;
    padding: 10px 40px 10px 20px;
    cursor: pointer;
    &:hover {
-      background: rgba(0, 0, 0, 0.2);
+      margin-right: 4px;
+      background: #f1f3f4;
+      border-radius: 0 50px 50px 0;
    }
 `
 export const Card = styled.div`

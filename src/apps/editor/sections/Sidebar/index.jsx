@@ -1,7 +1,8 @@
 import React from 'react'
 
 // State
-import { Context } from '../../state'
+// import { Context } from '../../state'
+import { useGlobalContext } from '../../context'
 import { Flex } from '@dailykit/ui'
 // Components
 import { FileExplorer } from '../../components'
@@ -21,13 +22,19 @@ import { toast } from 'react-toastify'
 import { FormType, FileType } from '../../components/Popup'
 
 // Assets
-import { ExpandIcon, CollapseIcon, Folder, File } from '../../assets/Icons'
+import {
+   ExpandIcon,
+   CollapseIcon,
+   CreateFile,
+   CreateFolder,
+} from '../../assets/Icons'
 import { useDailyGit } from '../../state/mutationFunction'
 
 const Sidebar = ({ visible, toggleSidebar }) => {
+   const { globalState, setPopupInfo } = useGlobalContext()
    const now = moment().toISOString()
    const { createFile, createFolder, recordFile } = useDailyGit()
-   const { state, dispatch } = React.useContext(Context)
+   // const { state, dispatch } = React.useContext(Context)
    const [showPopup1, setShowPopup1] = React.useState(false)
    const [showPopup2, setShowPopup2] = React.useState(false)
    const [type, setType] = React.useState('')
@@ -48,10 +55,14 @@ const Sidebar = ({ visible, toggleSidebar }) => {
       if (createType === 'Folder') {
          setShowPopup2(!showPopup2)
       } else {
-         setShowPopup1(!showPopup1)
+         setPopupInfo({
+            createTypePopup: false,
+            fileTypePopup: true,
+            formTypePopup: false,
+         })
       }
       setType(createType)
-      setNode(state.onToggleInfo)
+      setNode(globalState.onToggleInfo)
    }
 
    const createFolderHandler = () => {
@@ -98,12 +109,6 @@ const Sidebar = ({ visible, toggleSidebar }) => {
       setNode({})
    }
 
-   const stopDot = e => {
-      if (e.keyCode === 190 || e.keyCode === 110) {
-         e.preventDefault()
-      }
-   }
-
    const selectFileType = type => {
       fileType.current = type
       setShowPopup1(!showPopup1)
@@ -128,13 +133,13 @@ const Sidebar = ({ visible, toggleSidebar }) => {
                   className="sideBarIcon"
                   onClick={() => createClick('Folder')}
                >
-                  <Folder size="20px" color="#120136" />
+                  <CreateFolder size="24px" color="#120136" />
                </span>
                <span
                   className="sideBarIcon"
                   onClick={() => createClick('File')}
                >
-                  <File size="20px" color="#120136" />
+                  <CreateFile size="24px" color="#120136" />
                </span>
             </Flex>
             {/* ) : (
@@ -149,7 +154,7 @@ const Sidebar = ({ visible, toggleSidebar }) => {
             {/* </Header> */}
          </StyledHeading>
          <FileExplorer />
-         <FileType
+         {/* <FileType
             showPopup={showPopup1}
             setShowPopup={() => setShowPopup1(!showPopup1)}
             selectFileType={type => selectFileType(type)}
@@ -168,7 +173,22 @@ const Sidebar = ({ visible, toggleSidebar }) => {
             mutationHandler={(action, type) =>
                type === 'FOLDER' ? createFolderHandler() : createFileHandler()
             }
-         />
+         /> */}
+         {/* popupInfo({
+            showPopup=showPopup2,
+            action="Create",
+            treeViewData={nestedFolders},
+            nodePath=node?.path?.replace('/', '')},
+            nodeType=type,
+            name=name,
+            setName=name => setName(name),
+            setPath=path => setPath(path),
+            stopDot=e => stopDot(e),
+            cancelPopup=() => setShowPopup2(!showPopup2),
+            mutationHandler=(action, type) =>
+               type === 'FOLDER' ? createFolderHandler() : createFileHandler()
+            
+         }) */}
          {/* </SidebarWrapper> */}
       </StyledSidebar>
    )

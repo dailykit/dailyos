@@ -1,14 +1,12 @@
 import React, { useRef } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import MonacoEditor, { monaco } from '@monaco-editor/react'
 import { useMutation } from '@apollo/react-hooks'
 import { Flex, Form } from '@dailykit/ui'
 import PropTypes from 'prop-types'
 import { toast } from 'react-toastify'
 import { useQuery } from '@apollo/react-hooks'
-
-// State
-import { Context } from '../../../state'
+import { useTabs, useGlobalContext } from '../../../context'
 
 // Components
 import ReferenceFile from './ReferenceFile'
@@ -24,13 +22,17 @@ import { EditorWrapper } from './styles'
 
 // Helpers
 import fetchCall from '../../../utils/fetchCall'
+import { Tab } from '@reach/tabs'
 
 const Editor = () => {
+   const { tab, tabs, addTab } = useTabs()
+   const { globalState } = useGlobalContext()
    const { path } = useParams()
+   const history = useHistory()
    const monacoRef = useRef()
    const editorRef = useRef()
-
-   const { state, dispatch } = React.useContext(Context)
+   console.log('editor', path)
+   // const { globalState, dispatch } = React.useContext(Context)
 
    const [code, setCode] = React.useState('')
    const [file, setFile] = React.useState({})
@@ -166,35 +168,35 @@ const Editor = () => {
       })
    }
 
-   const draft = () => {
-      const code = editorRef.current.getValue()
-      dispatch({ type: 'UPDATE_LAST_SAVED' })
-      draftFile({
-         variables: {
-            path: path,
-            content: code,
-         },
-      })
-   }
+   // const draft = () => {
+   //    const code = editorRef.current.getValue()
+   //    dispatch({ type: 'UPDATE_LAST_SAVED' })
+   //    draftFile({
+   //       variables: {
+   //          path: path,
+   //          content: code,
+   //       },
+   //    })
+   // }
 
-   const viewCurrentVersion = () => {
-      setCode(state.tabs[state.currentTab].draft)
-      dispatch({ type: 'REMOVE_VERSION', payload: path })
-      dispatch({ type: 'REMOVE_DRAFT', payload: path })
-   }
+   // const viewCurrentVersion = () => {
+   //    setCode(tab.draft)
+   //    dispatch({ type: 'REMOVE_VERSION', payload: path })
+   //    dispatch({ type: 'REMOVE_DRAFT', payload: path })
+   // }
 
-   const selectVersion = contentVersion => {
-      if (state.tabs.find(tab => tab.path === path).draft === '') {
-         dispatch({
-            type: 'SET_DRAFT',
-            payload: {
-               content: editorRef.current.getValue(),
-               path: path,
-            },
-         })
-      }
-      setCode(contentVersion)
-   }
+   // const selectVersion = contentVersion => {
+   //    if (tabs.find(tab => tab.filePath === path).draft === '') {
+   //       dispatch({
+   //          type: 'SET_DRAFT',
+   //          payload: {
+   //             content: editorRef.current.getValue(),
+   //             path: path,
+   //          },
+   //       })
+   //    }
+   //    setCode(contentVersion)
+   // }
 
    const options = {
       fontFamily: 'monospace',
@@ -237,7 +239,7 @@ const Editor = () => {
    // )
    // const templateAreas = ()=>{
    //    let area = ''
-   //    if(state.isHistoryVisible ){
+   //    if(globalState.isHistoryVisible ){
    //       area = "'head head head head' 'main main main aside'"
    //    }else if(isWebBuilderOpen){
    //       area = ""
@@ -247,6 +249,14 @@ const Editor = () => {
       setTheme(isDark ? 'vs-dark' : 'vs-light')
    }, [isDark])
 
+   React.useEffect(() => {
+      if (!tab) {
+         history.push('/editor')
+      }
+   }, [addTab, tab])
+   // console.log('hello')
+
+   console.log(globalState)
    return (
       <>
          <div style={{ position: 'absolute', margin: '16px 0' }}>
@@ -261,7 +271,7 @@ const Editor = () => {
                />
             </Flex>
          </div>
-         <EditorWrapper isHistoryVisible={state.isHistoryVisible}>
+         <EditorWrapper isHistoryVisible={globalState.isHistoryVisible}>
             {isModalVisible && (
                <ReferenceFile
                   title="Add File"
@@ -272,7 +282,7 @@ const Editor = () => {
 
             <EditorOptions
                publish={publish}
-               draft={draft}
+               // draft={draft}
                lastSaved={file.lastSaved}
                isBuilderOpen={val => setIsWebBuilderOpen(val)}
                language={language}
@@ -292,19 +302,19 @@ const Editor = () => {
                <WebBuilder
                   content={editorRef.current.getValue()}
                   onChangeContent={updatedCode => setCode(updatedCode)}
-                  path={state?.tabs[state?.currentTab]?.path}
-                  linkedCss={state?.tabs[state?.currentTab]?.linkedCss}
-                  linkedJs={state?.tabs[state?.currentTab]?.linkedJs}
+                  path={tab?.filePath}
+                  linkedCss={tab?.linkedCss}
+                  linkedJs={tab?.linkedJs}
                />
             )}
-            {state.isHistoryVisible && Object.keys(file).length > 0 && (
+            {/* {globalState.isHistoryVisible && Object.keys(file).length > 0 && (
                <History
                   commits={file.commits}
                   path={path}
                   selectVersion={selectVersion}
                   viewCurrentVersion={viewCurrentVersion}
                />
-            )}
+            )} */}
          </EditorWrapper>
       </>
    )

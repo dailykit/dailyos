@@ -45,12 +45,6 @@ export const SidebarActions = styled.div(
             background: none;
          }
       }
-      p {
-         font-size: 16px;
-         &:hover {
-            color: #9ca2a7;
-         }
-      }
    `
 )
 

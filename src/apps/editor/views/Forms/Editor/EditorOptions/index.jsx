@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 
 // State
 import { Context } from '../../../../state'
+import { useTabs } from '../../../../context'
 
 // Components
 import { Modal } from '../../../../components'
@@ -19,7 +20,7 @@ const EditorOptions = ({
    isBuilderOpen,
    language,
 }) => {
-   const { state, dispatch } = React.useContext(Context)
+   const { tab } = useTabs()
    const [isModalVisible, setIsModalVisible] = React.useState()
    const [isWebBuilderOpen, SetIsWebBuilderOpen] = React.useState(false)
    const [message, setMessage] = React.useState('')
@@ -88,11 +89,7 @@ const EditorOptions = ({
                      day: 'numeric',
                      hour: 'numeric',
                      minute: 'numeric',
-                  }).format(
-                     state.tabs[state.currentTab].lastSaved !== ''
-                        ? state.tabs[state.currentTab].lastSaved
-                        : lastSaved
-                  )}
+                  }).format(tab.lastSaved !== '' ? tab.lastSaved : lastSaved)}
                </span>
             </div>
          )}

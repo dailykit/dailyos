@@ -32,3 +32,17 @@ export const Cross = styled.span`
       }
    }
 `
+export const Type = styled.div`
+   display: flex;
+   padding: 10px;
+   flex-direction: row;
+   align-items: flex-start;
+   p {
+      margin: 0 16px;
+      font-size: 16px;
+      font-weight: 500px;
+   }
+   &:hover {
+      background-color: #f3f3f3;
+   }
+`

@@ -1,14 +1,16 @@
 import React from 'react'
-import { Flex, Popup, Spacer } from '@dailykit/ui'
+import { Flex, Spacer } from '@dailykit/ui'
+import { Popup } from '../../../../shared/components'
 import { Javascript, Html, Css, Pug, CloseIcon } from '../../assets/Icons'
+import { useGlobalContext } from '../../context'
 import { Card, Cross } from './style'
 
-export default function FileType({ showPopup, setShowPopup, selectFileType }) {
+export default function FileType({ show, closePopup, selectFileType }) {
    return (
-      <Popup show={showPopup}>
+      <Popup show={show}>
          <Flex container alignItems="start" justifyContent="space-between">
             <Popup.Text>Select the file type</Popup.Text>
-            <Cross onClick={setShowPopup}>{CloseIcon}</Cross>
+            <Cross onClick={closePopup}>{CloseIcon}</Cross>
          </Flex>
          <Flex container alignItems="center" justifyContent="space-between">
             <Spacer size="16px" />

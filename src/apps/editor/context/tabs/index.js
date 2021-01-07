@@ -5,6 +5,16 @@ const Context = React.createContext()
 
 const initialState = {
    tabs: [],
+   isHistoryVisible: false,
+   isTabDropDownVisible: false,
+   isSidebarVisible: false,
+   isSidePanelVisible: false,
+   onToggleInfo: {},
+   popupInfo: {
+      createTypePopup: false,
+      fileTypePopup: false,
+      formTypePopup: false,
+   },
 }
 
 const reducers = (state, { type, payload }) => {
@@ -28,8 +38,16 @@ const reducers = (state, { type, payload }) => {
                ...state,
                tabs: [
                   {
-                     title: payload.title,
+                     title: payload.name,
+                     name: payload.name,
                      path: payload.path,
+                     filePath: payload.path,
+                     draft: '',
+                     version: null,
+                     lastSaved: '',
+                     id: payload.id,
+                     linkedCss: payload.linkedCss,
+                     linkedJs: payload.linkedJs,
                   },
                   ...state.tabs,
                ],
@@ -37,6 +55,45 @@ const reducers = (state, { type, payload }) => {
          }
          return state
       }
+      case 'TOGGLE_SIDEBAR': {
+         return {
+            ...state,
+            isSidebarVisible: !state.isSidebarVisible,
+         }
+      }
+      case 'TOGGLE_SIDEPANEL': {
+         return {
+            ...state,
+            isSidePanelVisible: !state.isSidePanelVisible,
+         }
+      }
+      case 'ADD_ON_TOGGLE_INFO': {
+         if (Object.entries(payload).length) {
+            const newState = {
+               ...state,
+               onToggleInfo: {
+                  name: payload.name,
+                  path: payload.path,
+                  type: payload.type,
+               },
+            }
+            return newState
+         } else {
+            const newState = {
+               ...state,
+               onToggleInfo: {},
+            }
+            return newState
+         }
+      }
+
+      case 'SET_POPUP_INFO': {
+         return {
+            ...state,
+            popupInfo: payload,
+         }
+      }
+
       // Store Tab Data
       case 'STORE_TAB_DATA': {
          const tabs = state.tabs
@@ -105,12 +162,12 @@ export const useTabs = () => {
    )
 
    const addTab = React.useCallback(
-      (title, path) => {
+      data => {
          dispatch({
             type: 'ADD_TAB',
-            payload: { title, path },
+            payload: data,
          })
-         history.push(path)
+         history.push(data.path)
       },
       [dispatch, history]
    )
@@ -155,5 +212,54 @@ export const useTabs = () => {
       closeAllTabs,
       doesTabExists,
       dispatch,
+   }
+}
+
+export const useGlobalContext = () => {
+   const history = useHistory()
+   const location = useLocation()
+   const globalState = initialState
+   const {
+      state: { tabs },
+      dispatch,
+   } = React.useContext(Context)
+
+   const toggleSideBar = React.useCallback(() => {
+      dispatch({ type: 'TOGGLE_SIDEBAR' })
+   }, [dispatch, history])
+
+   const toggleSidePanel = React.useCallback(() => {
+      dispatch({ type: 'TOGGLE_SIDEPANEL' })
+   }, [dispatch, history])
+
+   const onToggleInfo = React.useCallback(
+      data => {
+         dispatch({
+            type: 'ADD_ON_TOGGLE_INFO',
+            payload: {
+               ...initialState.popupInfo,
+               ...data,
+            },
+         })
+      },
+      [dispatch, history]
+   )
+
+   const setPopupInfo = React.useCallback(
+      data => {
+         dispatch({
+            type: 'SET_POPUP_INFO',
+            payload: data,
+         })
+      },
+      [dispatch, history]
+   )
+
+   return {
+      toggleSideBar,
+      toggleSidePanel,
+      globalState,
+      onToggleInfo,
+      setPopupInfo,
    }
 }

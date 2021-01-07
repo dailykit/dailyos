@@ -9,17 +9,21 @@ export const Node = styled.ul(
    ({ theme, isOpen }) => css`
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      margin-right: 4px;
+      width: 100%;
+      justify-content: unset;
       height: ${theme.basePt * 4}px;
-      border-radius: ${theme.basePt / 2}px 0 0 ${theme.basePt / 2}px;
+      border-radius: 0 50px 50px 0;
       cursor: pointer;
       font-size: ${theme.basePt * 1.75}px;
       padding: 0 ${theme.basePt * 2}px;
       background: transparent;
-      color: ${isOpen ? '#000' : '#9ca2a7'};
-      border-right: ${isOpen ? '4px solid #69A1F6' : '4px solid transparent'};
+      color: ${isOpen ? '#555b6e' : '#555b6e'};
+      /* border-right: ${isOpen
+         ? '4px solid #69A1F6'
+         : '4px solid transparent'}; */
       &:hover {
-         background: #f0f0f0;
+         background: #f1f3f4;
       }
    `
 )

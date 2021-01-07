@@ -1,28 +1,21 @@
 import React from 'react'
-import {
-   Flex,
-   Popup,
-   Spacer,
-   TextButton,
-   ButtonGroup,
-   Form,
-} from '@dailykit/ui'
+import { Flex, Spacer, TextButton, ButtonGroup, Form } from '@dailykit/ui'
+import { Popup } from '../../../../shared/components'
+import { useGlobalContext } from '../../context'
 import { TreeSelect } from 'antd'
 import 'antd/dist/antd.css'
 
 export default function FormType({
-   showPopup,
    action,
    nodeType,
    setName,
    mutationHandler,
-   cancelPopup,
-   stopDot,
    name,
    treeViewData,
    nodePath,
    setPath,
 }) {
+   const { globalState, setPopupInfo } = useGlobalContext()
    const { TreeNode } = TreeSelect
    const [selected, setSelected] = React.useState(null)
    const [treeViewNodes, setTreeViewNodes] = React.useState([])
@@ -33,11 +26,17 @@ export default function FormType({
    }
    const cancelPopupHandler = () => {
       nodePathRef.current = ''
-      cancelPopup()
+      setPopupInfo({ formType: false })
    }
    const mutationFunc = () => {
       mutationHandler(action, nodeType.toUpperCase())
       nodePathRef.current = ''
+   }
+
+   const stopDot = e => {
+      if (e.keyCode === 190 || e.keyCode === 110) {
+         e.preventDefault()
+      }
    }
 
    React.useEffect(() => {
@@ -59,7 +58,7 @@ export default function FormType({
       }
    }, [nodePath, nodePathRef.current])
    return (
-      <Popup show={showPopup}>
+      <Popup show={globalState.popupInfo.formTypePopup}>
          {action !== 'Delete' ? (
             action === 'Create' ? (
                <>

@@ -1,13 +1,18 @@
 import React from 'react'
 import { Menu, MenuOptions, MenuOption } from './style'
-import { Context } from '../../state'
+import { Spacer } from '@dailykit/ui'
+import {
+   CreateFile,
+   CreateFolder,
+   DeleteIcon,
+   EditIcon,
+} from '../../assets/Icons'
 import { useDailyGit } from '../../state/mutationFunction'
 import moment from 'moment'
 import { FileType, FormType } from '../Popup'
 import { toast } from 'react-toastify'
 
 const ContextMenu = ({ style, node, treeViewData }) => {
-   const { state, dispatch } = React.useContext(Context)
    const [showPopup1, setShowPopup1] = React.useState(false)
    const [showPopup2, setShowPopup2] = React.useState(false)
    const [name, setName] = React.useState('')
@@ -170,6 +175,8 @@ const ContextMenu = ({ style, node, treeViewData }) => {
                            setShowPopup1(!showPopup1)
                         }}
                      >
+                        <CreateFile size="20" />
+                        <Spacer xAxis size="4px" />
                         New File
                      </MenuOption>
                      <MenuOption
@@ -178,6 +185,8 @@ const ContextMenu = ({ style, node, treeViewData }) => {
                            setShowPopup2(!showPopup2)
                         }}
                      >
+                        <CreateFolder size="20" />
+                        <Spacer xAxis size="10px" />
                         New Folder
                      </MenuOption>
                      <MenuOption
@@ -187,6 +196,8 @@ const ContextMenu = ({ style, node, treeViewData }) => {
                            setShowPopup2(!showPopup2)
                         }}
                      >
+                        <EditIcon size="20" />
+                        <Spacer xAxis size="10px" />
                         Rename Folder
                      </MenuOption>
                      <MenuOption
@@ -196,6 +207,8 @@ const ContextMenu = ({ style, node, treeViewData }) => {
                            setShowPopup2(!showPopup2)
                         }}
                      >
+                        <DeleteIcon size="20" />
+                        <Spacer xAxis size="10px" />
                         Delete Folder
                      </MenuOption>
                   </>
@@ -208,6 +221,8 @@ const ContextMenu = ({ style, node, treeViewData }) => {
                            setShowPopup2(!showPopup2)
                         }}
                      >
+                        <EditIcon size="20" />
+                        <Spacer xAxis size="10px" />
                         Rename File
                      </MenuOption>
                      <MenuOption
@@ -217,7 +232,8 @@ const ContextMenu = ({ style, node, treeViewData }) => {
                            setShowPopup2(!showPopup2)
                         }}
                      >
-                        Delete File
+                        <DeleteIcon size="20" />
+                        <Spacer xAxis size="10px" /> Delete File
                      </MenuOption>
                      <MenuOption onClick={copyToClipboard}>
                         Copy File Path

@@ -1,7 +1,7 @@
 import React from 'react'
 import { useQuery, useLazyQuery } from '@apollo/react-hooks'
 import { Loader } from '@dailykit/ui'
-import { useTabs } from '../../context'
+import { useTabs, useGlobalContext } from '../../context'
 
 // State
 import { Context } from '../../state'
@@ -26,7 +26,8 @@ import toggleNode from '../../utils/toggleNode'
 
 const FileExplorer = () => {
    const { addTab } = useTabs()
-   const { state, dispatch } = React.useContext(Context)
+   const { onToggleInfo } = useGlobalContext()
+   // const { state, dispatch } = React.useContext(Context)
    const fileRef = React.useRef({})
    const [data, setData] = React.useState([])
    const nodeRef = React.useRef('')
@@ -71,7 +72,11 @@ const FileExplorer = () => {
             )
             const payload = {
                name: fileRef.current.name,
-               path: fileRef.current.path.replace(
+               path: `/editor${fileRef.current.path.replace(
+                  process.env.REACT_APP_ROOT_FOLDER,
+                  ''
+               )}`,
+               filePath: fileRef.current.path.replace(
                   process.env.REACT_APP_ROOT_FOLDER,
                   ''
                ),
@@ -79,7 +84,7 @@ const FileExplorer = () => {
                linkedCss: data.editor_file[0].linkedCssFiles,
                linkedJs: data.editor_file[0].linkedJsFiles,
             }
-            addTab(payload.name, `/editor${payload.path}`)
+            addTab(payload)
             // dispatch({
             //    type: 'ADD_TAB',
             //    payload: {
@@ -113,27 +118,18 @@ const FileExplorer = () => {
       if (node.type === 'folder') {
          onToggle(node.path)
          if (data[nodeIndex].isOpen) {
-            console.log('here', node)
-            dispatch({
-               type: 'ADD_ON_TOGGLE_INFO',
-               payload: {
-                  name: node.name,
-                  path: node.path.replace(
-                     process.env.REACT_APP_ROOT_FOLDER,
-                     ''
-                  ),
-                  type: node.type,
-               },
+            onToggleInfo({
+               name: node.name,
+               path: node.path.replace(process.env.REACT_APP_ROOT_FOLDER, ''),
+               type: node.type,
             })
          } else {
-            dispatch({
-               type: 'ADD_ON_TOGGLE_INFO',
-               payload: {},
-            })
+            onToggleInfo({})
          }
       }
       if (node.type === 'file') {
          fileRef.current = node
+         console.log('fileExplorer', node)
          getFileQuery({
             variables: {
                path: node.path.replace(process.env.REACT_APP_ROOT_FOLDER, ''),
