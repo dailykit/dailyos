@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
 import {
+   Tag,
    Flex,
    Text,
    Spacer,
@@ -69,18 +70,6 @@ const Order = () => {
       {
          variables: {
             id: params.id,
-            ...(!isEmpty(state.orders.where?._or) && {
-               packingStationId: {
-                  _eq:
-                     state.orders.where?._or[0].orderInventoryProducts
-                        .assemblyStationId._eq,
-               },
-               assemblyStationId: {
-                  _eq:
-                     state.orders.where?._or[0].orderInventoryProducts
-                        .assemblyStationId._eq,
-               },
-            }),
          },
          onSubscriptionData: ({
             subscriptionData: { data: { order = {} } = {} } = {},
@@ -97,18 +86,6 @@ const Order = () => {
    } = useSubscription(QUERIES.ORDER.MEALKITS, {
       variables: {
          orderId: params.id,
-         ...(!isEmpty(state.orders.where?._or) && {
-            packingStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-            assemblyStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-         }),
       },
    })
 
@@ -119,18 +96,6 @@ const Order = () => {
    } = useSubscription(QUERIES.ORDER.READY_TO_EAT.LIST, {
       variables: {
          orderId: params.id,
-         ...(!isEmpty(state.orders.where?._or) && {
-            packingStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-            assemblyStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-         }),
       },
    })
 
@@ -141,18 +106,6 @@ const Order = () => {
    } = useSubscription(QUERIES.ORDER.INVENTORY.LIST, {
       variables: {
          orderId: params.id,
-         ...(!isEmpty(state.orders.where?._or) && {
-            packingStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-            assemblyStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-         }),
       },
    })
 
@@ -243,6 +196,12 @@ const Order = () => {
          >
             <Flex container alignItems="center">
                <Text as="h4">ORD{order?.id}</Text>
+               {!isThirdParty && Boolean(order?.cart?.isTest) && (
+                  <>
+                     <Spacer size="8px" xAxis />
+                     <Tag>Test</Tag>
+                  </>
+               )}
                {!sourceLoading && isThirdParty && !isEmpty(orderSource) && (
                   <>
                      <Spacer size="16px" xAxis />
@@ -318,8 +277,8 @@ const Order = () => {
                   </Text>
                </Flex>
                {!isThirdParty && (
-                <>
-                 {/* 
+                  <>
+                     {/* 
                     <Spacer size="32px" xAxis />
                      <Flex as="section" container alignItems="center">
                         <Flex container alignItems="center">
@@ -337,15 +296,18 @@ const Order = () => {
                         </Text>
                      </Flex> 
                   */}
-                   <Spacer size="32px" xAxis />
-                   <Flex as="section" container alignItems="center">
-                      <TimeSlot
-                         type={order?.fulfillmentType}
-                         data={{ pickup: order.pickup, dropoff: order.dropoff }}
-                      />
-                   </Flex>
-                </>
-               )} 
+                     <Spacer size="32px" xAxis />
+                     <Flex as="section" container alignItems="center">
+                        <TimeSlot
+                           type={order?.fulfillmentType}
+                           data={{
+                              pickup: order.pickup,
+                              dropoff: order.dropoff,
+                           }}
+                        />
+                     </Flex>
+                  </>
+               )}
             </Flex>
          </Flex>
          <Spacer size="16px" />

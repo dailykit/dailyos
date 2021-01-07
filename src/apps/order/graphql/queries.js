@@ -42,6 +42,10 @@ export const QUERIES = {
                   products: parsedData(path: "items")
                   emailContent: parsedData(path: "HtmlDocument")
                }
+               cart: orderCart {
+                  id
+                  isTest
+               }
                pickup: deliveryInfo(path: "pickup.window")
                restaurant: deliveryInfo(path: "pickup.pickupInfo")
                dropoff: deliveryInfo(path: "dropoff.window")
@@ -1425,6 +1429,8 @@ export const QUERIES = {
                customer: deliveryInfo(path: "dropoff.dropoffInfo")
                deliveryCompany: deliveryInfo(path: "deliveryCompany")
                cart: orderCart {
+                  id
+                  isTest
                   transactionId
                }
                brand {
@@ -1581,7 +1587,14 @@ export const QUERIES = {
             subscription orderByStatus {
                orderByStatus: order_orderStatusEnum(order_by: { index: asc }) {
                   value
-                  orders: orders_aggregate {
+                  orders: orders_aggregate(
+                     where: {
+                        _or: [
+                           { isRejected: { _eq: false } }
+                           { isRejected: { _is_null: true } }
+                        ]
+                     }
+                  ) {
                      aggregate {
                         count
                         sum {
@@ -1598,6 +1611,21 @@ export const QUERIES = {
          TOTAL: gql`
             subscription orders($where: order_order_bool_exp = {}) {
                orders: ordersAggregate(where: $where) {
+                  aggregate {
+                     count
+                     sum {
+                        amountPaid
+                     }
+                     avg {
+                        amountPaid
+                     }
+                  }
+               }
+            }
+         `,
+         CANCELLED: gql`
+            subscription orders {
+               orders: ordersAggregate(where: { isRejected: { _eq: true } }) {
                   aggregate {
                      count
                      sum {

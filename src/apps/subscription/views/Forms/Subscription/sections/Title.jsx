@@ -237,7 +237,10 @@ const Title = () => {
                </SectionTabList>
                <SectionTabPanels>
                   {title?.servings.map((serving, index) => (
-                     <SectionTabPanel key={serving.id}>
+                     <SectionTabPanel
+                        key={serving.id}
+                        style={{ overflow: 'hidden' }}
+                     >
                         {tabIndex === index && (
                            <Serving
                               id={serving.id}

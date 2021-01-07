@@ -124,7 +124,6 @@ export const Brands = () => {
          {
             title: 'Brand',
             field: 'title',
-            width: 150,
             headerSort: true,
             headerFilter: true,
             formatter: cell => cell.getData().title || 'N/A',
@@ -145,7 +144,6 @@ export const Brands = () => {
             field: 'domain',
             headerSort: true,
             headerFilter: true,
-            width: 100,
             formatter: cell => cell.getData().domain || 'N/A',
             headerTooltip: function (column) {
                const identifier = 'brands_listing_domain_column'
@@ -162,7 +160,6 @@ export const Brands = () => {
             headerHozAlign: 'center',
             field: 'isPublished',
             formatter: 'tickCross',
-            width: 100,
             headerTooltip: function (column) {
                const identifier = 'brands_listing_publish_column'
                return (
@@ -176,7 +173,6 @@ export const Brands = () => {
             hozAlign: 'center',
             headerSort: false,
             headerHozAlign: 'center',
-            width: 100,
             formatter: reactFormatter(
                <DeleteBrand deleteHandler={deleteHandler} />
             ),

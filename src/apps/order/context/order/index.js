@@ -16,7 +16,13 @@ const initialState = {
       limit: 10,
       offset: 0,
       loading: true,
-      where: { orderStatus: { _eq: 'PENDING' } },
+      where: {
+         orderStatus: { _eq: 'PENDING' },
+         _or: [
+            { isRejected: { _eq: false } },
+            { isRejected: { _is_null: true } },
+         ],
+      },
    },
 }
 

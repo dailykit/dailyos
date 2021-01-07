@@ -149,10 +149,12 @@ export const ITEM_COUNT = gql`
    subscription itemCount($id: Int!) {
       itemCount: subscription_subscriptionItemCount_by_pk(id: $id) {
          id
+         tax
          count
          price
          isValid
          isActive
+         isTaxIncluded
          subscriptions {
             id
             rrule
@@ -200,7 +202,9 @@ export const SUBSCRIPTION_ZIPCODES = gql`
       ) {
          zipcode
          isActive
+         deliveryTime
          deliveryPrice
+         subscriptionId
       }
    }
 `
