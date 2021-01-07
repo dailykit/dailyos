@@ -7,6 +7,7 @@ import { Spacer, TunnelHeader, Form } from '@dailykit/ui'
 import { Flex, Tooltip } from '../../../../../../shared/components'
 
 export const RichTextEditorTunnel = ({
+   title,
    text,
    update,
    settingId,
@@ -26,7 +27,7 @@ export const RichTextEditorTunnel = ({
    return (
       <>
          <TunnelHeader
-            title="Terms and Conditions"
+            title={title}
             right={{ action: updateSetting, title: 'Save' }}
             close={() => closeTunnel(1)}
             tooltip={<Tooltip identifier="brand_rich_text_editor" />}

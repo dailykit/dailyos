@@ -21,7 +21,7 @@ import {
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../../../shared/utils'
 
-export const TermsAndConditions = ({ update }) => {
+export const PrivacyPolicy = ({ update }) => {
    const params = useParams()
    const [text, setText] = React.useState({})
    const [settingId, setSettingId] = React.useState(null)
@@ -29,7 +29,7 @@ export const TermsAndConditions = ({ update }) => {
 
    const { loading, error } = useSubscription(BRANDS.ONDEMAND_SETTING, {
       variables: {
-         identifier: { _eq: 'Terms and Conditions' },
+         identifier: { _eq: 'Privacy Policy' },
          type: { _eq: 'brand' },
       },
       onSubscriptionData: ({
@@ -63,8 +63,8 @@ export const TermsAndConditions = ({ update }) => {
    return (
       <div id="TermsAndConditions">
          <Flex container alignItems="flex-start">
-            <Text as="h3">Terms and Conditions</Text>
-            <Tooltip identifier="brand_terms_and_conditions" />
+            <Text as="h3">Privacy Policy</Text>
+            <Tooltip identifier="brand_privacy_policy" />
          </Flex>
          <Spacer size="16px" />
          <Flex container alignItems="center" justifyContent="space-between">
@@ -75,7 +75,7 @@ export const TermsAndConditions = ({ update }) => {
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="md">
                <RichTextEditorTunnel
-                  title="Terms and Conditions"
+                  title="Privacy Policy"
                   update={update}
                   text={text}
                   settingId={settingId}
