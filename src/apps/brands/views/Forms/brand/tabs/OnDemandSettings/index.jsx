@@ -30,6 +30,7 @@ import {
    FoodCostPercent,
    TermsAndConditions,
    PrivacyPolicy,
+   TaxPercentage,
 } from './sections'
 import { RefundPolicy } from './sections/RefundPolicy'
 
@@ -137,6 +138,8 @@ export const OnDemandSettings = () => {
             <Spacer size="48px" />
             <ScrollSection.Section hash="sales" title="Sales">
                <FoodCostPercent update={update} />
+               <Spacer size="24px" />
+               <TaxPercentage update={update} />
                <Spacer size="24px" />
             </ScrollSection.Section>
             <Spacer size="48px" />
