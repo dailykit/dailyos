@@ -556,10 +556,11 @@ export const S_COMBO_PRODUCT = gql`
          isPopupAllowed
          comboProductComponents(
             where: { isArchived: { _eq: false } }
-            order_by: { created_at: desc }
+            order_by: { position: desc_nulls_last }
          ) {
             id
             label
+            position
             options
             customizableProduct {
                id
