@@ -158,6 +158,15 @@ const Pagination = styled.ul`
 
 const PaginationItem = styled.li`
    list-style: none;
+   border-radius: 2px;
+   &.active {
+      background: #65b565;
+      a,
+      span {
+         color: #fff;
+         border: none;
+      }
+   }
    a,
    span {
       width: 28px;
