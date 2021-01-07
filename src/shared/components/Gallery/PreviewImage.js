@@ -61,7 +61,7 @@ const PreviewImage = ({
             style={
                images.length
                   ? { marginLeft: '16px', width: '8rem', height: '8rem' }
-                  : { margin: '16px' }
+                  : null
             }
          />
       </Wrapper>
