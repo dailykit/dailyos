@@ -22,12 +22,16 @@ import {
    Flex,
    TextButton,
    PlusIcon,
+   Collapsible,
+   ComboButton,
+   Spacer,
 } from '@dailykit/ui'
 
 import { Recommendations } from '..'
 import {
    DeleteIcon,
    EditIcon,
+   TickIcon,
 } from '../../../../../../../../shared/assets/icons'
 import {
    DragNDrop,
@@ -161,6 +165,7 @@ export default function Item({ state }) {
    }
 
    const changeDefault = async option => {
+      console.log(option)
       if (option.id !== state.default) {
          const response = await updateProduct({
             variables: {
@@ -326,170 +331,69 @@ export default function Item({ state }) {
                                  schemaname="products"
                               >
                                  {state.inventoryProductOptions?.map(option => (
-                                    <StyledProductOption key={option.id}>
-                                       <span>
-                                          <input
-                                             type="radio"
-                                             checked={
+                                    <Collapsible
+                                       key={option.id}
+                                       isDraggable
+                                       title={option.label}
+                                       head={
+                                          <OptionHead
+                                             deleteAction={() => remove(option)}
+                                             editAction={() =>
+                                                editOption(option)
+                                             }
+                                             isDefault={
                                                 option.id === state.default
                                              }
-                                             onClick={() =>
+                                             option={option}
+                                             makeDefault={() =>
                                                 changeDefault(option)
                                              }
                                           />
-                                       </span>
-                                       <span>{option.label}</span>
-                                       <span>{option.quantity}</span>
-                                       <span>
-                                          {currencyFmt(
-                                             Number(option.price[0].value) || 0
-                                          )}
-                                       </span>
-                                       <span>{option.price[0].discount}%</span>
-                                       <span>
-                                          {currencyFmt(
-                                             Number(
-                                                parseFloat(
-                                                   option.price[0].value
-                                                ) -
-                                                   parseFloat(
-                                                      option.price[0].value
-                                                   ) *
-                                                      (parseFloat(
-                                                         option.price[0]
-                                                            .discount
-                                                      ) /
-                                                         100)
-                                             ).toFixed(2)
-                                          ) || 0}
-                                       </span>
-                                       <span>
-                                          {option.modifier?.name ? (
-                                             <Modifier>
-                                                <span>
-                                                   <span
-                                                      tabIndex="0"
-                                                      role="button"
-                                                      onKeyPress={() =>
-                                                         editModifier(
-                                                            option.modifier
-                                                         )
-                                                      }
-                                                      onClick={() =>
-                                                         editModifier(
-                                                            option.modifier
-                                                         )
-                                                      }
-                                                   >
-                                                      <EditIcon
-                                                         color="#00A7E1"
-                                                         size={14}
-                                                      />
-                                                   </span>
-                                                   <span
-                                                      tabIndex="0"
-                                                      role="button"
-                                                      onKeyPress={() =>
-                                                         removeModifier(
-                                                            option.id
-                                                         )
-                                                      }
-                                                      onClick={() =>
-                                                         removeModifier(
-                                                            option.id
-                                                         )
-                                                      }
-                                                   >
-                                                      <DeleteIcon
-                                                         color="#FF5A52"
-                                                         size={14}
-                                                      />
-                                                   </span>
-                                                </span>
-                                                {option.modifier.name}
-                                             </Modifier>
-                                          ) : (
-                                             <IconButton
-                                                type="ghost"
-                                                onClick={() => {
-                                                   modifiersDispatch({
-                                                      type: 'META',
-                                                      payload: {
-                                                         name: 'optionId',
-                                                         value: option.id,
-                                                      },
-                                                   })
-                                                   openModifiersTunnel(1)
-                                                }}
-                                             >
-                                                <PlusIcon color="#36B6E2" />
-                                             </IconButton>
-                                          )}
-                                       </span>
-                                       <span>
-                                          {option.operationConfig ? (
-                                             <Flex
-                                                container
-                                                alignItems="center"
-                                                justifyContent="space-between"
-                                             >
-                                                {`${option.operationConfig.station.name} - ${option.operationConfig.labelTemplate.name}`}
-                                                <span
-                                                   onClick={() => {
-                                                      productDispatch({
-                                                         type: 'OPTION_ID',
-                                                         payload: {
-                                                            optionId: option.id,
-                                                         },
-                                                      })
-                                                      opConfigInvokedBy.current =
-                                                         'option'
-                                                      openOperationConfigTunnel(
-                                                         1
-                                                      )
-                                                   }}
-                                                >
-                                                   <EditIcon color="#36B6E2" />
-                                                </span>
-                                             </Flex>
-                                          ) : (
-                                             <TextButton
-                                                type="ghost"
-                                                onClick={() => {
-                                                   productDispatch({
-                                                      type: 'OPTION_ID',
-                                                      payload: {
-                                                         optionId: option.id,
-                                                      },
-                                                   })
-                                                   opConfigInvokedBy.current =
-                                                      'option'
-                                                   openOperationConfigTunnel(1)
-                                                }}
-                                             >
-                                                <PlusIcon color="#36B6E2" />
-                                             </TextButton>
-                                          )}
-                                       </span>
-                                       <span>
-                                          <Grid>
-                                             <IconButton
-                                                type="ghost"
-                                                onClick={() =>
-                                                   editOption(option)
-                                                }
-                                             >
-                                                <EditIcon color="#00A7E1" />
-                                             </IconButton>
-                                             <IconButton
-                                                type="ghost"
-                                                onClick={() => remove(option)}
-                                             >
-                                                <DeleteIcon color="#FF5A52" />
-                                             </IconButton>
-                                          </Grid>
-                                       </span>
-                                    </StyledProductOption>
+                                       }
+                                       body={
+                                          <OptionBody
+                                             addModifier={() => {
+                                                modifiersDispatch({
+                                                   type: 'META',
+                                                   payload: {
+                                                      name: 'optionId',
+                                                      value: option.id,
+                                                   },
+                                                })
+                                                openModifiersTunnel(1)
+                                             }}
+                                             addOpConfig={() => {
+                                                productDispatch({
+                                                   type: 'OPTION_ID',
+                                                   payload: {
+                                                      optionId: option.id,
+                                                   },
+                                                })
+                                                opConfigInvokedBy.current =
+                                                   'option'
+                                                openOperationConfigTunnel(1)
+                                             }}
+                                             editModifier={() =>
+                                                editModifier(option.modifier)
+                                             }
+                                             editOpConfig={() => {
+                                                productDispatch({
+                                                   type: 'OPTION_ID',
+                                                   payload: {
+                                                      optionId: option.id,
+                                                   },
+                                                })
+                                                opConfigInvokedBy.current =
+                                                   'option'
+                                                openOperationConfigTunnel(1)
+                                             }}
+                                             removeModifier={() =>
+                                                removeModifier(option.id)
+                                             }
+                                             option={option}
+                                          />
+                                       }
+                                    />
                                  ))}
                               </DragNDrop>
                               <ButtonTile
@@ -516,5 +420,142 @@ export default function Item({ state }) {
             />
          )}
       </>
+   )
+}
+
+const OptionHead = ({
+   deleteAction,
+   editAction,
+   isDefault,
+   option,
+   makeDefault,
+}) => {
+   return (
+      <Flex
+         container
+         alignItems="center"
+         justifyContent="space-between"
+         width="100%"
+      >
+         <Flex container alignItems="center">
+            <Flex>
+               <Text as="subtitle">Quantity</Text>
+               <Text as="p">{option.quantity}</Text>
+            </Flex>
+            <Spacer xAxis size="24px" />
+            <Flex>
+               <Text as="subtitle">Price</Text>
+               <Text as="p">
+                  {currencyFmt(Number(option.price[0].value) || 0)}
+               </Text>
+            </Flex>
+            <Spacer xAxis size="24px" />
+            <Flex>
+               <Text as="subtitle">Discount</Text>
+               <Text as="p">{option.price[0].discount}%</Text>
+            </Flex>
+            <Spacer xAxis size="24px" />
+            <Flex>
+               <Text as="subtitle">Discounted Price</Text>
+               <Text as="p">
+                  {currencyFmt(
+                     Number(
+                        parseFloat(option.price[0].value) -
+                           parseFloat(option.price[0].value) *
+                              (parseFloat(option.price[0].discount) / 100)
+                     ).toFixed(2)
+                  ) || 0}
+               </Text>
+            </Flex>
+         </Flex>
+         <Flex container alignItems="center">
+            {isDefault ? (
+               <TextButton disabled type="solid" size="sm">
+                  Default
+               </TextButton>
+            ) : (
+               <ComboButton type="outline" size="sm" onClick={makeDefault}>
+                  <TickIcon color="#36B6E2" size={14} stroke={1.5} />
+                  Make Default
+               </ComboButton>
+            )}
+            <Spacer xAxis size="24px" />
+            <IconButton type="ghost" onClick={editAction}>
+               <EditIcon color="#00A7E1" />
+            </IconButton>
+            <Spacer xAxis size="16px" />
+            <IconButton type="ghost" onClick={deleteAction}>
+               <DeleteIcon color="#FF5A52" />
+            </IconButton>
+         </Flex>
+      </Flex>
+   )
+}
+
+const OptionBody = ({
+   addModifier,
+   addOpConfig,
+   editModifier,
+   editOpConfig,
+   option,
+   removeModifier,
+}) => {
+   return (
+      <Flex
+         container
+         alignItems="center"
+         height="60px"
+         margin="8px 0 0 0"
+         width="100%"
+      >
+         <Flex container alignItems="center">
+            {option.modifier ? (
+               <Flex container alignItems="flex-end">
+                  <Flex>
+                     <Text as="subtitle">Modifier Template</Text>
+                     <Text as="p">{option.modifier.name}</Text>
+                  </Flex>
+                  <Spacer xAxis size="16px" />
+                  <IconButton type="ghost" onClick={editModifier}>
+                     <EditIcon color="#00A7E1" />
+                  </IconButton>
+                  <Spacer xAxis size="8px" />
+                  <IconButton type="ghost" onClick={removeModifier}>
+                     <DeleteIcon color="#FF5A52" />
+                  </IconButton>
+               </Flex>
+            ) : (
+               <ComboButton type="ghost" size="sm" onClick={addModifier}>
+                  <PlusIcon color="#36B6E2" size={14} />
+                  Add Modifiers
+               </ComboButton>
+            )}
+            <Spacer xAxis size="60px" />
+            {option.operationConfig ? (
+               <Flex container alignItems="flex-end">
+                  <Flex>
+                     <Text as="subtitle">Station</Text>
+                     <Text as="p">{option.operationConfig.station.name}</Text>
+                  </Flex>
+                  <Spacer xAxis size="16px" />
+                  <Flex>
+                     <Text as="subtitle">Label Template</Text>
+                     <Text as="p">
+                        {option.operationConfig.labelTemplate.name}
+                     </Text>
+                  </Flex>
+                  <Spacer xAxis size="16px" />
+                  <IconButton type="ghost" onClick={editOpConfig}>
+                     <EditIcon color="#00A7E1" />
+                  </IconButton>
+               </Flex>
+            ) : (
+               <ComboButton type="ghost" size="sm" onClick={addOpConfig}>
+                  <PlusIcon color="#36B6E2" size={14} />
+                  Add Operational Configuration
+               </ComboButton>
+            )}
+         </Flex>
+      </Flex>
    )
 }
