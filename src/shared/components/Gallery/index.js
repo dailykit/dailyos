@@ -60,7 +60,7 @@ export default function ImageGallery({ list = [], isMulti = false, onChange }) {
                      />
                   </ImgWrapper>
                )}
-               <Trail>
+               <Trail hasImage={images.length > 0}>
                   <PreviewImage
                      images={list}
                      current={current}

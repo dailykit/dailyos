@@ -43,8 +43,8 @@ export const WrapperDiv = styled.div`
 `
 
 export const Image = styled.img`
-   width: 8rem;
-   height: 8rem;
+   width: 4.25rem;
+   height: 4.25rem;
    border: ${({ active }) => (active ? `2px solid #02463a` : 0)};
    cursor: pointer;
    object-fit: cover;
@@ -57,7 +57,7 @@ export const Wrapper = styled.div`
 
 export const Trail = styled.div`
    width: 100%;
-   margin: 16px 0;
+   margin: ${props => (props.hasImage ? '16px' : null)};
 `
 
 export const MainWrap = styled.div``
