@@ -1,4 +1,5 @@
 import SizeContext from 'antd/lib/avatar/SizeContext'
+import { sampleSize } from 'lodash'
 import React from 'react'
 
 export const ExpandIcon = ({ size = 16, color = '#000000' }) => (
@@ -507,6 +508,21 @@ export const EditIcon = ({ size = 16, color = '#000' }) => (
    >
       <g fill={color} transform="scale(0.03125 0.03125)">
          <path d="M341.792 582.624l-70.688 181.44 178.304-73.824-107.616-107.616zM859.36 195.104l-22.624-22.624c-24.96-24.992-65.504-24.992-90.496 0l-45.248 45.248 113.12 113.152 45.248-45.248c25.024-24.992 25.024-65.536 0-90.528zM345.376 573.376l16.192-16.192 113.12 113.12 316.8-316.8-113.12-113.12 22.624-22.656-355.616 355.648zM736.128 832.128l-544.832 0.192 0.096-544.832 381.472-0.128 59.776-63.36h-473.76c-17.664 0-32 14.304-32 32v608c0 17.696 14.336 32 32 32h608c17.696 0 32-14.304 32-32v-449.856l-64.48 63.264 1.728 354.72z" />
+      </g>
+   </svg>
+)
+
+export const CopyIcon = ({ size = 16, color = '#000' }) => (
+   <svg
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      data-tags="content_copy"
+   >
+      <g fill={color} transform="scale(0.0234375 0.0234375)">
+         <path d="M810 896v-598h-468v598h468zM810 214q34 0 60 25t26 59v598q0 34-26 60t-60 26h-468q-34 0-60-26t-26-60v-598q0-34 26-59t60-25h468zM682 42v86h-512v598h-84v-598q0-34 25-60t59-26h512z" />
       </g>
    </svg>
 )

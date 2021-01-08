@@ -15,6 +15,7 @@ const initialState = {
       fileTypePopup: false,
       formTypePopup: false,
    },
+   contextMenuInfo: {},
 }
 
 const reducers = (state, { type, payload }) => {
@@ -68,23 +69,11 @@ const reducers = (state, { type, payload }) => {
          }
       }
       case 'ADD_ON_TOGGLE_INFO': {
-         if (Object.entries(payload).length) {
-            const newState = {
-               ...state,
-               onToggleInfo: {
-                  name: payload.name,
-                  path: payload.path,
-                  type: payload.type,
-               },
-            }
-            return newState
-         } else {
-            const newState = {
-               ...state,
-               onToggleInfo: {},
-            }
-            return newState
+         const newState = {
+            ...state,
+            onToggleInfo: payload,
          }
+         return newState
       }
 
       case 'SET_POPUP_INFO': {
@@ -92,6 +81,17 @@ const reducers = (state, { type, payload }) => {
             ...state,
             popupInfo: payload,
          }
+      }
+      case 'SET_CONTEXT_MENU_INFO': {
+         const newState = {
+            ...state,
+            popupInfo: {
+               ...state.popupInfo,
+               ...payload.showPopup,
+            },
+            contextMenuInfo: payload,
+         }
+         return newState
       }
 
       // Store Tab Data
@@ -218,11 +218,8 @@ export const useTabs = () => {
 export const useGlobalContext = () => {
    const history = useHistory()
    const location = useLocation()
-   const globalState = initialState
-   const {
-      state: { tabs },
-      dispatch,
-   } = React.useContext(Context)
+   const { state, dispatch } = React.useContext(Context)
+   const globalState = state
 
    const toggleSideBar = React.useCallback(() => {
       dispatch({ type: 'TOGGLE_SIDEBAR' })
@@ -236,10 +233,7 @@ export const useGlobalContext = () => {
       data => {
          dispatch({
             type: 'ADD_ON_TOGGLE_INFO',
-            payload: {
-               ...initialState.popupInfo,
-               ...data,
-            },
+            payload: data,
          })
       },
       [dispatch, history]
@@ -255,11 +249,22 @@ export const useGlobalContext = () => {
       [dispatch, history]
    )
 
+   const setContextMenuInfo = React.useCallback(
+      data => {
+         dispatch({
+            type: 'SET_CONTEXT_MENU_INFO',
+            payload: data,
+         })
+      },
+      [dispatch, history]
+   )
+
    return {
       toggleSideBar,
       toggleSidePanel,
       globalState,
       onToggleInfo,
       setPopupInfo,
+      setContextMenuInfo,
    }
 }

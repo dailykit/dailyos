@@ -1,11 +1,12 @@
 import React from 'react'
 import { Flex, Spacer, TextButton, ButtonGroup, Form } from '@dailykit/ui'
 import { Popup } from '../../../../shared/components'
-import { useGlobalContext } from '../../context'
 import { TreeSelect } from 'antd'
 import 'antd/dist/antd.css'
 
 export default function FormType({
+   show,
+   closePopup,
    action,
    nodeType,
    setName,
@@ -15,8 +16,6 @@ export default function FormType({
    nodePath,
    setPath,
 }) {
-   const { globalState, setPopupInfo } = useGlobalContext()
-   const { TreeNode } = TreeSelect
    const [selected, setSelected] = React.useState(null)
    const [treeViewNodes, setTreeViewNodes] = React.useState([])
    const nodePathRef = React.useRef('')
@@ -26,7 +25,7 @@ export default function FormType({
    }
    const cancelPopupHandler = () => {
       nodePathRef.current = ''
-      setPopupInfo({ formType: false })
+      closePopup()
    }
    const mutationFunc = () => {
       mutationHandler(action, nodeType.toUpperCase())
@@ -55,18 +54,15 @@ export default function FormType({
       if (nodePath || nodePathRef.current) {
          nodePathRef.current = nodePath
          setSelected(nodePathRef.current)
+         setPath(nodePathRef.current)
       }
    }, [nodePath, nodePathRef.current])
    return (
-      <Popup show={globalState.popupInfo.formTypePopup}>
-         {action !== 'Delete' ? (
-            action === 'Create' ? (
+      <Popup show={show} size="460px">
+         {action !== 'delete' ? (
+            action === 'create' ? (
                <>
-                  <Flex
-                     container
-                     alignItems="center"
-                     justifyContent="space-between"
-                  >
+                  <Flex>
                      <Form.Group>
                         <Form.Label htmlFor="name" title="name">
                            Enter {nodeType} Name
@@ -93,14 +89,16 @@ export default function FormType({
                      </Form.Group>
                   </Flex>
                   <Spacer size="16px" />
-                  <ButtonGroup>
-                     <TextButton type="solid" onClick={mutationFunc}>
-                        Create
-                     </TextButton>
-                     <TextButton type="ghost" onClick={cancelPopupHandler}>
-                        Cancel
-                     </TextButton>
-                  </ButtonGroup>
+                  <Flex container justifyContent="flex-end">
+                     <ButtonGroup>
+                        <TextButton type="solid" onClick={mutationFunc}>
+                           Create
+                        </TextButton>
+                        <TextButton type="ghost" onClick={cancelPopupHandler}>
+                           Cancel
+                        </TextButton>
+                     </ButtonGroup>
+                  </Flex>
                </>
             ) : (
                <>
@@ -115,16 +113,30 @@ export default function FormType({
                         value={name}
                         onKeyDown={e => stopDot(e)}
                      />
+                     <Spacer size="16px" />
+                     <Form.Label>Select the folder to keep it</Form.Label>
+                     <TreeSelect
+                        showSearch
+                        style={{ width: '100%' }}
+                        value={selected}
+                        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                        placeholder="Please select"
+                        allowClear
+                        onChange={onChange}
+                        treeData={treeViewNodes}
+                     />
                   </Form.Group>
                   <Spacer size="16px" />
-                  <ButtonGroup>
-                     <TextButton type="solid" onClick={mutationFunc}>
-                        Rename
-                     </TextButton>
-                     <TextButton type="ghost" onClick={cancelPopupHandler}>
-                        Cancel
-                     </TextButton>
-                  </ButtonGroup>
+                  <Flex container justifyContent="flex-end">
+                     <ButtonGroup>
+                        <TextButton type="solid" onClick={mutationFunc}>
+                           Rename
+                        </TextButton>
+                        <TextButton type="ghost" onClick={cancelPopupHandler}>
+                           Cancel
+                        </TextButton>
+                     </ButtonGroup>
+                  </Flex>
                </>
             )
          ) : (
@@ -132,8 +144,8 @@ export default function FormType({
                <Popup.Text type="danger">
                   Are you sure you want to delete this {nodeType}!
                </Popup.Text>
-               <Popup.Actions>
-                  <ButtonGroup align="left">
+               <Flex container justifyContent="flex-end">
+                  <ButtonGroup>
                      <TextButton type="solid" onClick={mutationFunc}>
                         Yes! delete this {nodeType}
                      </TextButton>
@@ -141,7 +153,7 @@ export default function FormType({
                         Cancel
                      </TextButton>
                   </ButtonGroup>
-               </Popup.Actions>
+               </Flex>
             </>
          )}
       </Popup>

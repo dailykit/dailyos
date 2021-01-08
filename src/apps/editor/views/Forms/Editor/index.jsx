@@ -31,7 +31,6 @@ const Editor = () => {
    const history = useHistory()
    const monacoRef = useRef()
    const editorRef = useRef()
-   console.log('editor', path)
    // const { globalState, dispatch } = React.useContext(Context)
 
    const [code, setCode] = React.useState('')
@@ -65,7 +64,6 @@ const Editor = () => {
          const fileType = getFile.path.split('.').pop()
          switch (fileType) {
             case 'js':
-               console.log(fileType)
                setLanguage('javascript')
                break
             case 'html':
@@ -254,9 +252,6 @@ const Editor = () => {
          history.push('/editor')
       }
    }, [addTab, tab])
-   // console.log('hello')
-
-   console.log(globalState)
    return (
       <>
          <div style={{ position: 'absolute', margin: '16px 0' }}>

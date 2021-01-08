@@ -1,13 +1,15 @@
 import React from 'react'
 import { TabPanels } from '@reach/tabs'
 import { Switch, Route } from 'react-router-dom'
+import moment from 'moment'
 // State
 import { Context } from '../../state'
-import { useGlobalContext, useTabs } from '../../context'
+import { useGlobalContext, useTabs, useDailyGit } from '../../context'
 import { FormType, FileType, CreateType } from '../../components/Popup'
-
-// Components
+import { useQuery } from '@apollo/react-hooks'
+import { GET_NESTED_FOLDER } from '../../graphql'
 import { Home, Editor } from '../../views'
+// Components
 
 // Styles
 import {
@@ -30,10 +32,117 @@ import {
 } from '../../assets/Icons'
 
 const Main = () => {
+   const now = moment().toISOString()
    const { tab, tabs } = useTabs()
-   const { globalState, setPopupInfo } = useGlobalContext()
-   const [createType, setCreateType] = React.useState('')
+   const { globalState, setPopupInfo, setContextMenuInfo } = useGlobalContext()
+   const {
+      createFile,
+      createFolder,
+      renameFile,
+      renameFolder,
+      deleteFile,
+      deleteFolder,
+      recordFile,
+      updateRecoredFile,
+      deleteRecoredFile,
+   } = useDailyGit()
+   const [type, setType] = React.useState('')
+   const [node, setNode] = React.useState({})
+   const [name, setName] = React.useState('')
+   const [path, setPath] = React.useState('')
    const fileTypeRef = React.useRef('')
+
+   const {
+      loading: queryLoading2,
+      error: queryError2,
+      data: { getNestedFolders: { children: nestedFolders = [] } = {} } = {},
+   } = useQuery(GET_NESTED_FOLDER, {
+      variables: { path: '' },
+   })
+
+   const closePopup = () => {
+      setPopupInfo({
+         createTypePopup: false,
+         fileTypePopup: false,
+         formTypePopup: false,
+      })
+   }
+
+   const setCreateType = createType => {
+      const option = {
+         type: createType,
+         action: 'create',
+         contextPath: './templates',
+      }
+
+      if (createType === 'folder') {
+         setContextMenuInfo({
+            ...option,
+            contextPath: './templates',
+            showPopup: {
+               createTypePopup: false,
+               fileTypePopup: false,
+               formTypePopup: true,
+            },
+         })
+      } else {
+         setContextMenuInfo({
+            ...option,
+            contextPath: './templates',
+            showPopup: {
+               createTypePopup: false,
+               fileTypePopup: true,
+               formTypePopup: false,
+            },
+         })
+      }
+      setType(createType)
+      setNode(globalState.onToggleInfo)
+   }
+
+   // const createFolderHandler = () => {
+   //    closePopup()
+   //    const folderPath = `${path.replace(
+   //       process.env.REACT_APP_ROOT_FOLDER,
+   //       ''
+   //    )}/${name}`
+   //    createFolder({
+   //       variables: {
+   //          path: folderPath,
+   //       },
+   //    })
+   //    setName('')
+   //    setType('')
+   //    setNode({})
+   // }
+   // const createFileHandler = () => {
+   //    closePopup()
+   //    const filePath = `${path.replace(
+   //       process.env.REACT_APP_ROOT_FOLDER,
+   //       ''
+   //    )}/${name}.${fileTypeRef.current}`
+   //    console.log(filePath)
+   //    createFile({
+   //       variables: {
+   //          path: filePath,
+   //          content: `Start writing content of file here...`,
+   //       },
+   //    })
+   //    recordFile({
+   //       variables: {
+   //          object: {
+   //             fileTypeRef: fileTypeRef.current,
+   //             fileName: `${name}.${fileTypeRef.current}`,
+   //             path: filePath,
+   //             lastSaved: now,
+   //          },
+   //       },
+   //    })
+
+   //    setName('')
+   //    setType('')
+   //    setNode({})
+   // }
 
    const selectFileType = type => {
       fileTypeRef.current = type
@@ -41,14 +150,6 @@ const Main = () => {
          createTypePopup: false,
          fileTypePopup: false,
          formTypePopup: true,
-      })
-   }
-
-   const closePopup = () => {
-      setPopupInfo({
-         createTypePopup: false,
-         fileTypePopup: false,
-         formTypePopup: false,
       })
    }
 
@@ -72,9 +173,109 @@ const Main = () => {
       return width
    }
 
-   // if (tabs.length === 0) {
-   //    return <main id="main">Select a file from the explorer.</main>
-   // }
+   const mutationHandler = (type, nodeType) => {
+      if (type === 'create') {
+         if (nodeType === 'FILE') {
+            const filePath = `${path.replace(
+               process.env.REACT_APP_ROOT_FOLDER,
+               ''
+            )}/${name}.${fileTypeRef.current}`
+            console.log(filePath)
+            createFile({
+               variables: {
+                  path: filePath,
+                  content: `Start writing content of file here...`,
+               },
+            })
+            recordFile({
+               variables: {
+                  object: {
+                     fileType: fileTypeRef.current,
+                     fileName: `${name}.${fileTypeRef.current}`,
+                     path: filePath,
+                     lastSaved: now,
+                  },
+               },
+            })
+            fileTypeRef.current = ''
+         } else {
+            const folderPath = `${path.replace(
+               process.env.REACT_APP_ROOT_FOLDER,
+               ''
+            )}/${name}`
+            console.log(path, folderPath)
+            createFolder({
+               variables: {
+                  path: folderPath,
+               },
+            })
+         }
+      } else if (type === 'rename') {
+         if (nodeType === 'FILE') {
+            const oldFilePath = path.replace(/.\/templates/g, '')
+            const newFilePath = `${oldFilePath.replace(
+               /\/([^/]*)$/g,
+               ''
+            )}/${name}.${oldFilePath.split('.').pop()}`
+            console.log(oldFilePath, ',', newFilePath)
+            renameFile({
+               variables: {
+                  oldPath: oldFilePath,
+                  newPath: newFilePath,
+               },
+            })
+            updateRecoredFile({
+               variables: {
+                  path: oldFilePath,
+                  set: {
+                     fileName: `${name}.${oldFilePath.split('.').pop()}`,
+                     path: newFilePath,
+                     lastSaved: now,
+                  },
+               },
+            })
+         } else {
+            const oldFolderPath = path.replace(/.\/templates/g, '')
+            const newFolderPath = `${oldFolderPath.replace(
+               /\/([^/]*)$/g,
+               ''
+            )}/${name}`
+            console.log(oldFolderPath, ',', newFolderPath)
+            renameFolder({
+               variables: {
+                  oldPath: oldFolderPath,
+                  newPath: newFolderPath,
+               },
+            })
+         }
+      } else {
+         if (nodeType === 'FILE') {
+            const filePath = path.replace(/.\/templates/g, '')
+            console.log(filePath)
+            deleteFile({
+               variables: {
+                  path: filePath,
+               },
+            })
+            deleteRecoredFile({
+               variables: {
+                  path: filePath,
+               },
+            })
+         } else {
+            const folderPath = path.replace(/.\/templates/g, '')
+            console.log(folderPath)
+            deleteFolder({
+               variables: {
+                  path: folderPath,
+               },
+            })
+         }
+      }
+      setName('')
+      closePopup()
+   }
+
    return (
       // <MainWrapper width={mainWidth()}>
       <main>
@@ -82,91 +283,27 @@ const Main = () => {
             <Route path="/editor" component={Home} exact />
             <Route path="/editor/:path+" component={Editor} exact />
          </Switch>
-         {/* <StyledTabs
-         index={state.currentTab}
-         onChange={() =>
-            dispatch({ type: 'SET_TAB_INDEX', payload: currentTab })
-         }
-         > */}
-         {/* <StyledTabList>
-               {tabs.map((tab, index) => (
-                  <StyledTab key={index}>
-                     <span title={tab.name}>{`${
-                        tab.name.length > 12
-                           ? `${tab.name.slice(0, 10)}...`
-                           : tab.name
-                     }`}</span>
-                     <span
-                        onClick={e => {
-                           e.stopPropagation()
-                           dispatch({
-                              type: 'REMOVE_TAB',
-                              payload: index,
-                           })
-                        }}
-                     >
-                        {CloseIcon}
-                     </span>
-                  </StyledTab>
-               ))}
-            </StyledTabList> */}
 
-         {/* <TabPanels>
-               {tabs.map((tab, index) => (
-                  <StyledTabPanel key={index}>
-                     <Editor {...tab} />
-                  </StyledTabPanel>
-               ))}
-            </TabPanels>
-         </StyledTabs> */}
-         {/* <TabsNav>
-            <span onClick={() => dispatch({ type: 'LEFT_TAB' })}>
-               {CaretLeftIcon}
-            </span>
-            <span onClick={() => dispatch({ type: 'RIGHT_TAB' })}>
-               {CaretRightIcon}
-            </span>
-            <span
-               onClick={() =>
-                  dispatch({
-                     type: 'TOGGLE_TAB_DROPDOWN',
-                     payload: !state.isTabDropDownVisible,
-                  })
-               }
-            >
-               {state.isTabDropDownVisible ? CaretUpIcon : CaretDownIcon}
-            </span>
-            {state.isTabDropDownVisible && (
-               <TabOptions>
-                  <ul>
-                     <li onClick={() => dispatch({ type: 'CLOSE_ALL_TABS' })}>
-                        Close All Tabs
-                     </li>
-                  </ul>
-               </TabOptions>
-            )}
-         </TabsNav> */}
          {/* </MainWrapper> */}
          <FileType
             show={globalState.popupInfo.fileTypePopup}
             closePopup={closePopup}
             setFileType={type => selectFileType(type)}
          />
-         {/* <FormType
-            showPopup={showPopup2}
-            action="Create"
+         <FormType
+            show={globalState.popupInfo.formTypePopup}
+            closePopup={closePopup}
+            action={globalState.contextMenuInfo.action}
             treeViewData={nestedFolders}
-            nodePath={node?.path?.replace('/', '')}
-            nodeType={type}
+            nodePath={
+               globalState?.contextMenuInfo?.contextPath || './templates'
+            }
+            nodeType={globalState.contextMenuInfo.type}
             name={name}
             setName={name => setName(name)}
             setPath={path => setPath(path)}
-            stopDot={e => stopDot(e)}
-            cancelPopup={() => setShowPopup2(!showPopup2)}
-            mutationHandler={(action, type) =>
-               type === 'FOLDER' ? createFolderHandler() : createFileHandler()
-            }
-         /> */}
+            mutationHandler={(action, type) => mutationHandler(action, type)}
+         />
          <CreateType
             show={globalState.popupInfo.createTypePopup}
             closePopup={closePopup}

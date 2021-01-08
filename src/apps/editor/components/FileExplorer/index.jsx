@@ -26,7 +26,7 @@ import toggleNode from '../../utils/toggleNode'
 
 const FileExplorer = () => {
    const { addTab } = useTabs()
-   const { onToggleInfo } = useGlobalContext()
+   const { onToggleInfo, globalState } = useGlobalContext()
    // const { state, dispatch } = React.useContext(Context)
    const fileRef = React.useRef({})
    const [data, setData] = React.useState([])

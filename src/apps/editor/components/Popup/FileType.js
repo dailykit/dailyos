@@ -5,7 +5,7 @@ import { Javascript, Html, Css, Pug, CloseIcon } from '../../assets/Icons'
 import { useGlobalContext } from '../../context'
 import { Card, Cross } from './style'
 
-export default function FileType({ show, closePopup, selectFileType }) {
+export default function FileType({ show, closePopup, setFileType }) {
    return (
       <Popup show={show}>
          <Flex container alignItems="start" justifyContent="space-between">
@@ -14,22 +14,22 @@ export default function FileType({ show, closePopup, selectFileType }) {
          </Flex>
          <Flex container alignItems="center" justifyContent="space-between">
             <Spacer size="16px" />
-            <Card onClick={() => selectFileType('js')}>
+            <Card onClick={() => setFileType('js')}>
                <Javascript />
                <p>Javascript</p>
             </Card>
             <Spacer size="16px" />
-            <Card onClick={() => selectFileType('html')}>
+            <Card onClick={() => setFileType('html')}>
                <Html />
                <p>Html</p>
             </Card>
             <Spacer size="16px" />
-            <Card onClick={() => selectFileType('css')}>
+            <Card onClick={() => setFileType('css')}>
                <Css />
                <p>Css</p>
             </Card>
             <Spacer size="16px" />
-            <Card onClick={() => selectFileType('pug')}>
+            <Card onClick={() => setFileType('pug')}>
                <Pug />
                <p>Pug</p>
             </Card>
