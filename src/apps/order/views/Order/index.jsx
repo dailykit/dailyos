@@ -45,7 +45,7 @@ const Order = () => {
    const params = useParams()
    const { tab, addTab } = useTabs()
    const { state: config } = useConfig()
-   const { state, switchView, dispatch } = useOrder()
+   const { selectSachet, switchView, dispatch } = useOrder()
    const [isThirdParty, setIsThirdParty] = React.useState(false)
    const [updateOrder] = useMutation(MUTATIONS.ORDER.UPDATE, {
       onCompleted: () => {
@@ -129,6 +129,67 @@ const Order = () => {
          }),
       },
    })
+
+   React.useEffect(() => {
+      if (!mealkitsLoading && !readytoeatsLoading && !inventoriesLoading) {
+         if (!isEmpty(mealkits)) {
+            const [mealkit] = mealkits
+            const { name = '' } = mealkit?.simpleRecipeProduct
+            const { orderSachets: sachets = [] } = mealkit
+            if (!isEmpty(sachets)) {
+               const index = sachets.findIndex(
+                  node => !node.isAssembled && node.status !== 'COMPLETED'
+               )
+               if (index === -1) {
+                  const [sachet] = sachets
+                  selectSachet(sachet?.id, { name: name || '' })
+               } else {
+                  const sachet = sachets[index]
+                  selectSachet(sachet?.id, { name: name || '' })
+               }
+            }
+         } else if (!isEmpty(readytoeats)) {
+            const [readytoeat] = readytoeats
+            const { name = '' } = readytoeat?.simpleRecipeProduct
+            const { orderSachets: sachets = [] } = readytoeat
+            if (!isEmpty(sachets)) {
+               const index = sachets.findIndex(
+                  node => !node.isAssembled && node.status !== 'COMPLETED'
+               )
+               if (index === -1) {
+                  const [sachet] = sachets
+                  selectSachet(sachet?.id, { name: name || '' })
+               } else {
+                  const sachet = sachets[index]
+                  selectSachet(sachet?.id, { name: name || '' })
+               }
+            }
+         } else if (!isEmpty(inventories)) {
+            const [inventory] = inventories
+            const { name = '' } = inventory?.inventoryProduct
+            const { orderSachets: sachets = [] } = inventory
+            if (!isEmpty(sachets)) {
+               const index = sachets.findIndex(
+                  node => !node.isAssembled && node.status !== 'COMPLETED'
+               )
+               if (index === -1) {
+                  const [sachet] = sachets
+                  selectSachet(sachet?.id, { name: name || '' })
+               } else {
+                  const sachet = sachets[index]
+                  selectSachet(sachet?.id, { name: name || '' })
+               }
+            }
+         }
+      }
+   }, [
+      mealkits,
+      mealkitsLoading,
+      readytoeats,
+      readytoeatsLoading,
+      inventoriesLoading,
+      inventoriesLoading,
+   ])
 
    React.useEffect(() => {
       if (!loading && order?.id && !tab) {

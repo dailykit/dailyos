@@ -159,6 +159,7 @@ export const QUERIES = {
             $assemblyStationId: Int_comparison_exp = {}
          ) {
             mealkits: orderMealKitProducts(
+               order_by: { created_at: desc }
                where: {
                   orderId: { _eq: $orderId }
                   assemblyStationId: $assemblyStationId
@@ -203,7 +204,9 @@ export const QUERIES = {
                   }
                }
                orderModifiers {
-                  inventoryProducts: childOrderInventoryProducts {
+                  inventoryProducts: childOrderInventoryProducts(
+                     order_by: { created_at: desc }
+                  ) {
                      id
                      quantity
                      isAssembled
@@ -241,6 +244,7 @@ export const QUERIES = {
                      }
                      orderSachets(
                         where: { packingStationId: $packingStationId }
+                        order_by: { created_at: desc }
                      ) {
                         id
                         unit
@@ -287,7 +291,9 @@ export const QUERIES = {
                         }
                      }
                   }
-                  mealKitProducts: childOrderMealKitProducts {
+                  mealKitProducts: childOrderMealKitProducts(
+                     order_by: { created_at: desc }
+                  ) {
                      id
                      isAssembled
                      assemblyStatus
@@ -326,6 +332,7 @@ export const QUERIES = {
                      }
                      orderSachets(
                         where: { packingStationId: $packingStationId }
+                        order_by: { created_at: desc }
                      ) {
                         id
                         unit
@@ -372,7 +379,9 @@ export const QUERIES = {
                         }
                      }
                   }
-                  readyToEatProducts: childOrderReadyToEatProducts {
+                  readyToEatProducts: childOrderReadyToEatProducts(
+                     order_by: { created_at: desc }
+                  ) {
                      id
                      quantity
                      isAssembled
@@ -412,6 +421,7 @@ export const QUERIES = {
                      }
                      orderSachets(
                         where: { packingStationId: $packingStationId }
+                        order_by: { created_at: desc }
                      ) {
                         id
                         unit
@@ -459,7 +469,10 @@ export const QUERIES = {
                      }
                   }
                }
-               orderSachets(where: { packingStationId: $packingStationId }) {
+               orderSachets(
+                  where: { packingStationId: $packingStationId }
+                  order_by: { created_at: desc }
+               ) {
                   id
                   unit
                   status
@@ -516,6 +529,7 @@ export const QUERIES = {
                $assemblyStationId: Int_comparison_exp = {}
             ) {
                readytoeats: orderReadyToEatProducts(
+                  order_by: { created_at: desc }
                   where: {
                      orderId: { _eq: $orderId }
                      assemblyStationId: $assemblyStationId
@@ -560,7 +574,9 @@ export const QUERIES = {
                      }
                   }
                   orderModifiers {
-                     inventoryProducts: childOrderInventoryProducts {
+                     inventoryProducts: childOrderInventoryProducts(
+                        order_by: { created_at: desc }
+                     ) {
                         id
                         quantity
                         isAssembled
@@ -598,6 +614,7 @@ export const QUERIES = {
                         }
                         orderSachets(
                            where: { packingStationId: $packingStationId }
+                           order_by: { created_at: desc }
                         ) {
                            id
                            unit
@@ -644,7 +661,9 @@ export const QUERIES = {
                            }
                         }
                      }
-                     mealKitProducts: childOrderMealKitProducts {
+                     mealKitProducts: childOrderMealKitProducts(
+                        order_by: { created_at: desc }
+                     ) {
                         id
                         isAssembled
                         assemblyStatus
@@ -683,6 +702,7 @@ export const QUERIES = {
                         }
                         orderSachets(
                            where: { packingStationId: $packingStationId }
+                           order_by: { created_at: desc }
                         ) {
                            id
                            unit
@@ -729,7 +749,9 @@ export const QUERIES = {
                            }
                         }
                      }
-                     readyToEatProducts: childOrderReadyToEatProducts {
+                     readyToEatProducts: childOrderReadyToEatProducts(
+                        order_by: { created_at: desc }
+                     ) {
                         id
                         quantity
                         isAssembled
@@ -769,6 +791,7 @@ export const QUERIES = {
                         }
                         orderSachets(
                            where: { packingStationId: $packingStationId }
+                           order_by: { created_at: desc }
                         ) {
                            id
                            unit
@@ -816,7 +839,10 @@ export const QUERIES = {
                         }
                      }
                   }
-                  orderSachets(where: { packingStationId: $packingStationId }) {
+                  orderSachets(
+                     where: { packingStationId: $packingStationId }
+                     order_by: { created_at: desc }
+                  ) {
                      id
                      unit
                      status
@@ -907,6 +933,7 @@ export const QUERIES = {
                $assemblyStationId: Int_comparison_exp = {}
             ) {
                inventories: orderInventoryProducts(
+                  order_by: { created_at: desc }
                   where: {
                      orderId: { _eq: $orderId }
                      assemblyStationId: $assemblyStationId
@@ -948,7 +975,10 @@ export const QUERIES = {
                      quantity
                      label
                   }
-                  orderSachets(where: { packingStationId: $packingStationId }) {
+                  orderSachets(
+                     where: { packingStationId: $packingStationId }
+                     order_by: { created_at: desc }
+                  ) {
                      id
                      unit
                      status
@@ -995,7 +1025,9 @@ export const QUERIES = {
                      }
                   }
                   orderModifiers {
-                     inventoryProducts: childOrderInventoryProducts {
+                     inventoryProducts: childOrderInventoryProducts(
+                        order_by: { created_at: desc }
+                     ) {
                         id
                         quantity
                         isAssembled
@@ -1033,6 +1065,7 @@ export const QUERIES = {
                         }
                         orderSachets(
                            where: { packingStationId: $packingStationId }
+                           order_by: { created_at: desc }
                         ) {
                            id
                            unit
@@ -1079,7 +1112,9 @@ export const QUERIES = {
                            }
                         }
                      }
-                     mealKitProducts: childOrderMealKitProducts {
+                     mealKitProducts: childOrderMealKitProducts(
+                        order_by: { created_at: desc }
+                     ) {
                         id
                         isAssembled
                         assemblyStatus
@@ -1118,6 +1153,7 @@ export const QUERIES = {
                         }
                         orderSachets(
                            where: { packingStationId: $packingStationId }
+                           order_by: { created_at: desc }
                         ) {
                            id
                            unit
@@ -1164,7 +1200,9 @@ export const QUERIES = {
                            }
                         }
                      }
-                     readyToEatProducts: childOrderReadyToEatProducts {
+                     readyToEatProducts: childOrderReadyToEatProducts(
+                        order_by: { created_at: desc }
+                     ) {
                         id
                         quantity
                         isAssembled
@@ -1204,6 +1242,7 @@ export const QUERIES = {
                         }
                         orderSachets(
                            where: { packingStationId: $packingStationId }
+                           order_by: { created_at: desc }
                         ) {
                            id
                            unit

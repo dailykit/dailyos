@@ -10,13 +10,19 @@ import { ArrowUpIcon, ArrowDownIcon } from '../../../assets/icons'
 const address = 'apps.order.views.order.'
 export const SachetItem = ({ item, product }) => {
    const { t } = useTranslation()
-   const { selectSachet } = useOrder()
+   const { state, selectSachet } = useOrder()
    const [isOpen, setIsOpen] = React.useState(null)
 
    const select = id => {
       selectSachet(id, { name: product?.simpleRecipeProduct?.name })
       setIsOpen(isOpen === id ? '' : id)
    }
+
+   React.useEffect(() => {
+      if (state.sachet?.id) {
+         setIsOpen(state.sachet?.id)
+      }
+   }, [state.sachet])
 
    return (
       <List.Item
