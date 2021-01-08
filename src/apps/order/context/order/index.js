@@ -11,8 +11,6 @@ const initialState = {
    delivery_config: { orderId: null },
    current_view: 'SUMMARY',
    sachet: { id: null, product: { name: null } },
-   inventory: { id: null },
-   readytoeat: { id: null },
    orders: {
       limit: 10,
       offset: 0,
@@ -36,22 +34,6 @@ const reducers = (state, { type, payload }) => {
             current_view: 'SACHET_ITEM',
             sachet: { id: payload.id, product: payload.product },
          }
-      case 'SELECT_INVENTORY':
-         return {
-            ...state,
-            current_view: 'INVENTORY',
-            inventory: {
-               id: payload,
-            },
-         }
-      case 'SELECT_READYTOEAT':
-         return {
-            ...state,
-            current_view: 'READYTOEAT',
-            readytoeat: {
-               id: payload,
-            },
-         }
       case 'SWITCH_VIEW': {
          return {
             ...state,
@@ -60,8 +42,6 @@ const reducers = (state, { type, payload }) => {
                id: null,
             },
 
-            inventory: { id: null },
-            readytoeat: { id: null },
             current_view: payload.view,
          }
       }
@@ -206,26 +186,6 @@ export const useOrder = () => {
       [dispatch]
    )
 
-   const selectInventory = React.useCallback(
-      id => {
-         dispatch({
-            type: 'SELECT_INVENTORY',
-            payload: id,
-         })
-      },
-      [dispatch]
-   )
-
-   const selectReadyToEat = React.useCallback(
-      id => {
-         dispatch({
-            type: 'SELECT_READYTOEAT',
-            payload: id,
-         })
-      },
-      [dispatch]
-   )
-
    const switchView = React.useCallback(
       view => {
          dispatch({
@@ -254,7 +214,5 @@ export const useOrder = () => {
       switchView,
       updateOrder,
       selectSachet,
-      selectInventory,
-      selectReadyToEat,
    }
 }
