@@ -109,7 +109,8 @@ const Information = ({ state }) => {
                </Container>
             ) : (
                <ButtonTile
-                  type="secondary"
+                  type="primary"
+                  size="sm"
                   text="Add Basic Information"
                   onClick={() => openTunnel(1)}
                />

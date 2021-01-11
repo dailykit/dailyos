@@ -27,6 +27,7 @@ import {
    Servings,
 } from './components'
 import validator from './validators'
+import styled from 'styled-components'
 
 const RecipeForm = () => {
    // Context
@@ -127,12 +128,37 @@ const RecipeForm = () => {
       logger(error)
       return <ErrorState />
    }
+   const ResponsiveFlex = styled.header`
+      display: flex;
+      padding: 16px 32px;
+      align-items: center;
+      justify-content: space-between;
+
+      @media screen and (max-width: 767px) {
+         flex-direction: column;
+         align-items: start;
+         input[type='text'] {
+            width: calc(100vw - 64px);
+         }
+         section {
+            margin-bottom: 8px;
+         }
+      }
+   `
+   const StyledFlex = styled(Flex)`
+      @media screen and (max-width: 767px) {
+         flex-direction: column;
+         button {
+            margin-bottom: 16px;
+         }
+      }
+   `
 
    return (
       <RecipeContext.Provider value={{ recipeState, recipeDispatch }}>
          <>
             {/* View */}
-            <Flex
+            <ResponsiveFlex
                container
                justifyContent="space-between"
                alignItems="start"
@@ -183,11 +209,12 @@ const RecipeForm = () => {
                   >
                      <Flex container alignItems="center">
                         Published
+                        <Spacer xAxis size="16px" />
                         <Tooltip identifier="recipe_publish" />
                      </Flex>
                   </Form.Toggle>
                </Flex>
-            </Flex>
+            </ResponsiveFlex>
             <Flex
                maxWidth="1280px"
                width="calc(100vw - 64px)"
@@ -196,9 +223,11 @@ const RecipeForm = () => {
             >
                {recipeState.stage === 0 ? (
                   <>
-                     <Information state={state} />
-                     <Spacer size="32px" />
-                     <Photo state={state} />
+                     <StyledFlex container alignItems="center">
+                        <Information state={state} />
+                        <Spacer xAxis size="32px" />
+                        <Photo state={state} />
+                     </StyledFlex>
                      <Spacer size="32px" />
                      <Servings state={state} />
                      <Spacer size="32px" />
