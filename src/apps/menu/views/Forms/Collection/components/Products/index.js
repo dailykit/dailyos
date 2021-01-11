@@ -104,6 +104,7 @@ const Products = ({ state }) => {
             droppableId="categoriesDroppableId"
             tablename="collection_productCategory"
             schemaname="onDemand"
+            direction="horizontal"
          >
             {state.productCategories.map(category => (
                <StyledCategoryWrapper key={category.id}>
@@ -113,16 +114,23 @@ const Products = ({ state }) => {
                         <DeleteIcon color="#FF6B5E" />
                      </ActionButton>
                   </StyledHeader>
-                  <Grid>
-                     {category.products.map(product => (
-                        <Product key={product.id} product={product} />
-                     ))}
+                  <Flex>
+                     <DragNDrop
+                        list={category.products}
+                        droppableId="categoryProductsDroppableId"
+                        tablename="collection_productCategory_product"
+                        schemaname="onDemand"
+                     >
+                        {category.products.map(product => (
+                           <Product key={product.id} product={product} />
+                        ))}
+                     </DragNDrop>
                      <ButtonTile
                         type="secondary"
                         text="Add Product"
                         onClick={() => addProduct(category.id)}
                      />
-                  </Grid>
+                  </Flex>
                </StyledCategoryWrapper>
             ))}
          </DragNDrop>

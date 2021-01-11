@@ -60,17 +60,27 @@ const CollectionForm = () => {
          id: collectionId,
       },
       onSubscriptionData: data => {
-         console.log(data.subscriptionData.data)
          setState(data.subscriptionData.data.collection)
          setTitle({
             ...title,
             value: data.subscriptionData.data.collection.name,
          })
-         if (data.subscriptionData.data.collection.productCategories.length) {
+         const categories =
+            data.subscriptionData.data.collection.productCategories
+         if (categories.length) {
             initiatePriority({
                tablename: 'collection_productCategory',
                schemaname: 'onDemand',
-               data: data.subscriptionData.data.collection.productCategories,
+               data: categories,
+            })
+            categories.forEach(category => {
+               if (category.products.length) {
+                  initiatePriority({
+                     tablename: 'collection_productCategory_product',
+                     schemaname: 'onDemand',
+                     data: category.products,
+                  })
+               }
             })
          }
       },

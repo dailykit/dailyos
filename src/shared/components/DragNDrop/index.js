@@ -131,9 +131,22 @@ export default function DragNDrop({
    }
    return (
       <DragDropContext onDragEnd={onDragEnd}>
-         <Droppable droppableId={droppableId}>
+         <Droppable
+            droppableId={droppableId}
+            direction={direction || 'vertical'}
+         >
             {provided => (
-               <div {...provided.droppableProps} ref={provided.innerRef}>
+               <div
+                  {...provided.droppableProps}
+                  style={
+                     direction === 'horizontal'
+                        ? {
+                             display: 'flex',
+                          }
+                        : { display: 'block' }
+                  }
+                  ref={provided.innerRef}
+               >
                   {children.map((item, index) => (
                      <Draggable
                         key={index}
