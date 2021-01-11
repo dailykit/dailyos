@@ -8,6 +8,8 @@ import {
    HorizontalTabPanel,
    HorizontalTabPanels,
    HorizontalTabs,
+   Text,
+   Spacer,
 } from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
@@ -170,6 +172,20 @@ const CollectionForm = () => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
+                  <Flex container alignItems="flex-end">
+                     <Text as="h2">{state.productCategories.length}</Text>
+                     <Spacer xAxis size="8px" />
+                     <Text as="subtitle">Categories</Text>
+                     <Spacer xAxis size="16px" />
+                     <Text as="h2">
+                        {state.productCategories.reduce(
+                           (acc, cat) => cat.products.length + acc,
+                           0
+                        )}
+                     </Text>
+                     <Spacer xAxis size="8px" />
+                     <Text as="subtitle">Products</Text>
+                  </Flex>
                </Flex>
                <Flex padding="16px 32px">
                   <HorizontalTabs>
