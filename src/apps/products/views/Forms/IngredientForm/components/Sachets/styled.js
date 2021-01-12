@@ -4,17 +4,25 @@ export const StyledSection = styled.div`
    display: grid;
    grid-template-columns: 250px 1fr;
    grid-gap: 32px;
+   @media screen and (max-width: 767px) {
+      grid-template-columns: auto;
+   }
 `
 
 export const StyledListing = styled.div`
    display: flex;
    flex-direction: column;
+   @media screen and (max-width: 767px) {
+      flex-direction: row;
+      overflow-x: auto;
+   }
 `
 
 export const StyledDisplay = styled.div`
    background: #fff;
    padding: 0px 28px 28px 0px;
    margin-top: 0;
+   overflow-x: auto;
 `
 
 export const StyledListingHeader = styled.div`
@@ -42,6 +50,7 @@ export const StyledListingTile = styled.div`
    cursor: pointer;
    position: relative;
    margin-bottom: 12px;
+   min-width: fit-content;
 
    h3 {
       margin-bottom: 20px;
@@ -58,6 +67,10 @@ export const StyledListingTile = styled.div`
       &:not(:last-child) {
          margin-bottom: 8px;
       }
+   }
+   @media screen and (max-width: 767px) {
+      margin-bottom: 0px;
+      margin-left: 12px;
    }
 `
 

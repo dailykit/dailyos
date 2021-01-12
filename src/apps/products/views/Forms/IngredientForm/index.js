@@ -20,6 +20,7 @@ import {
    InlineLoader,
    Tooltip,
 } from '../../../../../shared/components'
+import styled from 'styled-components'
 
 const IngredientForm = () => {
    const { setTabTitle, tab, addTab } = useTabs()
@@ -151,96 +152,114 @@ const IngredientForm = () => {
       logger(error)
       return <ErrorState />
    }
+   const HeaderWrapper = styled.div`
+      display: flex;
+      align-items: start;
+      padding: 16px 32px;
+      justify-content: space-between;
+      @media screen and (max-width: 767px) {
+         flex-direction: column;
+      }
+   `
+   const InputTextWrapper = styled(Flex)`
+      @media screen and (max-width: 767px) {
+         flex-direction: column;
+         section {
+            width: calc(100vw - 64px);
+         }
+      }
+   `
+   const ResponsiveFlex = styled(Flex)`
+      @media screen and (max-width: 767px) {
+         flex-direction: column;
+      }
+   `
 
    return (
       <IngredientContext.Provider
          value={{ ingredientState, ingredientDispatch }}
       >
-         <>
-            <Flex
-               container
-               padding="16px 32px"
-               alignItems="start"
-               justifyContent="space-between"
-            >
-               <Flex container alignItems="start">
-                  <Form.Group>
-                     <Form.Label htmlFor="title" title="title">
-                        Ingredient Name*
-                     </Form.Label>
-                     <Form.Text
-                        id="title"
-                        name="title"
-                        value={title.value}
-                        placeholder="Enter ingredient name"
-                        onChange={e =>
-                           setTitle({ ...title, value: e.target.value })
-                        }
-                        onBlur={updateName}
-                        hasError={!title.meta.isValid && title.meta.isTouched}
-                     />
-                     {title.meta.isTouched &&
-                        !title.meta.isValid &&
-                        title.meta.errors.map((error, index) => (
-                           <Form.Error key={index}>{error}</Form.Error>
-                        ))}
-                  </Form.Group>
-                  <Spacer xAxis size="16px" />
-                  <Form.Group>
-                     <Form.Label htmlFor="category" title="category">
-                        Category
-                     </Form.Label>
-                     <Form.Text
-                        id="category"
-                        name="category"
-                        value={category.value}
-                        placeholder="Enter ingredient category"
-                        onChange={e =>
-                           setCategory({ ...category, value: e.target.value })
-                        }
-                        onBlur={updateCategory}
-                        hasError={
-                           !category.meta.isValid && category.meta.isTouched
-                        }
-                     />
-                     {category.meta.isTouched &&
-                        !category.meta.isValid &&
-                        category.meta.errors.map((error, index) => (
-                           <Form.Error key={index}>{error}</Form.Error>
-                        ))}
-                  </Form.Group>
-               </Flex>
-               <Flex container alignItems="center" height="100%">
-                  {state.isValid?.status ? (
-                     <>
-                        <TickIcon color="#00ff00" stroke={2} />
-                        <Text as="p">All good!</Text>
-                     </>
-                  ) : (
-                     <>
-                        <CloseIcon color="#ff0000" />
-                        <Text as="p">{state.isValid?.error}</Text>
-                     </>
-                  )}
-                  <Spacer xAxis size="16px" />
-                  <Form.Toggle
-                     name="published"
-                     value={state.isPublished}
-                     onChange={togglePublish}
-                  >
-                     <Flex container alignItems="center">
-                        Published
-                        <Tooltip identifier="ingredient_publish" />
-                     </Flex>
-                  </Form.Toggle>
-               </Flex>
+         <HeaderWrapper>
+            <InputTextWrapper container alignItems="start">
+               <Form.Group>
+                  <Form.Label htmlFor="title" title="title">
+                     Ingredient Name*
+                  </Form.Label>
+                  <Form.Text
+                     id="title"
+                     name="title"
+                     value={title.value}
+                     placeholder="Enter ingredient name"
+                     onChange={e =>
+                        setTitle({ ...title, value: e.target.value })
+                     }
+                     onBlur={updateName}
+                     hasError={!title.meta.isValid && title.meta.isTouched}
+                  />
+                  {title.meta.isTouched &&
+                     !title.meta.isValid &&
+                     title.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
+                     ))}
+               </Form.Group>
+               <Spacer xAxis size="16px" />
+               <Form.Group>
+                  <Form.Label htmlFor="category" title="category">
+                     Category
+                  </Form.Label>
+                  <Form.Text
+                     id="category"
+                     name="category"
+                     value={category.value}
+                     placeholder="Enter ingredient category"
+                     onChange={e =>
+                        setCategory({ ...category, value: e.target.value })
+                     }
+                     onBlur={updateCategory}
+                     hasError={
+                        !category.meta.isValid && category.meta.isTouched
+                     }
+                  />
+                  {category.meta.isTouched &&
+                     !category.meta.isValid &&
+                     category.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
+                     ))}
+               </Form.Group>
+            </InputTextWrapper>
+            <Flex container alignItems="center" height="100%">
+               {state.isValid?.status ? (
+                  <>
+                     <TickIcon color="#00ff00" stroke={2} />
+                     <Text as="p">All good!</Text>
+                  </>
+               ) : (
+                  <>
+                     <CloseIcon color="#ff0000" />
+                     <Text as="p">{state.isValid?.error}</Text>
+                  </>
+               )}
+               <Spacer xAxis size="16px" />
+               <Form.Toggle
+                  name="published"
+                  value={state.isPublished}
+                  onChange={togglePublish}
+               >
+                  <Flex container alignItems="center">
+                     Published
+                     <Spacer xAxis size="16px" />
+                     <Tooltip identifier="ingredient_publish" />
+                  </Flex>
+               </Form.Toggle>
             </Flex>
-            <Flex padding="32px" style={{ background: '#f3f3f3' }}>
-               <Stats state={state} />
-               <Spacer size="32px" />
-               <Processings state={state} />
-            </Flex>
-         </>
+         </HeaderWrapper>
+         <Spacer size="32px" />
+
+         <Flex padding="32px" style={{ background: '#f3f3f3' }}>
+            <Stats state={state} />
+            <Spacer size="32px" />
+            <Processings state={state} />
+         </Flex>
       </IngredientContext.Provider>
    )
 }
