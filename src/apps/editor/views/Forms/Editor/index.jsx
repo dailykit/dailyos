@@ -308,6 +308,7 @@ const Editor = () => {
                undoWebBuilder={() => callWebBuilderFunc('core:undo')}
                redoWebBuilder={() => callWebBuilderFunc('core:redo')}
                fullscreen={() => callWebBuilderFunc('core:fullscreen')}
+               saveTemplate={() => callWebBuilderFunc('save-template')}
                deviceManager={command => callWebBuilderFunc(command)}
             />
 

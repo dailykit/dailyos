@@ -49,6 +49,7 @@ const EditorOptions = ({
    redoEditor,
    fullscreen,
    deviceManager,
+   saveTemplate,
 }) => {
    const [
       linkFilesTunnels,
@@ -251,7 +252,10 @@ const EditorOptions = ({
                   <EyeIcon size="16px" />
                   PREVIEW
                </ComboButton>
-               <TextButton type="ghost" onClick={() => draft()}>
+               <TextButton
+                  type="ghost"
+                  onClick={() => (isWebBuilderOpen ? saveTemplate() : draft())}
+               >
                   SAVE
                </TextButton>
                <TextButton

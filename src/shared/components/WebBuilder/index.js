@@ -131,10 +131,18 @@ const Builder = React.forwardRef(
                },
                stop: function () {},
             })
+            editorRef.current.Commands.add('save-template', {
+               run(editor) {
+                  const updatedCode =
+                     editor.getHtml() + '<style>' + editor.getCss() + '</style>'
+                  updateCode(updatedCode, path)
+               },
+            })
+            //stop command
             if (action === 'core:fullscreen' || action.includes('set-device')) {
                editorRef.current.stopCommand(action)
             }
-
+            //run command
             editorRef.current.runCommand(action)
          },
       }))
@@ -243,26 +251,6 @@ const Builder = React.forwardRef(
                const bmEl = this.getBlockEl(this.getRowEl(editor))
                bmEl.style.display = 'none'
             },
-         })
-
-         //command for device manager
-         editor.Commands.add('set-device-desktop', {
-            run: function (ed) {
-               ed.setDevice('Desktop')
-            },
-            stop: function () {},
-         })
-         editor.Commands.add('set-device-tablet', {
-            run: function (ed) {
-               ed.setDevice('Tablet')
-            },
-            stop: function () {},
-         })
-         editor.Commands.add('set-device-mobile', {
-            run: function (ed) {
-               ed.setDevice('Mobile portrait')
-            },
-            stop: function () {},
          })
 
          //call mutation for storing the template
