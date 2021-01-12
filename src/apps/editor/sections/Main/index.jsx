@@ -35,20 +35,10 @@ const Main = () => {
    const { globalState, setPopupInfo, setContextMenuInfo } = useGlobalContext()
    const mainWidth = () => {
       let width = '100vw'
-      if (globalState.isSidebarVisible && globalState.isSidePanelVisible) {
-         width = `calc(${width} - 520px)`
-      } else if (
-         globalState.isSidebarVisible &&
-         !globalState.isSidePanelVisible
-      ) {
-         width = `calc(${width} - 280px)`
-      } else if (
-         !globalState.isSidebarVisible &&
-         globalState.isSidePanelVisible
-      ) {
-         width = `calc(${width} - 280px)`
+      if (globalState.isSidebarVisible) {
+         width = `calc(${width} - 240px)`
       } else {
-         width = `calc(${width} - 40px)`
+         width = `calc(${width})`
       }
       return width
    }

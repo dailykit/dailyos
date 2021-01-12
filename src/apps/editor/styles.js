@@ -4,7 +4,7 @@ export const Wrapper = styled.div(
    ({ column }) => css`
       display: grid;
       grid-template-columns: ${column};
-      grid-template-areas: 'sidebar main sidePanel';
+      grid-template-areas: 'sidebar main ';
       width: 100vw;
       height: 10vh;
    `

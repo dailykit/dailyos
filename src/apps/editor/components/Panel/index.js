@@ -37,11 +37,12 @@ import {
    Child,
 } from './style'
 import { LinkCssTunnel, LinkJsTunnel } from './Tunnel'
-import { DragNDrop } from '../../../../shared/components'
+import { DragNDrop, InlineLoader } from '../../../../shared/components'
 import { useDnd } from '../../../../shared/components/DragNDrop/useDnd'
 import { toast } from 'react-toastify'
 
 const Panel = () => {
+   console.log('called')
    const { tab, tabs } = useTabs()
    const { updateLinkedFile, globalState } = useGlobalContext()
    const { initiatePriority } = useDnd()
@@ -176,9 +177,9 @@ const Panel = () => {
       })
    }
 
-   if (linkLoading) return <Loader />
+   if (linkLoading) return <InlineLoader />
    return (
-      <PanelWrapper isSidePanelVisible={globalState.isSidePanelVisible}>
+      <PanelWrapper>
          {tab?.path.split('.').pop() === 'html' ? (
             <Parent>
                <Node

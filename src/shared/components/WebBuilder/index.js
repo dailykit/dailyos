@@ -271,20 +271,7 @@ const Builder = React.forwardRef(
             updateCode(updatedCode, path)
          })
 
-         editor.getModel().set('dmode', 'absolute')
-
-         // const undo = () => {
-         //    editor.UndoManager.undo()
-         // }
-
-         // const redo = () => {
-         //    editor.UndoManager.redo()
-         // }
-
-         // editor.Canvas.addFrame({
-         //    styles: linkedCssArray,
-         //    scripts: linkedJsArray,
-         // })
+         // editor.getModel().set('dmode', 'absolute')
 
          // editor.Canvas.({
          //    styles: linkedCssArray,
@@ -297,9 +284,9 @@ const Builder = React.forwardRef(
             editor.setComponents(content)
          }
          // editor.Panels.removePanel('views')
-         // editor.Panels.removePanel('commands')
-         // editor.Panels.removePanel('devices-c')
-         // editor.Panels.removePanel('options')
+         editor.Panels.removePanel('commands')
+         editor.Panels.removePanel('devices-c')
+         editor.Panels.removePanel('options')
       }
 
       return (

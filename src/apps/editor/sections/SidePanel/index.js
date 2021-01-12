@@ -109,7 +109,7 @@ const SidePanel = () => {
                   )}
                </SidebarActions>
             </Header>
-            <div className="panel">{activePanelId === 5 && <Panel />}</div>
+            {/* <div className="panel">{activePanelId === 5 && <Panel />}</div> */}
          </SidebarWrapper>
       </>
    )

@@ -9,6 +9,7 @@ import {
    IconButton,
    ComboButton,
    ButtonGroup,
+   useTunnel,
 } from '@dailykit/ui'
 // State
 import { Context } from '../../../../state'
@@ -16,6 +17,7 @@ import { useTabs } from '../../../../context'
 
 // Components
 import { Modal } from '../../../../components'
+import { LinkFilesTunnel } from '../Tunnel'
 
 import { EditorOptionsWrapper } from './styles'
 
@@ -30,6 +32,7 @@ import {
    RotateLeftIcon,
    RotateRightIcon,
    DeleteIcon,
+   LinkFileIcon,
    EyeIcon,
 } from '../../../../assets/Icons'
 
@@ -47,6 +50,11 @@ const EditorOptions = ({
    fullscreen,
    deviceManager,
 }) => {
+   const [
+      linkFilesTunnels,
+      openLinkFilesTunnel,
+      closeLinkFilesTunnel,
+   ] = useTunnel(1)
    const { tab } = useTabs()
    const [isModalVisible, setIsModalVisible] = React.useState()
    const [isWebBuilderOpen, SetIsWebBuilderOpen] = React.useState(false)
@@ -118,8 +126,9 @@ const EditorOptions = ({
    }, [isDark])
 
    return (
-      <EditorOptionsWrapper>
-         {/* {isModalVisible && (
+      <>
+         <EditorOptionsWrapper>
+            {/* {isModalVisible && (
             <Modal>
                <Modal.Header>
                   <span>Publish</span>
@@ -159,7 +168,7 @@ const EditorOptions = ({
                </Modal.Footer>
             </Modal>
          )} */}
-         {/* <div id="left">
+            {/* <div id="left">
            <button
                     className="btn__icon"
                     title="History"
@@ -168,7 +177,7 @@ const EditorOptions = ({
                     <HistoryIcon color="#9a8484" />
                 </button>
          </div> */}
-         {/* {lastSaved && (
+            {/* {lastSaved && (
             <div>
                <span>
                   Last Saved -{' '}
@@ -181,72 +190,84 @@ const EditorOptions = ({
                </span>
             </div>
          )} */}
-         <Flex container alignItems="center" justifyContent="space-between">
-            <Form.Label htmlFor="theme" title="theme">
-               Dark Theme
-            </Form.Label>
-            <Form.Toggle
-               name="first_time"
-               onChange={() => setIsDark(!isDark)}
-               value={isDark}
-            />
-            <Spacer size="20px" xAxis />
-            <RadioGroup
-               options={ModeOptions}
-               active={isWebBuilderOpen ? 1 : 2}
-               onChange={option => SetIsWebBuilderOpen(!isWebBuilderOpen)}
-            />
-            {isWebBuilderOpen && (
-               <>
-                  <Spacer size="20px" xAxis />
-                  <RadioGroup
-                     options={deviceOptions}
-                     active={1}
-                     onChange={option => {
-                        setDeviceActive(option.name)
-                        deviceManager(option.command)
-                     }}
-                  />
-               </>
-            )}
-            <Spacer size="20px" xAxis />
-            <ButtonGroup>
-               <IconButton
-                  type="ghost"
-                  onClick={isWebBuilderOpen ? undoWebBuilder : undoEditor}
+            <Flex container alignItems="center" justifyContent="space-between">
+               <Form.Label htmlFor="theme" title="theme">
+                  Dark Theme
+               </Form.Label>
+               <Form.Toggle
+                  name="first_time"
+                  onChange={() => setIsDark(!isDark)}
+                  value={isDark}
+               />
+               <Spacer size="20px" xAxis />
+               <IconButton type="ghost" onClick={() => openLinkFilesTunnel(1)}>
+                  <LinkFileIcon size="20" />
+               </IconButton>
+
+               <Spacer size="20px" xAxis />
+               <RadioGroup
+                  options={ModeOptions}
+                  active={isWebBuilderOpen ? 1 : 2}
+                  onChange={option => SetIsWebBuilderOpen(!isWebBuilderOpen)}
+               />
+
+               <Spacer size="20px" xAxis />
+               <ButtonGroup>
+                  <IconButton
+                     type="ghost"
+                     onClick={isWebBuilderOpen ? undoWebBuilder : undoEditor}
+                  >
+                     <RotateLeftIcon size="20" />
+                  </IconButton>
+                  <IconButton
+                     type="ghost"
+                     onClick={isWebBuilderOpen ? redoWebBuilder : redoEditor}
+                  >
+                     <RotateRightIcon size="20" />
+                  </IconButton>
+               </ButtonGroup>
+               <Spacer size="20px" xAxis />
+               {isWebBuilderOpen && (
+                  <IconButton type="ghost" onClick={fullscreen}>
+                     <ExpandFullIcon size="20" />
+                  </IconButton>
+               )}
+            </Flex>
+            <Flex container alignItems="center" justifyContent="space-between">
+               {isWebBuilderOpen && (
+                  <>
+                     <Spacer size="20px" xAxis />
+                     <RadioGroup
+                        options={deviceOptions}
+                        active={1}
+                        onChange={option => {
+                           setDeviceActive(option.name)
+                           deviceManager(option.command)
+                        }}
+                     />
+                  </>
+               )}
+               <ComboButton type="ghost">
+                  <EyeIcon size="16px" />
+                  PREVIEW
+               </ComboButton>
+               <TextButton type="ghost" onClick={() => draft()}>
+                  SAVE
+               </TextButton>
+               <TextButton
+                  type="solid"
+                  onClick={() => setIsModalVisible(!isModalVisible)}
                >
-                  <RotateLeftIcon size="20" />
-               </IconButton>
-               <IconButton
-                  type="ghost"
-                  onClick={isWebBuilderOpen ? redoWebBuilder : redoEditor}
-               >
-                  <RotateRightIcon size="20" />
-               </IconButton>
-            </ButtonGroup>
-            <Spacer size="20px" xAxis />
-            {isWebBuilderOpen && (
-               <IconButton type="ghost" onClick={fullscreen}>
-                  <ExpandFullIcon size="20" />
-               </IconButton>
-            )}
-         </Flex>
-         <Flex container alignItems="center" justifyContent="space-between">
-            <ComboButton type="ghost">
-               <EyeIcon size="16px" />
-               PREVIEW
-            </ComboButton>
-            <TextButton type="ghost" onClick={() => draft()}>
-               SAVE
-            </TextButton>
-            <TextButton
-               type="solid"
-               onClick={() => setIsModalVisible(!isModalVisible)}
-            >
-               PUBLISH
-            </TextButton>
-         </Flex>
-      </EditorOptionsWrapper>
+                  PUBLISH
+               </TextButton>
+            </Flex>
+         </EditorOptionsWrapper>
+         <LinkFilesTunnel
+            tunnels={linkFilesTunnels}
+            openTunnel={openLinkFilesTunnel}
+            closeTunnel={closeLinkFilesTunnel}
+         />
+      </>
    )
 }
 

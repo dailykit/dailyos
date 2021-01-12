@@ -33,21 +33,11 @@ const App = () => {
       toggleSideBar()
    }
    const gridColumns = () => {
-      let column = '240px 1fr 240px'
-      if (globalState.isSidebarVisible && globalState.isSidePanelVisible) {
-         column = '240px 1fr 280px'
-      } else if (
-         globalState.isSidebarVisible &&
-         !globalState.isSidePanelVisible
-      ) {
-         column = '240px 1fr 40px'
-      } else if (
-         !globalState.isSidebarVisible &&
-         globalState.isSidePanelVisible
-      ) {
-         column = '0px 1fr 280px'
+      let column = '240px 1fr'
+      if (globalState.isSidebarVisible) {
+         column = '240px 1fr'
       } else {
-         column = '0px 1fr 40px'
+         column = '0px 1fr'
       }
       return column
    }
@@ -72,7 +62,6 @@ const App = () => {
                   <ErrorBoundary rootRoute="/apps/crm">
                      <Main />
                   </ErrorBoundary>
-                  <SidePanel />
                </Wrapper>
             </Router>
             {/* </Context.Provider> */}

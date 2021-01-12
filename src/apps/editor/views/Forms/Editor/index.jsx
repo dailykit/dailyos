@@ -26,6 +26,7 @@ import { Tab } from '@reach/tabs'
 
 const Editor = () => {
    const { tab, tabs, addTab } = useTabs()
+
    const {
       globalState,
       setDraft,
