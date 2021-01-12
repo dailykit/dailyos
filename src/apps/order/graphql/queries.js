@@ -1398,7 +1398,7 @@ export const QUERIES = {
             orders(
                limit: $limit
                offset: $offset
-               order_by: { isAccepted: desc, updated_at: desc }
+               order_by: { created_at: desc }
                where: $where
             ) {
                id

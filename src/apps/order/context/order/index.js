@@ -1,4 +1,5 @@
 import React from 'react'
+import { has } from 'lodash'
 import { useMutation } from '@apollo/react-hooks'
 
 import { MUTATIONS } from '../../graphql'
@@ -74,13 +75,23 @@ const reducers = (state, { type, payload }) => {
          }
       }
       case 'SET_FILTER': {
+         const existingOr = state.orders.where._or
+         const { _or: incomingOr, ...rest } = payload
+         let keys = incomingOr.map(node => Object.keys(node)).flat()
+         let result = existingOr.filter(
+            node => !keys.some(key => has(node, key))
+         )
          return {
             ...state,
             orders: {
                loading: true,
                limit: 10,
                offset: 0,
-               where: { ...state.orders.where, ...payload },
+               where: {
+                  ...state.orders.where,
+                  ...rest,
+                  _or: [...result, ...incomingOr],
+               },
             },
          }
       }
@@ -146,19 +157,6 @@ const reducers = (state, { type, payload }) => {
          const { amountPaid, ...rest } = state.orders.where
          return {
             ...state,
-            orders: {
-               loading: true,
-               limit: 10,
-               offset: 0,
-               where: rest,
-            },
-         }
-      }
-      case 'CLEAR_STATION_FILTER': {
-         const { _or, ...rest } = state.orders.where
-         return {
-            ...state,
-            loading: true,
             orders: {
                loading: true,
                limit: 10,

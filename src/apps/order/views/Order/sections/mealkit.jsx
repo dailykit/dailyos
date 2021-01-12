@@ -31,6 +31,7 @@ export const MealKits = ({
 }) => {
    const { state } = useConfig()
    const { t } = useTranslation()
+   const { state: config } = useConfig()
    const [label, setLabel] = React.useState('')
    const [current, setCurrent] = React.useState({})
 
@@ -122,10 +123,16 @@ export const MealKits = ({
                size="sm"
                type="solid"
                disabled={current?.assemblyStatus === 'COMPLETED'}
-               fallBackMessage="Pending order confirmation!"
                hasAccess={Boolean(
-                  current?.order?.isAccepted && !current?.order?.isRejected
+                  current?.order?.isAccepted &&
+                     !current?.order?.isRejected &&
+                     current?.assemblyStationId === config.current_station?.id
                )}
+               fallBackMessage={
+                  current?.assemblyStationId !== config.current_station?.id
+                     ? ''
+                     : 'Pending order confirmation!'
+               }
                onClick={() =>
                   update({
                      variables: {
@@ -145,9 +152,15 @@ export const MealKits = ({
             <TextButton
                size="sm"
                type="solid"
-               fallBackMessage="Pending order confirmation!"
+               fallBackMessage={
+                  current?.assemblyStationId !== config.current_station?.id
+                     ? ''
+                     : 'Pending order confirmation!'
+               }
                hasAccess={Boolean(
-                  current?.order?.isAccepted && !current?.order?.isRejected
+                  current?.order?.isAccepted &&
+                     !current?.order?.isRejected &&
+                     current?.assemblyStationId === config.current_station?.id
                )}
                disabled={
                   current?.isAssembled ||

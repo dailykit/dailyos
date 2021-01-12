@@ -30,6 +30,7 @@ export const Inventories = ({
 }) => {
    const { state } = useConfig()
    const { t } = useTranslation()
+   const { state: config } = useConfig()
    const [label, setLabel] = React.useState('')
    const [current, setCurrent] = React.useState({})
 
@@ -123,9 +124,15 @@ export const Inventories = ({
                size="sm"
                type="solid"
                disabled={current?.assemblyStatus === 'COMPLETED'}
-               fallBackMessage="Pending order confirmation!"
+               fallBackMessage={
+                  current?.assemblyStationId !== config.current_station?.id
+                     ? ''
+                     : 'Pending order confirmation!'
+               }
                hasAccess={Boolean(
-                  current?.order?.isAccepted && !current?.order?.isRejected
+                  current?.order?.isAccepted &&
+                     !current?.order?.isRejected &&
+                     current?.assemblyStationId === config.current_station?.id
                )}
                onClick={() =>
                   update({
@@ -150,9 +157,15 @@ export const Inventories = ({
                   current?.isAssembled ||
                   current?.assemblyStatus !== 'COMPLETED'
                }
-               fallBackMessage="Pending order confirmation!"
+               fallBackMessage={
+                  current?.assemblyStationId !== config.current_station?.id
+                     ? ''
+                     : 'Pending order confirmation!'
+               }
                hasAccess={Boolean(
-                  current?.order?.isAccepted && !current?.order?.isRejected
+                  current?.order?.isAccepted &&
+                     !current?.order?.isRejected &&
+                     current?.assemblyStationId === config.current_station?.id
                )}
                onClick={() =>
                   update({

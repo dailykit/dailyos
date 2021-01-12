@@ -25,7 +25,7 @@ import {
 import { ErrorBoundary } from '../../shared/components'
 
 const App = () => {
-   const { state } = useOrder()
+   const { state, dispatch } = useOrder()
    const { state: configState } = useConfig()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [filterTunnels, openFilterTunnel, closeFilterTunnel] = useTunnel(1)
@@ -34,6 +34,50 @@ const App = () => {
    const { openPortal, closePortal, isOpen, Portal } = usePortal({
       bindTo: document && document.getElementById('notifications'),
    })
+
+   React.useEffect(() => {
+      if (configState.current_station?.id) {
+         dispatch({
+            type: 'SET_FILTER',
+            payload: {
+               _or: [
+                  {
+                     orderInventoryProducts: {
+                        assemblyStationId: {
+                           _eq: configState.current_station?.id,
+                        },
+                     },
+                  },
+                  {
+                     orderReadyToEatProducts: {
+                        assemblyStationId: {
+                           _eq: configState.current_station?.id,
+                        },
+                     },
+                  },
+                  {
+                     orderMealKitProducts: {
+                        _or: [
+                           {
+                              assemblyStationId: {
+                                 _eq: configState.current_station?.id,
+                              },
+                           },
+                           {
+                              orderSachets: {
+                                 packingStationId: {
+                                    _eq: configState.current_station?.id,
+                                 },
+                              },
+                           },
+                        ],
+                     },
+                  },
+               ],
+            },
+         })
+      }
+   }, [configState.current_station.id])
 
    React.useEffect(() => {
       if (state.delivery_config.orderId) {
