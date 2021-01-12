@@ -58,7 +58,7 @@ export const FilterTunnel = () => {
             }
             tooltip={<Tooltip identifier="app_order_tunnel_filter_heading" />}
          />
-         <Wrapper padding="16px">
+         <Wrapper padding="16px" overflowY="auto" height="calc(100% - 105px)">
             <Flex container alignItems="center" justifyContent="space-between">
                <Text as="h3">Ready By</Text>
                <IconButton
