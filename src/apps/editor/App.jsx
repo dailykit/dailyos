@@ -35,7 +35,7 @@ const App = () => {
    const gridColumns = () => {
       let column = '240px 1fr 240px'
       if (globalState.isSidebarVisible && globalState.isSidePanelVisible) {
-         column = '200px 1fr 280px'
+         column = '240px 1fr 280px'
       } else if (
          globalState.isSidebarVisible &&
          !globalState.isSidePanelVisible
@@ -45,9 +45,9 @@ const App = () => {
          !globalState.isSidebarVisible &&
          globalState.isSidePanelVisible
       ) {
-         column = '40px 1fr 280px'
+         column = '0px 1fr 280px'
       } else {
-         column = '40px 1fr 40px'
+         column = '0px 1fr 40px'
       }
       return column
    }
@@ -55,9 +55,8 @@ const App = () => {
       <StyledWrapper>
          <ThemeProvider theme={theme}>
             {/* <Context.Provider value={{ state, dispatch }}> */}
+            {/* <Header toggleSidebar={setIsSidebarVisible} /> */}
             {/* <Router basename={process.env.PUBLIC_URL}>
-                  <Header toggleSidebar={setIsSidebarVisible} />
-                  <Wrapper column={gridColumns()}>
                   <Sidebar />
                   <Main />
                   <SidePanel />
@@ -65,13 +64,16 @@ const App = () => {
                </Router> */}
             <Router basename={process.env.PUBLIC_URL}>
                <Header toggleSidebar={sideBarHandler} />
-               <Sidebar
-                  visible={isSidebarVisible}
-                  toggleSidebar={sideBarHandler}
-               />
-               <ErrorBoundary rootRoute="/apps/crm">
-                  <Main />
-               </ErrorBoundary>
+               <Wrapper column={gridColumns()}>
+                  <Sidebar
+                     visible={isSidebarVisible}
+                     toggleSidebar={sideBarHandler}
+                  />
+                  <ErrorBoundary rootRoute="/apps/crm">
+                     <Main />
+                  </ErrorBoundary>
+                  <SidePanel />
+               </Wrapper>
             </Router>
             {/* </Context.Provider> */}
          </ThemeProvider>

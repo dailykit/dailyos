@@ -25,7 +25,8 @@ import {
    ChevronDown,
    DeleteIcon,
 } from '../../../../shared/assets/icons'
-import { Context } from '../../state'
+// import { Context } from '../../state'
+import { useTabs, useGlobalContext } from '../../context'
 import {
    PanelWrapper,
    Icon,
@@ -41,8 +42,10 @@ import { useDnd } from '../../../../shared/components/DragNDrop/useDnd'
 import { toast } from 'react-toastify'
 
 const Panel = () => {
+   const { tab, tabs } = useTabs()
+   const { updateLinkedFile, globalState } = useGlobalContext()
    const { initiatePriority } = useDnd()
-   const { state, dispatch } = React.useContext(Context)
+   // const { state, dispatch } = React.useContext(Context)
    const [cssTunnels, openCssTunnel, closeCssTunnel] = useTunnel(1)
    const [jsTunnels, openJsTunnel, closeJsTunnel] = useTunnel(1)
    const [selectedCssFiles, setSelectedCssFiles] = React.useState([])
@@ -70,10 +73,11 @@ const Panel = () => {
    })
 
    //query to load all files in dropdown
+   console.log(tab)
 
    const { loading: linkLoading } = useSubscription(FILE_LINKS, {
       variables: {
-         path: state?.tabs[state?.currentTab]?.path,
+         path: tab?.filePath.replace(process.env.REACT_APP_ROOT_FOLDER, ''),
       },
       onSubscriptionData: ({
          subscriptionData: { data: { editor_file = [] } = {} } = {},
@@ -117,16 +121,13 @@ const Panel = () => {
 
          setSelectedCssFiles([...cssResult])
          setSelectedJsFiles([...jsResult])
-         dispatch({
-            type: 'UPDATE_LINKED_FILE',
-            payload: {
-               path: state?.tabs[state?.currentTab]?.path,
-               linkedCss: cssLinks,
-               linkedJs: jsLinks,
-            },
+         updateLinkedFile({
+            path: tab.path,
+            linkedCss: cssLinks,
+            linkedJs: jsLinks,
          })
       },
-      skip: !state && !state?.tabs?.length,
+      skip: !tab && !tabs?.length,
    })
 
    //mutation for removing linked css
@@ -177,8 +178,8 @@ const Panel = () => {
 
    if (linkLoading) return <Loader />
    return (
-      <PanelWrapper isSidePanelVisible={state.isSidePanelVisible}>
-         {state?.tabs[state?.currentTab]?.path.split('.').pop() === 'html' ? (
+      <PanelWrapper isSidePanelVisible={globalState.isSidePanelVisible}>
+         {tab?.path.split('.').pop() === 'html' ? (
             <Parent>
                <Node
                   isOpen={node.linkCss.isOpen}
@@ -186,7 +187,7 @@ const Panel = () => {
                      setNode({
                         ...node,
                         linkCss: {
-                           ...state.linkCss,
+                           ...node.linkCss,
                            isOpen: !node.linkCss.isOpen,
                         },
                      })
@@ -199,7 +200,7 @@ const Panel = () => {
                         setNode({
                            ...node,
                            linkCss: {
-                              ...state.linkCss,
+                              ...node.linkCss,
                               isOpen: !node.linkCss.isOpen,
                            },
                         })
@@ -234,10 +235,7 @@ const Panel = () => {
                                     <span
                                        className="delete"
                                        onClick={() =>
-                                          unlinkCss(
-                                             state?.tabs[state?.currentTab]?.id,
-                                             file.id
-                                          )
+                                          unlinkCss(tab?.id, file.id)
                                        }
                                     >
                                        <DeleteIcon color="black" />
@@ -256,7 +254,7 @@ const Panel = () => {
                      setNode({
                         ...node,
                         linkJs: {
-                           ...state.linkJs,
+                           ...node.linkJs,
                            isOpen: !node.linkJs.isOpen,
                         },
                      })
@@ -269,7 +267,7 @@ const Panel = () => {
                         setNode({
                            ...node,
                            linkJs: {
-                              ...state.linkJs,
+                              ...node.linkJs,
                               isOpen: !node.linkJs.isOpen,
                            },
                         })
@@ -302,12 +300,7 @@ const Panel = () => {
                                     <span>{file.title}</span>
                                     <span
                                        className="delete"
-                                       onClick={() =>
-                                          unlinkJs(
-                                             state?.tabs[state?.currentTab]?.id,
-                                             file.id
-                                          )
-                                       }
+                                       onClick={() => unlinkJs(tab.id, file.id)}
                                     >
                                        <DeleteIcon color="black" />
                                     </span>

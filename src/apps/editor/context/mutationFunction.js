@@ -21,7 +21,7 @@ export const useDailyGit = () => {
          toast.error('Something went wrong!')
          console.log(error)
       },
-      refetchQueries: ['getFolderWithFiles'],
+      refetchQueries: ['getFolderWithFiles', 'getNestedFolders'],
    })
 
    const [createFile] = useMutation(CREATE_FILE, {
@@ -32,7 +32,7 @@ export const useDailyGit = () => {
          toast.error('Something went wrong!')
          console.log(error)
       },
-      refetchQueries: ['getFolderWithFiles'],
+      refetchQueries: ['getFolderWithFiles', 'getNestedFolders'],
    })
 
    const [renameFolder] = useMutation(RENAME_FOLDER, {
@@ -43,7 +43,7 @@ export const useDailyGit = () => {
          toast.error('Something went wrong!')
          console.log(error)
       },
-      refetchQueries: ['getFolderWithFiles'],
+      refetchQueries: ['getFolderWithFiles', 'getNestedFolders'],
    })
 
    const [renameFile] = useMutation(RENAME_FILE, {
@@ -54,7 +54,7 @@ export const useDailyGit = () => {
          toast.error('Something went wrong!')
          console.log(error)
       },
-      refetchQueries: ['getFolderWithFiles'],
+      refetchQueries: ['getFolderWithFiles', 'getNestedFolders'],
    })
 
    const [deleteFolder] = useMutation(DELETE_FOLDER, {
@@ -65,7 +65,7 @@ export const useDailyGit = () => {
          toast.error('Something went wrong!')
          console.log(error)
       },
-      refetchQueries: ['getFolderWithFiles'],
+      refetchQueries: ['getFolderWithFiles', 'getNestedFolders'],
    })
 
    const [deleteFile] = useMutation(DELETE_FILE, {
@@ -76,7 +76,7 @@ export const useDailyGit = () => {
          toast.error('Something went wrong!')
          console.log(error)
       },
-      refetchQueries: ['getFolderWithFiles'],
+      refetchQueries: ['getFolderWithFiles', 'getNestedFolders'],
    })
 
    const [recordFile] = useMutation(INSERT_RECORD, {
@@ -87,7 +87,7 @@ export const useDailyGit = () => {
          toast.error('Something went wrong!')
          console.log(error)
       },
-      refetchQueries: ['getFolderWithFiles'],
+      refetchQueries: ['getFolderWithFiles', 'getNestedFolders'],
    })
    const [updateRecoredFile] = useMutation(UPDATE_RECORD, {
       onCompleted: () => {
@@ -97,7 +97,7 @@ export const useDailyGit = () => {
          toast.error('Something went wrong!')
          console.log(error)
       },
-      refetchQueries: ['getFolderWithFiles'],
+      refetchQueries: ['getFolderWithFiles', 'getNestedFolders'],
    })
    const [deleteRecoredFile] = useMutation(DELETE_RECORD, {
       onCompleted: () => {
@@ -107,7 +107,7 @@ export const useDailyGit = () => {
          toast.error('Something went wrong!')
          console.log(error)
       },
-      refetchQueries: ['getFolderWithFiles'],
+      refetchQueries: ['getFolderWithFiles', 'getNestedFolders'],
    })
 
    return {

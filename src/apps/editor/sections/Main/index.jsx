@@ -32,9 +32,29 @@ import {
 } from '../../assets/Icons'
 
 const Main = () => {
+   const { globalState, setPopupInfo, setContextMenuInfo } = useGlobalContext()
+   const mainWidth = () => {
+      let width = '100vw'
+      if (globalState.isSidebarVisible && globalState.isSidePanelVisible) {
+         width = `calc(${width} - 520px)`
+      } else if (
+         globalState.isSidebarVisible &&
+         !globalState.isSidePanelVisible
+      ) {
+         width = `calc(${width} - 280px)`
+      } else if (
+         !globalState.isSidebarVisible &&
+         globalState.isSidePanelVisible
+      ) {
+         width = `calc(${width} - 280px)`
+      } else {
+         width = `calc(${width} - 40px)`
+      }
+      return width
+   }
+
    const now = moment().toISOString()
    const { tab, tabs } = useTabs()
-   const { globalState, setPopupInfo, setContextMenuInfo } = useGlobalContext()
    const {
       createFile,
       createFolder,
@@ -153,26 +173,6 @@ const Main = () => {
       })
    }
 
-   const mainWidth = () => {
-      let width = '100vw'
-      if (globalState.isSidebarVisible && globalState.isSidePanelVisible) {
-         width = `calc(${width} - 480px)`
-      } else if (
-         globalState.isSidebarVisible &&
-         !globalState.isSidePanelVisible
-      ) {
-         width = `calc(${width} - 280px)`
-      } else if (
-         !globalState.isSidebarVisible &&
-         globalState.isSidePanelVisible
-      ) {
-         width = `calc(${width} - 320px)`
-      } else {
-         width = `calc(${width} - 80px)`
-      }
-      return width
-   }
-
    const mutationHandler = (type, nodeType) => {
       if (type === 'create') {
          if (nodeType === 'FILE') {
@@ -277,39 +277,39 @@ const Main = () => {
    }
 
    return (
-      // <MainWrapper width={mainWidth()}>
-      <main>
-         <Switch>
-            <Route path="/editor" component={Home} exact />
-            <Route path="/editor/:path+" component={Editor} exact />
-         </Switch>
+      <MainWrapper width={mainWidth()}>
+         <main>
+            <Switch>
+               <Route path="/editor" component={Home} exact />
+               <Route path="/editor/:path+" component={Editor} exact />
+            </Switch>
 
-         {/* </MainWrapper> */}
-         <FileType
-            show={globalState.popupInfo.fileTypePopup}
-            closePopup={closePopup}
-            setFileType={type => selectFileType(type)}
-         />
-         <FormType
-            show={globalState.popupInfo.formTypePopup}
-            closePopup={closePopup}
-            action={globalState.contextMenuInfo.action}
-            treeViewData={nestedFolders}
-            nodePath={
-               globalState?.contextMenuInfo?.contextPath || './templates'
-            }
-            nodeType={globalState.contextMenuInfo.type}
-            name={name}
-            setName={name => setName(name)}
-            setPath={path => setPath(path)}
-            mutationHandler={(action, type) => mutationHandler(action, type)}
-         />
-         <CreateType
-            show={globalState.popupInfo.createTypePopup}
-            closePopup={closePopup}
-            setCreateType={type => setCreateType(type)}
-         />
-      </main>
+            <FileType
+               show={globalState.popupInfo.fileTypePopup}
+               closePopup={closePopup}
+               setFileType={type => selectFileType(type)}
+            />
+            <FormType
+               show={globalState.popupInfo.formTypePopup}
+               closePopup={closePopup}
+               action={globalState.contextMenuInfo.action}
+               treeViewData={nestedFolders}
+               nodePath={
+                  globalState?.contextMenuInfo?.contextPath || './templates'
+               }
+               nodeType={globalState.contextMenuInfo.type}
+               name={name}
+               setName={name => setName(name)}
+               setPath={path => setPath(path)}
+               mutationHandler={(action, type) => mutationHandler(action, type)}
+            />
+            <CreateType
+               show={globalState.popupInfo.createTypePopup}
+               closePopup={closePopup}
+               setCreateType={type => setCreateType(type)}
+            />
+         </main>
+      </MainWrapper>
    )
 }
 

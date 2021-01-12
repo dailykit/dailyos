@@ -26,14 +26,22 @@ import { Tab } from '@reach/tabs'
 
 const Editor = () => {
    const { tab, tabs, addTab } = useTabs()
-   const { globalState } = useGlobalContext()
+   const {
+      globalState,
+      setDraft,
+      setVersion,
+      removeVersion,
+      updateLastSaved,
+      removeDraft,
+   } = useGlobalContext()
    const { path } = useParams()
    const history = useHistory()
    const monacoRef = useRef()
    const editorRef = useRef()
-   // const { globalState, dispatch } = React.useContext(Context)
+   const webBuilderRef = useRef()
 
    const [code, setCode] = React.useState('')
+   const [undoManager, setUndoManager] = React.useState(false)
    const [file, setFile] = React.useState({})
    const [isModalVisible, toggleModal] = React.useState(false)
    const [updateFile] = useMutation(UPDATE_FILE)
@@ -54,6 +62,9 @@ const Editor = () => {
    ])
    const [isDark, setIsDark] = React.useState(false)
    const [isWebBuilderOpen, setIsWebBuilderOpen] = React.useState(false)
+   const callWebBuilderFunc = action => {
+      webBuilderRef.current.func(action)
+   }
 
    const { loading } = useQuery(GET_FILE_FETCH, {
       variables: {
@@ -166,35 +177,34 @@ const Editor = () => {
       })
    }
 
-   // const draft = () => {
-   //    const code = editorRef.current.getValue()
-   //    dispatch({ type: 'UPDATE_LAST_SAVED' })
-   //    draftFile({
-   //       variables: {
-   //          path: path,
-   //          content: code,
-   //       },
-   //    })
-   // }
+   const draft = () => {
+      const code = editorRef.current.getValue()
+      updateLastSaved({
+         path,
+      })
+      draftFile({
+         variables: {
+            path: path,
+            content: code,
+         },
+      })
+   }
 
-   // const viewCurrentVersion = () => {
-   //    setCode(tab.draft)
-   //    dispatch({ type: 'REMOVE_VERSION', payload: path })
-   //    dispatch({ type: 'REMOVE_DRAFT', payload: path })
-   // }
+   const viewCurrentVersion = () => {
+      setCode(tab.draft)
+      removeVersion({ path })
+      removeDraft({ path })
+   }
 
-   // const selectVersion = contentVersion => {
-   //    if (tabs.find(tab => tab.filePath === path).draft === '') {
-   //       dispatch({
-   //          type: 'SET_DRAFT',
-   //          payload: {
-   //             content: editorRef.current.getValue(),
-   //             path: path,
-   //          },
-   //       })
-   //    }
-   //    setCode(contentVersion)
-   // }
+   const selectVersion = contentVersion => {
+      if (tabs.find(tab => tab.filePath === path).draft === '') {
+         setDraft({
+            content: editorRef.current.getValue(),
+            path: path,
+         })
+      }
+      setCode(contentVersion)
+   }
 
    const options = {
       fontFamily: 'monospace',
@@ -216,9 +226,19 @@ const Editor = () => {
       smoothScrolling: true,
    }
 
-   const setDarkTheme = () => {
-      setIsDark(!isDark)
+   const undo = () => {
+      editorRef.current.focus()
+      editorRef.current.getModel().undo()
    }
+
+   const redo = () => {
+      editorRef.current.focus()
+      editorRef.current.getModel().redo()
+   }
+
+   // const setDarkTheme = () => {
+   //    setIsDark(!isDark)
+   // }
 
    // const langFormatProvider = {
    //    provideDocumentFormattingEdits(model, options, token) {
@@ -254,7 +274,7 @@ const Editor = () => {
    }, [addTab, tab])
    return (
       <>
-         <div style={{ position: 'absolute', margin: '16px 0' }}>
+         {/* <div style={{ position: 'absolute', margin: '16px 0' }}>
             <Flex container alignItems="center" justifyContent="space-around">
                <Form.Label htmlFor="theme" title="theme">
                   Dark Theme
@@ -265,7 +285,7 @@ const Editor = () => {
                   value={isDark}
                />
             </Flex>
-         </div>
+         </div> */}
          <EditorWrapper isHistoryVisible={globalState.isHistoryVisible}>
             {isModalVisible && (
                <ReferenceFile
@@ -277,10 +297,17 @@ const Editor = () => {
 
             <EditorOptions
                publish={publish}
-               // draft={draft}
+               draft={draft}
                lastSaved={file.lastSaved}
                isBuilderOpen={val => setIsWebBuilderOpen(val)}
+               isDarkMode={val => setIsDark(val)}
                language={language}
+               undoEditor={undo}
+               redoEditor={redo}
+               undoWebBuilder={() => callWebBuilderFunc('core:undo')}
+               redoWebBuilder={() => callWebBuilderFunc('core:redo')}
+               fullscreen={() => callWebBuilderFunc('core:fullscreen')}
+               deviceManager={command => callWebBuilderFunc(command)}
             />
 
             {!isWebBuilderOpen ? (
@@ -300,16 +327,17 @@ const Editor = () => {
                   path={tab?.filePath}
                   linkedCss={tab?.linkedCss}
                   linkedJs={tab?.linkedJs}
+                  ref={webBuilderRef}
                />
             )}
-            {/* {globalState.isHistoryVisible && Object.keys(file).length > 0 && (
+            {globalState.isHistoryVisible && Object.keys(file).length > 0 && (
                <History
                   commits={file.commits}
                   path={path}
                   selectVersion={selectVersion}
                   viewCurrentVersion={viewCurrentVersion}
                />
-            )} */}
+            )}
          </EditorWrapper>
       </>
    )

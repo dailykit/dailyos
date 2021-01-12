@@ -7,6 +7,7 @@ export const MainWrapper = styled.main(
       border: 1px solid ${theme.border.color};
       position: relative;
       width: ${width};
+      height: 100vh;
    `
 )
 

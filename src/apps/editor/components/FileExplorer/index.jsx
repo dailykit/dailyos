@@ -14,11 +14,7 @@ import ContextMenu from '../ContextMenu'
 import { FileExplorerWrapper } from './styles'
 
 // Queries
-import {
-   GET_EXPLORER_CONTENT,
-   GET_NESTED_FOLDER,
-   GET_FILE,
-} from '../../graphql'
+import { GET_EXPLORER_CONTENT, GET_FILE } from '../../graphql'
 import { toast } from 'react-toastify'
 
 // Helpers
@@ -26,8 +22,7 @@ import toggleNode from '../../utils/toggleNode'
 
 const FileExplorer = () => {
    const { addTab } = useTabs()
-   const { onToggleInfo, globalState } = useGlobalContext()
-   // const { state, dispatch } = React.useContext(Context)
+   const { onToggleInfo } = useGlobalContext()
    const fileRef = React.useRef({})
    const [data, setData] = React.useState([])
    const nodeRef = React.useRef('')
@@ -44,13 +39,6 @@ const FileExplorer = () => {
    } = useQuery(GET_EXPLORER_CONTENT, {
       variables: { path: '' },
    })
-   const {
-      loading: queryLoading2,
-      error: queryError2,
-      data: { getNestedFolders: { children: nestedFolders = [] } = {} } = {},
-   } = useQuery(GET_NESTED_FOLDER, {
-      variables: { path: '' },
-   })
 
    const [getFileQuery, { loading: fileLoading }] = useLazyQuery(GET_FILE, {
       onError: error => {
@@ -65,11 +53,6 @@ const FileExplorer = () => {
             data.editor_file.length > 0 &&
             Object.keys(fileRef.current).length !== 0
          ) {
-            const name = fileRef.current.name
-            const path = fileRef.current.path.replace(
-               process.env.REACT_APP_ROOT_FOLDER,
-               ''
-            )
             const payload = {
                name: fileRef.current.name,
                path: `/editor${fileRef.current.path.replace(
@@ -129,7 +112,6 @@ const FileExplorer = () => {
       }
       if (node.type === 'file') {
          fileRef.current = node
-         console.log('fileExplorer', node)
          getFileQuery({
             variables: {
                path: node.path.replace(process.env.REACT_APP_ROOT_FOLDER, ''),
@@ -175,11 +157,7 @@ const FileExplorer = () => {
             onToggle={onToggle}
             showContextMenu={(e, node) => showContextMenu(e, node, 'show')}
          />
-         <ContextMenu
-            style={style}
-            node={nodeRef.current}
-            treeViewData={nestedFolders}
-         />
+         <ContextMenu style={style} node={nodeRef.current} />
       </FileExplorerWrapper>
    )
 }

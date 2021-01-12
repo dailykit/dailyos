@@ -6,6 +6,6 @@ export const Wrapper = styled.div(
       grid-template-columns: ${column};
       grid-template-areas: 'sidebar main sidePanel';
       width: 100vw;
-      height: 100vh;
+      height: 10vh;
    `
 )

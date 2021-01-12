@@ -42,7 +42,7 @@ const reducers = (state, { type, payload }) => {
                      title: payload.name,
                      name: payload.name,
                      path: payload.path,
-                     filePath: payload.path,
+                     filePath: payload.filePath,
                      draft: '',
                      version: null,
                      lastSaved: '',
@@ -92,6 +92,100 @@ const reducers = (state, { type, payload }) => {
             contextMenuInfo: payload,
          }
          return newState
+      }
+
+      case 'SET_DRAFT': {
+         const tabs = state.tabs
+         const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
+         if (tabIndex !== -1) {
+            tabs[tabIndex] = {
+               ...tabs[tabIndex],
+               draft: payload.content,
+            }
+            const newState = {
+               ...state,
+               tabs: tabs,
+            }
+            return newState
+         }
+      }
+      case 'REMOVE_DRAFT': {
+         const tabs = state.tabs
+         const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
+         if (tabIndex !== -1) {
+            tabs[tabIndex] = {
+               ...tabs[tabIndex],
+               draft: '',
+            }
+            const newState = {
+               ...state,
+               tabs: tabs,
+            }
+            return newState
+         }
+      }
+      case 'SET_VERSION': {
+         const tabs = state.tabs
+         const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
+         if (tabIndex !== -1) {
+            tabs[tabIndex] = {
+               ...tabs[tabIndex],
+               version: payload.version,
+            }
+            const newState = {
+               ...state,
+               tabs: tabs,
+            }
+            return newState
+         }
+      }
+      case 'REMOVE_VERSION': {
+         const tabs = state.tabs
+         const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
+         if (tabIndex !== -1) {
+            tabs[state.currentTab] = {
+               ...tabs[state.currentTab],
+               version: null,
+            }
+            const newState = {
+               ...state,
+               tabs: tabs,
+            }
+            return newState
+         }
+      }
+      case 'UPDATE_LAST_SAVED': {
+         const tabs = state.tabs
+         const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
+         if (tabIndex !== -1) {
+            tabs[tabIndex] = {
+               ...tabs[tabIndex],
+               lastSaved: Date.now(),
+            }
+            const newState = {
+               ...state,
+               tabs: tabs,
+            }
+            return newState
+         }
+      }
+      case 'UPDATE_LINKED_FILE': {
+         if (state.tabs.some(tab => tab.path === payload.path)) {
+            const tabId =
+               state.tabs.findIndex(tab => tab.path === payload.path) >= 0 &&
+               state.tabs.findIndex(tab => tab.path === payload.path)
+            const tabs = state.tabs
+            tabs[tabId] = {
+               ...tabs[tabId],
+               linkedCss: payload.linkedCss,
+               linkedJs: payload.linkedJs,
+            }
+            const newState = {
+               ...state,
+               tabs: tabs,
+            }
+            return newState
+         }
       }
 
       // Store Tab Data
@@ -259,6 +353,43 @@ export const useGlobalContext = () => {
       [dispatch, history]
    )
 
+   const setDraft = React.useCallback(data => {
+      dispatch({
+         type: 'SET_DRAFT',
+         payload: data,
+      })
+   })
+   const removeDraft = React.useCallback(data => {
+      dispatch({
+         type: 'REMOVE_DRAFT',
+         payload: data,
+      })
+   })
+   const setVersion = React.useCallback(data => {
+      dispatch({
+         type: 'SET_VERSION',
+         payload: data,
+      })
+   })
+   const removeVersion = React.useCallback(data => {
+      dispatch({
+         type: 'REMOVE_VERSION',
+         payload: data,
+      })
+   })
+   const updateLastSaved = React.useCallback(data => {
+      dispatch({
+         type: 'UPDATE_LAST_SAVED',
+         payload: data,
+      })
+   })
+   const updateLinkedFile = React.useCallback(data => {
+      dispatch({
+         type: 'UPDATE_LINKED_FILE',
+         payload: data,
+      })
+   })
+
    return {
       toggleSideBar,
       toggleSidePanel,
@@ -266,5 +397,11 @@ export const useGlobalContext = () => {
       onToggleInfo,
       setPopupInfo,
       setContextMenuInfo,
+      setDraft,
+      removeDraft,
+      setVersion,
+      removeVersion,
+      updateLastSaved,
+      updateLinkedFile,
    }
 }

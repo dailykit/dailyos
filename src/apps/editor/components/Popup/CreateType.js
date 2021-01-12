@@ -6,11 +6,7 @@ import { Cross, Type } from './style'
 
 export default function CreateType({ show, closePopup, setCreateType }) {
    return (
-      <Popup
-         show={show}
-         size="360px"
-         style={{ position: 'absolute', top: '40px', left: '6px' }}
-      >
+      <Popup show={show} size="360px">
          <Flex container alignItems="start" justifyContent="space-between">
             <Popup.Text>Create</Popup.Text>
             <Cross onClick={() => closePopup()}>{CloseIcon}</Cross>

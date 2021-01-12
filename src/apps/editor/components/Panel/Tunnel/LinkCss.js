@@ -4,7 +4,8 @@ import { toast } from 'react-toastify'
 import { TunnelHeader, Tunnel, Tunnels, Dropdown } from '@dailykit/ui'
 import { GET_FILES, LINK_CSS_FILES } from '../../../graphql'
 import { TunnelBody } from './style'
-import { Context } from '../../../state'
+// import { Context } from '../../../state'
+import { useTabs } from '../../../context'
 
 export default function LinkCss({
    tunnels,
@@ -12,7 +13,8 @@ export default function LinkCss({
    closeTunnel,
    linkCssIds,
 }) {
-   const { state, dispatch } = React.useContext(Context)
+   const { tab } = useTabs()
+   // const { state, dispatch } = React.useContext(Context)
    const [cssOptions, setCssOptions] = React.useState([])
    const [linkCssFiles, setLinkCssFiles] = React.useState([])
    const files = linkCssIds.map(file => {
@@ -67,7 +69,7 @@ export default function LinkCss({
    const selectedOptionHandler = options => {
       const result = options.map(option => {
          return {
-            guiFileId: state?.tabs[state?.currentTab].id,
+            guiFileId: tab.id,
             cssFileId: option?.id,
          }
       })
