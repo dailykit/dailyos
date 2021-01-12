@@ -7,7 +7,7 @@ export default function LinkFiles({ tunnels, openTunnel, closeTunnel }) {
    return (
       <div>
          <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1}>
+            <Tunnel layer={1} size="sm">
                <TunnelHeader title="Link Files" close={() => closeTunnel(1)} />
                <TunnelBody>
                   <Panel />

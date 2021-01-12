@@ -39,6 +39,7 @@ const Builder = React.forwardRef(
          return url
       })
       const [mount, setMount] = useState(false)
+      const toggler = useRef(true)
 
       console.log('before initialize', linkedCss)
 
@@ -284,6 +285,69 @@ const Builder = React.forwardRef(
             editor.setComponents(content)
          }
          // editor.Panels.removePanel('views')
+         if (!editor.Panels.getButton('views', 'sidePanelToggler')) {
+            editor.Panels.addButton('views', {
+               id: 'sidePanelToggler',
+               className: 'fa fa-chevron-right',
+               command: function (editor) {
+                  console.log(editor.Panels.getPanel('views'))
+                  console.log(editor.Panels.getButton('views', 'open-sm'))
+                  toggler.current = !toggler.current
+                  editor.Panels.getButton('views', 'sidePanelToggler').set(
+                     'className',
+                     toggler.current
+                        ? 'fa fa-chevron-right icon-blank'
+                        : 'fa fa-chevron-left icon-blank'
+                  )
+                  if (editor.Panels.getPanel('views-container')) {
+                     editor.Panels.getPanel('views-container').set(
+                        'visible',
+                        toggler.current
+                     )
+                     editor.Panels.getButton('views', 'open-sm').set(
+                        'attributes',
+                        {
+                           style: `display:${
+                              toggler.current ? 'block' : 'none'
+                           }`,
+                        }
+                     )
+                     editor.Panels.getButton('views', 'open-tm').set(
+                        'attributes',
+                        {
+                           style: `display:${
+                              toggler.current ? 'block' : 'none'
+                           }`,
+                        }
+                     )
+                     editor.Panels.getButton('views', 'open-layers').set(
+                        'attributes',
+                        {
+                           style: `display:${
+                              toggler.current ? 'block' : 'none'
+                           }`,
+                        }
+                     )
+                     editor.Panels.getButton('views', 'open-blocks').set(
+                        'attributes',
+                        {
+                           style: `display:${
+                              toggler.current ? 'block' : 'none'
+                           }`,
+                        }
+                     )
+                     editor.Panels.getButton('views', 'open-blocks').set(
+                        'active',
+                        true
+                     )
+                  }
+               },
+
+               active: false,
+            })
+         }
+
+         // editor.Panels.getPanel('views').set('visible', false)
          editor.Panels.removePanel('commands')
          editor.Panels.removePanel('devices-c')
          editor.Panels.removePanel('options')
