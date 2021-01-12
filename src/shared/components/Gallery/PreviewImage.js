@@ -1,8 +1,22 @@
 import React from 'react'
-import { WrapperDiv, Image, Images, DeleteDiv, Wrapper } from './styled'
+import {
+   WrapperDiv,
+   Image,
+   Images,
+   DeleteDiv,
+   EditDiv,
+   Wrapper,
+} from './styled'
 import { IconButton, ButtonTile } from '@dailykit/ui'
-import { DeleteIcon } from '../../assets/icons'
-const PreviewImage = ({ images, removeImage, openTunnel, editImage }) => {
+import { DeleteIcon, EditIcon } from '../../assets/icons'
+const PreviewImage = ({
+   images,
+   current,
+   removeImage,
+   openTunnel,
+   setActive,
+   editImage,
+}) => {
    return (
       <Wrapper>
          <Images>
@@ -10,13 +24,24 @@ const PreviewImage = ({ images, removeImage, openTunnel, editImage }) => {
                <WrapperDiv key={`img${index}`}>
                   <Image
                      key={`img${index}`}
+                     active={index === current}
                      src={img}
                      alt="small product"
-                     onClick={e =>
-                        e.stopPropagation() || editImage(index, true)
-                     }
+                     onClick={e => e.stopPropagation() || setActive(index)}
                   />
-                  <DeleteDiv active={true}>
+                  <EditDiv active={index === current}>
+                     <IconButton
+                        size="sm"
+                        type="solid"
+                        onClick={e =>
+                           e.stopPropagation() || editImage(index, true)
+                        }
+                     >
+                        <EditIcon />
+                     </IconButton>
+                  </EditDiv>
+
+                  <DeleteDiv active={index === current}>
                      <IconButton
                         size="sm"
                         type="solid"
