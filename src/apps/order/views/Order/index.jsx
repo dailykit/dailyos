@@ -45,7 +45,7 @@ const Order = () => {
    const params = useParams()
    const { tab, addTab } = useTabs()
    const { state: config } = useConfig()
-   const { state, switchView, dispatch } = useOrder()
+   const { switchView, dispatch } = useOrder()
    const [isThirdParty, setIsThirdParty] = React.useState(false)
    const [updateOrder] = useMutation(MUTATIONS.ORDER.UPDATE, {
       onCompleted: () => {
@@ -71,11 +71,6 @@ const Order = () => {
       {
          variables: {
             id: params.id,
-            ...(config.current_station?.id && {
-               assemblyStationId: {
-                  _eq: config.current_station?.id,
-               },
-            }),
          },
          onSubscriptionData: ({
             subscriptionData: { data: { order = {} } = {} } = {},
@@ -92,11 +87,6 @@ const Order = () => {
    } = useSubscription(QUERIES.ORDER.MEALKITS, {
       variables: {
          orderId: params.id,
-         ...(config.current_station?.id && {
-            packingStationId: {
-               _eq: config.current_station?.id,
-            },
-         }),
       },
    })
 
@@ -107,11 +97,6 @@ const Order = () => {
    } = useSubscription(QUERIES.ORDER.READY_TO_EAT.LIST, {
       variables: {
          orderId: params.id,
-         ...(config.current_station?.id && {
-            packingStationId: {
-               _eq: config.current_station?.id,
-            },
-         }),
       },
    })
 
@@ -122,11 +107,6 @@ const Order = () => {
    } = useSubscription(QUERIES.ORDER.INVENTORY.LIST, {
       variables: {
          orderId: params.id,
-         ...(config.current_station?.id && {
-            packingStationId: {
-               _eq: config.current_station?.id,
-            },
-         }),
       },
    })
 
