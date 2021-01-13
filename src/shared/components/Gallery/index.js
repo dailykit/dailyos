@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
+import { Tunnels, Tunnel, useTunnel, IconButton } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import AssetTunnel from './upload'
 import useGallery from './useGallery'
 import PreviewImage from './PreviewImage'
 import SingleImage from './SingleImage'
-import { MainWrap, ImgWrapper, Trail } from './styled'
+import { MainWrap, ImgWrapper, Trail, EditDiv, DeleteDiv } from './styled'
 import ErrorBoundary from '../ErrorBoundary'
+import { DeleteIcon, EditIcon } from '../../assets/icons'
 
 export default function ImageGallery({ list = [], isMulti = false, onChange }) {
    const {
@@ -46,7 +47,6 @@ export default function ImageGallery({ list = [], isMulti = false, onChange }) {
          console.log("List contain multiple images, Set isMulti 'true' instead")
       }
    }, [list, images, isMulti])
-
    return (
       <div>
          {isMulti ? (
@@ -58,19 +58,32 @@ export default function ImageGallery({ list = [], isMulti = false, onChange }) {
                         alt="Product Preview"
                         style={{ objectFit: 'contain' }}
                      />
+                     <EditDiv>
+                        <IconButton
+                           size="sm"
+                           type="solid"
+                           onClick={() => editHandler(current, true)}
+                        >
+                           <EditIcon />
+                        </IconButton>
+                     </EditDiv>
+
+                     <DeleteDiv>
+                        <IconButton
+                           size="sm"
+                           type="solid"
+                           onClick={() => remove(current)}
+                        >
+                           <DeleteIcon />
+                        </IconButton>
+                     </DeleteDiv>
                   </ImgWrapper>
                )}
                <Trail hasImage={images.length > 0}>
                   <PreviewImage
                      images={list}
                      current={current}
-                     removeImage={index => remove(index)}
-                     setActive={index => {
-                        setActive(index)
-                     }}
-                     editImage={(index, editMode) =>
-                        editHandler(index, editMode)
-                     }
+                     setActive={index => setActive(index)}
                      openTunnel={openTunnel}
                   />
                </Trail>

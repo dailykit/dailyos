@@ -7,7 +7,6 @@ export const Images = styled.div`
 `
 
 export const DeleteDiv = styled.div`
-   display: ${({ active }) => (active ? `block` : 'none')};
    position: absolute;
    right: 6px;
    top: 6px;
@@ -18,7 +17,6 @@ export const DeleteDiv = styled.div`
    }
 `
 export const EditDiv = styled.div`
-   display: ${({ active }) => (active ? `block` : 'none')};
    position: absolute;
    right: 42px;
    top: 6px;
