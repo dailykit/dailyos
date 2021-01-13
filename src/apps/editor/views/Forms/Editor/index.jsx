@@ -2,7 +2,7 @@ import React, { useRef } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import MonacoEditor, { monaco } from '@monaco-editor/react'
 import { useMutation } from '@apollo/react-hooks'
-import { Flex, Form } from '@dailykit/ui'
+import { Flex, Form, Loader } from '@dailykit/ui'
 import PropTypes from 'prop-types'
 import { toast } from 'react-toastify'
 import { useQuery } from '@apollo/react-hooks'
@@ -19,10 +19,6 @@ import { GET_FILE_FETCH, UPDATE_FILE, DRAFT_FILE } from '../../../graphql'
 
 // Styles
 import { EditorWrapper } from './styles'
-
-// Helpers
-import fetchCall from '../../../utils/fetchCall'
-import { Tab } from '@reach/tabs'
 
 const Editor = () => {
    const { tab, tabs, addTab } = useTabs()
@@ -240,6 +236,8 @@ const Editor = () => {
          history.push('/editor')
       }
    }, [addTab, tab])
+
+   if (loading) return <Loader />
    return (
       <>
          <EditorWrapper isHistoryVisible={globalState.isHistoryVisible}>

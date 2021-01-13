@@ -1,35 +1,15 @@
 import React from 'react'
-import { TabPanels } from '@reach/tabs'
 import { Switch, Route } from 'react-router-dom'
 import moment from 'moment'
-// State
-import { Context } from '../../state'
 import { useGlobalContext, useTabs, useDailyGit } from '../../context'
 import { FormType, FileType, CreateType } from '../../components/Popup'
 import { useQuery } from '@apollo/react-hooks'
 import { GET_NESTED_FOLDER } from '../../graphql'
 import { Home, Editor } from '../../views'
-// Components
-
-// Styles
-import {
-   MainWrapper,
-   TabsNav,
-   TabOptions,
-   StyledTabs,
-   StyledTabList,
-   StyledTab,
-   StyledTabPanel,
-} from './styles'
-
-// Assets
-import {
-   CloseIcon,
-   CaretLeftIcon,
-   CaretRightIcon,
-   CaretDownIcon,
-   CaretUpIcon,
-} from '../../assets/Icons'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../shared/utils'
+import { Loader } from '@dailykit/ui'
+import { MainWrapper } from './styles'
 
 const Main = () => {
    const { globalState, setPopupInfo, setContextMenuInfo } = useGlobalContext()
@@ -63,11 +43,14 @@ const Main = () => {
    const fileTypeRef = React.useRef('')
 
    const {
-      loading: queryLoading2,
-      error: queryError2,
+      loading,
       data: { getNestedFolders: { children: nestedFolders = [] } = {} } = {},
    } = useQuery(GET_NESTED_FOLDER, {
       variables: { path: '' },
+      onError: error => {
+         toast.error('Something went wrong!!')
+         logger(error)
+      },
    })
 
    const closePopup = () => {
@@ -266,12 +249,25 @@ const Main = () => {
       closePopup()
    }
 
+   React.useEffect(() => {
+      return () => {
+         console.log('cleaned up')
+      }
+   }, [tab])
+
+   if (loading) return <Loader />
+
    return (
       <MainWrapper width={mainWidth()}>
          <main>
             <Switch>
                <Route path="/editor" component={Home} exact />
-               <Route path="/editor/:path+" component={Editor} exact />
+               <Route
+                  key="file-editor"
+                  path="/editor/:path+"
+                  component={() => <Editor />}
+                  exact
+               />
             </Switch>
 
             <FileType
