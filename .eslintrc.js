@@ -1,6 +1,6 @@
 module.exports = {
    extends: ['airbnb', 'prettier', 'prettier/react'],
-   plugins: ['prettier'],
+   plugins: ['prettier', 'graphql'],
    parser: 'babel-eslint',
    globals: {
       window: true,
@@ -46,5 +46,4 @@ module.exports = {
       'no-shadow': 1,
       'consistent-return': 1,
    },
-   plugins: ['graphql'],
 }

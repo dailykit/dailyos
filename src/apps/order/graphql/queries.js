@@ -132,6 +132,7 @@ export const QUERIES = {
                   orderId: { _eq: $orderId }
                   orderModifierId: { _is_null: true }
                }
+               order_by: { created_at: desc }
             ) {
                id
                isAssembled
@@ -171,7 +172,9 @@ export const QUERIES = {
                   }
                }
                orderModifiers {
-                  inventoryProducts: childOrderInventoryProducts {
+                  inventoryProducts: childOrderInventoryProducts(
+                     order_by: { created_at: desc }
+                  ) {
                      id
                      quantity
                      isAssembled
@@ -255,7 +258,9 @@ export const QUERIES = {
                         }
                      }
                   }
-                  mealKitProducts: childOrderMealKitProducts {
+                  mealKitProducts: childOrderMealKitProducts(
+                     order_by: { created_at: desc }
+                  ) {
                      id
                      isAssembled
                      assemblyStatus
@@ -340,7 +345,9 @@ export const QUERIES = {
                         }
                      }
                   }
-                  readyToEatProducts: childOrderReadyToEatProducts {
+                  readyToEatProducts: childOrderReadyToEatProducts(
+                     order_by: { created_at: desc }
+                  ) {
                      id
                      quantity
                      isAssembled
@@ -486,6 +493,8 @@ export const QUERIES = {
                      orderId: { _eq: $orderId }
                      orderModifierId: { _is_null: true }
                   }
+
+                  order_by: { created_at: desc }
                ) {
                   id
                   isAssembled
@@ -525,7 +534,9 @@ export const QUERIES = {
                      }
                   }
                   orderModifiers {
-                     inventoryProducts: childOrderInventoryProducts {
+                     inventoryProducts: childOrderInventoryProducts(
+                        order_by: { created_at: desc }
+                     ) {
                         id
                         quantity
                         isAssembled
@@ -609,7 +620,9 @@ export const QUERIES = {
                            }
                         }
                      }
-                     mealKitProducts: childOrderMealKitProducts {
+                     mealKitProducts: childOrderMealKitProducts(
+                        order_by: { created_at: desc }
+                     ) {
                         id
                         isAssembled
                         assemblyStatus
@@ -694,7 +707,9 @@ export const QUERIES = {
                            }
                         }
                      }
-                     readyToEatProducts: childOrderReadyToEatProducts {
+                     readyToEatProducts: childOrderReadyToEatProducts(
+                        order_by: { created_at: desc }
+                     ) {
                         id
                         quantity
                         isAssembled
@@ -874,6 +889,8 @@ export const QUERIES = {
                      orderId: { _eq: $orderId }
                      orderModifierId: { _is_null: true }
                   }
+
+                  order_by: { created_at: desc }
                ) {
                   id
                   hasModifiers
@@ -959,7 +976,9 @@ export const QUERIES = {
                      }
                   }
                   orderModifiers {
-                     inventoryProducts: childOrderInventoryProducts {
+                     inventoryProducts: childOrderInventoryProducts(
+                        order_by: { created_at: desc }
+                     ) {
                         id
                         quantity
                         isAssembled
@@ -1043,7 +1062,9 @@ export const QUERIES = {
                            }
                         }
                      }
-                     mealKitProducts: childOrderMealKitProducts {
+                     mealKitProducts: childOrderMealKitProducts(
+                        order_by: { created_at: desc }
+                     ) {
                         id
                         isAssembled
                         assemblyStatus
@@ -1128,7 +1149,9 @@ export const QUERIES = {
                            }
                         }
                      }
-                     readyToEatProducts: childOrderReadyToEatProducts {
+                     readyToEatProducts: childOrderReadyToEatProducts(
+                        order_by: { created_at: desc }
+                     ) {
                         id
                         quantity
                         isAssembled
