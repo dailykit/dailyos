@@ -11,7 +11,7 @@ import {
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { DeleteIcon, EditIcon } from '../../../../../assets/icons'
-import { ImageContainer } from './styled'
+import { ImageContainer, ResponsiveFlex } from './styled'
 import { UPDATE_INGREDIENT } from '../../../../../graphql'
 import { PhotoTunnel } from '../../tunnels'
 import { logger } from '../../../../../../../shared/utils'
@@ -44,11 +44,6 @@ const Stats = ({ state }) => {
          },
       })
    }
-   const ResponsiveFlex = styled(Flex)`
-      @media screen and (max-width: 767px) {
-         flex-direction: column;
-      }
-   `
 
    return (
       <>
@@ -77,7 +72,7 @@ const Stats = ({ state }) => {
                   <Text as="title">Sachets</Text>
                </Flex>
             </Flex>
-            <Spacer xAxis size="32px" />
+            <Spacer size="32px" />
             {/* {state.image ? (
                <ImageContainer>
                   <div>

@@ -33,7 +33,6 @@ import {
    NutritionTunnel,
 } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
-import styled from 'styled-components'
 
 const Processings = ({ state }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
@@ -90,11 +89,6 @@ const Processings = ({ state }) => {
          })
       }
    }
-   const StyledButtonTile = styled(ButtonTile)`
-      @media screen and (max-width: 767px) {
-         width: 120px;
-      }
-   `
 
    return (
       <>
@@ -226,7 +220,7 @@ const Processings = ({ state }) => {
                   </StyledSection>
                </>
             ) : (
-               <StyledButtonTile
+               <ButtonTile
                   type="primary"
                   size="lg"
                   text="Add Processings"

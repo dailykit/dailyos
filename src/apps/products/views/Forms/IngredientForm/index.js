@@ -20,7 +20,7 @@ import {
    InlineLoader,
    Tooltip,
 } from '../../../../../shared/components'
-import styled from 'styled-components'
+import { HeaderWrapper, InputTextWrapper } from './styled'
 
 const IngredientForm = () => {
    const { setTabTitle, tab, addTab } = useTabs()
@@ -152,35 +152,13 @@ const IngredientForm = () => {
       logger(error)
       return <ErrorState />
    }
-   const HeaderWrapper = styled.div`
-      display: flex;
-      align-items: start;
-      padding: 16px 32px;
-      justify-content: space-between;
-      @media screen and (max-width: 767px) {
-         flex-direction: column;
-      }
-   `
-   const InputTextWrapper = styled(Flex)`
-      @media screen and (max-width: 767px) {
-         flex-direction: column;
-         section {
-            width: calc(100vw - 64px);
-         }
-      }
-   `
-   const ResponsiveFlex = styled(Flex)`
-      @media screen and (max-width: 767px) {
-         flex-direction: column;
-      }
-   `
 
    return (
       <IngredientContext.Provider
          value={{ ingredientState, ingredientDispatch }}
       >
          <HeaderWrapper>
-            <InputTextWrapper container alignItems="start">
+            <InputTextWrapper>
                <Form.Group>
                   <Form.Label htmlFor="title" title="title">
                      Ingredient Name*
@@ -227,19 +205,26 @@ const IngredientForm = () => {
                      ))}
                </Form.Group>
             </InputTextWrapper>
-            <Flex container alignItems="center" height="100%">
-               {state.isValid?.status ? (
-                  <>
-                     <TickIcon color="#00ff00" stroke={2} />
-                     <Text as="p">All good!</Text>
-                  </>
-               ) : (
-                  <>
-                     <CloseIcon color="#ff0000" />
-                     <Text as="p">{state.isValid?.error}</Text>
-                  </>
-               )}
-               <Spacer xAxis size="16px" />
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               width="100%"
+            >
+               <div>
+                  {state.isValid?.status ? (
+                     <Flex container alignItems="center">
+                        <TickIcon color="#00ff00" stroke={2} />
+                        <Text as="p">All good!</Text>
+                     </Flex>
+                  ) : (
+                     <Flex container alignItems="center">
+                        <CloseIcon color="#ff0000" />
+                        <Text as="p">{state.isValid?.error}</Text>
+                     </Flex>
+                  )}
+               </div>
+               {/* <Spacer xAxis size="16px" /> */}
                <Form.Toggle
                   name="published"
                   value={state.isPublished}

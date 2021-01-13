@@ -4,7 +4,7 @@ export const StyledSection = styled.div`
    display: grid;
    grid-template-columns: 250px 1fr;
    grid-gap: 32px;
-   @media screen and (max-width: 767px) {
+   @media screen and (max-width: 925px) {
       grid-template-columns: auto;
    }
 `
@@ -12,7 +12,7 @@ export const StyledSection = styled.div`
 export const StyledListing = styled.div`
    display: flex;
    flex-direction: column;
-   @media screen and (max-width: 767px) {
+   @media screen and (max-width: 925px) {
       flex-direction: row;
       overflow-x: auto;
    }
