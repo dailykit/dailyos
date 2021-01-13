@@ -68,21 +68,9 @@ const FileExplorer = () => {
                linkedJs: data.editor_file[0].linkedJsFiles,
             }
             addTab(payload)
-            // dispatch({
-            //    type: 'ADD_TAB',
-            //    payload: {
-            //       name: fileRef.current.name,
-            //       path: fileRef.current.path.replace(
-            //          process.env.REACT_APP_ROOT_FOLDER,
-            //          ''
-            //       ),
-            //       id: data.editor_file[0].id,
-            //       linkedCss: data.editor_file[0].linkedCssFiles,
-            //       linkedJs: data.editor_file[0].linkedJsFiles,
-            //    },
-            // })
          }
       },
+      fetchPolicy: 'cache-and-network',
    })
 
    React.useEffect(() => {

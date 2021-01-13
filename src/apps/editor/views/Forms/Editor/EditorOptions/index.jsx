@@ -201,16 +201,23 @@ const EditorOptions = ({
                   value={isDark}
                />
                <Spacer size="20px" xAxis />
-               <IconButton type="ghost" onClick={() => openLinkFilesTunnel(1)}>
-                  <LinkFileIcon size="20" />
-               </IconButton>
+               {language === 'html' && (
+                  <IconButton
+                     type="ghost"
+                     onClick={() => openLinkFilesTunnel(1)}
+                  >
+                     <LinkFileIcon size="20" />
+                  </IconButton>
+               )}
 
                <Spacer size="20px" xAxis />
-               <RadioGroup
-                  options={ModeOptions}
-                  active={isWebBuilderOpen ? 1 : 2}
-                  onChange={option => SetIsWebBuilderOpen(!isWebBuilderOpen)}
-               />
+               {language === 'html' && (
+                  <RadioGroup
+                     options={ModeOptions}
+                     active={isWebBuilderOpen ? 1 : 2}
+                     onChange={option => SetIsWebBuilderOpen(!isWebBuilderOpen)}
+                  />
+               )}
 
                <Spacer size="20px" xAxis />
                <ButtonGroup>

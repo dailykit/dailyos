@@ -95,42 +95,13 @@ const Editor = () => {
          toast.error('Something went wrong!')
          console.log(error)
       },
+      fetchPolicy: 'cache-and-network',
    })
    React.useEffect(() => {
       monaco.init().then(monaco => {
          monacoRef.current = monaco
       })
    }, [])
-
-   // React.useEffect(() => {
-   //    const body = JSON.stringify({
-   //       query: GET_FILE_FETCH,
-   //       variables: {
-   //          path: `/${path}`,
-   //       },
-   //    })
-   //    fetchCall(body).then(({ data }) => {
-   //       const { getFile } = data
-   //       const fileType = getFile.path.split('.').pop()
-   //       switch (fileType) {
-   //          case 'js':
-   //             console.log(fileType)
-   //             setLanguage('javascript')
-   //             break
-   //          case 'html':
-   //             setLanguage(fileType)
-   //             break
-   //          case 'css':
-   //             setLanguage(fileType)
-   //             break
-   //          case 'pug':
-   //             setLanguage(fileType)
-   //             break
-   //       }
-   //       setCode(getFile.content)
-   //       setFile(getFile)
-   //    })
-   // }, [path])
 
    const selectFile = async path => {
       toggleModal(false)
@@ -237,10 +208,6 @@ const Editor = () => {
       editorRef.current.getModel().redo()
    }
 
-   // const setDarkTheme = () => {
-   //    setIsDark(!isDark)
-   // }
-
    // const langFormatProvider = {
    //    provideDocumentFormattingEdits(model, options, token) {
    //       return [
@@ -275,18 +242,6 @@ const Editor = () => {
    }, [addTab, tab])
    return (
       <>
-         {/* <div style={{ position: 'absolute', margin: '16px 0' }}>
-            <Flex container alignItems="center" justifyContent="space-around">
-               <Form.Label htmlFor="theme" title="theme">
-                  Dark Theme
-               </Form.Label>
-               <Form.Toggle
-                  name="first_time"
-                  onChange={setDarkTheme}
-                  value={isDark}
-               />
-            </Flex>
-         </div> */}
          <EditorWrapper isHistoryVisible={globalState.isHistoryVisible}>
             {isModalVisible && (
                <ReferenceFile
