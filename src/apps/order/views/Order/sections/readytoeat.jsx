@@ -14,12 +14,12 @@ import {
    TextButton,
 } from '@dailykit/ui'
 
-import { useConfig } from '../../../context'
-import ProductDetails from './product_details'
-import { UserIcon } from '../../../assets/icons'
 import ProductModifiers from './modifiers'
 import { MUTATIONS } from '../../../graphql'
+import ProductDetails from './product_details'
+import { UserIcon } from '../../../assets/icons'
 import { logger } from '../../../../../shared/utils'
+import { useConfig, useOrder } from '../../../context'
 import { useAccess } from '../../../../../shared/providers'
 import { Legend, Styles, Scroll, StyledProductTitle } from '../styled'
 import { ErrorState, InlineLoader } from '../../../../../shared/components'
@@ -30,9 +30,9 @@ export const ReadyToEats = ({
    hideModifiers,
    data: { loading, error, readytoeats },
 }) => {
-   const { state } = useConfig()
    const { t } = useTranslation()
    const { isSuperUser } = useAccess()
+   const { state, dispatch } = useOrder()
    const { state: config } = useConfig()
    const [label, setLabel] = React.useState('')
    const [current, setCurrent] = React.useState({})
@@ -54,7 +54,7 @@ export const ReadyToEats = ({
       }
       const url = `${process.env.REACT_APP_TEMPLATE_URL}?template={"name":"readytoeat_product1","type":"label","format":"html"}&data={"id":${current.id}}`
 
-      if (state.print.print_simulation.value.isActive) {
+      if (config.print.print_simulation.value.isActive) {
          setLabel(url)
       } else {
          const url = `${
@@ -91,10 +91,25 @@ export const ReadyToEats = ({
 
    React.useEffect(() => {
       if (!loading && !isEmpty(readytoeats)) {
-         const [product] = readytoeats
-         setCurrent(product)
+         if (state.current_product?.id) {
+            const product = readytoeats.find(
+               node => node.id === state.current_product?.id
+            )
+            if (!isEmpty(product)) {
+               setCurrent(product)
+            }
+         } else {
+            const [product] = readytoeats
+            setCurrent(product)
+         }
       }
-   }, [loading, readytoeats, setCurrent])
+   }, [loading, readytoeats, setCurrent, state.current_product])
+
+   const selectProduct = product => {
+      setLabel('')
+      setCurrent(product)
+      dispatch({ type: 'SELECT_PRODUCT', payload: product })
+   }
 
    const isOrderConfirmed =
       current?.order?.isAccepted && !current?.order?.isRejected
@@ -125,10 +140,7 @@ export const ReadyToEats = ({
                <ProductCard
                   key={readytoeat.id}
                   readytoeat={readytoeat}
-                  onClick={() => {
-                     setCurrent(readytoeat)
-                     setLabel('')
-                  }}
+                  onClick={() => selectProduct(readytoeat)}
                   isActive={current?.id === readytoeat.id}
                />
             ))}

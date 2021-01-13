@@ -14,12 +14,12 @@ import {
    TextButton,
 } from '@dailykit/ui'
 
-import { useConfig } from '../../../context'
+import ProductModifiers from './modifiers'
+import { MUTATIONS } from '../../../graphql'
 import ProductDetails from './product_details'
 import { UserIcon } from '../../../assets/icons'
-import { MUTATIONS } from '../../../graphql'
-import ProductModifiers from './modifiers'
 import { logger } from '../../../../../shared/utils'
+import { useConfig, useOrder } from '../../../context'
 import { useAccess } from '../../../../../shared/providers'
 import { Legend, Styles, Scroll, StyledProductTitle } from '../styled'
 import { ErrorState, InlineLoader } from '../../../../../shared/components'
@@ -30,9 +30,9 @@ export const MealKits = ({
    hideModifiers,
    data: { loading, error, mealkits },
 }) => {
-   const { state } = useConfig()
    const { t } = useTranslation()
    const { isSuperUser } = useAccess()
+   const { state, dispatch } = useOrder()
    const { state: config } = useConfig()
    const [label, setLabel] = React.useState('')
    const [current, setCurrent] = React.useState({})
@@ -49,10 +49,19 @@ export const MealKits = ({
 
    React.useEffect(() => {
       if (!loading && !isEmpty(mealkits)) {
-         const [product] = mealkits
-         setCurrent(product)
+         if (state.current_product?.id) {
+            const product = mealkits.find(
+               node => node.id === state.current_product?.id
+            )
+            if (!isEmpty(product)) {
+               setCurrent(product)
+            }
+         } else {
+            const [product] = mealkits
+            setCurrent(product)
+         }
       }
-   }, [loading, mealkits, setCurrent])
+   }, [loading, mealkits, setCurrent, state.current_product])
 
    const print = () => {
       if (isNull(current?.labelTemplateId)) {
@@ -61,7 +70,7 @@ export const MealKits = ({
       }
       const url = `${process.env.REACT_APP_TEMPLATE_URL}?template={"name":"mealkit_product1","type":"label","format":"html"}&data={"id":${current.id}}`
 
-      if (state.print.print_simulation.value.isActive) {
+      if (config.print.print_simulation.value.isActive) {
          setLabel(url)
       } else {
          const url = `${
@@ -113,6 +122,12 @@ export const MealKits = ({
       return access
    }
 
+   const selectProduct = mealkit => {
+      setLabel('')
+      setCurrent(mealkit)
+      dispatch({ type: 'SELECT_PRODUCT', payload: mealkit })
+   }
+
    if (loading) return <InlineLoader />
    if (error) return <ErrorState message="Failed to fetch mealkit products!" />
    if (isEmpty(mealkits))
@@ -125,10 +140,7 @@ export const MealKits = ({
                   key={mealkit.id}
                   mealkit={mealkit}
                   isActive={current?.id === mealkit.id}
-                  onClick={() => {
-                     setLabel('')
-                     setCurrent(mealkit)
-                  }}
+                  onClick={() => selectProduct(mealkit)}
                />
             ))}
          </Styles.Products>
