@@ -27,10 +27,9 @@ import {
    S_INVENTORY_PRODUCT,
    UPDATE_INVENTORY_PRODUCT,
 } from '../../../../graphql'
-import { StyledRule } from '../styled'
+import { ResponsiveFlex, StyledFlex, StyledRule } from '../styled'
 import validator from '../validators'
 import { Assets, Description, Item } from './components'
-import styled from 'styled-components'
 
 const address = 'apps.menu.views.forms.product.inventoryproduct.'
 
@@ -150,26 +149,6 @@ export default function InventoryProduct() {
       logger(error)
       return <ErrorState />
    }
-   const ResponsiveFlex = styled(Flex)`
-      @media screen and (max-width: 767px) {
-         flex-direction: column;
-         align-items: start;
-         input[type='text'] {
-            width: calc(100vw - 64px);
-         }
-         section {
-            margin-bottom: 8px;
-         }
-      }
-   `
-   const StyledFlex = styled(Flex)`
-      @media screen and (max-width: 767px) {
-         flex-direction: column;
-         section {
-            margin-bottom: 8px;
-         }
-      }
-   `
 
    return (
       <InventoryProductContext.Provider

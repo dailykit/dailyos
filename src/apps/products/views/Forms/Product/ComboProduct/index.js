@@ -195,6 +195,7 @@ export default function ComboProduct() {
                >
                   <Flex container alignItems="center">
                      Published
+                     <Spacer xAxis size="16px" />
                      <Tooltip identifier="combo_product_publish" />
                   </Flex>
                </Form.Toggle>

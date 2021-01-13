@@ -203,6 +203,7 @@ export default function CustomizableProduct() {
                >
                   <Flex container alignItems="center">
                      Published
+                     <Spacer xAxis size="16px" />
                      <Tooltip identifier="customizable_product_publish" />
                   </Flex>
                </Form.Toggle>

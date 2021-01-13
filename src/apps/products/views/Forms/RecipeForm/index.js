@@ -27,7 +27,7 @@ import {
    Servings,
 } from './components'
 import validator from './validators'
-import styled from 'styled-components'
+import { ResponsiveFlex, StyledFlex } from '../Product/styled'
 
 const RecipeForm = () => {
    // Context
@@ -128,31 +128,6 @@ const RecipeForm = () => {
       logger(error)
       return <ErrorState />
    }
-   const ResponsiveFlex = styled.header`
-      display: flex;
-      padding: 16px 32px;
-      align-items: center;
-      justify-content: space-between;
-
-      @media screen and (max-width: 767px) {
-         flex-direction: column;
-         align-items: start;
-         input[type='text'] {
-            width: calc(100vw - 64px);
-         }
-         section {
-            margin-bottom: 8px;
-         }
-      }
-   `
-   const StyledFlex = styled(Flex)`
-      @media screen and (max-width: 767px) {
-         flex-direction: column;
-         button {
-            margin-bottom: 16px;
-         }
-      }
-   `
 
    return (
       <RecipeContext.Provider value={{ recipeState, recipeDispatch }}>

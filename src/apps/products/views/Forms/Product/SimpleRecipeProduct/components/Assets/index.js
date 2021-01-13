@@ -1,12 +1,9 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { ButtonTile, Tunnel, Tunnels, useTunnel, Flex } from '@dailykit/ui'
+import { useTunnel, Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../../shared/utils'
-import { DeleteIcon, EditIcon } from '../../../../../../assets/icons'
 import { UPDATE_SIMPLE_RECIPE_PRODUCT } from '../../../../../../graphql'
-import { AssetsTunnel } from '../../tunnels'
-import { ImageContainer, PhotoTileWrapper } from './styled'
 import { Gallery } from '../../../../../../../../shared/components'
 
 const Assets = ({ state }) => {
@@ -37,7 +34,7 @@ const Assets = ({ state }) => {
    }
 
    return (
-      <Flex style={{ width: '100%' }}>
+      <Flex width="100%">
          {state?.assets?.images != null && state?.assets?.images?.length ? (
             <Gallery
                list={state.assets.images}
