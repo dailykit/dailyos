@@ -10,8 +10,8 @@ import { ArrowUpIcon, ArrowDownIcon } from '../../../assets/icons'
 const address = 'apps.order.views.order.'
 export const SachetItem = ({ item, product }) => {
    const { t } = useTranslation()
-   const { state, selectSachet } = useOrder()
    const [isOpen, setIsOpen] = React.useState(null)
+   const { state, selectSachet, switchView } = useOrder()
 
    React.useEffect(() => {
       if (state.sachet?.id) {
@@ -20,7 +20,11 @@ export const SachetItem = ({ item, product }) => {
    }, [state.sachet])
 
    const select = id => {
-      selectSachet(id, { name: product?.simpleRecipeProduct?.name })
+      if (state.sachet?.id === id) {
+         switchView('SUMMARY')
+      } else {
+         selectSachet(id, { name: product?.simpleRecipeProduct?.name })
+      }
       setIsOpen(isOpen === id ? '' : id)
    }
 

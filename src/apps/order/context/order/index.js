@@ -44,7 +44,7 @@ const reducers = (state, { type, payload }) => {
          return {
             ...state,
             sachet: {
-               name: null,
+               product: { name: null },
                id: null,
             },
 
