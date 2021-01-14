@@ -116,7 +116,7 @@ const Order = () => {
 
    React.useEffect(() => {
       if (!mealkitsLoading && !readytoeatsLoading && !inventoriesLoading) {
-         const list = [
+         const types = [
             !isEmpty(mealkits) && 'MEALKIT',
             !isEmpty(inventories) && 'INVENTORY',
             !isEmpty(readytoeats) && 'READYTOEAT',
@@ -147,7 +147,7 @@ const Order = () => {
                      product: mealkit,
                      station: config.current_station,
                   })
-                  setTabIndex(list.indexOf('MEALKIT'))
+                  setTabIndex(types.indexOf('MEALKIT'))
                   console.log('IN MEALKITS -> SELECT SACHET AND SWITCH TAB')
                }
             }
@@ -176,7 +176,7 @@ const Order = () => {
                      product: inventory,
                      station: config.current_station,
                   })
-                  setTabIndex(list.indexOf('INVENTORY'))
+                  setTabIndex(types.indexOf('INVENTORY'))
                   console.log('IN INVENTORIES -> SELECT SACHET AND SWITCH TAB')
                }
             }
@@ -205,7 +205,7 @@ const Order = () => {
                      product: readytoeat,
                      station: config.current_station,
                   })
-                  setTabIndex(list.indexOf('READYTOEAT'))
+                  setTabIndex(types.indexOf('READYTOEAT'))
                   console.log('IN READYTOEATS -> SELECT SACHET AND SWITCH TAB')
                }
             }
@@ -288,6 +288,47 @@ const Order = () => {
       }
       kots()
    }, [order])
+
+   const onTabChange = React.useCallback(
+      index => {
+         setTabIndex(index)
+         const types = [
+            !isEmpty(mealkits) && 'MEALKIT',
+            !isEmpty(inventories) && 'INVENTORY',
+            !isEmpty(readytoeats) && 'READYTOEAT',
+         ].filter(Boolean)
+
+         if (types[index] === 'MEALKIT') {
+            const [mealkit] = mealkits
+            dispatch({ type: 'SELECT_PRODUCT', payload: mealkit })
+            findAndSelectSachet({
+               dispatch,
+               isSuperUser,
+               product: mealkit,
+               station: config.current_station,
+            })
+         } else if (types[index] === 'INVENTORY') {
+            const [inventory] = inventories
+            dispatch({ type: 'SELECT_PRODUCT', payload: inventory })
+            findAndSelectSachet({
+               dispatch,
+               isSuperUser,
+               product: inventory,
+               station: config.current_station,
+            })
+         } else if (types[index] === 'READYTOEAT') {
+            const [readytoeat] = readytoeats
+            dispatch({ type: 'SELECT_PRODUCT', payload: readytoeat })
+            findAndSelectSachet({
+               dispatch,
+               isSuperUser,
+               product: readytoeat,
+               station: config.current_station,
+            })
+         }
+      },
+      [setTabIndex, mealkits, inventories, readytoeats]
+   )
 
    if (loading) return <InlineLoader />
    if (error) {
@@ -550,10 +591,7 @@ const Order = () => {
                </HorizontalTabPanels>
             </HorizontalTabs>
          ) : (
-            <HorizontalTabs
-               index={tabIndex}
-               onChange={index => setTabIndex(index)}
-            >
+            <HorizontalTabs index={tabIndex} onChange={onTabChange}>
                <HorizontalTabList style={{ padding: '0 16px' }}>
                   {!isEmpty(mealkits) && (
                      <HorizontalTab>
