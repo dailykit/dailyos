@@ -17,6 +17,7 @@ import {
 import ProductModifiers from './modifiers'
 import { MUTATIONS } from '../../../graphql'
 import ProductDetails from './product_details'
+import { findAndSelectSachet } from '../methods'
 import { logger } from '../../../../../shared/utils'
 import { useConfig, useOrder } from '../../../context'
 import { useAccess } from '../../../../../shared/providers'
@@ -107,6 +108,12 @@ export const Inventories = ({
       setLabel('')
       setCurrent(product)
       dispatch({ type: 'SELECT_PRODUCT', payload: product })
+      findAndSelectSachet({
+         dispatch,
+         product,
+         isSuperUser,
+         station: config.current_station,
+      })
    }
 
    const isOrderConfirmed =

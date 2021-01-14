@@ -17,6 +17,7 @@ import {
 import ProductModifiers from './modifiers'
 import { MUTATIONS } from '../../../graphql'
 import ProductDetails from './product_details'
+import { findAndSelectSachet } from '../methods'
 import { UserIcon } from '../../../assets/icons'
 import { logger } from '../../../../../shared/utils'
 import { useConfig, useOrder } from '../../../context'
@@ -109,6 +110,12 @@ export const ReadyToEats = ({
       setLabel('')
       setCurrent(product)
       dispatch({ type: 'SELECT_PRODUCT', payload: product })
+      findAndSelectSachet({
+         dispatch,
+         product,
+         isSuperUser,
+         station: config.current_station,
+      })
    }
 
    const isOrderConfirmed =
