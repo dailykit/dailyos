@@ -11,6 +11,7 @@ export const Styles = {
    ProductItem: styled.li(
       ({ isActive }) => css`
          padding: 12px;
+         cursor: pointer;
          list-style: none;
          border-radius: 2px;
          ${isActive && `color: #fff`};
@@ -85,6 +86,10 @@ export const List = {
             grid-gap: 16px;
             line-height: 48px;
             border-radius: 2px 2px 0 0;
+            ${isOpen &&
+            css`
+               border-left: 5px solid rgba(0, 0, 0, 0.3);
+            `};
             grid-template-columns: repeat(4, 1fr) 48px;
             background: ${selectBg(isPacked, isAssembled)};
             > span {

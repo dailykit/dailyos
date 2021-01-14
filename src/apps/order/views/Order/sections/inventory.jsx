@@ -14,11 +14,12 @@ import {
    TextButton,
 } from '@dailykit/ui'
 
-import { useConfig } from '../../../context'
 import ProductModifiers from './modifiers'
 import { MUTATIONS } from '../../../graphql'
 import ProductDetails from './product_details'
+import { findAndSelectSachet } from '../methods'
 import { logger } from '../../../../../shared/utils'
+import { useConfig, useOrder } from '../../../context'
 import { useAccess } from '../../../../../shared/providers'
 import { Legend, Styles, Scroll, StyledProductTitle } from '../styled'
 import { ErrorState, InlineLoader } from '../../../../../shared/components'
@@ -29,9 +30,9 @@ export const Inventories = ({
    data: { loading, error, inventories },
    hideModifiers,
 }) => {
-   const { state } = useConfig()
    const { t } = useTranslation()
    const { isSuperUser } = useAccess()
+   const { state, dispatch } = useOrder()
    const { state: config } = useConfig()
    const [label, setLabel] = React.useState('')
    const [current, setCurrent] = React.useState({})
@@ -48,10 +49,19 @@ export const Inventories = ({
 
    React.useEffect(() => {
       if (!loading && !isEmpty(inventories)) {
-         const [product] = inventories
-         setCurrent(product)
+         if (state.current_product?.id) {
+            const product = inventories.find(
+               node => node.id === state.current_product?.id
+            )
+            if (!isEmpty(product)) {
+               setCurrent(product)
+            }
+         } else {
+            const [product] = inventories
+            setCurrent(product)
+         }
       }
-   }, [loading, inventories, setCurrent])
+   }, [loading, inventories, setCurrent, state.current_product])
 
    const print = () => {
       if (isNull(current?.labelTemplateId)) {
@@ -60,7 +70,7 @@ export const Inventories = ({
       }
       const url = `${process.env.REACT_APP_TEMPLATE_URL}?template={"name":"inventory_product1","type":"label","format":"html"}&data={"id":${current.id}}`
 
-      if (state.print.print_simulation.value.isActive) {
+      if (config.print.print_simulation.value.isActive) {
          setLabel(url)
       } else {
          const url = `${
@@ -95,8 +105,15 @@ export const Inventories = ({
    }
 
    const selectProduct = product => {
-      setCurrent(product)
       setLabel('')
+      setCurrent(product)
+      dispatch({ type: 'SELECT_PRODUCT', payload: product })
+      findAndSelectSachet({
+         dispatch,
+         product,
+         isSuperUser,
+         station: config.current_station,
+      })
    }
 
    const isOrderConfirmed =
@@ -297,6 +314,13 @@ const productTitle = inventory => {
 }
 
 const ProductCard = ({ onClick, isActive, inventory }) => {
+   const assembled = inventory.orderSachets?.filter(
+      sachet => sachet.isAssembled
+   ).length
+   const packed = inventory.orderSachets?.filter(
+      sachet => sachet.status === 'PACKED'
+   ).length
+   const total = inventory.orderSachets?.length
    const quantity =
       inventory.quantity * inventory?.inventoryProductOption?.quantity || 1
    return (
@@ -308,8 +332,7 @@ const ProductCard = ({ onClick, isActive, inventory }) => {
          <Spacer size="14px" />
          <Flex container alignItems="center" justifyContent="space-between">
             <span>
-               {inventory.isAssembled ? 1 : 0} /{' '}
-               {inventory.assemblyStatus === 'COMPLETED' ? 1 : 0} / 1
+               {assembled} / {packed} / {total}
             </span>
             <span>{inventory?.inventoryProductOption?.label}</span>
          </Flex>
