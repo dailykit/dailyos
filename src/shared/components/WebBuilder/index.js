@@ -6,7 +6,6 @@ import grapesjs from 'grapesjs'
 import axios from 'axios'
 import { InlineLoader } from '../InlineLoader'
 import { toast } from 'react-toastify'
-import { TEMPLATE, BLOCKS } from './graphql'
 import { logger, randomSuffix } from '../../utils'
 import { config } from './config'
 import { StyledDiv } from './style'
@@ -20,6 +19,7 @@ const Builder = React.forwardRef(
          onChangeContent,
          linkedCss = [],
          linkedJs = [],
+         tab = {},
       },
       ref
    ) => {
@@ -40,8 +40,6 @@ const Builder = React.forwardRef(
       })
       const [mount, setMount] = useState(false)
       const toggler = useRef(true)
-
-      console.log('before initialize', linkedCss)
 
       // React.useEffect(() => {
       //    setLinkedCssArray(linkedCss)
@@ -89,27 +87,34 @@ const Builder = React.forwardRef(
       // Initialize the grapejs editor by passing config object
       useEffect(() => {
          console.log('editor initialize1')
+         console.log('mouting')
          const editor = grapesjs.init({
             ...config,
             canvas: {
                styles: linkedCssArray,
                scripts: linkedJsArray,
             },
-            panels: { defaults: [] },
          })
          editorRef.current = editor
          setMount(true)
-         return () => {
-            console.log('editor initialize2')
-            editorRef.current = null
-            const code =
-               editor.getHtml() + `<style>+ ${editor.getCss()} +</style>`
-            onChangeContent(code)
-            editor.destroy()
-         }
+         console.log('after mouting')
       }, [])
 
-      //loading all dailykit images in webBuilder image component
+      useEffect(() => {
+         if (editorRef.current) {
+            return () => {
+               console.log('before unmouting')
+               console.log('editor', editorRef.current)
+               const code =
+                  editorRef.current.getHtml() +
+                  `<style>+ ${editorRef.current.getCss()} +</style>`
+               onChangeContent(code)
+               editorRef.current.destroy()
+               console.log('after unmouting')
+            }
+         }
+      }, [tab])
+
       React.useImperativeHandle(ref, () => ({
          func(action) {
             console.log(editorRef.current.Panels.getPanels())
@@ -146,7 +151,10 @@ const Builder = React.forwardRef(
             editorRef.current.runCommand(action)
          },
       }))
-      if (mount && editorRef.current.editor) {
+
+      //loading all dailykit images in webBuilder image component
+
+      if (mount && editorRef?.current) {
          const editor = editorRef.current
          const assetManager = editorRef.current.AssetManager
          axios.get(`${url}?type=images`).then(data => {
@@ -164,23 +172,23 @@ const Builder = React.forwardRef(
          // })
 
          //Adding a save button in webBuilder
-         if (!editor.Panels.getButton('devices-c', 'save')) {
-            editor.Panels.addButton('devices-c', [
-               {
-                  id: 'save',
-                  className: 'fa fa-floppy-o icon-blank',
-                  command: function (editor1, sender) {
-                     const updatedCode =
-                        editor.getHtml() +
-                        '<style>' +
-                        editor.getCss() +
-                        '</style>'
-                     updateCode(updatedCode, path)
-                  },
-                  attributes: { title: 'Save Template' },
-               },
-            ])
-         }
+         // if (!editor.Panels.getButton('devices-c', 'save')) {
+         //    editor.Panels.addButton('devices-c', [
+         //       {
+         //          id: 'save',
+         //          className: 'fa fa-floppy-o icon-blank',
+         //          command: function (editor1, sender) {
+         //             const updatedCode =
+         //                editor.getHtml() +
+         //                '<style>' +
+         //                editor.getCss() +
+         //                '</style>'
+         //             updateCode(updatedCode, path)
+         //          },
+         //          attributes: { title: 'Save Template' },
+         //       },
+         //    ])
+         // }
 
          // Define commands for style manager
          editor.Commands.add('show-layers', {

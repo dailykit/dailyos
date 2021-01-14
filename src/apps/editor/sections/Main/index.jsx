@@ -262,12 +262,7 @@ const Main = () => {
          <main>
             <Switch>
                <Route path="/editor" component={Home} exact />
-               <Route
-                  key="file-editor"
-                  path="/editor/:path+"
-                  component={() => <Editor />}
-                  exact
-               />
+               <Route path="/editor/:path+" component={Editor} exact />
             </Switch>
 
             <FileType

@@ -17,7 +17,7 @@ import { useTabs } from '../../../../context'
 
 // Components
 import { Modal } from '../../../../components'
-import { LinkFilesTunnel } from '../Tunnel'
+import { LinkFilesTunnel, PagePreviewTunnel } from '../Tunnel'
 
 import { EditorOptionsWrapper } from './styles'
 
@@ -55,6 +55,11 @@ const EditorOptions = ({
       linkFilesTunnels,
       openLinkFilesTunnel,
       closeLinkFilesTunnel,
+   ] = useTunnel(1)
+   const [
+      pagePreviewTunnels,
+      openPagePreviewTunnel,
+      closePagePreviewTunnel,
    ] = useTunnel(1)
    const { tab } = useTabs()
    const [isModalVisible, setIsModalVisible] = React.useState()
@@ -118,6 +123,16 @@ const EditorOptions = ({
          name: 'mobile',
       },
    ]
+
+   const result = {
+      filePath: tab?.filePath,
+      cssPaths: tab?.linkedCss.map(file => {
+         return file?.cssFile?.path
+      }),
+      jsPaths: tab?.linkedJs.map(file => {
+         return file?.jsFile?.path
+      }),
+   }
 
    React.useEffect(() => {
       isBuilderOpen(isWebBuilderOpen)
@@ -255,7 +270,10 @@ const EditorOptions = ({
                      />
                   </>
                )}
-               <ComboButton type="ghost">
+               <ComboButton
+                  type="ghost"
+                  onClick={() => openPagePreviewTunnel(1)}
+               >
                   <EyeIcon size="16px" />
                   PREVIEW
                </ComboButton>
@@ -277,6 +295,12 @@ const EditorOptions = ({
             tunnels={linkFilesTunnels}
             openTunnel={openLinkFilesTunnel}
             closeTunnel={closeLinkFilesTunnel}
+         />
+         <PagePreviewTunnel
+            tunnels={pagePreviewTunnels}
+            openTunnel={openPagePreviewTunnel}
+            closeTunnel={closePagePreviewTunnel}
+            query={result}
          />
       </>
    )

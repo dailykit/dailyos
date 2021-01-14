@@ -53,10 +53,6 @@ const Editor = () => {
    })
    const [language, setLanguage] = React.useState('javascript')
    const [theme, setTheme] = React.useState('vs-light')
-   const [themes] = React.useState([
-      { id: 1, title: 'Light', value: 'vs-light' },
-      { id: 2, title: 'Dark', value: 'vs-dark' },
-   ])
    const [isDark, setIsDark] = React.useState(false)
    const [isWebBuilderOpen, setIsWebBuilderOpen] = React.useState(false)
    const callWebBuilderFunc = action => {
@@ -126,8 +122,8 @@ const Editor = () => {
    }
 
    function handleEditorDidMount(_, editor) {
+      editor.getAction('editor.action.formatDocument').run()
       editorRef.current = editor
-
       editorRef.current.addCommand(
          monacoRef.current.KeyMod.Shift | monacoRef.current.KeyCode.KEY_2,
          () => toggleModal(!isModalVisible)
@@ -237,6 +233,18 @@ const Editor = () => {
       }
    }, [addTab, tab])
 
+   // disposing monaco editor whenever changing tab or before re-initializing the monaco
+   React.useEffect(() => {
+      if (editorRef.current) {
+         console.log('monaco cleanup....')
+         return () => {
+            editorRef.current.dispose()
+            setIsWebBuilderOpen(false)
+            webBuilderRef.current = null
+         }
+      }
+   }, [tab])
+
    if (loading) return <Loader />
    return (
       <>
@@ -283,6 +291,7 @@ const Editor = () => {
                   linkedCss={tab?.linkedCss}
                   linkedJs={tab?.linkedJs}
                   ref={webBuilderRef}
+                  tab={tab}
                />
             )}
             {globalState.isHistoryVisible && Object.keys(file).length > 0 && (
