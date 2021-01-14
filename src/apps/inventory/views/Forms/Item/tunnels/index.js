@@ -4,6 +4,7 @@ import ProcessingTunnel from './Processing'
 import ConfigTunnel from './Config'
 import AllergensTunnel from './Allergens'
 import ConfigureSachetTunnel from './ConfigureSachetTunnel'
+import AnykitMatchesTunnel from './AnykitMatches'
 
 export {
    SuppliersTunnel,
@@ -12,4 +13,5 @@ export {
    ConfigTunnel,
    AllergensTunnel,
    ConfigureSachetTunnel,
+   AnykitMatchesTunnel,
 }

@@ -9,6 +9,8 @@ import {
    HorizontalTabPanels,
    HorizontalTabs,
    IconButton,
+   Spacer,
+   TextButton,
    Tunnel,
    Tunnels,
    useTunnel,
@@ -28,7 +30,7 @@ import {
 import { DELETE_BULK_ITEM } from '../../../graphql'
 import PlannedLotView from './PlannedLot'
 import RealTimeView from './RealtimeView'
-import { ConfigTunnel } from './tunnels'
+import { ConfigTunnel, AnykitMatchesTunnel } from './tunnels'
 
 const address = 'apps.inventory.views.forms.item.'
 
@@ -36,6 +38,11 @@ export default function ProcessingView({ formState, proc = {}, isDefault }) {
    const { t } = useTranslation()
 
    const [configTunnel, openConfigTunnel, closeConfigTunnel] = useTunnel(1)
+   const [
+      anykitMatchesTunnel,
+      openAnykitMatchesTunnel,
+      closeAnykitMatchesTunnel,
+   ] = useTunnel(1)
 
    const [deleteBulkItem, { loading }] = useMutation(DELETE_BULK_ITEM, {
       onCompleted: () => {
@@ -65,6 +72,11 @@ export default function ProcessingView({ formState, proc = {}, isDefault }) {
                />
             </Tunnel>
          </Tunnels>
+         <Tunnels tunnels={anykitMatchesTunnel}>
+            <Tunnel style={{ overflowY: 'auto' }} layer={1} size="lg">
+               <AnykitMatchesTunnel close={closeAnykitMatchesTunnel} />
+            </Tunnel>
+         </Tunnels>
          <HorizontalTabs>
             <HorizontalTabList>
                <HorizontalTab>
@@ -85,6 +97,14 @@ export default function ProcessingView({ formState, proc = {}, isDefault }) {
                <HorizontalTabPanel>
                   {proc ? (
                      <Flex container justifyContent="flex-end">
+                        <TextButton
+                           type="outline"
+                          onClick={() => openAnykitMatchesTunnel(1)}
+                        >
+                           Show Anykit Matches
+                        </TextButton>
+                        <Spacer xAxis size="16px" />
+
                         <IconButton
                            onClick={() => openConfigTunnel(1)}
                            type="outline"
