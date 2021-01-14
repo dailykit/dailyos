@@ -6,7 +6,7 @@
    "dependencies": {
       "@apollo/react-hooks": "3.1.5",
       "@dailykit/react-tabulator": "0.13.6",
-      "@dailykit/ui": "0.8.12",
+      "@dailykit/ui": "^0.8.15",
       "@reach/tabs": "0.11.2",
       "@react-google-maps/api": "1.9.7",
       "@sentry/react": "^5.25.0",
@@ -33,6 +33,7 @@
       "lodash": "4.17.15",
       "moment": "2.25.3",
       "react": "16.13.1",
+      "react-beautiful-dnd": "^13.0.0",
       "react-datepicker": "3.1.3",
       "react-datetime": "2.16.3",
       "react-dom": "16.13.1",

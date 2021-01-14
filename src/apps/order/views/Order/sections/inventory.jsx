@@ -19,6 +19,7 @@ import ProductModifiers from './modifiers'
 import { MUTATIONS } from '../../../graphql'
 import ProductDetails from './product_details'
 import { logger } from '../../../../../shared/utils'
+import { useAccess } from '../../../../../shared/providers'
 import { Legend, Styles, Scroll, StyledProductTitle } from '../styled'
 import { ErrorState, InlineLoader } from '../../../../../shared/components'
 
@@ -30,6 +31,7 @@ export const Inventories = ({
 }) => {
    const { state } = useConfig()
    const { t } = useTranslation()
+   const { isSuperUser } = useAccess()
    const { state: config } = useConfig()
    const [label, setLabel] = React.useState('')
    const [current, setCurrent] = React.useState({})
@@ -97,6 +99,23 @@ export const Inventories = ({
       setLabel('')
    }
 
+   const isOrderConfirmed =
+      current?.order?.isAccepted && !current?.order?.isRejected
+   const hasStationAccess = () => {
+      let access = false
+      if (isOrderConfirmed) {
+         access = true
+      }
+      if (isSuperUser) {
+         access = true
+      } else if (current?.assemblyStationId === config.current_station?.id) {
+         access = true
+      } else {
+         access = false
+      }
+      return access
+   }
+
    if (loading) return <InlineLoader />
    if (error)
       return <ErrorState message="Failed to fetch inventory products!" />
@@ -123,17 +142,15 @@ export const Inventories = ({
             <TextButton
                size="sm"
                type="solid"
+               hasAccess={hasStationAccess()}
                disabled={current?.assemblyStatus === 'COMPLETED'}
                fallBackMessage={
-                  current?.assemblyStationId !== config.current_station?.id
-                     ? ''
+                  isOrderConfirmed
+                     ? current?.assemblyStationId === config.current_station?.id
+                        ? ''
+                        : 'You do not have access to pack this product'
                      : 'Pending order confirmation!'
                }
-               hasAccess={Boolean(
-                  current?.order?.isAccepted &&
-                     !current?.order?.isRejected &&
-                     current?.assemblyStationId === config.current_station?.id
-               )}
                onClick={() =>
                   update({
                      variables: {
@@ -153,20 +170,18 @@ export const Inventories = ({
             <TextButton
                size="sm"
                type="solid"
+               hasAccess={hasStationAccess()}
                disabled={
                   current?.isAssembled ||
                   current?.assemblyStatus !== 'COMPLETED'
                }
                fallBackMessage={
-                  current?.assemblyStationId !== config.current_station?.id
-                     ? ''
+                  isOrderConfirmed
+                     ? current?.assemblyStationId === config.current_station?.id
+                        ? ''
+                        : 'You do not have access to assemble this product'
                      : 'Pending order confirmation!'
                }
-               hasAccess={Boolean(
-                  current?.order?.isAccepted &&
-                     !current?.order?.isRejected &&
-                     current?.assemblyStationId === config.current_station?.id
-               )}
                onClick={() =>
                   update({
                      variables: {
