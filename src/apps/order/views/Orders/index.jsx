@@ -36,9 +36,9 @@ const Orders = () => {
          ...(state.orders.offset !== null && { offset: state.orders.offset }),
       },
       onSubscriptionData: ({
-         subscriptionData: { data: { orders = [] } = {} } = {},
+         subscriptionData: { data: { orders: list = [] } = {} } = {},
       }) => {
-         setOrders(orders)
+         setOrders(list)
          if (state.orders.limit) {
             if (!loadingAggregate && ordersAggregate?.aggregate?.count > 10) {
                dispatch({

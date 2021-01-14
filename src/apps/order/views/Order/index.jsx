@@ -76,10 +76,8 @@ const Order = () => {
          variables: {
             id: params.id,
          },
-         onSubscriptionData: ({
-            subscriptionData: { data: { order = {} } = {} } = {},
-         }) => {
-            setIsThirdParty(Boolean(order?.thirdPartyOrderId))
+         onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
+            setIsThirdParty(Boolean(data?.order?.thirdPartyOrderId))
          },
       }
    )
@@ -124,7 +122,6 @@ const Order = () => {
 
          let isSelected = Boolean(state.current_product?.id)
          if (!isEmpty(mealkits)) {
-            console.log('IN MEALKITS')
             if (!isSelected) {
                const [mealkit] = mealkits
                dispatch({ type: 'SELECT_PRODUCT', payload: mealkit })
@@ -135,7 +132,6 @@ const Order = () => {
                   station: config.current_station,
                })
                isSelected = true
-               console.log('IN MEALKITS -> SELECT PRODUCT & SACHET')
             } else {
                const mealkit = mealkits.find(
                   node => node.id === state.current_product?.id
@@ -148,12 +144,10 @@ const Order = () => {
                      station: config.current_station,
                   })
                   setTabIndex(types.indexOf('MEALKIT'))
-                  console.log('IN MEALKITS -> SELECT SACHET AND SWITCH TAB')
                }
             }
          }
          if (!isEmpty(inventories)) {
-            console.log('IN INVENTORIES')
             if (!isSelected) {
                const [inventory] = inventories
                dispatch({ type: 'SELECT_PRODUCT', payload: inventory })
@@ -164,7 +158,6 @@ const Order = () => {
                   station: config.current_station,
                })
                isSelected = true
-               console.log('IN INVENTORIES -> SELECT PRODUCT & SACHET')
             } else {
                const inventory = inventories.find(
                   node => node.id === state.current_product?.id
@@ -177,12 +170,10 @@ const Order = () => {
                      station: config.current_station,
                   })
                   setTabIndex(types.indexOf('INVENTORY'))
-                  console.log('IN INVENTORIES -> SELECT SACHET AND SWITCH TAB')
                }
             }
          }
          if (!isEmpty(readytoeats)) {
-            console.log('IN READYTOEATS')
             if (!isSelected) {
                const [readytoeat] = readytoeats
                dispatch({ type: 'SELECT_PRODUCT', payload: readytoeat })
@@ -193,7 +184,6 @@ const Order = () => {
                   station: config.current_station,
                })
                isSelected = true
-               console.log('IN READYTOEATS -> SELECT PRODUCT & SACHET')
             } else {
                const readytoeat = readytoeats.find(
                   node => node.id === state.current_product?.id
@@ -206,7 +196,6 @@ const Order = () => {
                      station: config.current_station,
                   })
                   setTabIndex(types.indexOf('READYTOEAT'))
-                  console.log('IN READYTOEATS -> SELECT SACHET AND SWITCH TAB')
                }
             }
          }
@@ -268,8 +257,8 @@ const Order = () => {
                },
             }
          )
-      } catch (error) {
-         console.log(error)
+      } catch (err) {
+         console.error('printKot -> ', err)
       }
    }
 
@@ -282,8 +271,8 @@ const Order = () => {
             if (success) {
                data.forEach(node => window.open(node.url, '_blank'))
             }
-         } catch (error) {
-            console.log('viewKOT -> error', error)
+         } catch (err) {
+            console.error('viewKOT -> error', err)
          }
       }
       kots()
@@ -369,7 +358,9 @@ const Order = () => {
                            justifyContent="center"
                         >
                            <img
-                              alt={orderSource[0]?.thirdPartyCompany?.title}
+                              alt={
+                                 orderSource[0]?.thirdPartyCompany?.title || ''
+                              }
                               src={orderSource[0]?.thirdPartyCompany?.imageUrl}
                               style={{
                                  height: '100%',

@@ -1,5 +1,18 @@
 import styled, { css } from 'styled-components'
 
+const selectBg = (isPacked, isAssembled) => {
+   if (isPacked && isAssembled) {
+      return '#79df54' // green
+   }
+   if (!isPacked && !isAssembled) {
+      return '#f9daa8' // pending
+   }
+   if (isPacked && !isAssembled) {
+      return '#65c6ff' // processing
+   }
+   return ''
+}
+
 export const Styles = {
    Products: styled.ul(
       () => css`
@@ -134,19 +147,6 @@ export const List = {
       margin-right: 3px;
       background: rgba(0, 0, 0, 0.2);
    `,
-}
-
-const selectBg = (isPacked, isAssembled) => {
-   if (isPacked && isAssembled) {
-      return '#79df54' // green
-   }
-   if (!isPacked && !isAssembled) {
-      return '#f9daa8' //pending
-   }
-   if (isPacked && !isAssembled) {
-      return '#65c6ff' // processing
-   }
-   return ''
 }
 
 export const Legend = styled.div`

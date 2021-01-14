@@ -42,8 +42,8 @@ export const ReadyToEats = ({
       onCompleted: () => {
          toast.success('Successfully updated the product!')
       },
-      onError: error => {
-         logger(error)
+      onError: err => {
+         logger(err)
          toast.success('Failed to update the product!')
       },
    })
@@ -58,7 +58,7 @@ export const ReadyToEats = ({
       if (config.print.print_simulation.value.isActive) {
          setLabel(url)
       } else {
-         const url = `${
+         const uri = `${
             new URL(process.env.REACT_APP_DATA_HUB_URI).origin
          }/datahub/v1/query`
 
@@ -71,7 +71,7 @@ export const ReadyToEats = ({
             simpleRecipeProductOptionId: current.simpleRecipeProductOptionId,
          }
          axios.post(
-            url,
+            uri,
             {
                type: 'invoke_event_trigger',
                args: {
