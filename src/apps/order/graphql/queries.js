@@ -493,7 +493,6 @@ export const QUERIES = {
                      orderId: { _eq: $orderId }
                      orderModifierId: { _is_null: true }
                   }
-
                   order_by: { created_at: desc }
                ) {
                   id

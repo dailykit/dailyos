@@ -299,6 +299,13 @@ export const ReadyToEats = ({
 const ProductCard = ({ readytoeat, isActive, onClick }) => {
    const { t } = useTranslation()
 
+   const assembled = readytoeat?.orderSachets?.filter(
+      sachet => sachet.isAssembled
+   ).length
+   const packed = readytoeat?.orderSachets?.filter(
+      sachet => sachet.status === 'PACKED'
+   ).length
+   const total = readytoeat?.orderSachets?.length
    const serving =
       readytoeat?.simpleRecipeProductOption?.simpleRecipeYield?.yield?.serving
 
@@ -316,8 +323,7 @@ const ProductCard = ({ readytoeat, isActive, onClick }) => {
          <Spacer size="14px" />
          <Flex container alignItems="center" justifyContent="space-between">
             <span>
-               {readytoeat.isAssembled ? 1 : 0} /{' '}
-               {readytoeat.assemblyStatus === 'COMPLETED' ? 1 : 0} / 1
+               {assembled} / {packed} / {total}
             </span>
             <Flex container alignItems="center">
                <Flex as="span" container alignItems="center">

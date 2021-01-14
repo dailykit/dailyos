@@ -307,6 +307,13 @@ const productTitle = inventory => {
 }
 
 const ProductCard = ({ onClick, isActive, inventory }) => {
+   const assembled = inventory.orderSachets?.filter(
+      sachet => sachet.isAssembled
+   ).length
+   const packed = inventory.orderSachets?.filter(
+      sachet => sachet.status === 'PACKED'
+   ).length
+   const total = inventory.orderSachets?.length
    const quantity =
       inventory.quantity * inventory?.inventoryProductOption?.quantity || 1
    return (
@@ -318,8 +325,7 @@ const ProductCard = ({ onClick, isActive, inventory }) => {
          <Spacer size="14px" />
          <Flex container alignItems="center" justifyContent="space-between">
             <span>
-               {inventory.isAssembled ? 1 : 0} /{' '}
-               {inventory.assemblyStatus === 'COMPLETED' ? 1 : 0} / 1
+               {assembled} / {packed} / {total}
             </span>
             <span>{inventory?.inventoryProductOption?.label}</span>
          </Flex>
