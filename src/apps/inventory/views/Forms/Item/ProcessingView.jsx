@@ -74,7 +74,7 @@ export default function ProcessingView({ formState, proc = {}, isDefault }) {
          </Tunnels>
          <Tunnels tunnels={anykitMatchesTunnel}>
             <Tunnel style={{ overflowY: 'auto' }} layer={1} size="lg">
-               <AnykitMatchesTunnel close={closeAnykitMatchesTunnel} />
+               <AnykitMatchesTunnel supplierItemId={formState.id} close={closeAnykitMatchesTunnel} />
             </Tunnel>
          </Tunnels>
          <HorizontalTabs>
