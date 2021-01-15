@@ -31,7 +31,7 @@ const Information = ({ state }) => {
             state.cookingTime ||
             state.utensils?.length ||
             state.description ? (
-               <Container>
+               <Container width="100%">
                   <ContainerAction>
                      <IconButton type="ghost" onClick={() => openTunnel(1)}>
                         <EditIcon color="#00A7E1" />
