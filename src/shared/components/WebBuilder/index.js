@@ -98,22 +98,32 @@ const Builder = React.forwardRef(
          editorRef.current = editor
          setMount(true)
          console.log('after mouting')
+         return () => {
+            console.log('before unmounting')
+            console.log('editor', editorRef.current)
+            const code =
+               editorRef.current.getHtml() +
+               `<style>+ ${editorRef.current.getCss()} +</style>`
+            onChangeContent(code)
+            editorRef.current.destroy()
+            console.log('after unmounting')
+         }
       }, [])
 
-      useEffect(() => {
-         if (editorRef.current) {
-            return () => {
-               console.log('before unmouting')
-               console.log('editor', editorRef.current)
-               const code =
-                  editorRef.current.getHtml() +
-                  `<style>+ ${editorRef.current.getCss()} +</style>`
-               onChangeContent(code)
-               editorRef.current.destroy()
-               console.log('after unmouting')
-            }
-         }
-      }, [tab])
+      // useEffect(() => {
+      //    if (editorRef.current) {
+      //       return () => {
+      //          console.log('before unmounting')
+      //          console.log('editor', editorRef.current)
+      //          const code =
+      //             editorRef.current.getHtml() +
+      //             `<style>+ ${editorRef.current.getCss()} +</style>`
+      //          onChangeContent(code)
+      //          editorRef.current.destroy()
+      //          console.log('after unmounting')
+      //       }
+      //    }
+      // }, [])
 
       React.useImperativeHandle(ref, () => ({
          func(action) {

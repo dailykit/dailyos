@@ -234,11 +234,18 @@ const Editor = () => {
    }, [addTab, tab])
 
    // disposing monaco editor whenever changing tab or before re-initializing the monaco
+   // React.useEffect(() => {
+   //    if (editorRef.current) {
+   //       return () => {
+   //          console.log('monaco cleanup....')
+   //          editorRef.current.dispose()
+   //       }
+   //    }
+   // }, [])
    React.useEffect(() => {
       if (editorRef.current) {
-         console.log('monaco cleanup....')
          return () => {
-            editorRef.current.dispose()
+            console.log('running...')
             setIsWebBuilderOpen(false)
             webBuilderRef.current = null
          }
