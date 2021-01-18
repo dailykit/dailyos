@@ -58,20 +58,19 @@ export default function PlannedLotView({ sachetItems = [], procId, unit }) {
                />
             </Tunnel>
          </Tunnels>
-
+         <SectionTabsListHeader>
+            <Text as="h2">{t(address.concat('sachets'))}</Text>
+            <IconButton
+               type="outline"
+               onClick={() => {
+                  openConfigureSachetTunnel(1)
+               }}
+            >
+               <AddIcon />
+            </IconButton>
+         </SectionTabsListHeader>
          <SectionTabs>
             <SectionTabList>
-               <SectionTabsListHeader>
-                  <Text as="h2">{t(address.concat('sachets'))}</Text>
-                  <IconButton
-                     type="outline"
-                     onClick={() => {
-                        openConfigureSachetTunnel(1)
-                     }}
-                  >
-                     <AddIcon />
-                  </IconButton>
-               </SectionTabsListHeader>
                {sachetItems.map(sachet => {
                   return (
                      <SectionTab key={sachet.id}>
