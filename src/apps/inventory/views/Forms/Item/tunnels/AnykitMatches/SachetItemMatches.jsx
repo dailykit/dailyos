@@ -22,8 +22,6 @@ export default function SachetItemMatches({ close, sachetItemId }) {
 
    if (loading) return <InlineLoader />
 
-   console.log(sachetItemMatches)
-
    return (
       <>
          <TunnelHeader
