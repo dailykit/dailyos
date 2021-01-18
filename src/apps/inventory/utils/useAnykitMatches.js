@@ -10,6 +10,7 @@ export const useAnykitMatches = ({
    const [error, setError] = useState(null)
    const [supplierItemMatches, setSupplierItemMatches] = useState([])
    const [sachetItemMatches, setSatchetItemMatches] = useState([])
+   const [loading, setLoading] = useState(false)
 
    const controller = new window.AbortController()
 
@@ -18,6 +19,8 @@ export const useAnykitMatches = ({
          'x-hasura-admin-secret': process.env.REACT_APP_ANYKIT_SECRET,
          'content-type': 'application/json',
       }
+
+      setLoading(true)
 
       if (!showSachetMatches) {
          // get matches from ingredientSupllierItemMatch table
@@ -48,6 +51,7 @@ export const useAnykitMatches = ({
          })
             .then(r => r.json())
             .then(resp => {
+               setLoading(false)
                if (resp?.errors) {
                   // errors is always an array with atleast one item
                   setError(resp.errors[0])
@@ -56,6 +60,10 @@ export const useAnykitMatches = ({
                      resp?.data?.matches_ingredientSupplierItemMatch || []
                   )
                }
+            })
+            .catch(err => {
+               setLoading(false)
+               setError(err)
             })
       } else {
          // get matches from sachetSachetItem and sachetSupplierItemMatches table
@@ -86,6 +94,7 @@ export const useAnykitMatches = ({
          })
             .then(r => r.json())
             .then(resp => {
+               setLoading(false)
                if (resp?.errors?.length) {
                   setError(resp.errors[0])
                } else {
@@ -94,6 +103,10 @@ export const useAnykitMatches = ({
                      ...sachetItemMatches,
                   ])
                }
+            })
+            .catch(err => {
+               setLoading(false)
+               setError(err)
             })
 
          fetch(BASE_URL, {
@@ -125,6 +138,7 @@ export const useAnykitMatches = ({
          })
             .then(r => r.json())
             .then(resp => {
+               setLoading(false)
                if (resp?.errors?.length) {
                   setError(resp.errors[0])
                } else {
@@ -135,7 +149,8 @@ export const useAnykitMatches = ({
                }
             })
             .catch(err => {
-               console.log(err)
+               setLoading(false)
+               setError(err)
             })
       }
 
@@ -148,5 +163,6 @@ export const useAnykitMatches = ({
       sachetItemMatches,
       supplierItemMatches,
       error,
+      loading,
    }
 }
