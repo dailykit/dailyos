@@ -42,27 +42,25 @@ const Assets = ({ state }) => {
    }
 
    return (
-      <>
-         <Flex width="400px">
-            {state?.assets?.images != null && state?.assets?.images?.length ? (
-               <Gallery
-                  list={state.assets.images}
-                  isMulti={true}
-                  onChange={images => {
-                     addImage(images)
-                  }}
-               />
-            ) : (
-               <Gallery
-                  list={[]}
-                  isMulti={true}
-                  onChange={images => {
-                     addImage(images)
-                  }}
-               />
-            )}
-         </Flex>
-      </>
+      <Flex style={{ width: '100%' }}>
+         {state?.assets?.images != null && state?.assets?.images?.length ? (
+            <Gallery
+               list={state.assets.images}
+               isMulti={true}
+               onChange={images => {
+                  addImage(images)
+               }}
+            />
+         ) : (
+            <Gallery
+               list={[]}
+               isMulti={true}
+               onChange={images => {
+                  addImage(images)
+               }}
+            />
+         )}
+      </Flex>
    )
 }
 

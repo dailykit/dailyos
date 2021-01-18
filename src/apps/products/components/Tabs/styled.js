@@ -8,7 +8,7 @@ export const StyledTabs = styled.ul`
 
 export const StyledTab = styled.li(
    ({ active }) => css`
-      width: 220px;
+      min-width: fit-content;
       height: 40px;
       display: grid;
       cursor: pointer;

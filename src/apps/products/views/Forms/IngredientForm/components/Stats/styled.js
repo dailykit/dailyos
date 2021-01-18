@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { Flex } from '@dailykit/ui'
 
 export const ImageContainer = styled.div`
    width: 464px;
@@ -20,5 +21,10 @@ export const ImageContainer = styled.div`
          margin-right: 16px;
          cursor: pointer;
       }
+   }
+`
+export const ResponsiveFlex = styled(Flex)`
+   @media screen and (max-width: 767px) {
+      flex-direction: column;
    }
 `

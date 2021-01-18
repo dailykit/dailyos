@@ -1,12 +1,9 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { ButtonTile, Tunnel, Tunnels, useTunnel, Flex } from '@dailykit/ui'
+import { useTunnel, Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../../shared/utils'
-import { DeleteIcon, EditIcon } from '../../../../../../assets/icons'
 import { UPDATE_SIMPLE_RECIPE_PRODUCT } from '../../../../../../graphql'
-import { AssetsTunnel } from '../../tunnels'
-import { ImageContainer, PhotoTileWrapper } from './styled'
 import { Gallery } from '../../../../../../../../shared/components'
 
 const Assets = ({ state }) => {
@@ -14,7 +11,7 @@ const Assets = ({ state }) => {
 
    const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
       onCompleted: () => {
-         toast.success('Image removed!')
+         toast.success('Image updated!')
       },
       onError: error => {
          toast.error('Something went wrong!')
@@ -37,27 +34,25 @@ const Assets = ({ state }) => {
    }
 
    return (
-      <>
-         <Flex width="400px">
-            {state?.assets?.images != null && state?.assets?.images?.length ? (
-               <Gallery
-                  list={state.assets.images}
-                  isMulti={true}
-                  onChange={images => {
-                     addImage(images)
-                  }}
-               />
-            ) : (
-               <Gallery
-                  list={[]}
-                  isMulti={true}
-                  onChange={images => {
-                     addImage(images)
-                  }}
-               />
-            )}
-         </Flex>
-      </>
+      <Flex width="100%">
+         {state?.assets?.images != null && state?.assets?.images?.length ? (
+            <Gallery
+               list={state.assets.images}
+               isMulti={true}
+               onChange={images => {
+                  addImage(images)
+               }}
+            />
+         ) : (
+            <Gallery
+               list={[]}
+               isMulti={true}
+               onChange={images => {
+                  addImage(images)
+               }}
+            />
+         )}
+      </Flex>
    )
 }
 
