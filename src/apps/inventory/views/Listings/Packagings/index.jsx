@@ -22,6 +22,7 @@ import { PACKAGINGS_LISTINGS_SUBSCRIPTION } from '../../../graphql'
 import { StyledWrapper } from '../styled'
 import tableOptions from '../tableOption'
 import PackagingTypeTunnel from './PackagingTypeTunnel'
+import { HeaderFlex, StyledFlex } from './styled'
 
 export default function Packagings() {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -144,17 +145,14 @@ export default function Packagings() {
             </Tunnel>
          </Tunnels>
          <StyledWrapper>
-            <Flex
-               container
-               alignItems="center"
-               justifyContent="space-between"
-               padding="16px 0"
-            >
-               <Flex container alignItems="center">
-                  <Text as="h2">Packagings</Text>
+            <StyledFlex container justifyContent="space-between">
+               <HeaderFlex container alignItems="center">
+                  <Text as="h2" textAlign="left">
+                     Packagings
+                  </Text>
                   <Tooltip identifier="packagings_listings_header_title" />
-               </Flex>
-               <Flex container>
+               </HeaderFlex>
+               <StyledFlex container>
                   <ComboButton
                      type="outline"
                      onClick={() =>
@@ -169,8 +167,8 @@ export default function Packagings() {
                      <AddIcon color="#fff" size={24} />
                      Add Packaging
                   </ComboButton>
-               </Flex>
-            </Flex>
+               </StyledFlex>
+            </StyledFlex>
             <Spacer size="16px" />
             <ReactTabulator
                ref={tableRef}

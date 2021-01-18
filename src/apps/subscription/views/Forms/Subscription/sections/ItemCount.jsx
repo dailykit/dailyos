@@ -7,7 +7,6 @@ import { useSubscription, useMutation } from '@apollo/react-hooks'
 import {
    Text,
    Form,
-   Input,
    Tunnel,
    Spacer,
    Tunnels,
@@ -71,9 +70,11 @@ const ItemCount = ({ id, openItemTunnel }) => {
                type: 'SET_ITEM',
                payload: {
                   id: itemCount.id,
+                  tax: itemCount.tax,
                   count: itemCount.count,
                   price: itemCount.price,
                   isActive: itemCount.isActive,
+                  isTaxIncluded: itemCount.isTaxIncluded,
                },
             })
          },
@@ -88,7 +89,9 @@ const ItemCount = ({ id, openItemTunnel }) => {
                id: null,
                count: '',
                price: '',
+               tax: 0,
                isActive: true,
+               isTaxIncluded: false,
             },
          })
       }
@@ -104,11 +107,8 @@ const ItemCount = ({ id, openItemTunnel }) => {
       return upsertItemCount({
          variables: {
             object: {
-               id: state.item.id,
-               count: state.item.count,
-               price: state.item.price,
                isActive: !state.item.isActive,
-               subscriptionServingId: state.serving.id,
+               ...state.item,
             },
          },
       })

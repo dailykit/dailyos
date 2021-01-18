@@ -9,6 +9,7 @@ export const Container = styled.div`
    padding-right: ${props => props.paddingX || 0}px;
    padding-top: ${props => props.paddingY || 0}px;
    padding-bottom: ${props => props.paddingY || 0}px;
+   width: ${props => props.width || null};
    position: relative;
 `
 

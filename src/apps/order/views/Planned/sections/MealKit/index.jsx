@@ -4,7 +4,7 @@ import { Text, Flex, Spacer } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 
 import { QUERIES } from '../../../../graphql'
-import { NewTabIcon } from '../../../../assets/icons'
+// import { NewTabIcon } from '../../../../assets/icons'
 import { useOrder, useTabs } from '../../../../context'
 import { logger } from '../../../../../../shared/utils'
 import {
@@ -33,15 +33,17 @@ export const MealKitSection = ({ setMealKitTotal }) => {
          order: state.orders.where,
       },
       onSubscriptionData: ({
-         subscriptionData: { data: { simpleRecipeProducts = {} } = {} } = {},
+         subscriptionData: {
+            data: { simpleRecipeProducts: products = {} } = {},
+         } = {},
       }) => {
-         setMealKitTotal(simpleRecipeProducts.aggregate.count)
+         setMealKitTotal(products.aggregate.count)
       },
    })
 
-   const openProduct = (id, name) => {
-      addTab(name, `/apps/order/planned/meal-kit/${id}`)
-   }
+   // const openProduct = (id, name) => {
+   //    addTab(name, `/apps/order/planned/meal-kit/${id}`)
+   // }
 
    if (loading) return <InlineLoader />
    if (error) {

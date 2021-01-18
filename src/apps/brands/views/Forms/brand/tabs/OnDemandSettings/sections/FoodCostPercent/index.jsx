@@ -72,8 +72,8 @@ export const FoodCostPercent = ({ update }) => {
       update({
          id: settingId,
          value: {
-            lowerLimit: +lowerLimit.value.trim(),
-            upperLimit: +upperLimit.value.trim(),
+            lowerLimit: +lowerLimit.value,
+            upperLimit: +upperLimit.value,
          },
       })
    }, [lowerLimit, upperLimit, settingId])
@@ -159,7 +159,15 @@ export const FoodCostPercent = ({ update }) => {
                   ))}
             </Form.Group>
             <Spacer size="8px" xAxis />
-            <TextButton size="sm" type="outline" onClick={updateSetting}>
+            <TextButton
+               size="sm"
+               type="outline"
+               onClick={() =>
+                  lowerLimit.meta.isValid &&
+                  upperLimit.meta.isValid &&
+                  updateSetting()
+               }
+            >
                Update
             </TextButton>
          </Flex>

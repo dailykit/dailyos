@@ -8,7 +8,7 @@ import { RecurrenceContext } from '../../../../../../context/recurrence'
 import { Flex } from '../../../styled'
 import { DeleteIcon, EditIcon } from '../../../../../../assets/icons'
 import { DELETE_CHARGE } from '../../../../../../graphql'
-import { logger } from '../../../../../../../../shared/utils'
+import { currencyFmt, logger } from '../../../../../../../../shared/utils'
 
 const DeliveryCharges = ({ mileRangeId, charges, openTunnel }) => {
    const { recurrenceDispatch } = React.useContext(RecurrenceContext)
@@ -60,9 +60,12 @@ const DeliveryCharges = ({ mileRangeId, charges, openTunnel }) => {
          {charges.map(charge => (
             <TableRecord key={charge.id}>
                <div style={{ padding: '8px' }}>
-                  ${charge.orderValueFrom} - ${charge.orderValueUpto}
+                  {currencyFmt(Number(charge.orderValueFrom) || 0)} -{' '}
+                  {currencyFmt(Number(charge.orderValueUpto) || 0)}
                </div>
-               <div style={{ padding: '8px' }}>${charge.charge}</div>
+               <div style={{ padding: '8px' }}>
+                  {currencyFmt(Number(charge.charge) || 0)}
+               </div>
                <Flex direction="row" align="center" style={{ padding: '8px' }}>
                   <IconButton type="ghost" onClick={() => updateCharge(charge)}>
                      <EditIcon color="#00A7E1" />

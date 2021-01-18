@@ -119,9 +119,6 @@ const ModifierFormTunnel = ({
             ) {
                return false
             }
-            if (!option.operationConfig.value) {
-               return false
-            }
             return true
          })
          if (!hasValidOptions) {

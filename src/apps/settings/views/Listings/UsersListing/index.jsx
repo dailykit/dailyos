@@ -66,7 +66,6 @@ const UsersListing = () => {
          field: 'firstName',
          headerFilter: true,
          cssClass: 'cell',
-         width: 100,
          cellClick: (e, cell) => rowClick(e, cell),
          formatter: cell =>
             `${cell.getData()?.firstName || ''} ${
@@ -83,7 +82,6 @@ const UsersListing = () => {
          title: 'Email',
          field: 'email',
          headerFilter: true,
-         width: 100,
          headerTooltip: column => {
             const identifier = 'user_listing_column_email'
             return (

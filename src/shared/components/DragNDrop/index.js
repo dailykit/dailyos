@@ -3,18 +3,20 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { Flex } from '@dailykit/ui'
 // import { set } from 'lodash'
 import { useDnd } from './useDnd'
+
 export default function DragNDrop({
    list,
    droppableId,
    children,
    tablename,
    schemaname,
+   direction,
 }) {
    const { priorityMutation } = useDnd()
    const [data, setData] = useState(list)
 
    const onDragEnd = result => {
-      //return if item was dropped outside
+      // return if item was dropped outside
       if (!result.destination) return
 
       // return if item was dropped to the same place
@@ -24,19 +26,19 @@ export default function DragNDrop({
       )
          return
 
-      //get the items array
+      // get the items array
       const newItems = [...list]
       let items = []
-      //get the draggedItems
+      // get the draggedItems
       let draggedItems = newItems[result.source.index]
       const length = newItems.length
       console.log(result.destination.index)
 
-      //delete the item from the source position and insert it to the destination position
+      // delete the item from the source position and insert it to the destination position
       newItems.splice(result.source.index, 1)
       newItems.splice(result.destination.index, 0, draggedItems)
 
-      //when middle items are dragged in the any middle position except top and bottom
+      // when middle items are dragged in the any middle position except top and bottom
       if (
          result.destination.index !== 0 &&
          result.destination.index !== length - 1
@@ -50,7 +52,7 @@ export default function DragNDrop({
          draggedItems.position = (beforePosition + afterPosition) / 2
          items = [draggedItems]
       }
-      //when any items are dragged in the top position
+      // when any items are dragged in the top position
       else if (result.destination.index === 0) {
          console.log('when any items are dragged in the top position')
          if (length === 2) {
@@ -67,7 +69,7 @@ export default function DragNDrop({
             items = [draggedItems, newItems[result.destination.index + 1]]
          }
       }
-      //when any items are dragged in the bottom position
+      // when any items are dragged in the bottom position
       else if (result.destination.index === length - 1) {
          console.log('when any items are dragged in the bottom position')
          if (length === 2) {
@@ -84,7 +86,7 @@ export default function DragNDrop({
          }
       }
 
-      //check for top and bottom position
+      // check for top and bottom position
       if (
          newItems[0].position !== 1000000 &&
          newItems[length - 1].position !== 0
@@ -93,21 +95,20 @@ export default function DragNDrop({
          newItems[0].position = 1000000
          newItems[length - 1].position = 0
       }
-      //check for top position
+      // check for top position
       else if (newItems[0].position !== 1000000) {
          console.log('case 2')
          newItems[0].position = 1000000
          items = [...items, newItems[0]]
       }
-      //check for bottom position
+      // check for bottom position
       else if (newItems[length - 1].position !== 0) {
          console.log('case 3')
          newItems[length - 1].position = 0
          items = [...items, newItems[length - 1]]
       }
 
-      //create a new data
-      console.log(items)
+      // create a new data
       if (items.length > 0) {
          priorityMutation({
             variables: {
@@ -125,14 +126,27 @@ export default function DragNDrop({
          items: newItems,
       }
 
-      //update state
+      // update state
       setData(newData)
    }
    return (
       <DragDropContext onDragEnd={onDragEnd}>
-         <Droppable droppableId={droppableId}>
+         <Droppable
+            droppableId={droppableId}
+            direction={direction || 'vertical'}
+         >
             {provided => (
-               <div {...provided.droppableProps} ref={provided.innerRef}>
+               <div
+                  {...provided.droppableProps}
+                  style={
+                     direction === 'horizontal'
+                        ? {
+                             display: 'flex',
+                          }
+                        : { display: 'block' }
+                  }
+                  ref={provided.innerRef}
+               >
                   {children.map((item, index) => (
                      <Draggable
                         key={index}

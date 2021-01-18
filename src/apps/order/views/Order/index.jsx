@@ -1,12 +1,13 @@
 import React from 'react'
 import axios from 'axios'
-import { isArray, isEmpty, isNull } from 'lodash'
+import { isEmpty, isNull } from 'lodash'
 import { toast } from 'react-toastify'
 import htmlToReact from 'html-to-react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
 import {
+   Tag,
    Flex,
    Text,
    Spacer,
@@ -22,9 +23,11 @@ import {
 
 import { Styles } from './styled'
 import { formatDate } from '../../utils'
-import { useOrder, useTabs } from '../../context'
+import { findAndSelectSachet } from './methods'
 import { QUERIES, MUTATIONS } from '../../graphql'
 import { PrintIcon, UserIcon } from '../../assets/icons'
+import { useAccess } from '../../../../shared/providers'
+import { useConfig, useOrder, useTabs } from '../../context'
 import { currencyFmt, logger } from '../../../../shared/utils'
 import { MealKits, Inventories, ReadyToEats } from './sections'
 import {
@@ -40,10 +43,13 @@ const address = 'apps.order.views.order.'
 const parser = new htmlToReact.Parser(React)
 
 const Order = () => {
-   const { t } = useTranslation()
    const params = useParams()
+   const { t } = useTranslation()
+   const { isSuperUser } = useAccess()
    const { tab, addTab } = useTabs()
+   const { state: config } = useConfig()
    const { state, switchView, dispatch } = useOrder()
+   const [tabIndex, setTabIndex] = React.useState(0)
    const [isThirdParty, setIsThirdParty] = React.useState(false)
    const [updateOrder] = useMutation(MUTATIONS.ORDER.UPDATE, {
       onCompleted: () => {
@@ -69,23 +75,9 @@ const Order = () => {
       {
          variables: {
             id: params.id,
-            ...(!isEmpty(state.orders.where?._or) && {
-               packingStationId: {
-                  _eq:
-                     state.orders.where?._or[0].orderInventoryProducts
-                        .assemblyStationId._eq,
-               },
-               assemblyStationId: {
-                  _eq:
-                     state.orders.where?._or[0].orderInventoryProducts
-                        .assemblyStationId._eq,
-               },
-            }),
          },
-         onSubscriptionData: ({
-            subscriptionData: { data: { order = {} } = {} } = {},
-         }) => {
-            setIsThirdParty(Boolean(order?.thirdPartyOrderId))
+         onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
+            setIsThirdParty(Boolean(data?.order?.thirdPartyOrderId))
          },
       }
    )
@@ -97,18 +89,6 @@ const Order = () => {
    } = useSubscription(QUERIES.ORDER.MEALKITS, {
       variables: {
          orderId: params.id,
-         ...(!isEmpty(state.orders.where?._or) && {
-            packingStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-            assemblyStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-         }),
       },
    })
 
@@ -119,18 +99,6 @@ const Order = () => {
    } = useSubscription(QUERIES.ORDER.READY_TO_EAT.LIST, {
       variables: {
          orderId: params.id,
-         ...(!isEmpty(state.orders.where?._or) && {
-            packingStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-            assemblyStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-         }),
       },
    })
 
@@ -141,20 +109,105 @@ const Order = () => {
    } = useSubscription(QUERIES.ORDER.INVENTORY.LIST, {
       variables: {
          orderId: params.id,
-         ...(!isEmpty(state.orders.where?._or) && {
-            packingStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-            assemblyStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-         }),
       },
    })
+
+   React.useEffect(() => {
+      if (!mealkitsLoading && !readytoeatsLoading && !inventoriesLoading) {
+         const types = [
+            !isEmpty(mealkits) && 'MEALKIT',
+            !isEmpty(inventories) && 'INVENTORY',
+            !isEmpty(readytoeats) && 'READYTOEAT',
+         ].filter(Boolean)
+
+         let isSelected = Boolean(state.current_product?.id)
+         if (!isEmpty(mealkits)) {
+            if (!isSelected) {
+               const [mealkit] = mealkits
+               dispatch({ type: 'SELECT_PRODUCT', payload: mealkit })
+               findAndSelectSachet({
+                  dispatch,
+                  isSuperUser,
+                  product: mealkit,
+                  station: config.current_station,
+               })
+               isSelected = true
+            } else {
+               const mealkit = mealkits.find(
+                  node => node.id === state.current_product?.id
+               )
+               if (!isEmpty(mealkit)) {
+                  findAndSelectSachet({
+                     dispatch,
+                     isSuperUser,
+                     product: mealkit,
+                     station: config.current_station,
+                  })
+                  setTabIndex(types.indexOf('MEALKIT'))
+               }
+            }
+         }
+         if (!isEmpty(inventories)) {
+            if (!isSelected) {
+               const [inventory] = inventories
+               dispatch({ type: 'SELECT_PRODUCT', payload: inventory })
+               findAndSelectSachet({
+                  dispatch,
+                  isSuperUser,
+                  product: inventory,
+                  station: config.current_station,
+               })
+               isSelected = true
+            } else {
+               const inventory = inventories.find(
+                  node => node.id === state.current_product?.id
+               )
+               if (!isEmpty(inventory)) {
+                  findAndSelectSachet({
+                     dispatch,
+                     isSuperUser,
+                     product: inventory,
+                     station: config.current_station,
+                  })
+                  setTabIndex(types.indexOf('INVENTORY'))
+               }
+            }
+         }
+         if (!isEmpty(readytoeats)) {
+            if (!isSelected) {
+               const [readytoeat] = readytoeats
+               dispatch({ type: 'SELECT_PRODUCT', payload: readytoeat })
+               findAndSelectSachet({
+                  dispatch,
+                  isSuperUser,
+                  product: readytoeat,
+                  station: config.current_station,
+               })
+               isSelected = true
+            } else {
+               const readytoeat = readytoeats.find(
+                  node => node.id === state.current_product?.id
+               )
+               if (!isEmpty(readytoeat)) {
+                  findAndSelectSachet({
+                     dispatch,
+                     isSuperUser,
+                     product: readytoeat,
+                     station: config.current_station,
+                  })
+                  setTabIndex(types.indexOf('READYTOEAT'))
+               }
+            }
+         }
+      }
+   }, [
+      mealkits,
+      mealkitsLoading,
+      readytoeats,
+      readytoeatsLoading,
+      inventories,
+      inventoriesLoading,
+   ])
 
    React.useEffect(() => {
       if (!loading && order?.id && !tab) {
@@ -204,8 +257,8 @@ const Order = () => {
                },
             }
          )
-      } catch (error) {
-         console.log(error)
+      } catch (err) {
+         console.error('printKot -> ', err)
       }
    }
 
@@ -218,12 +271,53 @@ const Order = () => {
             if (success) {
                data.forEach(node => window.open(node.url, '_blank'))
             }
-         } catch (error) {
-            console.log('viewKOT -> error', error)
+         } catch (err) {
+            console.error('viewKOT -> error', err)
          }
       }
       kots()
    }, [order])
+
+   const onTabChange = React.useCallback(
+      index => {
+         setTabIndex(index)
+         const types = [
+            !isEmpty(mealkits) && 'MEALKIT',
+            !isEmpty(inventories) && 'INVENTORY',
+            !isEmpty(readytoeats) && 'READYTOEAT',
+         ].filter(Boolean)
+
+         if (types[index] === 'MEALKIT') {
+            const [mealkit] = mealkits
+            dispatch({ type: 'SELECT_PRODUCT', payload: mealkit })
+            findAndSelectSachet({
+               dispatch,
+               isSuperUser,
+               product: mealkit,
+               station: config.current_station,
+            })
+         } else if (types[index] === 'INVENTORY') {
+            const [inventory] = inventories
+            dispatch({ type: 'SELECT_PRODUCT', payload: inventory })
+            findAndSelectSachet({
+               dispatch,
+               isSuperUser,
+               product: inventory,
+               station: config.current_station,
+            })
+         } else if (types[index] === 'READYTOEAT') {
+            const [readytoeat] = readytoeats
+            dispatch({ type: 'SELECT_PRODUCT', payload: readytoeat })
+            findAndSelectSachet({
+               dispatch,
+               isSuperUser,
+               product: readytoeat,
+               station: config.current_station,
+            })
+         }
+      },
+      [setTabIndex, mealkits, inventories, readytoeats]
+   )
 
    if (loading) return <InlineLoader />
    if (error) {
@@ -243,6 +337,12 @@ const Order = () => {
          >
             <Flex container alignItems="center">
                <Text as="h4">ORD{order?.id}</Text>
+               {!isThirdParty && Boolean(order?.cart?.isTest) && (
+                  <>
+                     <Spacer size="8px" xAxis />
+                     <Tag>Test</Tag>
+                  </>
+               )}
                {!sourceLoading && isThirdParty && !isEmpty(orderSource) && (
                   <>
                      <Spacer size="16px" xAxis />
@@ -258,7 +358,9 @@ const Order = () => {
                            justifyContent="center"
                         >
                            <img
-                              alt={orderSource[0]?.thirdPartyCompany?.title}
+                              alt={
+                                 orderSource[0]?.thirdPartyCompany?.title || ''
+                              }
                               src={orderSource[0]?.thirdPartyCompany?.imageUrl}
                               style={{
                                  height: '100%',
@@ -318,8 +420,8 @@ const Order = () => {
                   </Text>
                </Flex>
                {!isThirdParty && (
-                <>
-                 {/* 
+                  <>
+                     {/* 
                     <Spacer size="32px" xAxis />
                      <Flex as="section" container alignItems="center">
                         <Flex container alignItems="center">
@@ -337,15 +439,18 @@ const Order = () => {
                         </Text>
                      </Flex> 
                   */}
-                   <Spacer size="32px" xAxis />
-                   <Flex as="section" container alignItems="center">
-                      <TimeSlot
-                         type={order?.fulfillmentType}
-                         data={{ pickup: order.pickup, dropoff: order.dropoff }}
-                      />
-                   </Flex>
-                </>
-               )} 
+                     <Spacer size="32px" xAxis />
+                     <Flex as="section" container alignItems="center">
+                        <TimeSlot
+                           type={order?.fulfillmentType}
+                           data={{
+                              pickup: order.pickup,
+                              dropoff: order.dropoff,
+                           }}
+                        />
+                     </Flex>
+                  </>
+               )}
             </Flex>
          </Flex>
          <Spacer size="16px" />
@@ -477,7 +582,7 @@ const Order = () => {
                </HorizontalTabPanels>
             </HorizontalTabs>
          ) : (
-            <HorizontalTabs>
+            <HorizontalTabs index={tabIndex} onChange={onTabChange}>
                <HorizontalTabList style={{ padding: '0 16px' }}>
                   {!isEmpty(mealkits) && (
                      <HorizontalTab>
