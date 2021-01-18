@@ -58,6 +58,12 @@ const Editor = () => {
    const callWebBuilderFunc = action => {
       webBuilderRef.current.func(action)
    }
+   console.log({
+      language: language,
+      theme: theme,
+      isDark: isDark,
+      isWebBuilderOpen: isWebBuilderOpen,
+   })
 
    const { loading } = useQuery(GET_FILE_FETCH, {
       variables: {
@@ -243,14 +249,10 @@ const Editor = () => {
    //    }
    // }, [])
    React.useEffect(() => {
-      if (editorRef.current) {
-         return () => {
-            console.log('running...')
-            setIsWebBuilderOpen(false)
-            webBuilderRef.current = null
-         }
-      }
-   }, [tab])
+      console.log('running...')
+      setIsWebBuilderOpen(false)
+      webBuilderRef.current = null
+   }, [path])
 
    if (loading) return <Loader />
    return (

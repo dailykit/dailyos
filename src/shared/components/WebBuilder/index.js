@@ -97,16 +97,16 @@ const Builder = React.forwardRef(
          })
          editorRef.current = editor
          setMount(true)
-         console.log('after mouting')
+         console.log('after mount')
          return () => {
-            console.log('before unmounting')
+            console.log('before unmount')
             console.log('editor', editorRef.current)
             const code =
                editorRef.current.getHtml() +
                `<style>+ ${editorRef.current.getCss()} +</style>`
             onChangeContent(code)
             editorRef.current.destroy()
-            console.log('after unmounting')
+            console.log('after unmount')
          }
       }, [])
 
@@ -272,11 +272,11 @@ const Builder = React.forwardRef(
          })
 
          //call mutation for storing the template
-         editor.on('storage:store', function (e) {
-            const updatedCode =
-               editor.getHtml() + '<style>' + editor.getCss() + '</style>'
-            updateCode(updatedCode, path)
-         })
+         // editor.on('storage:store', function (e) {
+         //    const updatedCode =
+         //       editor.getHtml() + '<style>' + editor.getCss() + '</style>'
+         //    updateCode(updatedCode, path)
+         // })
 
          // editor.getModel().set('dmode', 'absolute')
 

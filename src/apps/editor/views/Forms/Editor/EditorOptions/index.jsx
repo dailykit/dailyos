@@ -296,6 +296,7 @@ const EditorOptions = ({
             openTunnel={openLinkFilesTunnel}
             closeTunnel={closeLinkFilesTunnel}
          />
+
          <PagePreviewTunnel
             tunnels={pagePreviewTunnels}
             openTunnel={openPagePreviewTunnel}
