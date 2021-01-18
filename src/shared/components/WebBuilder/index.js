@@ -310,11 +310,22 @@ const Builder = React.forwardRef(
                         'visible',
                         toggler.current
                      )
+
+                     document.getElementsByClassName(
+                        'gjs-pn-views'
+                     )[0].style.width = `${toggler.current ? '15%' : '3%'}`
+                     document.getElementsByClassName(
+                        'gjs-pn-views-container'
+                     )[0].style.width = `${toggler.current ? '15%' : '3%'}`
+                     document.getElementsByClassName(
+                        'gjs-cv-canvas'
+                     )[0].style.width = `${toggler.current ? '85%' : '97%'}`
+
                      editor.Panels.getButton('views', 'open-sm').set(
                         'attributes',
                         {
                            style: `display:${
-                              toggler.current ? 'block' : 'none'
+                              toggler.current ? 'inline-flex' : 'none'
                            }`,
                         }
                      )
@@ -322,7 +333,7 @@ const Builder = React.forwardRef(
                         'attributes',
                         {
                            style: `display:${
-                              toggler.current ? 'block' : 'none'
+                              toggler.current ? 'inline-flex' : 'none'
                            }`,
                         }
                      )
@@ -330,7 +341,7 @@ const Builder = React.forwardRef(
                         'attributes',
                         {
                            style: `display:${
-                              toggler.current ? 'block' : 'none'
+                              toggler.current ? 'inline-flex' : 'none'
                            }`,
                         }
                      )
@@ -338,7 +349,7 @@ const Builder = React.forwardRef(
                         'attributes',
                         {
                            style: `display:${
-                              toggler.current ? 'block' : 'none'
+                              toggler.current ? 'inline-flex' : 'none'
                            }`,
                         }
                      )
@@ -352,6 +363,7 @@ const Builder = React.forwardRef(
                active: false,
             })
          }
+         console.log('views', editor.Panels.getPanel('views'))
 
          // editor.Panels.getPanel('views').set('visible', false)
          editor.Panels.removePanel('commands')

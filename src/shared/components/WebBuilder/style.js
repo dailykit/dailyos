@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 
 export const StyledDiv = styled.div`
-   border: 2px solid #444;
    grid-area: main;
    #gjs {
       border: none;
@@ -10,8 +9,9 @@ export const StyledDiv = styled.div`
    /* Reset some default styling */
    .gjs-cv-canvas {
       top: 0;
-      width: 100%;
+      width: 85%;
       height: 100%;
+      z: 0;
    }
    .gjs-cstmBlock {
       width: auto;
@@ -76,5 +76,27 @@ export const StyledDiv = styled.div`
    .gjs-four-color,
    .gjs-four-color-h:hover {
       color: black;
+   }
+
+   .gjs-pn-btn {
+      height: 30px;
+      width: 30px;
+      padding: 0 12px;
+      font-weight: 500;
+      font-size: 14px;
+      border-radius: 1.5px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #555b6e;
+      background: #f3f3f3;
+   }
+   .gjs-pn-btn.gjs-pn-active {
+      background: linear-gradient(180deg, #28c1f7 -4.17%, #00a7e1 100%);
+      color: #fff;
+   }
+
+   .gjs-pn-panels {
+      z: 0;
    }
 `
