@@ -10,12 +10,15 @@ const AccessContext = React.createContext()
 
 const initialState = {
    routes: {},
+   roles: [],
 }
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
       case 'SET_ROUTES':
          return { ...state, routes: payload }
+      case 'SET_ROLES':
+         return { ...state, roles: payload }
       default:
          return state
    }
@@ -57,6 +60,7 @@ export const AccessProvider = ({ app, children }) => {
             'route'
          )
          dispatch({ type: 'SET_ROUTES', payload: _routes })
+         dispatch({ type: 'SET_ROLES', payload: roles.map(node => node.title) })
       }
    }, [loading, roles])
 
@@ -98,10 +102,14 @@ export const useAccess = (route = '') => {
       [state.routes, route]
    )
 
+   const isSuperUser =
+      state.roles.includes('admin') || state.roles.includes('manager')
+
    return {
       state,
       dispatch,
       hasAccess,
+      isSuperUser,
       canAccessRoute,
       accessPermission,
    }

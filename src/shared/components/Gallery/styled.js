@@ -7,7 +7,6 @@ export const Images = styled.div`
 `
 
 export const DeleteDiv = styled.div`
-   display: ${({ active }) => (active ? `block` : 'none')};
    position: absolute;
    right: 6px;
    top: 6px;
@@ -18,7 +17,6 @@ export const DeleteDiv = styled.div`
    }
 `
 export const EditDiv = styled.div`
-   display: ${({ active }) => (active ? `block` : 'none')};
    position: absolute;
    right: 42px;
    top: 6px;
@@ -43,8 +41,8 @@ export const WrapperDiv = styled.div`
 `
 
 export const Image = styled.img`
-   width: 8rem;
-   height: 8rem;
+   width: 4.25rem;
+   height: 4.25rem;
    border: ${({ active }) => (active ? `2px solid #02463a` : 0)};
    cursor: pointer;
    object-fit: cover;
@@ -53,12 +51,11 @@ export const Image = styled.img`
 export const Wrapper = styled.div`
    display: flex;
    flex-direction: row;
-   margin: 0 32px;
 `
 
 export const Trail = styled.div`
    width: 100%;
-   margin: 16px 0;
+   margin: ${props => (props.hasImage ? '16px' : null)};
 `
 
 export const MainWrap = styled.div``

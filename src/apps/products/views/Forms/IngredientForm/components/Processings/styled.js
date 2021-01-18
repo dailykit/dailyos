@@ -4,11 +4,21 @@ export const StyledSection = styled.div`
    display: grid;
    grid-template-columns: 250px 1fr;
    grid-gap: 32px;
+   @media screen and (max-width: 767px) {
+      grid-template-columns: auto;
+   }
 `
 
 export const StyledListing = styled.div`
    display: flex;
    flex-direction: column;
+   @media screen and (max-width: 767px) {
+      flex-direction: row;
+      overflow-x: auto;
+      &:last-child {
+         display: none;
+      }
+   }
 `
 
 export const StyledDisplay = styled.div`
@@ -43,6 +53,7 @@ export const StyledListingTile = styled.div`
    cursor: pointer;
    position: relative;
    margin-bottom: 12px;
+   min-width: fit-content;
 
    h3 {
       margin-bottom: 20px;
@@ -60,6 +71,10 @@ export const StyledListingTile = styled.div`
          margin-bottom: 8px;
       }
    }
+   @media screen and (max-width: 767px) {
+      margin-bottom: 0px;
+      margin-right: 12px;
+   }
 `
 
 export const Actions = styled.div`
@@ -69,5 +84,8 @@ export const Actions = styled.div`
 
    span {
       margin-right: 12px;
+   }
+   @media screen and (max-width: 767px) {
+      position: static;
    }
 `

@@ -5,7 +5,7 @@ import { useSubscription } from '@apollo/react-hooks'
 
 import { QUERIES } from '../../../../graphql'
 import { useOrder, useTabs } from '../../../../context'
-import { NewTabIcon } from '../../../../assets/icons'
+// import { NewTabIcon } from '../../../../assets/icons'
 import { logger } from '../../../../../../shared/utils'
 import {
    Tooltip,
@@ -33,15 +33,17 @@ export const ReadyToEatSection = ({ setReadyToEatTotal }) => {
          order: state.orders.where,
       },
       onSubscriptionData: ({
-         subscriptionData: { data: { simpleRecipeProducts = {} } = {} } = {},
+         subscriptionData: {
+            data: { simpleRecipeProducts: products = {} } = {},
+         } = {},
       }) => {
-         setReadyToEatTotal(simpleRecipeProducts.aggregate.count)
+         setReadyToEatTotal(products.aggregate.count)
       },
    })
 
-   const openProduct = (id, name) => {
-      addTab(name, `/apps/order/planned/ready-to-eat/${id}`)
-   }
+   // const openProduct = (id, name) => {
+   //    addTab(name, `/apps/order/planned/ready-to-eat/${id}`)
+   // }
 
    if (loading) return <InlineLoader />
    if (error) {

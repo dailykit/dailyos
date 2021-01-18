@@ -9,6 +9,7 @@ import NutritionTunnel from './NutritionTunnel'
 import InsightDashboard from './InsightDashboard'
 import Gallery from './Gallery'
 import WebBuilder from './WebBuilder'
+import DragNDrop from './DragNDrop'
 
 export {
    Lang,
@@ -22,6 +23,7 @@ export {
    InsightDashboard,
    Gallery,
    WebBuilder,
+   DragNDrop,
 }
 export * from './AssetUploader'
 export * from './InlineLoader'

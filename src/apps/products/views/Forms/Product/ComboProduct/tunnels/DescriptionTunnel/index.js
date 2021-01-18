@@ -15,6 +15,14 @@ const address =
 const DescriptionTunnel = ({ state, close }) => {
    const { t } = useTranslation()
 
+   const [additionalText, setAdditionalText] = React.useState({
+      value: state.additionalText || '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
    const [tags, setTags] = React.useState({
       value: state.tags ? state.tags.join(', ') : '',
       meta: {
@@ -43,6 +51,7 @@ const DescriptionTunnel = ({ state, close }) => {
                   ? tags.value.split(',').map(tag => tag.trim())
                   : [],
                description: description.value,
+               additionalText: additionalText.value,
             },
          },
          onCompleted: () => {
@@ -80,6 +89,24 @@ const DescriptionTunnel = ({ state, close }) => {
             tooltip={<Tooltip identifier="combo_product_description_tunnel" />}
          />
          <TunnelBody>
+            <Form.Group>
+               <Form.Label htmlFor="text" title="text">
+                  Additional Text (shown with Name)
+               </Form.Label>
+               <Form.Text
+                  id="text"
+                  name="text"
+                  onChange={e => {
+                     setAdditionalText({
+                        ...additionalText,
+                        value: e.target.value,
+                     })
+                  }}
+                  value={additionalText.value}
+                  placeholder="Enter text"
+               />
+            </Form.Group>
+            <Spacer size="16px" />
             <Form.Group>
                <Form.Label htmlFor="tags" title="tags">
                   Tags

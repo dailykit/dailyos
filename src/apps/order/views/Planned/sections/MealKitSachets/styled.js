@@ -11,6 +11,7 @@ export const StyledTabs = styled(Tabs)(
 export const StyledTabList = styled(TabList)(
    () => css`
       display: flex;
+      height: auto !important;
       flex-direction: column;
       align-items: flex-start;
       [data-selected] {

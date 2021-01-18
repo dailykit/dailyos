@@ -23,73 +23,13 @@ const formatDateTime = input => moment(input).format('YYYY-MM-DD HH:MM')
 const isValidDateTime = input => moment(input, 'YYYY-MM-DD HH:MM').isValid()
 
 export const FilterTunnel = () => {
-   const { state: config } = useConfig()
    const { state, dispatch } = useOrder()
-   const [activeStation, setActiveStation] = React.useState(null)
    const [fulfillmentTypes] = React.useState([
       { id: 1, title: 'PREORDER_DELIVERY' },
       { id: 2, title: 'ONDEMAND_DELIVERY' },
       { id: 3, title: 'PREORDER_PICKUP' },
       { id: 4, title: 'ONDEMAND_PICKUP' },
    ])
-
-   React.useEffect(() => {
-      if (
-         _.has(state, 'orders.where._or') &&
-         _.isArray(state.orders.where._or) &&
-         !_.isEmpty(state.orders.where._or)
-      ) {
-         const [condition] = state.orders.where._or
-         const index = config.stations.findIndex(
-            station =>
-               station.id ===
-               condition.orderInventoryProducts.assemblyStationId._eq
-         )
-         setActiveStation(index + 1)
-      }
-   }, [config.stations, state, state.orders.where])
-
-   const handleStationChange = option => {
-      dispatch({
-         type: 'SET_FILTER',
-         payload: {
-            _or: [
-               {
-                  orderInventoryProducts: {
-                     assemblyStationId: {
-                        _eq: option.id,
-                     },
-                  },
-               },
-               {
-                  orderReadyToEatProducts: {
-                     assemblyStationId: {
-                        _eq: option.id,
-                     },
-                  },
-               },
-               {
-                  orderMealKitProducts: {
-                     _or: [
-                        {
-                           assemblyStationId: {
-                              _eq: option.id,
-                           },
-                        },
-                        {
-                           orderSachets: {
-                              packingStationId: {
-                                 _eq: option.id,
-                              },
-                           },
-                        },
-                     ],
-                  },
-               },
-            ],
-         },
-      })
-   }
 
    const onDateTimeBlur = ({ data, field, op }) => {
       const datetime = formatDateTime(data)
@@ -118,7 +58,7 @@ export const FilterTunnel = () => {
             }
             tooltip={<Tooltip identifier="app_order_tunnel_filter_heading" />}
          />
-         <Wrapper padding="16px">
+         <Wrapper padding="16px" overflowY="auto" height="calc(100% - 105px)">
             <Flex container alignItems="center" justifyContent="space-between">
                <Text as="h3">Ready By</Text>
                <IconButton
@@ -319,31 +259,6 @@ export const FilterTunnel = () => {
                   />
                </Form.Group>
             </Flex>
-            <Spacer size="16px" />
-            <Flex container alignItems="center" justifyContent="space-between">
-               <Text as="h3">Station</Text>
-               <IconButton
-                  size="sm"
-                  type="ghost"
-                  onClick={() => dispatch({ type: 'CLEAR_STATION_FILTER' })}
-               >
-                  <ClearIcon size={20} />
-               </IconButton>
-            </Flex>
-            <Spacer size="8px" />
-            <div className="station">
-               <Dropdown
-                  type="single"
-                  searchedOption={() => {}}
-                  defaultValue={activeStation}
-                  placeholder="search for stations..."
-                  selectedOption={option => handleStationChange(option)}
-                  options={config.stations.map(station => ({
-                     id: station.id,
-                     title: station.name,
-                  }))}
-               />
-            </div>
             <Spacer size="16px" />
             <Flex container alignItems="center" justifyContent="space-between">
                <Text as="h3">Fulfillment Type</Text>

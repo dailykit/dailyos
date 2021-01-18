@@ -78,7 +78,7 @@ const Pricing = ({ updateProduct, state }) => {
                   <Form.Error key={index}>{error}</Form.Error>
                ))}
          </Form.Group>
-         <Spacer size="16px" />
+         <Spacer xAxis size="16px" />
          <Form.Group>
             <Form.Label htmlFor="discount" title="discount">
                Discount*

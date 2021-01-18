@@ -28,7 +28,11 @@ import {
    NavLinks,
    Referral,
    FoodCostPercent,
+   TermsAndConditions,
+   PrivacyPolicy,
+   TaxPercentage,
 } from './sections'
+import { RefundPolicy } from './sections/RefundPolicy'
 
 export const OnDemandSettings = () => {
    const params = useParams()
@@ -87,6 +91,12 @@ export const OnDemandSettings = () => {
                <BrandContact update={update} />
                <Spacer size="24px" />
                <NavLinks update={update} />
+               <Spacer size="24px" />
+               <TermsAndConditions update={update} />
+               <Spacer size="24px" />
+               <PrivacyPolicy update={update} />
+               <Spacer size="24px" />
+               <RefundPolicy update={update} />
             </ScrollSection.Section>
             <Spacer size="48px" />
             <ScrollSection.Section hash="visual" title="Visual">
@@ -128,6 +138,8 @@ export const OnDemandSettings = () => {
             <Spacer size="48px" />
             <ScrollSection.Section hash="sales" title="Sales">
                <FoodCostPercent update={update} />
+               <Spacer size="24px" />
+               <TaxPercentage update={update} />
                <Spacer size="24px" />
             </ScrollSection.Section>
             <Spacer size="48px" />

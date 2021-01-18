@@ -116,82 +116,87 @@ const Sachets = ({ state, openNutritionTunnel }) => {
          <ErrorBoundary rootRoute="/apps/products">
             {state.ingredientProcessings[ingredientState.processingIndex]
                .ingredientSachets.length ? (
-               <StyledSection>
-                  <StyledListing>
-                     <StyledListingHeader>
-                        <Flex container>
-                           <Text as="h3">
-                              Sachets (
-                              {
-                                 state.ingredientProcessings[
-                                    ingredientState.processingIndex
-                                 ].ingredientSachets.length
-                              }
-                              )
-                           </Text>
-                           <Tooltip identifier="ingredient_form_sachets" />
-                        </Flex>
-                        <span
-                           role="button"
-                           tabIndex="0"
-                           onClick={() => openSachetTunnel(1)}
-                           onKeyDown={e =>
-                              e.charCode === 13 && openSachetTunnel(1)
+               <>
+                  <StyledListingHeader>
+                     <Flex container>
+                        <Text as="h3">
+                           Sachets (
+                           {
+                              state.ingredientProcessings[
+                                 ingredientState.processingIndex
+                              ].ingredientSachets.length
                            }
-                        >
-                           <AddIcon color="#555B6E" size="18" stroke="2.5" />
-                        </span>
-                     </StyledListingHeader>
-                     {state.ingredientProcessings[
-                        ingredientState.processingIndex
-                     ].ingredientSachets?.map((sachet, i) => (
-                        <StyledListingTile
-                           key={sachet.id}
-                           active={ingredientState.sachetIndex === i}
-                           onClick={() =>
-                              ingredientDispatch({
-                                 type: 'SACHET_INDEX',
-                                 payload: i,
-                              })
-                           }
-                        >
-                           <Actions active={ingredientState.sachetIndex === i}>
-                              <span
-                                 role="button"
-                                 tabIndex="0"
-                                 onClick={() => remove(sachet)}
-                                 onKeyDown={e =>
-                                    e.charCode === 13 && remove(sachet)
-                                 }
-                              >
-                                 <DeleteIcon />
-                              </span>
-                           </Actions>
-                           <h3>{`${sachet.quantity} ${sachet.unit}`}</h3>
-                           <p>
-                              Active:{' '}
-                              {sachet.liveModeOfFulfillment?.type ===
-                                 'realTime' && 'Real Time'}
-                              {sachet.liveModeOfFulfillment?.type ===
-                                 'plannedLot' && 'Planned Lot'}
-                           </p>
-                           <p>Available: NA</p>
-                        </StyledListingTile>
-                     ))}
-                     <ButtonTile
-                        type="primary"
-                        size="lg"
+                           )
+                        </Text>
+                        <Tooltip identifier="ingredient_form_sachets" />
+                     </Flex>
+                     <span
+                        role="button"
+                        tabIndex="0"
                         onClick={() => openSachetTunnel(1)}
-                     />
-                  </StyledListing>
-                  <StyledDisplay>
-                     <Sachet
-                        state={state}
-                        openEditSachetTunnel={openEditSachetTunnel}
-                        openNutritionTunnel={openNutritionTunnel}
-                     />
-                  </StyledDisplay>
-               </StyledSection>
+                        onKeyDown={e =>
+                           e.charCode === 13 && openSachetTunnel(1)
+                        }
+                     >
+                        <AddIcon color="#555B6E" size="18" stroke="2.5" />
+                     </span>
+                  </StyledListingHeader>
+
+                  <StyledSection>
+                     <StyledListing>
+                        {state.ingredientProcessings[
+                           ingredientState.processingIndex
+                        ].ingredientSachets?.map((sachet, i) => (
+                           <StyledListingTile
+                              key={sachet.id}
+                              active={ingredientState.sachetIndex === i}
+                              onClick={() =>
+                                 ingredientDispatch({
+                                    type: 'SACHET_INDEX',
+                                    payload: i,
+                                 })
+                              }
+                           >
+                              <Actions
+                                 active={ingredientState.sachetIndex === i}
+                              >
+                                 <span
+                                    role="button"
+                                    tabIndex="0"
+                                    onClick={() => remove(sachet)}
+                                    onKeyDown={e =>
+                                       e.charCode === 13 && remove(sachet)
+                                    }
+                                 >
+                                    <DeleteIcon />
+                                 </span>
+                              </Actions>
+                              <h3>{`${sachet.quantity} ${sachet.unit}`}</h3>
+                              <p>
+                                 Active:{' '}
+                                 {sachet.liveModeOfFulfillment?.type ===
+                                    'realTime' && 'Real Time'}
+                                 {sachet.liveModeOfFulfillment?.type ===
+                                    'plannedLot' && 'Planned Lot'}
+                              </p>
+                              <p>Available: NA</p>
+                           </StyledListingTile>
+                        ))}
+                        <ButtonTile
+                           type="primary"
+                           size="lg"
+                           onClick={() => openSachetTunnel(1)}
+                        />
+                     </StyledListing>
+                     <StyledDisplay>
+                        <Sachet
+                           state={state}
+                           openEditSachetTunnel={openEditSachetTunnel}
+                           openNutritionTunnel={openNutritionTunnel}
+                        />
+                     </StyledDisplay>
+                  </StyledSection>
+               </>
             ) : (
                <ButtonTile
                   type="primary"

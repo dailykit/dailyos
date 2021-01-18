@@ -11,11 +11,12 @@ import {
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { DeleteIcon, EditIcon } from '../../../../../assets/icons'
-import { ImageContainer } from './styled'
+import { ImageContainer, ResponsiveFlex } from './styled'
 import { UPDATE_INGREDIENT } from '../../../../../graphql'
 import { PhotoTunnel } from '../../tunnels'
 import { logger } from '../../../../../../../shared/utils'
 import { Gallery } from '../../../../../../../shared/components'
+import styled from 'styled-components'
 
 const Stats = ({ state }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -51,8 +52,14 @@ const Stats = ({ state }) => {
                <PhotoTunnel state={state} closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         <Flex container>
-            <Flex container alignItems="flex-end" width="250px">
+
+         <ResponsiveFlex container>
+            <Flex
+               container
+               alignItems="center"
+               justifyContent="center"
+               width="100%"
+            >
                <Flex
                   padding="0 16px 0 0"
                   style={{ borderRight: '1px solid #dddddd' }}
@@ -65,7 +72,7 @@ const Stats = ({ state }) => {
                   <Text as="title">Sachets</Text>
                </Flex>
             </Flex>
-            <Spacer xAxis size="32px" />
+            <Spacer size="32px" />
             {/* {state.image ? (
                <ImageContainer>
                   <div>
@@ -99,7 +106,7 @@ const Stats = ({ state }) => {
                   />
                </Flex>
             )} */}
-            <Flex width="400px">
+            <Flex width="100%">
                {state?.assets?.images != null &&
                state?.assets?.images?.length ? (
                   <Gallery
@@ -119,7 +126,7 @@ const Stats = ({ state }) => {
                   />
                )}
             </Flex>
-         </Flex>
+         </ResponsiveFlex>
       </>
    )
 }
