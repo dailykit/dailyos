@@ -12,6 +12,7 @@ import {
    SectionTabsListHeader,
    Spacer,
    Text,
+   TextButton,
    Tunnel,
    Tunnels,
    useTunnel,
@@ -32,7 +33,7 @@ import {
 import { NO_SACHET_HISTORIES } from '../../../constants/infoMessages'
 import { SACHET_ITEM_HISTORIES } from '../../../graphql'
 import tableOptions from '../../Listings/tableOption'
-import { ConfigureSachetTunnel } from './tunnels'
+import { ConfigureSachetTunnel, SachetItemMatches, SupplierItemMatches } from './tunnels'
 
 const address = 'apps.inventory.views.forms.item.'
 
@@ -111,6 +112,11 @@ export default function PlannedLotView({ sachetItems = [], procId, unit }) {
 function PlannedLotStats({ sachet }) {
    const { t } = useTranslation()
    const [showHistory, setShowHistory] = useState(false)
+   const [
+      anykitMatchesTunnel,
+      openAnykitMatchesTunnel,
+      closeAnykitMatchesTunnel,
+   ] = useTunnel(1)
 
    return (
       <>
@@ -118,35 +124,53 @@ function PlannedLotStats({ sachet }) {
          {showHistory ? (
             <SachetHistories sachetId={sachet.id} />
          ) : (
-            <Flex margin="54px 0 0 0">
-               <Ranger
-                  label="On hand qty"
-                  max={sachet.maxLevel}
-                  min={sachet.parLevel}
-                  maxLabel="Max Inventory qty"
-                  minLabel="Par Level"
-                  value={sachet.onHand}
-               />
-               <Spacer size="16px" />
-               <Flex container style={{ flexWrap: 'wrap' }}>
-                  <DataCard
-                     title={t(address.concat('awaiting'))}
-                     quantity={`${sachet.awaiting || 0} pkt`}
-                  />
-                  <Spacer xAxis size="16px" />
-                  <DataCard
-                     title={t(address.concat('commited'))}
-                     quantity={`${sachet.committed || 0} pkt`}
-                  />
-                  <Spacer xAxis size="16px" />
-                  <DataCard
-                     title={t(address.concat('consumed'))}
-                     quantity={`${sachet.consumed || 0} pkt`}
-                     actionText="view history"
-                     action={() => setShowHistory(true)}
-                  />
+            <>
+               <Tunnels tunnels={anykitMatchesTunnel}>
+                  <Tunnel style={{ overflowY: 'auto' }} layer={1} size="lg">
+                     <SachetItemMatches
+                        sachetItemId={sachet.id}
+                        close={closeAnykitMatchesTunnel}
+                     />
+                  </Tunnel>
+               </Tunnels>
+               <Flex container justifyContent="flex-end">
+                  <TextButton
+                     type="outline"
+                     onClick={() => openAnykitMatchesTunnel(1)}
+                  >
+                     Show Anykit Matches
+                  </TextButton>
                </Flex>
-            </Flex>
+               <Flex margin="54px 0 0 0">
+                  <Ranger
+                     label="On hand qty"
+                     max={sachet.maxLevel}
+                     min={sachet.parLevel}
+                     maxLabel="Max Inventory qty"
+                     minLabel="Par Level"
+                     value={sachet.onHand}
+                  />
+                  <Spacer size="16px" />
+                  <Flex container style={{ flexWrap: 'wrap' }}>
+                     <DataCard
+                        title={t(address.concat('awaiting'))}
+                        quantity={`${sachet.awaiting || 0} pkt`}
+                     />
+                     <Spacer xAxis size="16px" />
+                     <DataCard
+                        title={t(address.concat('commited'))}
+                        quantity={`${sachet.committed || 0} pkt`}
+                     />
+                     <Spacer xAxis size="16px" />
+                     <DataCard
+                        title={t(address.concat('consumed'))}
+                        quantity={`${sachet.consumed || 0} pkt`}
+                        actionText="view history"
+                        action={() => setShowHistory(true)}
+                     />
+                  </Flex>
+               </Flex>
+            </>
          )}
       </>
    )

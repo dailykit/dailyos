@@ -30,7 +30,7 @@ import {
 import { DELETE_BULK_ITEM } from '../../../graphql'
 import PlannedLotView from './PlannedLot'
 import RealTimeView from './RealtimeView'
-import { ConfigTunnel, AnykitMatchesTunnel } from './tunnels'
+import { ConfigTunnel,  SupplierItemMatches } from './tunnels'
 
 const address = 'apps.inventory.views.forms.item.'
 
@@ -74,7 +74,7 @@ export default function ProcessingView({ formState, proc = {}, isDefault }) {
          </Tunnels>
          <Tunnels tunnels={anykitMatchesTunnel}>
             <Tunnel style={{ overflowY: 'auto' }} layer={1} size="lg">
-               <AnykitMatchesTunnel supplierItemId={formState.id} close={closeAnykitMatchesTunnel} />
+               <SupplierItemMatches supplierItemId={formState.id} close={closeAnykitMatchesTunnel} />
             </Tunnel>
          </Tunnels>
          <HorizontalTabs>
