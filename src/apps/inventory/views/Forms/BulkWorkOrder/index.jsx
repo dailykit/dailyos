@@ -355,7 +355,7 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
    return (
       <>
          <Separator />
-         <Flex width="10rem">
+         <Flex width="10rem" style={{ marginLeft: '16px' }}>
             <Form.Group>
                <Form.Label htmlFor="yield" title="yield">
                   {t(address.concat('yield percentage'))}
@@ -390,7 +390,7 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
             </Form.Group>
          </Flex>
          <br />
-         <Flex container alignItems="center">
+         <Flex container alignItems="center" style={{ marginLeft: '16px' }}>
             <Form.Group>
                <Form.Label title="output quantity" htmlFor="output">
                   {t(address.concat('enter output quantity'))}
@@ -443,8 +443,9 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
             {bulkWorkOrder.user?.firstName ? (
                <Flex
                   container
-                  margin="16px 0 16px 0"
-                  justifyContent="space-between"
+                  margin="16px 0 0 16px"
+                  padding="20px"
+                  style={{ backgroundColor: '#f3f3f3', borderRadius: '4px' }}
                >
                   <Avatar
                      withName
@@ -452,6 +453,7 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
                         bulkWorkOrder.user?.lastName || ''
                      }`}
                   />
+                  <Spacer xAxis size="68px" />
                   <IconButton onClick={() => openUserTunnel(1)} type="outline">
                      <EditIcon />
                   </IconButton>
@@ -467,7 +469,7 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
          </>
 
          <br />
-         <Flex container>
+         <Flex container style={{ marginLeft: '16px' }}>
             <Form.Group>
                <Form.Label htmlFor="scheduledDate" title="scheduledDate">
                   {t(address.concat('scheduled on'))}
