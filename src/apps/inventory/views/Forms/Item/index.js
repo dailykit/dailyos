@@ -47,6 +47,7 @@ import {
    ConfigTunnel,
    InfoTunnel,
    ProcessingTunnel,
+   SupplierItemMatches,
    SuppliersTunnel,
 } from './tunnels'
 
@@ -76,6 +77,11 @@ export default function ItemForm() {
       closeProcessingTunnel,
    ] = useTunnel(1)
    const [configTunnel, openConfigTunnel, closeConfigTunnel] = useTunnel(1)
+   const [
+      anykitMatchesTunnel,
+      openAnykitMatchesTunnel,
+      closeAnykitMatchesTunnel,
+   ] = useTunnel(1)
 
    const { loading: itemDetailLoading } = useSubscription(
       SUPPLIER_ITEM_SUBSCRIPTION,
@@ -189,6 +195,14 @@ export default function ItemForm() {
                   close={closeConfigTunnel}
                   open={openConfigTunnel}
                   id={bulktItems[0]?.id}
+               />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={anykitMatchesTunnel}>
+            <Tunnel style={{ overflowY: 'auto' }} layer={1} size="full">
+               <SupplierItemMatches
+                  supplierItemId={formState.id}
+                  close={closeAnykitMatchesTunnel}
                />
             </Tunnel>
          </Tunnels>
@@ -327,6 +341,15 @@ export default function ItemForm() {
                      </div>
                   </div>
                </StyledGrid>
+
+               <Flex container justifyContent="flex-end" margin="24px 24px 0 0">
+                  <TextButton
+                     type="outline"
+                     onClick={() => openAnykitMatchesTunnel(1)}
+                  >
+                     Show Anykit Matches
+                  </TextButton>
+               </Flex>
 
                <SectionTabs
                   style={{

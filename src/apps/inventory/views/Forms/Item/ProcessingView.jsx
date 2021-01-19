@@ -97,13 +97,6 @@ export default function ProcessingView({ formState, proc = {}, isDefault }) {
                <HorizontalTabPanel>
                   {proc ? (
                      <Flex container justifyContent="flex-end">
-                        <TextButton
-                           type="outline"
-                          onClick={() => openAnykitMatchesTunnel(1)}
-                        >
-                           Show Anykit Matches
-                        </TextButton>
-                        <Spacer xAxis size="16px" />
 
                         <IconButton
                            onClick={() => openConfigTunnel(1)}
