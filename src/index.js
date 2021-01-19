@@ -2,6 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import Loadable from 'react-loadable'
 import i18n from 'i18next'
+import Keycloak from 'keycloak-js'
 import { initReactI18next } from 'react-i18next'
 import { Loader } from '@dailykit/ui'
 import * as Sentry from '@sentry/react'
@@ -22,6 +23,8 @@ import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
 
 import Backend from 'i18next-http-backend'
+
+import { AuthProvider } from './shared/providers/auth'
 
 import './global.css'
 
@@ -84,6 +87,18 @@ const client = new ApolloClient({
    cache: new InMemoryCache(),
 })
 
+const keycloak = new Keycloak({
+   realm: process.env.REACT_APP_KEYCLOAK_REALM,
+   url: process.env.REACT_APP_KEYCLOAK_URL,
+   clientId: 'apps',
+   'ssl-required': 'none',
+   'public-client': true,
+   'bearer-only': false,
+   'verify-token-audience': true,
+   'use-resource-role-mappings': true,
+   'confidential-port': 0,
+})
+
 i18n
    .use(Backend)
    .use(initReactI18next)
@@ -105,20 +120,22 @@ i18n
    })
    .then(() =>
       render(
-         <ApolloProvider client={client}>
-            <ToastContainer
-               position="bottom-left"
-               autoClose={3000}
-               hideProgressBar={false}
-               newestOnTop={false}
-               closeOnClick
-               rtl={false}
-               pauseOnFocusLoss
-               draggable
-               pauseOnHover
-            />
-            <App />
-         </ApolloProvider>,
+         <AuthProvider keycloak={keycloak}>
+            <ApolloProvider client={client}>
+               <ToastContainer
+                  position="bottom-left"
+                  autoClose={3000}
+                  hideProgressBar={false}
+                  newestOnTop={false}
+                  closeOnClick
+                  rtl={false}
+                  pauseOnFocusLoss
+                  draggable
+                  pauseOnHover
+               />
+               <App />
+            </ApolloProvider>
+         </AuthProvider>,
          document.getElementById('root')
       )
    )
