@@ -14,7 +14,9 @@ export const StyledWrapper = styled.div`
       width: ${({ isOpen }) => (isOpen ? '100%' : '100vw')};
    }
    > aside {
+      display: flex;
       grid-area: aside;
+      flex-direction: column;
    }
    > header {
       width: 100vw;
