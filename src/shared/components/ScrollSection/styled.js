@@ -66,7 +66,4 @@ export const Content = styled.main`
    width: 100%;
    padding: 16px;
    scroll-behavior: smooth;
-   > div {
-      max-width: 560px;
-   }
 `

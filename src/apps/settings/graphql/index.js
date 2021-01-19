@@ -916,12 +916,27 @@ export const NOTIFICATIONS = {
    LIST: gql`
       subscription listNotificationTypes {
          notificationTypes(order_by: { app: asc }) {
+            id
+            name
             app
             audioUrl
             description
+            isActive
+            isGlobal 
+            isLocal
+            playAudio
          }
       }
    `,
+   LIST_SIDEBAR:gql`subscription listNotificationTypes {
+      notificationTypes(order_by: {app: asc}, distinct_on: app) {
+       
+         app
+        name
+      }
+    }
+    `
+,
    CREATE: gql`
       mutation insertNotificationType(
          $object: notifications_type_insert_input!
@@ -950,4 +965,29 @@ export const NOTIFICATIONS = {
       }
    `,
 
+   CREATE_EMAIL_CONFIGS: gql`
+   mutation CreateEmailConfigs($objects: [notifications_emailConfig_insert_input!]!) {
+      createNotificationEmailConfigs(objects: $objects) {
+        returning {
+          email
+          id
+          isActive
+          typeId
+        }
+      }
+    }
+    `
+,
+
+UPDATE_EMAIL_CONFIGS:gql`mutation updateEmailConfigs($_set: notifications_emailConfig_set_input = {}, $id: uuid_comparison_exp = {}) {
+   updateNotificationEmailConfigs(where: {id: $id}, _set: $_set) {
+     returning {
+       email
+       id
+       typeId
+     }
+   }
+ }
+`, 
+   
 }

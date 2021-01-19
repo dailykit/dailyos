@@ -34,7 +34,7 @@ const Home = () => {
    const {
       loading: notificationsLoading,
       error: notificationsError,
-      data: { notificationsAggregate = {} } = {},
+      data: { displayNotificationsAggregate = {} } = {},
    } = useSubscription(NOTIFICATIONS.AGGREGATE)
 
    if (stationsLoading || usersLoading || rolesLoading) return <Loader />
@@ -79,13 +79,12 @@ const Home = () => {
             />
  
            <DashboardTile
-               title={t(address.concat('notifications'))}
+               title="Notifications"
                count="5"
                conf="All active"
                onClick={() => addTab('Notifications', '/settings/notifications')}
             />
- 
- 
+
          </StyledCardList>
       </StyledHome>
    )
