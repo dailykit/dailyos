@@ -35,6 +35,7 @@ import { logger } from '../../../../../shared/utils'
 import { DEVICES, PRINT_JOB } from '../../../graphql'
 import { PrinterIcon } from '../../../../../shared/assets/icons'
 import { InlineLoader, Tooltip } from '../../../../../shared/components'
+import { ResponsiveFlex } from '../styled'
 
 const DevicesListing = () => {
    const { tab, addTab } = useTabs()
@@ -68,7 +69,7 @@ const DevicesListing = () => {
    }, [tab, addTab])
 
    return (
-      <Flex width="calc(100vw - 64px)" maxWidth="1280px" margin="0 auto">
+      <ResponsiveFlex maxWidth="1280px" margin="0 auto">
          <Flex
             container
             as="header"
@@ -249,7 +250,7 @@ const DevicesListing = () => {
                <PrintTunnel closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
-      </Flex>
+      </ResponsiveFlex>
    )
 }
 

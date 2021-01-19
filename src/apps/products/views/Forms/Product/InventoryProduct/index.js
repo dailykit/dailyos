@@ -27,7 +27,7 @@ import {
    S_INVENTORY_PRODUCT,
    UPDATE_INVENTORY_PRODUCT,
 } from '../../../../graphql'
-import { StyledRule } from '../styled'
+import { ResponsiveFlex, StyledFlex, StyledRule } from '../styled'
 import validator from '../validators'
 import { Assets, Description, Item } from './components'
 
@@ -157,11 +157,11 @@ export default function InventoryProduct() {
          <ModifiersContext.Provider
             value={{ modifiersState, modifiersDispatch }}
          >
-            <Flex
+            <ResponsiveFlex
                as="header"
                container
                padding="16px 32px"
-               alignItems="start"
+               alignItems="center"
                justifyContent="space-between"
             >
                <Form.Group>
@@ -185,6 +185,7 @@ export default function InventoryProduct() {
                         <Form.Error key={index}>{error}</Form.Error>
                      ))}
                </Form.Group>
+
                <Flex container alignItems="center">
                   {state.isValid?.status ? (
                      <>
@@ -198,6 +199,7 @@ export default function InventoryProduct() {
                      </>
                   )}
                   <Spacer xAxis size="16px" />
+
                   <Form.Checkbox
                      name="popup"
                      value={state.isPopupAllowed}
@@ -209,6 +211,7 @@ export default function InventoryProduct() {
                      </Flex>
                   </Form.Checkbox>
                   <Spacer xAxis size="16px" />
+
                   <Form.Toggle
                      name="published"
                      value={state.isPublished}
@@ -216,27 +219,26 @@ export default function InventoryProduct() {
                   >
                      <Flex container alignItems="center">
                         Published
+                        <Spacer xAxis size="16px" />
                         <Tooltip identifier="inventory_product_publish" />
                      </Flex>
                   </Form.Toggle>
                </Flex>
-            </Flex>
+            </ResponsiveFlex>
+
             <Flex
                as="main"
                padding="32px"
                minHeight="calc(100vh - 130px)"
                style={{ background: '#f3f3f3' }}
             >
-               <Flex as="section" container>
-                  <Flex flex="2">
-                     <Description state={state} />
-                  </Flex>
+               <StyledFlex as="section" alignItems="center" container>
+                  <Description state={state} />
                   <Spacer xAxis size="16px" />
-                  <Flex flex="1">
-                     <Assets state={state} />
-                  </Flex>
-               </Flex>
+                  <Assets state={state} />
+               </StyledFlex>
                <Spacer size="16px" />
+
                <StyledRule />
                <Spacer size="16px" />
                <Item state={state} />

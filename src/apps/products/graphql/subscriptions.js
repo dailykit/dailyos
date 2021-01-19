@@ -326,6 +326,7 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
       simpleRecipeProduct(id: $id) {
          id
          name
+         additionalText
          assets
          isValid
          isPublished
@@ -386,6 +387,7 @@ export const S_INVENTORY_PRODUCT = gql`
       inventoryProduct(id: $id) {
          id
          name
+         additionalText
          assets
          recommendations
          isValid
@@ -466,11 +468,13 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
       customizableProduct(id: $id) {
          id
          name
+         additionalText
          default
          isValid
          isPublished
          description
          tags
+         price
          assets
          isPopupAllowed
          customizableProductOptions(
@@ -478,6 +482,7 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
             order_by: { created_at: desc }
          ) {
             id
+            options
             inventoryProduct {
                id
                name
@@ -504,6 +509,7 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
                   isActive
                   price
                   simpleRecipeYield {
+                     id
                      yield
                   }
                   type
@@ -537,8 +543,10 @@ export const S_COMBO_PRODUCT = gql`
       comboProduct(id: $id) {
          id
          name
+         additionalText
          description
          tags
+         price
          isValid
          isPublished
          assets
@@ -549,6 +557,7 @@ export const S_COMBO_PRODUCT = gql`
          ) {
             id
             label
+            options
             customizableProduct {
                id
                name

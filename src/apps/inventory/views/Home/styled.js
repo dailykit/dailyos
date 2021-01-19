@@ -25,3 +25,20 @@ export const StyledTileContainer = styled.div`
    align-content: center;
    justify-items: center;
 `
+
+export const StyledCardList = styled.ul`
+   width: 780px;
+   display: grid;
+   grid-gap: 24px;
+   margin: 0 auto;
+   grid-template-columns: 1fr 1fr;
+   @media (max-width: 780px) {
+      width: 100%;
+   }
+   @media (max-width: 567px) {
+      grid-template-columns: 1fr;
+   }
+   div {
+      width: 100%;
+   }
+`

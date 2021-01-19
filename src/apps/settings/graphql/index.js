@@ -256,7 +256,7 @@ export const STATIONS = {
    },
    LABEL_PRINTERS: {
       LIST: gql`
-         subscription labelPrinters($type: String!, $stationId: Int!) {
+         subscription labelPrinters($type: String, $stationId: Int!) {
             labelPrinters: printers(
                where: {
                   printerType: { _eq: $type }
@@ -319,7 +319,7 @@ export const STATIONS = {
    },
    KOT_PRINTERS: {
       LIST: gql`
-         subscription kotPrinters($type: String!, $stationId: Int!) {
+         subscription kotPrinters($type: String, $stationId: Int!) {
             kotPrinters: printers(
                where: {
                   printerType: { _eq: $type }
@@ -716,14 +716,6 @@ export const DEVICES = {
       `,
    },
 }
-
-export const DELETE_USERS_APPS_ROLES = gql`
-   mutation delete_users_apps_roles($where: settings_user_role_app_bool_exp!) {
-      delete_users_apps_roles(where: $where) {
-         affected_rows
-      }
-   }
-`
 
 export const PRINT_JOB = gql`
    mutation createPrintJob(

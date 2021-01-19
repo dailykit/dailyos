@@ -3,7 +3,7 @@ import { toast } from 'react-toastify'
 import { Text, Flex, Spacer } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { NewTabIcon } from '../../../../assets/icons'
+// import { NewTabIcon } from '../../../../assets/icons'
 import { QUERIES } from '../../../../graphql/queries'
 import { useOrder, useTabs } from '../../../../context'
 import { logger } from '../../../../../../shared/utils'
@@ -33,15 +33,17 @@ export const InventorySection = ({ setInventoryTotal }) => {
          order: state.orders.where,
       },
       onSubscriptionData: ({
-         subscriptionData: { data: { inventoryProducts = {} } = {} } = {},
+         subscriptionData: {
+            data: { inventoryProducts: products = {} } = {},
+         } = {},
       }) => {
-         setInventoryTotal(inventoryProducts.aggregate.count)
+         setInventoryTotal(products.aggregate.count)
       },
    })
 
-   const openProduct = (id, name) => {
-      addTab(name, `/apps/order/planned/inventory/${id}`)
-   }
+   // const openProduct = (id, name) => {
+   //    addTab(name, `/apps/order/planned/inventory/${id}`)
+   // }
 
    if (loading) return <InlineLoader />
    if (error) {
@@ -64,25 +66,25 @@ export const InventorySection = ({ setInventoryTotal }) => {
                <Product key={product.id}>
                   <Flex container alignItems="center">
                      <ProductTitle
-                        isLink
+                        // isLink
                         tabIndex="-1"
                         role="button"
                         title={product.name}
-                        onClick={() => openProduct(product.id, product.name)}
-                        onKeyPress={e =>
-                           e.charCode === 13 &&
-                           openProduct(product.id, product.name)
-                        }
+                        // onClick={() => openProduct(product.id, product.name)}
+                        // onKeyPress={e =>
+                        //    e.charCode === 13 &&
+                        //    openProduct(product.id, product.name)
+                        // }
                      >
-                        <NewTabIcon size={16} color="#b9b9b9" />
-                        &nbsp;
+                        {/* <NewTabIcon size={16} color="#b9b9b9" />
+                        &nbsp; */}
                         {product.name}
                      </ProductTitle>
                      <h3 title={product.products.aggregate.count}>
-                        <label>Total:</label> {product.products.aggregate.count}
+                        <span>Total:</span> {product.products.aggregate.count}
                      </h3>
                      <h3 title={product.products.aggregate.sum.quantity}>
-                        <label>Quantity:</label>{' '}
+                        <span>Quantity:</span>{' '}
                         {product.products.aggregate.sum.quantity}
                      </h3>
                   </Flex>

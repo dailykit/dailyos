@@ -45,3 +45,5 @@ export {
    LabelPrinterIcon,
    KotPrinterIcon,
 }
+
+export * from './Notes'

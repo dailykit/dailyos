@@ -27,6 +27,7 @@ import {
 } from '../../../graphql'
 import ServingsCount from '../../../utils/countFormatter'
 import tableOptions from '../tableOption'
+import { ResponsiveFlex } from '../styled'
 
 const address = 'apps.products.views.listings.recipeslisting.'
 
@@ -97,7 +98,7 @@ const RecipesListing = () => {
    }
 
    return (
-      <Flex maxWidth="1280px" width="calc(100vw - 64px)" margin="0 auto">
+      <ResponsiveFlex maxWidth="1280px" margin="0 auto">
          <Flex
             container
             alignItems="center"
@@ -121,7 +122,7 @@ const RecipesListing = () => {
                createRecipeHandler={createRecipeHandler}
             />
          )}
-      </Flex>
+      </ResponsiveFlex>
    )
 }
 

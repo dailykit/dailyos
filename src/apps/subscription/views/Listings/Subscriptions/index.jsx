@@ -15,6 +15,7 @@ import {
    ErrorState,
    InlineLoader,
 } from '../../../../../shared/components'
+import { ResponsiveFlex } from '../../../../../shared/components/ResponsiveFlex'
 
 export const Subscriptions = () => {
    const { tooltip } = useTooltip()
@@ -84,7 +85,7 @@ export const Subscriptions = () => {
    }
 
    return (
-      <Flex width="calc(100vw - 64px)" maxWidth="1280px" margin="0 auto">
+      <ResponsiveFlex maxWidth="1280px" margin="0 auto">
          <Flex
             container
             as="header"
@@ -111,6 +112,6 @@ export const Subscriptions = () => {
                rowClick={rowClick}
             />
          )}
-      </Flex>
+      </ResponsiveFlex>
    )
 }

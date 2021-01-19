@@ -220,7 +220,7 @@ const AddPrinterTunnel = ({ isOpen, setIsOpen, station }) => {
 
    const { loading, error } = useSubscription(STATIONS.KOT_PRINTERS.LIST, {
       variables: {
-         type: 'KOT_PRINTER',
+         // type: 'KOT_PRINTER',
          stationId: station,
       },
       onSubscriptionData: ({

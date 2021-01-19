@@ -5,7 +5,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import { useTranslation } from 'react-i18next'
 
 // import { Context } from '../../context/tabs'
-import { StyledHome, StyledTileContainer } from './styled'
+import { StyledCardList, StyledHome } from './styled'
 import {
    ALL_AVAILABLE_SUPPLIERS_COUNT_SUBSCRIPTION,
    SUPPLIERS_COUNT_SUBSCRIPTION,
@@ -67,7 +67,7 @@ const Home = () => {
    return (
       <StyledHome>
          <h1>{t(address.concat('inventory app'))}</h1>
-         <StyledTileContainer>
+         <StyledCardList>
             <DashboardTile
                title={t(address.concat('suppliers'))}
                count={suppliers?.suppliersAggregate?.aggregate?.count || '...'}
@@ -116,7 +116,7 @@ const Home = () => {
                count={packagings?.packagingAggregate?.aggregate?.count || '...'}
                onClick={() => addTab('Packagings', '/inventory/packagings')}
             />
-         </StyledTileContainer>
+         </StyledCardList>
       </StyledHome>
    )
 }

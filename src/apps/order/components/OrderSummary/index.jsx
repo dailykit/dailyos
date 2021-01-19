@@ -27,6 +27,9 @@ export const OrderSummary = () => {
    const { data: { orders = {} } = {} } = useSubscription(
       QUERIES.ORDERS.AGGREGATE.TOTAL
    )
+   const { data: { orders: cancelledOrders = {} } = {} } = useSubscription(
+      QUERIES.ORDERS.AGGREGATE.CANCELLED
+   )
    const {
       loading,
       error,
@@ -47,7 +50,6 @@ export const OrderSummary = () => {
       dispatch({ type: 'CLEAR_FULFILLMENT_TYPE_FILTER' })
       dispatch({ type: 'CLEAR_SOURCE_FILTER' })
       dispatch({ type: 'CLEAR_AMOUNT_FILTER' })
-      dispatch({ type: 'CLEAR_STATION_FILTER' })
    }
 
    if (loading) return <InlineLoader />
@@ -80,6 +82,13 @@ export const OrderSummary = () => {
                />
             ))}
          </ul>
+         <MetricItem
+            title="REJECTED OR CANCELLED"
+            variant="REJECTED_OR_CANCELLED"
+            count={cancelledOrders?.aggregate?.count}
+            amount={cancelledOrders?.aggregate?.sum?.amountPaid}
+            average={cancelledOrders?.aggregate?.avg?.amountPaid}
+         />
          <Flex container alignItems="center" justifyContent="space-between">
             <Text as="h4">Advanced Filters</Text>
             <Flex container alignItems="center">

@@ -55,7 +55,7 @@ export const UPSERT_ITEM_COUNT = gql`
          object: $object
          on_conflict: {
             constraint: subscriptionItemCount_pkey
-            update_columns: [count, price, isActive]
+            update_columns: [count, price, isActive, isTaxIncluded, tax]
          }
       ) {
          id
@@ -100,3 +100,16 @@ export const UPDATE_SUBSCRIPTION = gql`
       }
    }
 `
+
+export const ZIPCODE = {
+   DELETE: gql`
+      mutation deleteZipcode($subscriptionId: Int!, $zipcode: String!) {
+         deleteZipcode: delete_subscription_subscription_zipcode_by_pk(
+            subscriptionId: $subscriptionId
+            zipcode: $zipcode
+         ) {
+            zipcode
+         }
+      }
+   `,
+}

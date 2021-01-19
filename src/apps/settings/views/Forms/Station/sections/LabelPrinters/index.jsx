@@ -221,7 +221,7 @@ const AddPrinterTunnel = ({ isOpen, setIsOpen, station }) => {
 
    const { loading, error } = useSubscription(STATIONS.LABEL_PRINTERS.LIST, {
       variables: {
-         type: 'LABEL_PRINTER',
+         // type: 'LABEL_PRINTER',
          stationId: station,
       },
       onSubscriptionData: ({

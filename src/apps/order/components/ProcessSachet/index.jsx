@@ -202,7 +202,9 @@ export const ProcessSachet = () => {
                   <option value="SACHET_ITEM">Process Sachet</option>
                </select>
             </StyledMode>
-            <Text as="h3">No sachet selected!</Text>
+            <Flex margin="16px 0">
+               <Text as="h3">No sachet selected!</Text>
+            </Flex>
          </Wrapper>
       )
    }
@@ -286,7 +288,7 @@ export const ProcessSachet = () => {
                   <span>
                      <ScaleIcon size={24} color="#fff" />
                   </span>
-                  {isNull(sachet.labelTemplateId) && (
+                  {!isNull(sachet.labelTemplateId) && (
                      <button onClick={() => print()}>Print Label</button>
                   )}
                </header>

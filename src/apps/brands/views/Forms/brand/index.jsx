@@ -4,6 +4,7 @@ import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   Flex,
    Text,
    Spacer,
    Form,
@@ -17,13 +18,14 @@ import validator from '../../validator'
 import { BRANDS } from '../../../graphql'
 import { useTabs } from '../../../context'
 import { Wrapper, Label } from './styled'
-import { Flex, InlineLoader, Tooltip } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils'
+import { InlineLoader, Tooltip } from '../../../../../shared/components'
 import {
    OnDemandSettings,
    OnDemandCollections,
    SubscriptionPlans,
    SubscriptionSettings,
+   ThirdPartyIntegrations,
 } from './tabs'
 
 export const Brand = () => {
@@ -173,6 +175,7 @@ export const Brand = () => {
                <HorizontalTab>On Demand Collections</HorizontalTab>
                <HorizontalTab>Subscription Settings</HorizontalTab>
                <HorizontalTab>Subscription Plans</HorizontalTab>
+               <HorizontalTab>Third Party Integration</HorizontalTab>
             </HorizontalTabList>
             <HorizontalTabPanels>
                <HorizontalTabPanel>
@@ -186,6 +189,9 @@ export const Brand = () => {
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <SubscriptionPlans />
+               </HorizontalTabPanel>
+               <HorizontalTabPanel>
+                  <ThirdPartyIntegrations brand={brand} />
                </HorizontalTabPanel>
             </HorizontalTabPanels>
          </HorizontalTabs>

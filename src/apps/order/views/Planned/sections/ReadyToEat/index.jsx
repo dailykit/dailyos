@@ -5,7 +5,7 @@ import { useSubscription } from '@apollo/react-hooks'
 
 import { QUERIES } from '../../../../graphql'
 import { useOrder, useTabs } from '../../../../context'
-import { NewTabIcon } from '../../../../assets/icons'
+// import { NewTabIcon } from '../../../../assets/icons'
 import { logger } from '../../../../../../shared/utils'
 import {
    Tooltip,
@@ -33,15 +33,17 @@ export const ReadyToEatSection = ({ setReadyToEatTotal }) => {
          order: state.orders.where,
       },
       onSubscriptionData: ({
-         subscriptionData: { data: { simpleRecipeProducts = {} } = {} } = {},
+         subscriptionData: {
+            data: { simpleRecipeProducts: products = {} } = {},
+         } = {},
       }) => {
-         setReadyToEatTotal(simpleRecipeProducts.aggregate.count)
+         setReadyToEatTotal(products.aggregate.count)
       },
    })
 
-   const openProduct = (id, name) => {
-      addTab(name, `/apps/order/planned/ready-to-eat/${id}`)
-   }
+   // const openProduct = (id, name) => {
+   //    addTab(name, `/apps/order/planned/ready-to-eat/${id}`)
+   // }
 
    if (loading) return <InlineLoader />
    if (error) {
@@ -64,18 +66,18 @@ export const ReadyToEatSection = ({ setReadyToEatTotal }) => {
                <Product key={product.id}>
                   <Flex container alignItems="center">
                      <ProductTitle
-                        isLink
+                        // isLink
                         tabIndex="-1"
                         role="button"
                         title={product.name}
-                        onClick={() => openProduct(product.id, product.name)}
-                        onKeyPress={e =>
-                           e.charCode === 13 &&
-                           openProduct(product.id, product.name)
-                        }
+                        // onClick={() => openProduct(product.id, product.name)}
+                        // onKeyPress={e =>
+                        //    e.charCode === 13 &&
+                        //    openProduct(product.id, product.name)
+                        // }
                      >
-                        <NewTabIcon size={16} color="#b9b9b9" />
-                        &nbsp;
+                        {/* <NewTabIcon size={16} color="#b9b9b9" />
+                        &nbsp; */}
                         {product.name}
                      </ProductTitle>
                   </Flex>

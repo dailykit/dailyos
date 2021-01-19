@@ -16,6 +16,7 @@ import {
    InlineLoader,
    Tooltip,
 } from '../../../../../shared/components'
+import { ResponsiveFlex } from '../styled'
 
 const UsersListing = () => {
    const tableRef = React.useRef()
@@ -111,7 +112,7 @@ const UsersListing = () => {
    }, [tab, addTab])
 
    return (
-      <Flex margin="0 auto" maxWidth="1280px" width="calc(100vw - 64px)">
+      <ResponsiveFlex margin="0 auto" maxWidth="1280px">
          <Flex
             container
             as="header"
@@ -152,7 +153,7 @@ const UsersListing = () => {
                )}
             </>
          )}
-      </Flex>
+      </ResponsiveFlex>
    )
 }
 
