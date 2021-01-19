@@ -13,7 +13,7 @@ import { ErrorBoundary, Sidebar } from '../../shared/components'
 
 const App = () => {
    const { addTab } = useTabs()
-   const [isSidebarVisible, toggleSidebar] = React.useState(false)
+   const [isSidebarVisible, toggleSidebar] = React.useState(true)
    const links = React.useMemo(
       () => [
          {
@@ -48,11 +48,7 @@ const App = () => {
       <StyledWrapper isOpen={isSidebarVisible}>
          <Router basename={process.env.PUBLIC_URL}>
             <Header toggleSidebar={toggleSidebar} />
-            <Sidebar
-               links={links}
-               open={isSidebarVisible}
-               toggle={toggleSidebar}
-            />
+            <Sidebar links={links} open={isSidebarVisible} />
             <ErrorBoundary rootRoute="/apps/settings">
                <Main />
             </ErrorBoundary>

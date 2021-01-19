@@ -120,8 +120,8 @@ i18n
    })
    .then(() =>
       render(
-         <AuthProvider keycloak={keycloak}>
-            <ApolloProvider client={client}>
+         <ApolloProvider client={client}>
+            <AuthProvider keycloak={keycloak}>
                <ToastContainer
                   position="bottom-left"
                   autoClose={3000}
@@ -134,8 +134,8 @@ i18n
                   pauseOnHover
                />
                <App />
-            </ApolloProvider>
-         </AuthProvider>,
+            </AuthProvider>
+         </ApolloProvider>,
          document.getElementById('root')
       )
    )
