@@ -39,8 +39,25 @@ export const useAnykitMatches = ({
                         id
                         ingredient {
                            name
-                           processings {
-                              name
+                           processings_aggregate {
+                              aggregate {
+                                 count
+                              }
+                              nodes {
+                                 name
+                                 sachets {
+                                    id
+                                    minQuantity
+                                    maxQuantity
+                                    unit
+                                    rawingredient_sachets {
+                                       rawIngredient {
+                                          id
+                                          data
+                                       }
+                                    }
+                                 }
+                              }
                            }
                         }
                      }
@@ -73,12 +90,20 @@ export const useAnykitMatches = ({
             signal: controller.signal,
             body: JSON.stringify({
                query: `
-                  query GetSachetSupplierItemMatches($sachetId: Int!) {
+                  query GetSachetSupplierItemMatches($sachetId: Int) {
                      matches_sachetSachetItemMatch(
                         where: { organizationSachetItemId: { _eq: $sachetId } }
                      ) {
                         id
                         sachet {
+                           minQuantity
+                           maxQuantity
+                           rawingredient_sachets {
+                              rawIngredient {
+                                 id
+                                 data
+                              }
+                           }
                            processing {
                               name
                               ingredient {
@@ -123,6 +148,14 @@ export const useAnykitMatches = ({
                      ) {
                         id
                         sachet {
+                           minQuantity
+                           maxQuantity
+                           rawingredient_sachets {
+                              rawIngredient {
+                                 id
+                                 data
+                              }
+                           }
                            processing {
                               name
                               ingredient {
