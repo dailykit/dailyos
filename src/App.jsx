@@ -30,8 +30,8 @@ const App = () => {
                <Route path="/" exact>
                   <AppList>
                      {apps.map(app => (
-                        <AppItem>
-                           <Link key={app.id} to={app.route}>
+                        <AppItem key={app.id}>
+                           <Link to={app.route}>
                               {app.icon && (
                                  <img src={app.icon} alt={app.title} />
                               )}
