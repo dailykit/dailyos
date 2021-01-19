@@ -268,15 +268,16 @@ const EditorOptions = ({
                            deviceManager(option.command)
                         }}
                      />
+                     <Spacer size="8px" xAxis />
+                     <ComboButton
+                        type="ghost"
+                        onClick={() => openPagePreviewTunnel(1)}
+                     >
+                        <EyeIcon size="16px" />
+                        PREVIEW
+                     </ComboButton>
                   </>
                )}
-               <ComboButton
-                  type="ghost"
-                  onClick={() => openPagePreviewTunnel(1)}
-               >
-                  <EyeIcon size="16px" />
-                  PREVIEW
-               </ComboButton>
                <TextButton
                   type="ghost"
                   onClick={() => (isWebBuilderOpen ? saveTemplate() : draft())}

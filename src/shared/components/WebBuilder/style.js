@@ -11,7 +11,7 @@ export const StyledDiv = styled.div`
       top: 0;
       width: 85%;
       height: 100%;
-      z: 0;
+      z-index: 0;
    }
    .gjs-cstmBlock {
       width: auto;
@@ -96,7 +96,10 @@ export const StyledDiv = styled.div`
       color: #fff;
    }
 
-   .gjs-pn-panels {
-      z: 0;
+   .gjs-pn-panel {
+      z-index: 0;
+   }
+   .gjs-pn-views {
+      z-index: 4;
    }
 `

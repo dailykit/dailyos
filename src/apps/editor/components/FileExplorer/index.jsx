@@ -131,7 +131,7 @@ const FileExplorer = () => {
       setMenuVisible(!menuVisible)
    }
 
-   if (queryLoading || fileLoading) {
+   if (queryLoading) {
       return <Loader />
    }
    if (queryError) {

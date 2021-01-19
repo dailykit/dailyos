@@ -1,7 +1,6 @@
 import React from 'react'
 import { Flex } from '@dailykit/ui'
 import {
-   ArrowUp,
    ArrowDown,
    ArrowRight,
    FolderIcon,
@@ -19,22 +18,21 @@ const TreeView = ({ data, onSelection, onToggle, showContextMenu }) => {
       return <div>No Folders!</div>
    }
    const fetchIcon = node => {
+      const extension = node.name.split('.').pop()
       if (node.type === 'folder') {
-         return <FolderIcon size="24" />
-      } else {
-         const extension = node.name.split('.').pop()
-         switch (extension) {
-            case 'html':
-               return <Html size="24" />
-            case 'js':
-               return <Javascript size="24" />
-            case 'css':
-               return <Css size="24" />
-            case 'pug':
-               return <Pug size="24" />
-            default:
-               return <FileIcon size="24" />
-         }
+         return <FolderIcon size="24" color="#555b6e" />
+      }
+      switch (extension) {
+         case 'html':
+            return <Html size="24" color="#555b6e" />
+         case 'js':
+            return <Javascript size="24" color="#555b6e" />
+         case 'css':
+            return <Css size="24" color="#555b6e" />
+         case 'pug':
+            return <Pug size="24" color="#555b6e" />
+         default:
+            return <FileIcon size="24" color="#555b6e" />
       }
    }
    return data.map((node, nodeIndex) => {
@@ -59,9 +57,9 @@ const TreeView = ({ data, onSelection, onToggle, showContextMenu }) => {
                               }}
                            >
                               {node.isOpen ? (
-                                 <ArrowDown size="20" />
+                                 <ArrowDown size="20" color="#555b6e" />
                               ) : (
-                                 <ArrowRight size="20" />
+                                 <ArrowRight size="20" color="#555b6e" />
                               )}
                            </Icon>
                         )}

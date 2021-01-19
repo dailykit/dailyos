@@ -1,11 +1,9 @@
 import React, { useRef } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import MonacoEditor, { monaco } from '@monaco-editor/react'
-import { useMutation } from '@apollo/react-hooks'
-import { Flex, Form, Loader } from '@dailykit/ui'
-import PropTypes from 'prop-types'
+import { useMutation, useQuery } from '@apollo/react-hooks'
+import { Loader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { useQuery } from '@apollo/react-hooks'
 import { useTabs, useGlobalContext } from '../../../context'
 
 // Components
@@ -13,6 +11,7 @@ import ReferenceFile from './ReferenceFile'
 import EditorOptions from './EditorOptions'
 import History from './History'
 import { WebBuilder } from '../../../../../shared/components'
+import { logger } from '../../../../../shared/utils'
 
 // Queries
 import { GET_FILE_FETCH, UPDATE_FILE, DRAFT_FILE } from '../../../graphql'
@@ -21,12 +20,11 @@ import { GET_FILE_FETCH, UPDATE_FILE, DRAFT_FILE } from '../../../graphql'
 import { EditorWrapper } from './styles'
 
 const Editor = () => {
-   const { tab, tabs, addTab } = useTabs()
+   const { tab, addTab } = useTabs()
 
    const {
       globalState,
       setDraft,
-      setVersion,
       removeVersion,
       updateLastSaved,
       removeDraft,
@@ -38,7 +36,6 @@ const Editor = () => {
    const webBuilderRef = useRef()
 
    const [code, setCode] = React.useState('')
-   const [undoManager, setUndoManager] = React.useState(false)
    const [file, setFile] = React.useState({})
    const [isModalVisible, toggleModal] = React.useState(false)
    const [updateFile] = useMutation(UPDATE_FILE)
@@ -48,7 +45,7 @@ const Editor = () => {
       },
       onError: error => {
          toast.error('Something went wrong')
-         console.log(error)
+         logger(error)
       },
    })
    const [language, setLanguage] = React.useState('javascript')
@@ -58,12 +55,6 @@ const Editor = () => {
    const callWebBuilderFunc = action => {
       webBuilderRef.current.func(action)
    }
-   console.log({
-      language: language,
-      theme: theme,
-      isDark: isDark,
-      isWebBuilderOpen: isWebBuilderOpen,
-   })
 
    const { loading } = useQuery(GET_FILE_FETCH, {
       variables: {
@@ -85,23 +76,25 @@ const Editor = () => {
             case 'pug':
                setLanguage(fileType)
                break
+            default:
+               setLanguage('javascript')
          }
          setCode(getFile.content)
          setFile(getFile)
       },
       onError: error => {
          toast.error('Something went wrong!')
-         console.log(error)
+         logger(error)
       },
       fetchPolicy: 'cache-and-network',
    })
    React.useEffect(() => {
-      monaco.init().then(monaco => {
-         monacoRef.current = monaco
+      monaco.init().then(monacoReference => {
+         monacoRef.current = monacoReference
       })
    }, [])
 
-   const selectFile = async path => {
+   const selectFile = async filePath => {
       toggleModal(false)
       const position = editorRef.current.getPosition()
 
@@ -115,12 +108,12 @@ const Editor = () => {
       const id = { major: 1, minor: 1 }
 
       const text = {
-         name: path.split('/').pop(),
-         path: path,
+         name: filePath.split('/').pop(),
+         path: filePath,
       }
       const op = {
          identifier: id,
-         range: range,
+         range,
          text: JSON.stringify(text, null, 2),
          forceMoveMarkers: true,
       }
@@ -131,31 +124,31 @@ const Editor = () => {
       editor.getAction('editor.action.formatDocument').run()
       editorRef.current = editor
       editorRef.current.addCommand(
-         monacoRef.current.KeyMod.Shift | monacoRef.current.KeyCode.KEY_2,
+         monacoRef.current.KeyMod.Shift && monacoRef.current.KeyCode.KEY_2,
          () => toggleModal(!isModalVisible)
       )
    }
 
    const publish = message => {
-      const code = editorRef.current.getValue()
+      const content = editorRef.current.getValue()
       updateFile({
          variables: {
             path,
-            content: code,
+            content,
             message,
          },
       })
    }
 
    const draft = () => {
-      const code = editorRef.current.getValue()
+      const content = editorRef.current.getValue()
       updateLastSaved({
          path,
       })
       draftFile({
          variables: {
-            path: path,
-            content: code,
+            path,
+            content,
          },
       })
    }
@@ -167,10 +160,10 @@ const Editor = () => {
    }
 
    const selectVersion = contentVersion => {
-      if (tabs.find(tab => tab.filePath === path).draft === '') {
+      if (tab && tab?.draft === '') {
          setDraft({
             content: editorRef.current.getValue(),
-            path: path,
+            path,
          })
       }
       setCode(contentVersion)
@@ -243,13 +236,11 @@ const Editor = () => {
    // React.useEffect(() => {
    //    if (editorRef.current) {
    //       return () => {
-   //          console.log('monaco cleanup....')
-   //          editorRef.current.dispose()
+   //          logger         editorRef.current.dispose()
    //       }
    //    }
    // }, [])
    React.useEffect(() => {
-      console.log('running...')
       setIsWebBuilderOpen(false)
       webBuilderRef.current = null
    }, [path])
@@ -314,10 +305,6 @@ const Editor = () => {
          </EditorWrapper>
       </>
    )
-}
-
-Editor.propTypes = {
-   path: PropTypes.string,
 }
 
 export default Editor
