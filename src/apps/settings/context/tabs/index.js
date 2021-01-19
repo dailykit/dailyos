@@ -73,7 +73,7 @@ export const useTabs = () => {
       dispatch,
    } = React.useContext(Context)
 
-   const tab = tabs.find(tab => tab.path === location.pathname)
+   const tab = tabs.find(node => node.path === location.pathname)
 
    const setTabTitle = React.useCallback(
       title => {

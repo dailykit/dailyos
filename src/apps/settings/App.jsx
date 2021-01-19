@@ -45,7 +45,7 @@ const App = () => {
       []
    )
    return (
-      <StyledWrapper>
+      <StyledWrapper isOpen={isSidebarVisible}>
          <Router basename={process.env.PUBLIC_URL}>
             <Header toggleSidebar={toggleSidebar} />
             <Sidebar

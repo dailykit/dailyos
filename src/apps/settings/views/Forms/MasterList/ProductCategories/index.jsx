@@ -100,7 +100,7 @@ const ProductCategoriesForm = () => {
       return <ErrorState />
    }
    return (
-      <Flex width="calc(100vw - 64px)" maxWidth="1280px" margin="0 auto">
+      <Flex width="calc(100% - 32px)" maxWidth="1280px" margin="0 auto">
          <Flex
             as="header"
             container

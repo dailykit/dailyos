@@ -5,13 +5,15 @@ export const StyledHeader = styled.header`
    display: flex;
 `
 
-export const StyledMenu = styled.div`
+export const StyledMenu = styled.button`
    width: 40px;
    height: 40px;
+   border: none;
    display: flex;
    cursor: pointer;
    align-items: center;
    justify-content: center;
+   background-color: transparent;
    :hover,
    :focus {
       background: #fff;
