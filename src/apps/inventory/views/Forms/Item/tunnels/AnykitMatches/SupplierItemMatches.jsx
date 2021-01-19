@@ -13,6 +13,7 @@ import {
    List,
 } from '@dailykit/ui'
 import React, { useMemo } from 'react'
+import { NewTab } from '../../../../../../../shared/assets/icons'
 import {
    ErrorState,
    InlineLoader,
@@ -42,8 +43,6 @@ export default function SupplierItemMatches({ close, supplierItemId }) {
       })
       return result
    }, [supplierItemMatches])
-
-   console.log(sachets)
 
    if (error) {
       logger(error)
@@ -90,29 +89,44 @@ export default function SupplierItemMatches({ close, supplierItemId }) {
                                     ?.join(', ')}
                               </Text>
                               <Spacer size="8px" />
-                              <Text as="h3">Recipe(s): </Text>
+                              <Text as="h2">Recipe(s): </Text>
                               <List>
                                  {sachet.rawingredient_sachets
                                     ?.map(ing => {
                                        const recipe = []
 
-                                       console.log(ing)
-
                                        ing.rawIngredient.recipe_ingredients.forEach(
                                           ri => {
                                              if (ri.recipe?.name)
                                                 recipe.push(
-                                                   <ListItem
-                                                      type="SSL1"
-                                                      key={ri.id}
-                                                      title={ri.recipe.name}
+                                                   <Flex
+                                                      container
+                                                      alignItems="center"
+                                                      style={{
+                                                         cursor: 'pointer',
+                                                      }}
+                                                      margin="8px"
                                                       onClick={() =>
                                                          window.open(
                                                             ri.recipe.url,
                                                             '_blank'
                                                          )
                                                       }
-                                                   />
+                                                   >
+                                                      <Text
+                                                         style={{
+                                                            color: '#00a7e1',
+                                                         }}
+                                                         as="h3"
+                                                      >
+                                                         {ri.recipe.name}
+                                                      </Text>
+                                                      <Spacer
+                                                         xAxis
+                                                         size="4px"
+                                                      />
+                                                      <NewTab />
+                                                   </Flex>
                                                 )
                                           }
                                        )
