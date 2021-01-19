@@ -38,7 +38,6 @@ export const useAnykitMatches = ({
                      ) {
                         id
                         ingredient {
-                           name
                            processings_aggregate {
                               aggregate {
                                  count
@@ -46,6 +45,12 @@ export const useAnykitMatches = ({
                               nodes {
                                  name
                                  sachets {
+                                    processing {
+                                       ingredient {
+                                          id
+                                          name
+                                       }
+                                    }
                                     id
                                     minQuantity
                                     maxQuantity
@@ -54,6 +59,12 @@ export const useAnykitMatches = ({
                                        rawIngredient {
                                           id
                                           data
+                                          recipe_ingredients {
+                                             recipe {
+                                                name
+                                                url
+                                             }
+                                          }
                                        }
                                     }
                                  }

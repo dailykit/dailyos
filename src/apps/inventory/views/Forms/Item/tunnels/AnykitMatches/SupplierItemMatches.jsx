@@ -1,19 +1,49 @@
-import {Filler, Flex, Spacer, TunnelHeader} from '@dailykit/ui'
-import React from 'react'
 import {
-  ErrorState,
-  InlineLoader,
-  Tooltip
+   Filler,
+   SectionTab,
+   SectionTabs,
+   SectionTabList,
+   TunnelHeader,
+   Flex,
+   SectionTabPanels,
+   SectionTabPanel,
+   Text,
+   Spacer,
+   ListItem,
+   List,
+} from '@dailykit/ui'
+import React, { useMemo } from 'react'
+import {
+   ErrorState,
+   InlineLoader,
+   Tooltip,
 } from '../../../../../../../shared/components'
-import {logger} from '../../../../../../../shared/utils'
-import {useAnykitMatches} from '../../../../../utils/useAnykitMatches'
-import {TunnelBody} from '../styled'
+import { logger } from '../../../../../../../shared/utils'
+import { useAnykitMatches } from '../../../../../utils/useAnykitMatches'
+import { TunnelBody } from '../styled'
 
 export default function SupplierItemMatches({ close, supplierItemId }) {
    const { error, supplierItemMatches, loading } = useAnykitMatches({
       supplierItemId,
       showSachetMatches: false,
    })
+
+   const sachets = useMemo(() => {
+      const result = []
+
+      supplierItemMatches.forEach(match => {
+         if (!match) return
+         if (!match.ingredient?.processings_aggregate?.nodes?.length) return
+
+         match.ingredient.processings_aggregate.nodes.forEach(node => {
+            if (!node) return
+            result.push(...node.sachets)
+         })
+      })
+      return result
+   }, [supplierItemMatches])
+
+   console.log(sachets)
 
    if (error) {
       logger(error)
@@ -34,19 +64,68 @@ export default function SupplierItemMatches({ close, supplierItemId }) {
          />
 
          <TunnelBody>
-            {supplierItemMatches.length ? (
-               <ul>
-                  {supplierItemMatches.map(match => (
-                     <Flex container as="li">
-                        <b>Ingredient:</b> {match.ingredient.name}
-                        <Spacer xAxis size="8px" />
-                        <b>Processings:</b>{' '}
-                        {match.ingredient.processings
-                           .map(p => p.name)
-                           .join(', ')}
-                     </Flex>
-                  ))}
-               </ul>
+            {sachets.length ? (
+               <SectionTabs>
+                  <SectionTabList>
+                     {sachets.map(sachet => (
+                        <SectionTab key={sachet.id}>
+                           <Flex padding="14px" style={{ textAlign: 'left' }}>
+                              {sachet.minQuantity || sachet.maxQuantity}{' '}
+                              {sachet.unit || 'unit'}
+                           </Flex>
+                        </SectionTab>
+                     ))}
+                  </SectionTabList>
+                  <SectionTabPanels>
+                     {sachets.map(sachet => {
+                        return (
+                           <SectionTabPanel key={sachet.id}>
+                              <Text as="h1">
+                                 {sachet.processing.ingredient.name}
+                              </Text>
+                              <Text as="p">
+                                 Parsed from:{' '}
+                                 {sachet.rawingredient_sachets
+                                    ?.map(ing => `"${ing.rawIngredient.data}"`)
+                                    ?.join(', ')}
+                              </Text>
+                              <Spacer size="8px" />
+                              <Text as="h3">Recipe(s): </Text>
+                              <List>
+                                 {sachet.rawingredient_sachets
+                                    ?.map(ing => {
+                                       const recipe = []
+
+                                       console.log(ing)
+
+                                       ing.rawIngredient.recipe_ingredients.forEach(
+                                          ri => {
+                                             if (ri.recipe?.name)
+                                                recipe.push(
+                                                   <ListItem
+                                                      type="SSL1"
+                                                      key={ri.id}
+                                                      title={ri.recipe.name}
+                                                      onClick={() =>
+                                                         window.open(
+                                                            ri.recipe.url,
+                                                            '_blank'
+                                                         )
+                                                      }
+                                                   />
+                                                )
+                                          }
+                                       )
+
+                                       return recipe
+                                    })
+                                    .flat()}
+                              </List>
+                           </SectionTabPanel>
+                        )
+                     })}
+                  </SectionTabPanels>
+               </SectionTabs>
             ) : (
                <Filler message="No matches found" />
             )}
