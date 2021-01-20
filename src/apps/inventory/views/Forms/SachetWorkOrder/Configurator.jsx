@@ -158,6 +158,7 @@ export default function Configurator({
                   container
                   margin="16px 0 0 16px"
                   padding="20px"
+                  width="fit-content"
                   style={{ backgroundColor: '#f3f3f3', borderRadius: '4px' }}
                >
                   <Avatar
@@ -166,6 +167,7 @@ export default function Configurator({
                         state.user.lastName || ''
                      }`}
                   />
+                  <Spacer xAxis size="68px" />
                   <IconButton onClick={() => openUserTunnel(1)} type="outline">
                      <EditIcon />
                   </IconButton>

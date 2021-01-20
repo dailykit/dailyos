@@ -68,4 +68,5 @@ const StyledCard = styled.div`
    background-color: #f3f3f3;
    padding: 20px;
    border-radius: 4px;
+   width: fit-content;
 `

@@ -445,6 +445,7 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
                   container
                   margin="16px 0 0 16px"
                   padding="20px"
+                  width="fit-content"
                   style={{ backgroundColor: '#f3f3f3', borderRadius: '4px' }}
                >
                   <Avatar
