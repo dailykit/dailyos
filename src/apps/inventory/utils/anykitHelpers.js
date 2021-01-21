@@ -197,8 +197,37 @@ async function updateSupplierItemMatch(variables) {
    return 'Cannot update this match'
 }
 
+async function updateSachetSachetItem(variables) {
+   const query = `
+      mutation UpdateSachetItemMatch(
+         $where: matches_sachetSachetItemMatch_bool_exp!
+         $set: matches_sachetSachetItemMatch_set_input
+      ) {
+         update_matches_sachetSachetItemMatch(where: $where, _set: $set) {
+            affected_rows
+         }
+      }
+   `
+   const response = await fetch(BASE_URL, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+         query,
+         variables,
+      }),
+   }).then(r => r.json())
+
+   if (response?.data?.update_matches_sachetSachetItemMatch?.affected_rows)
+      return 'Updated!'
+
+   console.log(response?.errors)
+
+   return 'Cannot update this match'
+}
+
 export default {
    getSachetItemMatches,
    getSupplierItemMatches,
    updateSupplierItemMatch,
+   updateSachetSachetItem,
 }
