@@ -355,7 +355,7 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
    return (
       <>
          <Separator />
-         <Flex width="10rem" style={{ marginLeft: '16px' }}>
+         <Flex width="10rem" margin="0px 0px 0px 16px">
             <Form.Group>
                <Form.Label htmlFor="yield" title="yield">
                   {t(address.concat('yield percentage'))}
@@ -390,7 +390,7 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
             </Form.Group>
          </Flex>
          <br />
-         <Flex container alignItems="center" style={{ marginLeft: '16px' }}>
+         <Flex container alignItems="center" margin="0px 0px 0px 16px">
             <Form.Group>
                <Form.Label title="output quantity" htmlFor="output">
                   {t(address.concat('enter output quantity'))}
@@ -470,7 +470,7 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
          </>
 
          <br />
-         <Flex container style={{ marginLeft: '16px' }}>
+         <Flex container margin="0px 0px 0px 16px">
             <Form.Group>
                <Form.Label htmlFor="scheduledDate" title="scheduledDate">
                   {t(address.concat('scheduled on'))}

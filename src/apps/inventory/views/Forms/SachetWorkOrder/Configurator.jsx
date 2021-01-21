@@ -61,7 +61,7 @@ export default function Configurator({
    return (
       <>
          <Separator />
-         <Flex container style={{ marginLeft: '16px' }}>
+         <Flex container margin="0px 0px 0px 16px">
             <Flex>
                <Form.Group>
                   <Form.Label htmlFor="quantity" title="quantity">
@@ -183,7 +183,7 @@ export default function Configurator({
          </>
 
          <Spacer size="8px" />
-         <Flex container style={{ marginLeft: '16px' }}>
+         <Flex container margin="0px 0px 0px 16px">
             <Form.Group>
                <Form.Label htmlFor="scheduledDate" title="scheduledDate">
                   {t(address.concat('scheduled on'))}

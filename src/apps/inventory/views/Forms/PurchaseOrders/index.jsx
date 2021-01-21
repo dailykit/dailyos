@@ -166,7 +166,7 @@ export default function PurchaseOrderForm() {
                   <Flex
                      container
                      alignItems="flex-end"
-                     style={{ marginLeft: '16px' }}
+                     margin="0px 0px 0px 16px"
                   >
                      <Form.Group>
                         <Form.Label htmlFor="quantity" title="quantity">
