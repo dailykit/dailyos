@@ -1,16 +1,15 @@
 import {
    Filler,
-   SectionTab,
-   SectionTabs,
-   SectionTabList,
-   TunnelHeader,
    Flex,
-   SectionTabPanels,
-   SectionTabPanel,
-   Text,
-   Spacer,
-   ListItem,
    List,
+   SectionTab,
+   SectionTabList,
+   SectionTabPanel,
+   SectionTabPanels,
+   SectionTabs,
+   Spacer,
+   Text,
+   TunnelHeader,
 } from '@dailykit/ui'
 import React, { useMemo } from 'react'
 import { NewTab } from '../../../../../../../shared/assets/icons'
@@ -26,7 +25,7 @@ import { TunnelBody } from '../styled'
 export default function SupplierItemMatches({ close, supplierItemId }) {
    const { error, supplierItemMatches, loading } = useAnykitMatches({
       supplierItemId,
-      showSachetMatches: false,
+      showSupplierItemMatches: true /* default value */,
    })
 
    const sachets = useMemo(() => {
