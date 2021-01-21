@@ -1,11 +1,12 @@
-async function getSupplierItemMatches(
-   url,
-   supplierItemId,
-   headers,
-   controller
-) {
+const BASE_URL = 'https://dailykit-recipe-hub.herokuapp.com/v1/graphql'
+const headers = {
+   'x-hasura-admin-secret': process.env.REACT_APP_ANYKIT_SECRET,
+   'content-type': 'application/json',
+}
+
+async function getSupplierItemMatches(supplierItemId, controller) {
    try {
-      const resp = await fetch(url, {
+      const resp = await fetch(BASE_URL, {
          method: 'POST',
          headers,
          signal: controller.signal,
@@ -69,16 +70,10 @@ async function getSupplierItemMatches(
    }
 }
 
-async function getSachetItemMatches(
-   url,
-   sachetId,
-   supplierItemId,
-   headers,
-   controller
-) {
+async function getSachetItemMatches(sachetId, supplierItemId, controller) {
    let sachetItemMatches = []
    let err = null
-   const sachetSachetItemMatches = await fetch(url, {
+   const sachetSachetItemMatches = await fetch(BASE_URL, {
       method: 'POST',
       headers,
       signal: controller.signal,
@@ -121,7 +116,7 @@ async function getSachetItemMatches(
       ...sachetItemMatches,
    ]
 
-   const sachetSupplierItemMatches = await fetch(url, {
+   const sachetSupplierItemMatches = await fetch(BASE_URL, {
       method: 'POST',
       headers,
       signal: controller.signal,
@@ -172,4 +167,38 @@ async function getSachetItemMatches(
    return [sachetItemMatches, err]
 }
 
-export default { getSachetItemMatches, getSupplierItemMatches }
+async function updateSupplierItemMatch(variables) {
+   const query = `
+      mutation UpdateSupplierItemMatch(
+         $where: matches_ingredientSupplierItemMatch_bool_exp!
+         $set: matches_ingredientSupplierItemMatch_set_input
+      ) {
+         update_matches_ingredientSupplierItemMatch(where: $where, _set: $set) {
+            affected_rows
+         }
+      }
+   `
+   const response = await fetch(BASE_URL, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+         query,
+         variables,
+      }),
+   }).then(r => r.json())
+
+   if (
+      response?.data?.update_matches_ingredientSupplierItemMatch?.affected_rows
+   )
+      return 'Updated!'
+
+   console.log(response?.errors)
+
+   return 'Cannot update this match'
+}
+
+export default {
+   getSachetItemMatches,
+   getSupplierItemMatches,
+   updateSupplierItemMatch,
+}

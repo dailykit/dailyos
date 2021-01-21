@@ -67,6 +67,21 @@ export const useAnykitMatches = ({
 
    useEffect(resolveData, [supplierItemId, sachetId, showSachetMatches])
 
+   const setAvailability = (matchId, isAvailable) => {
+      if (showSupplierItemMatches) {
+         // update the match in anykit (useFetch)
+         // update the supplierItemMatches state
+         updateSupplierItemMatch()
+      }
+
+      if (showSachetMatches) {
+         // update the match in anykit (useFetch)
+         // update the sachetItemMatches state
+
+         updateSachetItemMatch()
+      }
+   }
+
    return {
       sachetItemMatches,
       supplierItemMatches,
