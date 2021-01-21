@@ -1,4 +1,11 @@
-import { Filler, Flex, Spacer, TunnelHeader } from '@dailykit/ui'
+import {
+   Filler,
+   Flex,
+   List,
+   ListItem,
+   Spacer,
+   TunnelHeader,
+} from '@dailykit/ui'
 import React from 'react'
 import {
    ErrorState,
@@ -35,16 +42,21 @@ export default function SachetItemMatches({ close, sachetItemId }) {
 
          <TunnelBody>
             {sachetItemMatches.length ? (
-               <ul>
-                  {sachetItemMatches.map(match => (
-                     <Flex container as="li" key={match.id}>
-                        <b>Ingredient:</b>{' '}
-                        {match.sachet?.processing?.ingredient?.name}
-                        <Spacer xAxis size="8px" />
-                        <b>Processing:</b> {match.sachet?.processing?.name}
-                     </Flex>
-                  ))}
-               </ul>
+               <List>
+                  {sachetItemMatches.map(match => {
+                     console.log(match)
+                     return (
+                        <ListItem
+                           key={match.id}
+                           type="SSL2"
+                           content={{
+                              title: '',
+                              description: '',
+                           }}
+                        />
+                     )
+                  })}
+               </List>
             ) : (
                <Filler message="No matches found" />
             )}
