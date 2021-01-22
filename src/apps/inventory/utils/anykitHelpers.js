@@ -167,7 +167,7 @@ async function getSachetItemMatches(sachetId, supplierItemId, controller) {
    return [sachetItemMatches, err]
 }
 
-async function updateSupplierItemMatch(variables) {
+async function updateIngredientSupplierItemMatch(variables) {
    const query = `
       mutation UpdateSupplierItemMatch(
          $where: matches_ingredientSupplierItemMatch_bool_exp!
@@ -225,9 +225,96 @@ async function updateSachetSachetItem(variables) {
    return 'Cannot update this match'
 }
 
+async function updateSachetSupplierItemMatch(variables) {
+   const query = `
+      mutation UpdateSachetSuplierItemMatch(
+         $where: matches_sachetSupplierItemMatch_bool_exp!
+         $set: matches_sachetSupplierItemMatch_set_input
+      ) {
+         update_matches_sachetSupplierItemMatch(where: $where, _set: $set) {
+            affected_rows
+         }
+      }
+   `
+   const response = await fetch(BASE_URL, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+         query,
+         variables,
+      }),
+   }).then(r => r.json())
+
+   if (response?.data?.update_matches_sachetSachetItemMatch?.affected_rows)
+      return 'Updated!'
+
+   console.log(response?.errors)
+
+   return 'Cannot update this match'
+}
+
+async function updateSachetIngredientSachet(variables) {
+   const query = `
+      mutation UpdateSachetIngredientSachetMatch(
+         $where: matches_sachetIngredientSachetMatch_bool_exp!
+         $set: matches_sachetIngredientSachetMatch_set_input
+      ) {
+         update_matches_sachetIngredientSachetMatch(where: $where, _set: $set) {
+            affected_rows
+         }
+      }
+   `
+   const response = await fetch(BASE_URL, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+         query,
+         variables,
+      }),
+   }).then(r => r.json())
+
+   if (response?.data?.update_matches_sachetSachetItemMatch?.affected_rows)
+      return 'Updated!'
+
+   console.log(response?.errors)
+
+   return 'Cannot update this match'
+}
+
+async function updateIngredientSachetItemMatch(variables) {
+   const query = `
+      mutation UpdateIngredientSachetItemMatch(
+         $where: matches_ingredientSachetItemMatch_bool_exp!
+         $set: matches_ingredientSachetItemMatch_set_input
+      ) {
+         update_matches_ingredientSachetItemMatch(where: $where, _set: $set) {
+            affected_rows
+         }
+      }
+   `
+   const response = await fetch(BASE_URL, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+         query,
+         variables,
+      }),
+   }).then(r => r.json())
+
+   if (response?.data?.update_matches_sachetSachetItemMatch?.affected_rows)
+      return 'Updated!'
+
+   console.log(response?.errors)
+
+   return 'Cannot update this match'
+}
+
 export default {
    getSachetItemMatches,
    getSupplierItemMatches,
-   updateSupplierItemMatch,
+   updateIngredientSupplierItemMatch,
+   updateIngredientSachetItemMatch,
    updateSachetSachetItem,
+   updateSachetIngredientSachet,
+   updateSachetSupplierItemMatch,
 }
