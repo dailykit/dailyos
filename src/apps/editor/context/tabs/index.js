@@ -95,7 +95,7 @@ const reducers = (state, { type, payload }) => {
       }
 
       case 'SET_DRAFT': {
-         const tabs = state.tabs
+         const { tabs } = state
          const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
          if (tabIndex !== -1) {
             tabs[tabIndex] = {
@@ -104,13 +104,14 @@ const reducers = (state, { type, payload }) => {
             }
             const newState = {
                ...state,
-               tabs: tabs,
+               tabs,
             }
             return newState
          }
+         return state
       }
       case 'REMOVE_DRAFT': {
-         const tabs = state.tabs
+         const { tabs } = state
          const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
          if (tabIndex !== -1) {
             tabs[tabIndex] = {
@@ -119,13 +120,14 @@ const reducers = (state, { type, payload }) => {
             }
             const newState = {
                ...state,
-               tabs: tabs,
+               tabs,
             }
             return newState
          }
+         return state
       }
       case 'SET_VERSION': {
-         const tabs = state.tabs
+         const { tabs } = state
          const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
          if (tabIndex !== -1) {
             tabs[tabIndex] = {
@@ -134,13 +136,14 @@ const reducers = (state, { type, payload }) => {
             }
             const newState = {
                ...state,
-               tabs: tabs,
+               tabs,
             }
             return newState
          }
+         return state
       }
       case 'REMOVE_VERSION': {
-         const tabs = state.tabs
+         const { tabs } = state
          const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
          if (tabIndex !== -1) {
             tabs[state.currentTab] = {
@@ -149,13 +152,14 @@ const reducers = (state, { type, payload }) => {
             }
             const newState = {
                ...state,
-               tabs: tabs,
+               tabs,
             }
             return newState
          }
+         return state
       }
       case 'UPDATE_LAST_SAVED': {
-         const tabs = state.tabs
+         const { tabs } = state
          const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
          if (tabIndex !== -1) {
             tabs[tabIndex] = {
@@ -164,17 +168,18 @@ const reducers = (state, { type, payload }) => {
             }
             const newState = {
                ...state,
-               tabs: tabs,
+               tabs,
             }
             return newState
          }
+         return state
       }
       case 'UPDATE_LINKED_FILE': {
          if (state.tabs.some(tab => tab.path === payload.path)) {
             const tabId =
                state.tabs.findIndex(tab => tab.path === payload.path) >= 0 &&
                state.tabs.findIndex(tab => tab.path === payload.path)
-            const tabs = state.tabs
+            const { tabs } = state
             tabs[tabId] = {
                ...tabs[tabId],
                linkedCss: payload.linkedCss,
@@ -182,15 +187,16 @@ const reducers = (state, { type, payload }) => {
             }
             const newState = {
                ...state,
-               tabs: tabs,
+               tabs,
             }
             return newState
          }
+         return state
       }
 
       // Store Tab Data
       case 'STORE_TAB_DATA': {
-         const tabs = state.tabs
+         const { tabs } = state
          const tabIndex = tabs.findIndex(tab => tab.path === payload.path)
          if (tabIndex !== -1) {
             tabs[tabIndex].data = {
@@ -240,7 +246,7 @@ export const useTabs = () => {
       dispatch,
    } = React.useContext(Context)
 
-   const tab = tabs.find(tab => tab.path === location.pathname)
+   const tab = tabs.find(currTab => currTab.path === location.pathname)
 
    const setTitle = React.useCallback(
       title => {
@@ -294,7 +300,8 @@ export const useTabs = () => {
       switchTab('/editor')
    }, [switchTab, dispatch])
 
-   const doesTabExists = path => tabs.find(tab => tab.path === path) || false
+   const doesTabExists = path =>
+      tabs.find(currTab => currTab.path === path) || false
 
    return {
       tab,
@@ -311,7 +318,6 @@ export const useTabs = () => {
 
 export const useGlobalContext = () => {
    const history = useHistory()
-   const location = useLocation()
    const { state, dispatch } = React.useContext(Context)
    const globalState = state
 

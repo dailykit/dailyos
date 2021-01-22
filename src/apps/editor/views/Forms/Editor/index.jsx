@@ -18,6 +18,7 @@ import { GET_FILE_FETCH, UPDATE_FILE, DRAFT_FILE } from '../../../graphql'
 
 // Styles
 import { EditorWrapper } from './styles'
+import { pathToArray } from 'graphql/jsutils/Path'
 
 const Editor = () => {
    const { tab, addTab } = useTabs()
@@ -145,9 +146,10 @@ const Editor = () => {
       updateLastSaved({
          path,
       })
+
       draftFile({
          variables: {
-            path,
+            path: `/${path}`,
             content,
          },
       })

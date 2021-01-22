@@ -1,15 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { useQuery } from '@apollo/react-hooks'
 import 'grapesjs/dist/css/grapes.min.css'
 import 'grapesjs-preset-webpage'
 import grapesjs from 'grapesjs'
 import axios from 'axios'
-import { InlineLoader } from '../InlineLoader'
 import { toast } from 'react-toastify'
-import { logger, randomSuffix } from '../../utils'
+import { InlineLoader } from '../InlineLoader'
+import { logger } from '../../utils'
 import { config } from './config'
 import { StyledDiv } from './style'
-const url = `${process.env.REACT_APP_DAILYOS_SERVER_URI}/api/assets`
 
 const Builder = React.forwardRef(
    (
@@ -19,24 +17,24 @@ const Builder = React.forwardRef(
          onChangeContent,
          linkedCss = [],
          linkedJs = [],
-         tab = {},
       },
       ref
    ) => {
+      const url = `${process.env.REACT_APP_DAILYOS_SERVER_URI}/api/assets`
       const editorRef = useRef()
       const linkedCssArray = linkedCss.map(file => {
-         let url = `https://test.dailykit.org/template/files${file.cssFile.path}`
+         let fileUrl = `https://test.dailykit.org/template/files${file.cssFile.path}`
          if (/\s/.test(url)) {
-            url = url.split(' ').join('%20')
+            fileUrl = url.split(' ').join('%20')
          }
-         return url
+         return fileUrl
       })
       const linkedJsArray = linkedJs.map(file => {
-         let url = `https://test.dailykit.org/template/files${file.jsFile.path}`
+         let fileUrl = `https://test.dailykit.org/template/files${file.jsFile.path}`
          if (/\s/.test(url)) {
-            url = url.split(' ').join('%20')
+            fileUrl = url.split(' ').join('%20')
          }
-         return url
+         return fileUrl
       })
       const [mount, setMount] = useState(false)
       const toggler = useRef(true)
@@ -46,8 +44,8 @@ const Builder = React.forwardRef(
       //    setLinkedJsArray(linkedJs)
       // }, [CssArray, JsArray])
 
-      //mutation for saving the template
-      const updateCode = (updatedCode, path) => {
+      // mutation for saving the template
+      const updateCode = (updatedCode, filePath) => {
          axios({
             url: process.env.REACT_APP_DATA_HUB_URI,
             method: 'POST',
@@ -71,13 +69,13 @@ const Builder = React.forwardRef(
          }
            `,
                variables: {
-                  path,
+                  path: filePath,
                   content: updatedCode,
                   message: 'update: template',
                },
             },
          })
-            .then(data => toast.success('Template updated'))
+            .then(() => toast.success('Template updated'))
             .catch(error => {
                toast.error('Failed to Add!')
                logger(error)
@@ -86,8 +84,6 @@ const Builder = React.forwardRef(
 
       // Initialize the grapejs editor by passing config object
       useEffect(() => {
-         console.log('editor initialize1')
-         console.log('mouting')
          const editor = grapesjs.init({
             ...config,
             canvas: {
@@ -97,16 +93,11 @@ const Builder = React.forwardRef(
          })
          editorRef.current = editor
          setMount(true)
-         console.log('after mount')
          return () => {
-            console.log('before unmount')
-            console.log('editor', editorRef.current)
-            const code =
-               editorRef.current.getHtml() +
-               `<style>+ ${editorRef.current.getCss()} +</style>`
+            const code = `${editorRef.current.getHtml()}
+               <style> ${editorRef.current.getCss()} </style>`
             onChangeContent(code)
             editorRef.current.destroy()
-            console.log('after unmount')
          }
       }, [])
 
@@ -127,42 +118,37 @@ const Builder = React.forwardRef(
 
       React.useImperativeHandle(ref, () => ({
          func(action) {
-            console.log(editorRef.current.Panels.getPanels())
             editorRef.current.Commands.add('set-device-desktop', {
-               run: function (ed) {
+               run: ed => {
                   ed.setDevice('Desktop')
                },
-               stop: function () {},
             })
             editorRef.current.Commands.add('set-device-tablet', {
-               run: function (ed) {
+               run: ed => {
                   ed.setDevice('Tablet')
                },
-               stop: function () {},
             })
             editorRef.current.Commands.add('set-device-mobile', {
-               run: function (ed) {
+               run: ed => {
                   ed.setDevice('Mobile portrait')
                },
-               stop: function () {},
             })
             editorRef.current.Commands.add('save-template', {
-               run(editor) {
-                  const updatedCode =
-                     editor.getHtml() + '<style>' + editor.getCss() + '</style>'
+               run: editor => {
+                  const updatedCode = `${editor.getHtml()} <style> ${editor.getCss()} </style>`
                   updateCode(updatedCode, path)
                },
             })
-            //stop command
+            // stop command
             if (action === 'core:fullscreen' || action.includes('set-device')) {
                editorRef.current.stopCommand(action)
             }
-            //run command
+            // run command
             editorRef.current.runCommand(action)
          },
       }))
 
-      //loading all dailykit images in webBuilder image component
+      // loading all dailykit images in webBuilder image component
 
       if (mount && editorRef?.current) {
          const editor = editorRef.current
@@ -181,7 +167,7 @@ const Builder = React.forwardRef(
 
          // })
 
-         //Adding a save button in webBuilder
+         // Adding a save button in webBuilder
          // if (!editor.Panels.getButton('devices-c', 'save')) {
          //    editor.Panels.addButton('devices-c', [
          //       {
@@ -200,78 +186,78 @@ const Builder = React.forwardRef(
          //    ])
          // }
 
-         // Define commands for style manager
+         // Define commands for style manager
          editor.Commands.add('show-layers', {
-            getRowEl(editor) {
-               return editor.getContainer().closest('.editor-row')
+            getRowEl(ed) {
+               return ed.getContainer().closest('.editor-row')
             },
             getLayersEl(row) {
                return row.querySelector('.layers-container')
             },
 
-            run(editor, sender) {
-               const lmEl = this.getLayersEl(this.getRowEl(editor))
+            run(ed) {
+               const lmEl = this.getLayersEl(this.getRowEl(ed))
                lmEl.style.display = ''
             },
-            stop(editor, sender) {
-               const lmEl = this.getLayersEl(this.getRowEl(editor))
+            stop(ed) {
+               const lmEl = this.getLayersEl(this.getRowEl(ed))
                lmEl.style.display = 'none'
             },
          })
 
-         //command for styles
+         // command for styles
          editor.Commands.add('show-styles', {
-            getRowEl(editor) {
-               return editor.getContainer().closest('.editor-row')
+            getRowEl(ed) {
+               return ed.getContainer().closest('.editor-row')
             },
             getStyleEl(row) {
                return row.querySelector('.styles-container')
             },
 
-            run(editor, sender) {
-               const smEl = this.getStyleEl(this.getRowEl(editor))
+            run(ed) {
+               const smEl = this.getStyleEl(this.getRowEl(ed))
                smEl.style.display = ''
             },
-            stop(editor, sender) {
-               const smEl = this.getStyleEl(this.getRowEl(editor))
+            stop(ed) {
+               const smEl = this.getStyleEl(this.getRowEl(ed))
                smEl.style.display = 'none'
             },
          })
 
-         //command for traits
+         // command for traits
          editor.Commands.add('show-traits', {
-            getTraitsEl(editor) {
-               const row = editor.getContainer().closest('.editor-row')
+            getTraitsEl(ed) {
+               const row = ed.getContainer().closest('.editor-row')
                return row.querySelector('.traits-container')
             },
-            run(editor, sender) {
-               this.getTraitsEl(editor).style.display = ''
+            run(ed) {
+               this.getTraitsEl(ed).style.display = ''
             },
-            stop(editor, sender) {
-               this.getTraitsEl(editor).style.display = 'none'
+            stop(ed) {
+               this.getTraitsEl(ed).style.display = 'none'
             },
          })
 
-         //Command for blocks
+         // Command for blocks
          editor.Commands.add('show-blocks', {
-            getRowEl(editor) {
-               return editor.getContainer().closest('.editor-row')
+            getRowEl(ed) {
+               return ed.getContainer().closest('.editor-row')
             },
             getBlockEl(row) {
                return row.querySelector('.blocks-container')
             },
 
-            run(editor, sender) {
-               const bmEl = this.getBlockEl(this.getRowEl(editor))
+            run(ed) {
+               const bmEl = this.getBlockEl(this.getRowEl(ed))
                bmEl.style.display = ''
             },
-            stop(editor, sender) {
-               const bmEl = this.getBlockEl(this.getRowEl(editor))
+            stop(ed) {
+               const bmEl = this.getBlockEl(this.getRowEl(ed))
                bmEl.style.display = 'none'
             },
          })
 
-         //call mutation for storing the template
+         // call mutation for storing the template
          // editor.on('storage:store', function (e) {
          //    const updatedCode =
          //       editor.getHtml() + '<style>' + editor.getCss() + '</style>'
@@ -286,7 +272,7 @@ const Builder = React.forwardRef(
          // })
          // console.log(editor.Canvas.postRender)
 
-         //set the content in the editor
+         // set the content in the editor
          if (content) {
             editor.setComponents(content)
          }
@@ -295,18 +281,16 @@ const Builder = React.forwardRef(
             editor.Panels.addButton('views', {
                id: 'sidePanelToggler',
                className: 'fa fa-chevron-right',
-               command: function (editor) {
-                  console.log(editor.Panels.getPanel('views'))
-                  console.log(editor.Panels.getButton('views', 'open-sm'))
+               command: ed => {
                   toggler.current = !toggler.current
-                  editor.Panels.getButton('views', 'sidePanelToggler').set(
+                  ed.Panels.getButton('views', 'sidePanelToggler').set(
                      'className',
                      toggler.current
                         ? 'fa fa-chevron-right icon-blank'
                         : 'fa fa-chevron-left icon-blank'
                   )
-                  if (editor.Panels.getPanel('views-container')) {
-                     editor.Panels.getPanel('views-container').set(
+                  if (ed.Panels.getPanel('views-container')) {
+                     ed.Panels.getPanel('views-container').set(
                         'visible',
                         toggler.current
                      )
@@ -321,7 +305,17 @@ const Builder = React.forwardRef(
                         'gjs-cv-canvas'
                      )[0].style.width = `${toggler.current ? '85%' : '97%'}`
 
-                     editor.Panels.getButton('views', 'open-sm').set(
+                     ed.Panels.getButton('views', 'open-sm').set('attributes', {
+                        style: `display:${
+                           toggler.current ? 'inline-flex' : 'none'
+                        }`,
+                     })
+                     ed.Panels.getButton('views', 'open-tm').set('attributes', {
+                        style: `display:${
+                           toggler.current ? 'inline-flex' : 'none'
+                        }`,
+                     })
+                     ed.Panels.getButton('views', 'open-layers').set(
                         'attributes',
                         {
                            style: `display:${
@@ -329,7 +323,7 @@ const Builder = React.forwardRef(
                            }`,
                         }
                      )
-                     editor.Panels.getButton('views', 'open-tm').set(
+                     ed.Panels.getButton('views', 'open-blocks').set(
                         'attributes',
                         {
                            style: `display:${
@@ -337,23 +331,7 @@ const Builder = React.forwardRef(
                            }`,
                         }
                      )
-                     editor.Panels.getButton('views', 'open-layers').set(
-                        'attributes',
-                        {
-                           style: `display:${
-                              toggler.current ? 'inline-flex' : 'none'
-                           }`,
-                        }
-                     )
-                     editor.Panels.getButton('views', 'open-blocks').set(
-                        'attributes',
-                        {
-                           style: `display:${
-                              toggler.current ? 'inline-flex' : 'none'
-                           }`,
-                        }
-                     )
-                     editor.Panels.getButton('views', 'open-blocks').set(
+                     ed.Panels.getButton('views', 'open-blocks').set(
                         'active',
                         true
                      )
@@ -363,7 +341,6 @@ const Builder = React.forwardRef(
                active: false,
             })
          }
-         console.log('views', editor.Panels.getPanel('views'))
 
          // editor.Panels.getPanel('views').set('visible', false)
          editor.Panels.removePanel('commands')

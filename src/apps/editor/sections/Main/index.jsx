@@ -1,14 +1,13 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
-import moment from 'moment'
-import { useGlobalContext, useTabs, useDailyGit } from '../../context'
-import { FormType, FileType, CreateType } from '../../components/Popup'
 import { useQuery } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
+import { Loader } from '@dailykit/ui'
+import { useGlobalContext, useDailyGit } from '../../context'
+import { FormType, FileType, CreateType } from '../../components/Popup'
 import { GET_NESTED_FOLDER } from '../../graphql'
 import { Home, Editor } from '../../views'
-import { toast } from 'react-toastify'
 import { logger } from '../../../../shared/utils'
-import { Loader } from '@dailykit/ui'
 import { MainWrapper } from './styles'
 
 const Main = () => {
@@ -23,8 +22,6 @@ const Main = () => {
       return width
    }
 
-   const now = moment().toISOString()
-   const { tab, tabs } = useTabs()
    const {
       createFile,
       createFolder,
@@ -32,12 +29,7 @@ const Main = () => {
       renameFolder,
       deleteFile,
       deleteFolder,
-      recordFile,
-      updateRecoredFile,
-      deleteRecoredFile,
    } = useDailyGit()
-   const [type, setType] = React.useState('')
-   const [node, setNode] = React.useState({})
    const [name, setName] = React.useState('')
    const [path, setPath] = React.useState('')
    const fileTypeRef = React.useRef('')
@@ -89,53 +81,7 @@ const Main = () => {
             },
          })
       }
-      setType(createType)
-      setNode(globalState.onToggleInfo)
    }
-
-   // const createFolderHandler = () => {
-   //    closePopup()
-   //    const folderPath = `${path.replace(
-   //       process.env.REACT_APP_ROOT_FOLDER,
-   //       ''
-   //    )}/${name}`
-   //    createFolder({
-   //       variables: {
-   //          path: folderPath,
-   //       },
-   //    })
-   //    setName('')
-   //    setType('')
-   //    setNode({})
-   // }
-   // const createFileHandler = () => {
-   //    closePopup()
-   //    const filePath = `${path.replace(
-   //       process.env.REACT_APP_ROOT_FOLDER,
-   //       ''
-   //    )}/${name}.${fileTypeRef.current}`
-   //    console.log(filePath)
-   //    createFile({
-   //       variables: {
-   //          path: filePath,
-   //          content: `Start writing content of file here...`,
-   //       },
-   //    })
-   //    recordFile({
-   //       variables: {
-   //          object: {
-   //             fileTypeRef: fileTypeRef.current,
-   //             fileName: `${name}.${fileTypeRef.current}`,
-   //             path: filePath,
-   //             lastSaved: now,
-   //          },
-   //       },
-   //    })
-
-   //    setName('')
-   //    setType('')
-   //    setNode({})
-   // }
 
    const selectFileType = type => {
       fileTypeRef.current = type
@@ -146,28 +92,17 @@ const Main = () => {
       })
    }
 
-   const mutationHandler = (type, nodeType) => {
+   const mutationHandler = async (type, nodeType) => {
       if (type === 'create') {
          if (nodeType === 'FILE') {
             const filePath = `${path.replace(
                process.env.REACT_APP_ROOT_FOLDER,
                ''
             )}/${name}.${fileTypeRef.current}`
-            console.log(filePath)
-            createFile({
+            await createFile({
                variables: {
                   path: filePath,
                   content: `Start writing content of file here...`,
-               },
-            })
-            recordFile({
-               variables: {
-                  object: {
-                     fileType: fileTypeRef.current,
-                     fileName: `${name}.${fileTypeRef.current}`,
-                     path: filePath,
-                     lastSaved: now,
-                  },
                },
             })
             fileTypeRef.current = ''
@@ -176,8 +111,7 @@ const Main = () => {
                process.env.REACT_APP_ROOT_FOLDER,
                ''
             )}/${name}`
-            console.log(path, folderPath)
-            createFolder({
+            await createFolder({
                variables: {
                   path: folderPath,
                },
@@ -190,21 +124,10 @@ const Main = () => {
                /\/([^/]*)$/g,
                ''
             )}/${name}.${oldFilePath.split('.').pop()}`
-            console.log(oldFilePath, ',', newFilePath)
-            renameFile({
+            await renameFile({
                variables: {
                   oldPath: oldFilePath,
                   newPath: newFilePath,
-               },
-            })
-            updateRecoredFile({
-               variables: {
-                  path: oldFilePath,
-                  set: {
-                     fileName: `${name}.${oldFilePath.split('.').pop()}`,
-                     path: newFilePath,
-                     lastSaved: now,
-                  },
                },
             })
          } else {
@@ -213,32 +136,24 @@ const Main = () => {
                /\/([^/]*)$/g,
                ''
             )}/${name}`
-            console.log(oldFolderPath, ',', newFolderPath)
-            renameFolder({
+            await renameFolder({
                variables: {
                   oldPath: oldFolderPath,
                   newPath: newFolderPath,
                },
             })
          }
-      } else {
+      } else if (type === 'delete') {
          if (nodeType === 'FILE') {
             const filePath = path.replace(/.\/templates/g, '')
-            console.log(filePath)
-            deleteFile({
-               variables: {
-                  path: filePath,
-               },
-            })
-            deleteRecoredFile({
+            await deleteFile({
                variables: {
                   path: filePath,
                },
             })
          } else {
             const folderPath = path.replace(/.\/templates/g, '')
-            console.log(folderPath)
-            deleteFolder({
+            await deleteFolder({
                variables: {
                   path: folderPath,
                },
@@ -248,12 +163,6 @@ const Main = () => {
       setName('')
       closePopup()
    }
-
-   React.useEffect(() => {
-      return () => {
-         console.log('cleaned up')
-      }
-   }, [tab])
 
    if (loading) return <Loader />
 
@@ -268,7 +177,7 @@ const Main = () => {
             <FileType
                show={globalState.popupInfo.fileTypePopup}
                closePopup={closePopup}
-               setFileType={type => selectFileType(type)}
+               setFileType={fileType => selectFileType(fileType)}
             />
             <FormType
                show={globalState.popupInfo.formTypePopup}
@@ -280,14 +189,16 @@ const Main = () => {
                }
                nodeType={globalState.contextMenuInfo.type}
                name={name}
-               setName={name => setName(name)}
-               setPath={path => setPath(path)}
-               mutationHandler={(action, type) => mutationHandler(action, type)}
+               setName={updatedName => setName(updatedName)}
+               setPath={updatedPath => setPath(updatedPath)}
+               mutationHandler={(action, nodeType) =>
+                  mutationHandler(action, nodeType)
+               }
             />
             <CreateType
                show={globalState.popupInfo.createTypePopup}
                closePopup={closePopup}
-               setCreateType={type => setCreateType(type)}
+               setCreateType={nodeType => setCreateType(nodeType)}
             />
          </main>
       </MainWrapper>
