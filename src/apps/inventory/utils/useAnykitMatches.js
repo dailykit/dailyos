@@ -2,12 +2,10 @@ import { useEffect, useState } from 'react'
 
 import helpers from './anykitHelpers'
 
-const BASE_URL = 'https://dailykit-recipe-hub.herokuapp.com/v1/graphql'
-
 export const useAnykitMatches = ({
    supplierItemId,
    sachetId,
-   showSachetMatches = false,
+   showSachetItemMatches = false,
    showSupplierItemMatches = true,
    showIngredientSachetMatches = false,
 }) => {
@@ -19,18 +17,11 @@ export const useAnykitMatches = ({
    const controller = new window.AbortController()
 
    const resolveData = async () => {
-      const headers = {
-         'x-hasura-admin-secret': process.env.REACT_APP_ANYKIT_SECRET,
-         'content-type': 'application/json',
-      }
-
       setLoading(true)
 
       if (showSupplierItemMatches) {
          const [matches, err] = await helpers.getSupplierItemMatches(
-            BASE_URL,
             supplierItemId,
-            headers,
             controller
          )
 
@@ -43,12 +34,10 @@ export const useAnykitMatches = ({
          return
       }
 
-      if (showSachetMatches) {
+      if (showSachetItemMatches) {
          const [matches, err] = await helpers.getSachetItemMatches(
-            BASE_URL,
             sachetId,
             supplierItemId,
-            headers,
             controller
          )
 
@@ -65,20 +54,34 @@ export const useAnykitMatches = ({
       }
    }
 
-   useEffect(resolveData, [supplierItemId, sachetId, showSachetMatches])
+   useEffect(resolveData, [supplierItemId, sachetId, showSachetItemMatches])
 
-   const setAvailability = (matchId, isAvailable) => {
+   const setApproved = async (matchId, isApproved, meta) => {
+      const vars = {
+         where: { id: { _eq: matchId } },
+         set: { isApproved },
+      }
+      let message = ''
+
       if (showSupplierItemMatches) {
-         // update the match in anykit (useFetch)
-         // update the supplierItemMatches state
-         updateSupplierItemMatch()
+         // update the match in anykit
+         if (meta.isSachetMatch) {
+            message = await helpers.updateIngredientSupplierItemMatch(vars)
+         } else {
+            message = await helpers.updateSachetSupplierItemMatch(vars)
+         }
+
+         return message || 'Unexpected error occured!'
       }
 
-      if (showSachetMatches) {
-         // update the match in anykit (useFetch)
-         // update the sachetItemMatches state
+      if (showSachetItemMatches) {
+         if (meta.isSachetMatch) {
+            message = helpers.updateSachetSachetItem(vars)
+         } else {
+            message = helpers.updateIngredientSachetItemMatch(vars)
+         }
 
-         updateSachetItemMatch()
+         return message
       }
    }
 
@@ -87,5 +90,6 @@ export const useAnykitMatches = ({
       supplierItemMatches,
       error,
       loading,
+      setApproved,
    }
 }
