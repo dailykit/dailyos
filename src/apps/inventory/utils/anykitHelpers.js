@@ -5,6 +5,8 @@ const headers = {
 }
 
 async function getSupplierItemMatches(supplierItemId, controller) {
+   let matches = []
+   let err = null
    try {
       const resp = await fetch(BASE_URL, {
          method: 'POST',
@@ -61,10 +63,63 @@ async function getSupplierItemMatches(supplierItemId, controller) {
       }).then(r => r.json())
 
       if (resp?.errors?.length) {
-         return [null, resp.errors[0]?.message || 'Unexpected error occured']
+         err = resp.errors[0]?.message || 'Unexpected error occured'
+      } else {
+         matches = [
+            ...matches,
+            ...(resp?.data?.matches_ingredientSupplierItemMatch || []),
+         ]
       }
 
-      return [resp?.data?.matches_ingredientSupplierItemMatch || [], null]
+      const sachetSupplierItemMatches = await fetch(BASE_URL, {
+         method: 'POST',
+         headers,
+         signal: controller.signal,
+         body: JSON.stringify({
+            query: `
+                  query GetSachetSupplierItemMatches($supplierItemId: Int) {
+                     matches_sachetSupplierItemMatch(
+                        where: {
+                           organizationSupplierItemId: { _eq: $supplierItemId }
+                        }
+                     ) {
+                        id
+                        sachet {
+                           minQuantity
+                           maxQuantity
+                           rawingredient_sachets {
+                              rawIngredient {
+                                 id
+                                 data
+                              }
+                           }
+                           processing {
+                              name
+                              ingredient {
+                                 name
+                              }
+                           }
+                        }
+                     }
+                  }
+               `,
+            variables: { supplierItemId },
+         }),
+      }).then(r => r.json())
+
+      if (sachetSupplierItemMatches?.errors?.length) {
+         err =
+            sachetSupplierItemMatches.errors[0].message ||
+            'Unexpected error occured'
+      } else {
+         matches = [
+            ...matches,
+            ...(sachetSupplierItemMatches?.data
+               ?.matches_sachetSupplierItemMatch || []),
+         ]
+      }
+
+      return [matches, err]
    } catch (e) {
       return [null, e.message || 'Unexpected error occured']
    }
@@ -115,54 +170,6 @@ async function getSachetItemMatches(sachetId, supplierItemId, controller) {
       ...(sachetSachetItemMatches?.data?.matches_sachetSachetItemMatch || []),
       ...sachetItemMatches,
    ]
-
-   const sachetSupplierItemMatches = await fetch(BASE_URL, {
-      method: 'POST',
-      headers,
-      signal: controller.signal,
-      body: JSON.stringify({
-         query: `
-                  query GetSachetSupplierItemMatches($supplierItemId: Int) {
-                     matches_sachetSupplierItemMatch(
-                        where: {
-                           organizationSupplierItemId: { _eq: $supplierItemId }
-                        }
-                     ) {
-                        id
-                        sachet {
-                           minQuantity
-                           maxQuantity
-                           rawingredient_sachets {
-                              rawIngredient {
-                                 id
-                                 data
-                              }
-                           }
-                           processing {
-                              name
-                              ingredient {
-                                 name
-                              }
-                           }
-                        }
-                     }
-                  }
-               `,
-         variables: { supplierItemId },
-      }),
-   }).then(r => r.json())
-
-   if (sachetSupplierItemMatches?.errors?.length) {
-      err =
-         sachetSupplierItemMatches.errors[0].message ||
-         'Unexpected error occured'
-   } else {
-      sachetItemMatches = [
-         ...sachetItemMatches,
-         ...(sachetSupplierItemMatches?.data?.matches_sachetSupplierItemMatch ||
-            []),
-      ]
-   }
 
    return [sachetItemMatches, err]
 }
