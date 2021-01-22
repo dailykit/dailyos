@@ -16,45 +16,48 @@ export const useAnykitMatches = ({
 
    const controller = new window.AbortController()
 
-   const resolveData = async () => {
-      setLoading(true)
+   useEffect(() => {
+      const resolveData = async () => {
+         setLoading(true)
 
-      if (showSupplierItemMatches) {
-         const [matches, err] = await helpers.getSupplierItemMatches(
-            supplierItemId,
-            controller
-         )
+         if (showSupplierItemMatches) {
+            const [matches, err] = await helpers.getSupplierItemMatches(
+               supplierItemId,
+               controller
+            )
 
-         setLoading(false)
-         if (err) {
-            setError(err)
+            setLoading(false)
+            if (err) {
+               setError(err)
+               return
+            }
+            setSupplierItemMatches(matches)
             return
          }
-         setSupplierItemMatches(matches)
-         return
-      }
 
-      if (showSachetItemMatches) {
-         const [matches, err] = await helpers.getSachetItemMatches(
-            sachetId,
-            supplierItemId,
-            controller
-         )
+         if (showSachetItemMatches) {
+            const [matches, err] = await helpers.getSachetItemMatches(
+               sachetId,
+               supplierItemId,
+               controller
+            )
 
-         setLoading(false)
-         if (err) {
-            setError(err)
+            setLoading(false)
+            if (err) {
+               setError(err)
+               return
+            }
+            setSatchetItemMatches(matches)
             return
          }
-         setSatchetItemMatches(matches)
-         return
       }
+
+      resolveData()
+
       return () => {
          controller.abort()
       }
-   }
-
-   useEffect(resolveData, [supplierItemId, sachetId, showSachetItemMatches])
+   }, [supplierItemId, sachetId, showSachetItemMatches])
 
    const setApproved = async (matchId, isApproved, meta) => {
       const vars = {
