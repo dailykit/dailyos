@@ -31,6 +31,7 @@ export default function SupplierItemMatches({ close, supplierItemId }) {
    const sachets = useMemo(() => {
       const result = []
 
+      // loop through ingredientSupplierItemMatches, add sachets to result
       supplierItemMatches.forEach(match => {
          if (!match) return
          if (!match.ingredient?.processings_aggregate?.nodes?.length) return
@@ -40,6 +41,8 @@ export default function SupplierItemMatches({ close, supplierItemId }) {
             result.push(...node.sachets)
          })
       })
+
+      // TODO: loop through sachetSupplierItemMatches, add sachet to result
       return result
    }, [supplierItemMatches])
 

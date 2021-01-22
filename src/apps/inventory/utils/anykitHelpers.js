@@ -77,32 +77,40 @@ async function getSupplierItemMatches(supplierItemId, controller) {
          signal: controller.signal,
          body: JSON.stringify({
             query: `
-                  query GetSachetSupplierItemMatches($supplierItemId: Int) {
-                     matches_sachetSupplierItemMatch(
-                        where: {
-                           organizationSupplierItemId: { _eq: $supplierItemId }
-                        }
-                     ) {
-                        id
-                        sachet {
-                           minQuantity
-                           maxQuantity
-                           rawingredient_sachets {
-                              rawIngredient {
-                                 id
-                                 data
-                              }
-                           }
-                           processing {
+               query GetSachetSupplierItemMatches($supplierItemId: Int) {
+                  matches_sachetSupplierItemMatch(
+                     where: {
+                        organizationSupplierItemId: { _eq: $supplierItemId }
+                     }
+                  ) {
+                     id
+                     sachet {
+                        processing {
+                           ingredient {
+                              id
                               name
-                              ingredient {
-                                 name
+                           }
+                        }
+                        id
+                        minQuantity
+                        maxQuantity
+                        unit
+                        rawingredient_sachets {
+                           rawIngredient {
+                              id
+                              data
+                              recipe_ingredients {
+                                 recipe {
+                                    name
+                                    url
+                                 }
                               }
                            }
                         }
                      }
                   }
-               `,
+               }
+            `,
             variables: { supplierItemId },
          }),
       }).then(r => r.json())
