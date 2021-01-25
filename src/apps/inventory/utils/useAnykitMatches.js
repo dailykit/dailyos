@@ -10,7 +10,13 @@ export const useAnykitMatches = ({
    showIngredientSachetMatches = false,
 }) => {
    const [error, setError] = useState(null)
-   const [supplierItemMatches, setSupplierItemMatches] = useState([])
+   const [
+      ingredientSupplierItemMatches,
+      setIngredientSupplierItemMatches,
+   ] = useState([])
+   const [sachetSupplierItemMatches, setSachetSupplierItemMatches] = useState(
+      []
+   )
    const [sachetItemMatches, setSatchetItemMatches] = useState([])
    const [loading, setLoading] = useState(false)
 
@@ -21,17 +27,19 @@ export const useAnykitMatches = ({
          setLoading(true)
 
          if (showSupplierItemMatches) {
-            const [matches, err] = await helpers.getSupplierItemMatches(
-               supplierItemId,
-               controller
-            )
+            const [
+               sachetMatches,
+               ingredientMatches,
+               err,
+            ] = await helpers.getSupplierItemMatches(supplierItemId, controller)
 
             setLoading(false)
             if (err) {
                setError(err)
                return
             }
-            setSupplierItemMatches(matches)
+            setSachetSupplierItemMatches(sachetMatches)
+            setIngredientSupplierItemMatches(ingredientMatches)
             return
          }
 
@@ -48,7 +56,6 @@ export const useAnykitMatches = ({
                return
             }
             setSatchetItemMatches(matches)
-            return
          }
       }
 
@@ -89,8 +96,9 @@ export const useAnykitMatches = ({
    }
 
    return {
+      ingredientSupplierItemMatches,
+      sachetSupplierItemMatches,
       sachetItemMatches,
-      supplierItemMatches,
       error,
       loading,
       setApproved,

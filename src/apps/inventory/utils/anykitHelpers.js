@@ -5,7 +5,8 @@ const headers = {
 }
 
 async function getSupplierItemMatches(supplierItemId, controller) {
-   let matches = []
+   let ingredientMatches = []
+   let sachetMatches = []
    let err = null
    try {
       const resp = await fetch(BASE_URL, {
@@ -65,10 +66,8 @@ async function getSupplierItemMatches(supplierItemId, controller) {
       if (resp?.errors?.length) {
          err = resp.errors[0]?.message || 'Unexpected error occured'
       } else {
-         matches = [
-            ...matches,
-            ...(resp?.data?.matches_ingredientSupplierItemMatch || []),
-         ]
+         ingredientMatches =
+            resp?.data?.matches_ingredientSupplierItemMatch || []
       }
 
       const sachetSupplierItemMatches = await fetch(BASE_URL, {
@@ -120,16 +119,14 @@ async function getSupplierItemMatches(supplierItemId, controller) {
             sachetSupplierItemMatches.errors[0].message ||
             'Unexpected error occured'
       } else {
-         matches = [
-            ...matches,
-            ...(sachetSupplierItemMatches?.data
-               ?.matches_sachetSupplierItemMatch || []),
-         ]
+         sachetMatches =
+            sachetSupplierItemMatches?.data?.matches_sachetSupplierItemMatch ||
+            []
       }
 
-      return [matches, err]
+      return [sachetMatches, ingredientMatches, err]
    } catch (e) {
-      return [null, e.message || 'Unexpected error occured']
+      return [null, null, e.message || 'Unexpected error occured']
    }
 }
 
