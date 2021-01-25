@@ -115,7 +115,7 @@ function MatchesSection({
                   </SectionTab>
                ))}
             </SectionTabList>
-            <SectionTabPanels style={{ height: '100%' }}>
+            <SectionTabPanels>
                {ingredients.map(sachet => {
                   return <MatchPanel key={sachet.id} sachet={sachet} />
                })}
@@ -130,7 +130,7 @@ function MatchesSection({
 
 function MatchPanel({ sachet }) {
    return (
-      <SectionTabPanel>
+      <SectionTabPanel style={{ height: '100%' }}>
          <Text as="h1">{sachet.processing.ingredient.name}</Text>
          <Text as="p">
             Parsed from:{' '}
