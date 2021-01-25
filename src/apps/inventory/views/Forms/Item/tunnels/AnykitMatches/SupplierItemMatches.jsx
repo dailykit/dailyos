@@ -25,7 +25,12 @@ import { TunnelBody } from '../styled'
 export default function SupplierItemMatches({ close, supplierItemId }) {
    // supplierItemMatches: true returns both ingredientSupplierItemMatches
    // ...and sachetSupplierItemMatches
-   const { error, ingredientSupplierItemMatches, loading } = useAnykitMatches({
+   const {
+      error,
+      ingredientSupplierItemMatches,
+      sachetSupplierItemMatches,
+      loading,
+   } = useAnykitMatches({
       supplierItemId,
       showSupplierItemMatches: true /* default value */,
    })
@@ -51,8 +56,9 @@ export default function SupplierItemMatches({ close, supplierItemId }) {
          <TunnelBody>
             {/* Matched Ingredients */}
             {ingredientSupplierItemMatches.length ? (
-               <IngredientSupplierItemMatchesSection
+               <MatchesSection
                   ingredientSupplierItemMatches={ingredientSupplierItemMatches}
+                  sachetSupplierItemMatches={sachetSupplierItemMatches}
                />
             ) : (
                <Filler message="No matches found" />
@@ -62,10 +68,12 @@ export default function SupplierItemMatches({ close, supplierItemId }) {
    )
 }
 
-function IngredientSupplierItemMatchesSection({
-   ingredientSupplierItemMatches,
+function MatchesSection({
+   ingredientSupplierItemMatches = [],
+   sachetSupplierItemMatches = [],
 }) {
-   const sachets = useMemo(() => {
+   const sachets = sachetSupplierItemMatches.map(s => s.sachet || {})
+   const ingredients = useMemo(() => {
       const result = []
 
       // loop through ingredientSupplierItemMatches, add sachets to result
@@ -84,11 +92,20 @@ function IngredientSupplierItemMatchesSection({
 
    return (
       <>
-         <Flex container margin="0 0 8px 0" justifyContent="flex-start">
-            <Text as="subtitle">Matched Ingredients</Text>
-         </Flex>
          <SectionTabs>
             <SectionTabList>
+               <Text as="subtitle">Matched Ingredients</Text>
+               <Spacer size="8px" />
+               {ingredients.map(sachet => (
+                  <SectionTab key={sachet.id}>
+                     <Flex padding="14px" style={{ textAlign: 'left' }}>
+                        {sachet.minQuantity || sachet.maxQuantity}{' '}
+                        {sachet.unit || 'unit'}
+                     </Flex>
+                  </SectionTab>
+               ))}
+               <Text as="subtitle">Matched Sachets</Text>
+               <Spacer size="8px" />
                {sachets.map(sachet => (
                   <SectionTab key={sachet.id}>
                      <Flex padding="14px" style={{ textAlign: 'left' }}>
@@ -98,66 +115,68 @@ function IngredientSupplierItemMatchesSection({
                   </SectionTab>
                ))}
             </SectionTabList>
-            <SectionTabPanels>
+            <SectionTabPanels style={{ height: '100%' }}>
+               {ingredients.map(sachet => {
+                  return <MatchPanel key={sachet.id} sachet={sachet} />
+               })}
                {sachets.map(sachet => {
-                  return (
-                     <SectionTabPanel key={sachet.id}>
-                        <Text as="h1">{sachet.processing.ingredient.name}</Text>
-                        <Text as="p">
-                           Parsed from:{' '}
-                           {sachet.rawingredient_sachets
-                              ?.map(ing => `"${ing.rawIngredient.data}"`)
-                              ?.join(', ')}
-                        </Text>
-                        <Spacer size="8px" />
-                        <Text as="h2">Recipe(s): </Text>
-                        <List>
-                           {sachet.rawingredient_sachets
-                              ?.map(ing => {
-                                 const recipe = []
-
-                                 ing.rawIngredient.recipe_ingredients.forEach(
-                                    ri => {
-                                       if (ri.recipe?.name)
-                                          recipe.push(
-                                             <Flex
-                                                container
-                                                alignItems="center"
-                                                style={{
-                                                   cursor: 'pointer',
-                                                }}
-                                                margin="8px"
-                                                onClick={() =>
-                                                   window.open(
-                                                      ri.recipe.url,
-                                                      '_blank'
-                                                   )
-                                                }
-                                             >
-                                                <Text
-                                                   style={{
-                                                      color: '#00a7e1',
-                                                   }}
-                                                   as="h3"
-                                                >
-                                                   {ri.recipe.name}
-                                                </Text>
-                                                <Spacer xAxis size="4px" />
-                                                <NewTab />
-                                             </Flex>
-                                          )
-                                    }
-                                 )
-
-                                 return recipe
-                              })
-                              .flat()}
-                        </List>
-                     </SectionTabPanel>
-                  )
+                  return <MatchPanel key={sachet.id} sachet={sachet} />
                })}
             </SectionTabPanels>
          </SectionTabs>
       </>
+   )
+}
+
+function MatchPanel({ sachet }) {
+   return (
+      <SectionTabPanel>
+         <Text as="h1">{sachet.processing.ingredient.name}</Text>
+         <Text as="p">
+            Parsed from:{' '}
+            {sachet.rawingredient_sachets
+               ?.map(ing => `"${ing.rawIngredient.data}"`)
+               ?.join(', ')}
+         </Text>
+         <Spacer size="8px" />
+         <Text as="h2">Recipe(s): </Text>
+         <List>
+            {sachet.rawingredient_sachets
+               ?.map(ing => {
+                  const recipe = []
+
+                  ing.rawIngredient.recipe_ingredients.forEach(ri => {
+                     if (ri.recipe?.name)
+                        recipe.push(
+                           <Flex
+                              container
+                              alignItems="center"
+                              style={{
+                                 cursor: 'pointer',
+                              }}
+                              margin="8px"
+                              onClick={() =>
+                                 window.open(ri.recipe.url, '_blank')
+                              }
+                           >
+                              <Text
+                                 style={{
+                                    color: '#00a7e1',
+                                 }}
+                                 as="h3"
+                              >
+                                 {ri.recipe.name}
+                              </Text>
+                              <Spacer xAxis size="4px" />
+                              <NewTab />
+                           </Flex>
+                        )
+                  })
+
+                  return recipe
+               })
+               .flat()}
+         </List>
+      </SectionTabPanel>
    )
 }
