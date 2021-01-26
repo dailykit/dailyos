@@ -8,7 +8,6 @@ import ErrorBoundary from './ErrorBoundary'
 import NutritionTunnel from './NutritionTunnel'
 import InsightDashboard from './InsightDashboard'
 import Gallery from './Gallery'
-import WebBuilder from './WebBuilder'
 import DragNDrop from './DragNDrop'
 
 export {
@@ -22,7 +21,6 @@ export {
    NutritionTunnel,
    InsightDashboard,
    Gallery,
-   WebBuilder,
    DragNDrop,
 }
 export * from './AssetUploader'
