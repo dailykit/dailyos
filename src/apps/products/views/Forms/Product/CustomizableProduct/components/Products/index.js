@@ -134,312 +134,328 @@ const Products = ({ state }) => {
             </Tunnel>
          </Tunnels>
          {state.customizableProductOptions?.length ? (
-            <SectionTabs>
-               <SectionTabList>
-                  <SectionTabsListHeader>
-                     <Flex container alignItems="center">
-                        <Text as="title">
-                           Products({state.customizableProductOptions.length})
-                        </Text>
-                        <Tooltip identifier="customizable_product_products" />
-                     </Flex>
-                     <IconButton type="ghost" onClick={() => openTunnel(1)}>
-                        <PlusIcon color="#555b6e" />
-                     </IconButton>
-                  </SectionTabsListHeader>
-                  <DragNDrop
-                     list={state.customizableProductOptions}
-                     droppableId="customizableProductOptionsDroppableId"
-                     tablename="customizableProductOption"
-                     schemaname="products"
-                  >
+            <>
+               <SectionTabsListHeader>
+                  <Flex container alignItems="center">
+                     <Text as="title">
+                        Products({state.customizableProductOptions.length})
+                     </Text>
+                     <Tooltip identifier="customizable_product_products" />
+                  </Flex>
+                  <IconButton type="ghost" onClick={() => openTunnel(1)}>
+                     <PlusIcon color="#555b6e" />
+                  </IconButton>
+               </SectionTabsListHeader>
+               <SectionTabs>
+                  <SectionTabList>
+                     <DragNDrop
+                        list={state.customizableProductOptions}
+                        droppableId="customizableProductOptionsDroppableId"
+                        tablename="customizableProductOption"
+                        schemaname="products"
+                     >
+                        {state.customizableProductOptions.map(option => (
+                           <SectionTab key={option.id}>
+                              <ItemInfo>
+                                 {Boolean(
+                                    option.simpleRecipeProduct?.assets?.images
+                                       ?.length ||
+                                       option.inventoryProduct?.assets?.images
+                                          ?.length
+                                 ) && (
+                                    <img
+                                       src={
+                                          option.simpleRecipeProduct?.assets
+                                             ?.images[0] ||
+                                          option.inventoryProduct?.assets
+                                             ?.images[0]
+                                       }
+                                    />
+                                 )}
+                                 <h3>
+                                    {option.inventoryProduct?.name ||
+                                       option.simpleRecipeProduct?.name}
+                                 </h3>
+                                 <button onClick={() => remove(option)}>
+                                    <DeleteIcon color="#fff" />
+                                 </button>
+                                 <label hidden={state.default !== option.id}>
+                                    {t(address.concat('default'))}
+                                 </label>
+                              </ItemInfo>
+                           </SectionTab>
+                        ))}
+                     </DragNDrop>
+                  </SectionTabList>
+                  <SectionTabPanels>
                      {state.customizableProductOptions.map(option => (
-                        <SectionTab key={option.id}>
-                           <ItemInfo>
-                              {Boolean(
-                                 option.simpleRecipeProduct?.assets?.images
-                                    ?.length ||
-                                    option.inventoryProduct?.assets?.images
-                                       ?.length
-                              ) && (
-                                 <img
-                                    src={
-                                       option.simpleRecipeProduct?.assets
-                                          ?.images[0] ||
-                                       option.inventoryProduct?.assets
-                                          ?.images[0]
-                                    }
-                                 />
-                              )}
-                              <h3>
-                                 {option.inventoryProduct?.name ||
-                                    option.simpleRecipeProduct?.name}
-                              </h3>
-                              <button onClick={() => remove(option)}>
-                                 <DeleteIcon color="#fff" />
-                              </button>
-                              <label hidden={state.default !== option.id}>
-                                 {t(address.concat('default'))}
-                              </label>
-                           </ItemInfo>
-                        </SectionTab>
-                     ))}
-                  </DragNDrop>
-               </SectionTabList>
-               <SectionTabPanels>
-                  {state.customizableProductOptions.map(option => (
-                     <SectionTabPanel key={option.id}>
-                        <Flex
-                           container
-                           alignItems="center"
-                           justifyContent="space-between"
-                        >
-                           <Flex container alignItems="center">
-                              <Text as="h2">
-                                 {option.inventoryProduct?.name ||
-                                    option.simpleRecipeProduct?.name}
-                              </Text>
-                              <IconButton
-                                 type="ghost"
-                                 onClick={() =>
-                                    option.inventoryProduct
-                                       ? addTab(
-                                            option.inventoryProduct.name,
-                                            `/products/inventory-products/${option.inventoryProduct.id}`
-                                         )
-                                       : addTab(
-                                            option.simpleRecipeProduct.name,
-                                            `/products/simple-recipe-products/${option.simpleRecipeProduct.id}`
-                                         )
-                                 }
-                              >
-                                 <LinkIcon color="#00A7E1" stroke={1.5} />
-                              </IconButton>
-                           </Flex>
-                           <Flex container>
-                              {Boolean(state.default !== option.id) && (
-                                 <TextButton
+                        <SectionTabPanel key={option.id}>
+                           <Flex
+                              container
+                              alignItems="center"
+                              justifyContent="space-between"
+                           >
+                              <Flex container alignItems="center">
+                                 <Text as="h2">
+                                    {option.inventoryProduct?.name ||
+                                       option.simpleRecipeProduct?.name}
+                                 </Text>
+                                 <IconButton
                                     type="ghost"
-                                    onClick={() => makeDefault(option.id)}
+                                    onClick={() =>
+                                       option.inventoryProduct
+                                          ? addTab(
+                                               option.inventoryProduct.name,
+                                               `/products/inventory-products/${option.inventoryProduct.id}`
+                                            )
+                                          : addTab(
+                                               option.simpleRecipeProduct.name,
+                                               `/products/simple-recipe-products/${option.simpleRecipeProduct.id}`
+                                            )
+                                    }
                                  >
-                                    Set as Default
+                                    <LinkIcon color="#00A7E1" stroke={1.5} />
+                                 </IconButton>
+                              </Flex>
+                              <Flex container>
+                                 {Boolean(state.default !== option.id) && (
+                                    <TextButton
+                                       type="ghost"
+                                       onClick={() => makeDefault(option.id)}
+                                    >
+                                       Set as Default
+                                    </TextButton>
+                                 )}
+                                 <Spacer xAxis size="16px" />
+                                 <TextButton
+                                    type="outline"
+                                    onClick={() => editOptions(option)}
+                                 >
+                                    Edit Options
                                  </TextButton>
-                              )}
-                              <Spacer xAxis size="16px" />
-                              <TextButton
-                                 type="outline"
-                                 onClick={() => editOptions(option)}
-                              >
-                                 Edit Options
-                              </TextButton>
+                              </Flex>
                            </Flex>
-                        </Flex>
-                        <StyledTable>
-                           <thead>
-                              <tr>
-                                 <th>
-                                    {option.simpleRecipeProduct
-                                       ? ''
-                                       : t(address.concat('labels'))}
-                                 </th>
-                                 <th>
-                                    {option.simpleRecipeProduct
-                                       ? t(address.concat('servings'))
-                                       : t(address.concat('options'))}
-                                 </th>
-                                 <th>{t(address.concat('price'))}</th>
-                                 <th>{t(address.concat('discount'))}</th>
-                                 <th>
-                                    {t(address.concat('discounted price'))}
-                                 </th>
-                              </tr>
-                           </thead>
-                           <tbody>
-                              {option.simpleRecipeProduct ? (
-                                 <>
-                                    {option.simpleRecipeProduct.simpleRecipeProductOptions
-                                       .filter(op => op.type === 'mealKit')
-                                       .filter(
-                                          op =>
-                                             op.isActive &&
+                           <StyledTable>
+                              <thead>
+                                 <tr>
+                                    <th>
+                                       {option.simpleRecipeProduct
+                                          ? ''
+                                          : t(address.concat('labels'))}
+                                    </th>
+                                    <th>
+                                       {option.simpleRecipeProduct
+                                          ? t(address.concat('servings'))
+                                          : t(address.concat('options'))}
+                                    </th>
+                                    <th>{t(address.concat('price'))}</th>
+                                    <th>{t(address.concat('discount'))}</th>
+                                    <th>
+                                       {t(address.concat('discounted price'))}
+                                    </th>
+                                 </tr>
+                              </thead>
+                              <tbody>
+                                 {option.simpleRecipeProduct ? (
+                                    <>
+                                       {option.simpleRecipeProduct.simpleRecipeProductOptions
+                                          .filter(op => op.type === 'mealKit')
+                                          .filter(
+                                             op =>
+                                                op.isActive &&
+                                                isIncludedInOptions(
+                                                   op.id,
+                                                   option.options
+                                                )
+                                          )
+                                          .map(op => {
+                                             const opt = option.options.find(
+                                                ({ optionId }) =>
+                                                   optionId === op.id
+                                             )
+                                             return {
+                                                ...op,
+                                                price: opt.price,
+                                                discount: opt.discount,
+                                             }
+                                          })
+                                          .map((op, i) => (
+                                             <tr key={op.id}>
+                                                <td>
+                                                   {i === 0 ? (
+                                                      <span>
+                                                         {t(
+                                                            address.concat(
+                                                               'meal kit'
+                                                            )
+                                                         )}
+                                                      </span>
+                                                   ) : (
+                                                      ''
+                                                   )}
+                                                </td>
+                                                <td>
+                                                   {
+                                                      op.simpleRecipeYield.yield
+                                                         .serving
+                                                   }
+                                                </td>
+                                                <td>
+                                                   {currencyFmt(
+                                                      Number(op.price) || 0
+                                                   )}
+                                                </td>
+                                                <td>{op.discount} %</td>
+                                                <td>
+                                                   {currencyFmt(
+                                                      Number(
+                                                         (
+                                                            parseFloat(
+                                                               op.price
+                                                            ) -
+                                                            parseFloat(
+                                                               op.price
+                                                            ) *
+                                                               (parseFloat(
+                                                                  op.discount
+                                                               ) /
+                                                                  100)
+                                                         ).toFixed(2)
+                                                      ) || 0
+                                                   )}
+                                                </td>
+                                             </tr>
+                                          ))}
+                                       {option.simpleRecipeProduct.simpleRecipeProductOptions
+                                          .filter(
+                                             op => op.type === 'readyToEat'
+                                          )
+                                          .filter(
+                                             op =>
+                                                op.isActive &&
+                                                isIncludedInOptions(
+                                                   op.id,
+                                                   option.options
+                                                )
+                                          )
+                                          .map(op => {
+                                             const opt = option.options.find(
+                                                ({ optionId }) =>
+                                                   optionId === op.id
+                                             )
+                                             return {
+                                                ...op,
+                                                price: opt.price,
+                                                discount: opt.discount,
+                                             }
+                                          })
+                                          .map((op, i) => (
+                                             <tr key={op.id}>
+                                                <td>
+                                                   {i === 0 ? (
+                                                      <span>
+                                                         {t(
+                                                            address.concat(
+                                                               'ready to eat'
+                                                            )
+                                                         )}
+                                                      </span>
+                                                   ) : (
+                                                      ''
+                                                   )}
+                                                </td>
+                                                <td>
+                                                   {
+                                                      op.simpleRecipeYield.yield
+                                                         .serving
+                                                   }
+                                                </td>
+                                                <td>
+                                                   {currencyFmt(
+                                                      Number(op.price) || 0
+                                                   )}
+                                                </td>
+                                                <td>{op.discount} %</td>
+                                                <td>
+                                                   {currencyFmt(
+                                                      Number(
+                                                         (
+                                                            parseFloat(
+                                                               op.price
+                                                            ) -
+                                                            parseFloat(
+                                                               op.price
+                                                            ) *
+                                                               (parseFloat(
+                                                                  op.discount
+                                                               ) /
+                                                                  100)
+                                                         ).toFixed(2)
+                                                      ) || 0
+                                                   )}
+                                                </td>
+                                             </tr>
+                                          ))}
+                                    </>
+                                 ) : (
+                                    <>
+                                       {option.inventoryProduct.inventoryProductOptions
+                                          .filter(op =>
                                              isIncludedInOptions(
                                                 op.id,
                                                 option.options
                                              )
-                                       )
-                                       .map(op => {
-                                          const opt = option.options.find(
-                                             ({ optionId }) =>
-                                                optionId === op.id
                                           )
-                                          return {
-                                             ...op,
-                                             price: opt.price,
-                                             discount: opt.discount,
-                                          }
-                                       })
-                                       .map((op, i) => (
-                                          <tr key={op.id}>
-                                             <td>
-                                                {i === 0 ? (
-                                                   <span>
-                                                      {t(
-                                                         address.concat(
-                                                            'meal kit'
-                                                         )
-                                                      )}
-                                                   </span>
-                                                ) : (
-                                                   ''
-                                                )}
-                                             </td>
-                                             <td>
-                                                {
-                                                   op.simpleRecipeYield.yield
-                                                      .serving
-                                                }
-                                             </td>
-                                             <td>
-                                                {currencyFmt(
-                                                   Number(op.price) || 0
-                                                )}
-                                             </td>
-                                             <td>{op.discount} %</td>
-                                             <td>
-                                                {currencyFmt(
-                                                   Number(
-                                                      (
-                                                         parseFloat(op.price) -
-                                                         parseFloat(op.price) *
-                                                            (parseFloat(
-                                                               op.discount
-                                                            ) /
-                                                               100)
-                                                      ).toFixed(2)
-                                                   ) || 0
-                                                )}
-                                             </td>
-                                          </tr>
-                                       ))}
-                                    {option.simpleRecipeProduct.simpleRecipeProductOptions
-                                       .filter(op => op.type === 'readyToEat')
-                                       .filter(
-                                          op =>
-                                             op.isActive &&
-                                             isIncludedInOptions(
-                                                op.id,
-                                                option.options
+                                          .map(op => {
+                                             const opt = option.options.find(
+                                                ({ optionId }) =>
+                                                   optionId === op.id
                                              )
-                                       )
-                                       .map(op => {
-                                          const opt = option.options.find(
-                                             ({ optionId }) =>
-                                                optionId === op.id
-                                          )
-                                          return {
-                                             ...op,
-                                             price: opt.price,
-                                             discount: opt.discount,
-                                          }
-                                       })
-                                       .map((op, i) => (
-                                          <tr key={op.id}>
-                                             <td>
-                                                {i === 0 ? (
-                                                   <span>
-                                                      {t(
-                                                         address.concat(
-                                                            'ready to eat'
-                                                         )
-                                                      )}
-                                                   </span>
-                                                ) : (
-                                                   ''
-                                                )}
-                                             </td>
-                                             <td>
-                                                {
-                                                   op.simpleRecipeYield.yield
-                                                      .serving
-                                                }
-                                             </td>
-                                             <td>
-                                                {currencyFmt(
-                                                   Number(op.price) || 0
-                                                )}
-                                             </td>
-                                             <td>{op.discount} %</td>
-                                             <td>
-                                                {currencyFmt(
-                                                   Number(
-                                                      (
-                                                         parseFloat(op.price) -
-                                                         parseFloat(op.price) *
-                                                            (parseFloat(
-                                                               op.discount
-                                                            ) /
-                                                               100)
-                                                      ).toFixed(2)
-                                                   ) || 0
-                                                )}
-                                             </td>
-                                          </tr>
-                                       ))}
-                                 </>
-                              ) : (
-                                 <>
-                                    {option.inventoryProduct.inventoryProductOptions
-                                       .filter(op =>
-                                          isIncludedInOptions(
-                                             op.id,
-                                             option.options
-                                          )
-                                       )
-                                       .map(op => {
-                                          const opt = option.options.find(
-                                             ({ optionId }) =>
-                                                optionId === op.id
-                                          )
-                                          return {
-                                             ...op,
-                                             price: opt.price,
-                                             discount: opt.discount,
-                                          }
-                                       })
-                                       .map(op => (
-                                          <tr key={op.id}>
-                                             <td>{op.label}</td>
-                                             <td>{op.quantity}</td>
-                                             <td>
-                                                {currencyFmt(
-                                                   Number(op.price) || 0
-                                                )}
-                                             </td>
-                                             <td>{op.discount} %</td>
-                                             <td>
-                                                {currencyFmt(
-                                                   Number(
-                                                      (
-                                                         parseFloat(op.price) -
-                                                         parseFloat(op.price) *
-                                                            (parseFloat(
-                                                               op.discount
-                                                            ) /
-                                                               100)
-                                                      ).toFixed(2)
-                                                   ) || 0
-                                                )}
-                                             </td>
-                                          </tr>
-                                       ))}
-                                 </>
-                              )}
-                           </tbody>
-                        </StyledTable>
-                     </SectionTabPanel>
-                  ))}
-               </SectionTabPanels>
-            </SectionTabs>
+                                             return {
+                                                ...op,
+                                                price: opt.price,
+                                                discount: opt.discount,
+                                             }
+                                          })
+                                          .map(op => (
+                                             <tr key={op.id}>
+                                                <td>{op.label}</td>
+                                                <td>{op.quantity}</td>
+                                                <td>
+                                                   {currencyFmt(
+                                                      Number(op.price) || 0
+                                                   )}
+                                                </td>
+                                                <td>{op.discount} %</td>
+                                                <td>
+                                                   {currencyFmt(
+                                                      Number(
+                                                         (
+                                                            parseFloat(
+                                                               op.price
+                                                            ) -
+                                                            parseFloat(
+                                                               op.price
+                                                            ) *
+                                                               (parseFloat(
+                                                                  op.discount
+                                                               ) /
+                                                                  100)
+                                                         ).toFixed(2)
+                                                      ) || 0
+                                                   )}
+                                                </td>
+                                             </tr>
+                                          ))}
+                                    </>
+                                 )}
+                              </tbody>
+                           </StyledTable>
+                        </SectionTabPanel>
+                     ))}
+                  </SectionTabPanels>
+               </SectionTabs>
+            </>
          ) : (
             <ButtonTile
                type="primary"

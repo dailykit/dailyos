@@ -63,7 +63,7 @@ export const MealKitProduct = () => {
                         {ingredient.name}
                      </ProductTitle>
                      <h3>
-                        <label>Total: </label>
+                        <span>Total: </span>
                         {ingredient.processings.nodes
                            .map(processing =>
                               processing.sachets.nodes.reduce(
@@ -85,7 +85,7 @@ export const MealKitProduct = () => {
                            .reduce((a, b) => b + a, 0)}
                      </h3>
                      <h3>
-                        <label>Quantity: </label>
+                        <span>Quantity: </span>
                         {ingredient.processings.nodes
                            .map(processing =>
                               processing.sachets.nodes.reduce(
@@ -225,15 +225,15 @@ const Sachet = ({ sachet }) => {
       <StyledTabPanel>
          <List>
             <ListBody>
-               {sachet.allOrderSachets.nodes.map(sachet => (
+               {sachet.allOrderSachets.nodes.map(item => (
                   <ListBodyItem
-                     key={sachet.id}
-                     isAssembled={sachet.isAssembled}
-                     isActive={sachet.id === state.sachet.id}
+                     key={item.id}
+                     isAssembled={item.isAssembled}
+                     isActive={item.id === state.sachet.id}
                      onClick={() =>
                         select(
-                           sachet.id,
-                           sachet.orderMealKitProduct.simpleRecipeProduct.name
+                           item.id,
+                           item.orderMealKitProduct.simpleRecipeProduct.name
                         )
                      }
                   >
@@ -241,19 +241,19 @@ const Sachet = ({ sachet }) => {
                         <StyledButton
                            type="button"
                            onClick={e =>
-                              openOrder(e, sachet.orderMealKitProduct.orderId)
+                              openOrder(e, item.orderMealKitProduct.orderId)
                            }
                         >
-                           ORD{sachet.orderMealKitProduct.orderId}
+                           ORD{item.orderMealKitProduct.orderId}
                            <NewTabIcon size={14} />
                         </StyledButton>
                      </span>
                      <span
                         title={
-                           sachet.orderMealKitProduct.simpleRecipeProduct.name
+                           item.orderMealKitProduct.simpleRecipeProduct.name
                         }
                      >
-                        {sachet.orderMealKitProduct.simpleRecipeProduct.name}
+                        {item.orderMealKitProduct.simpleRecipeProduct.name}
                      </span>
                   </ListBodyItem>
                ))}

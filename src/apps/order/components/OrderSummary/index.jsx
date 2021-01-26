@@ -50,7 +50,6 @@ export const OrderSummary = () => {
       dispatch({ type: 'CLEAR_FULFILLMENT_TYPE_FILTER' })
       dispatch({ type: 'CLEAR_SOURCE_FILTER' })
       dispatch({ type: 'CLEAR_AMOUNT_FILTER' })
-      dispatch({ type: 'CLEAR_STATION_FILTER' })
    }
 
    if (loading) return <InlineLoader />

@@ -39,6 +39,7 @@ import {
    YieldInfoTunnel,
 } from '../../tunnels'
 import validator from '../../validators'
+import styled from 'styled-components'
 
 const Ingredients = ({ state }) => {
    const { recipeDispatch } = React.useContext(RecipeContext)
@@ -144,6 +145,13 @@ const Ingredients = ({ state }) => {
       addSachet.call(this, ingredient, serving, true)
    }
 
+   const StyledFlex = styled(Flex)`
+      @media screen and (max-width: 767px) {
+         flex-direction: column;
+         align-items: flex-start;
+      }
+   `
+
    return (
       <>
          <Tunnels tunnels={tunnels}>
@@ -165,7 +173,11 @@ const Ingredients = ({ state }) => {
                <YieldInfoTunnel close={closeYieldInfoTunnel} />
             </Tunnel>
          </Tunnels>
-         <Flex container alignItems="center" justifyContent="space-between">
+         <StyledFlex
+            container
+            alignItems="center"
+            justifyContent="space-between"
+         >
             <Flex container alignItems="center" justifyContent="flex-start">
                <Text as="subtitle">Ingredients</Text>
                <Tooltip identifier="recipe_ingredients" />
@@ -211,7 +223,7 @@ const Ingredients = ({ state }) => {
                   </Flex>
                </Form.Checkbox>
             </Flex>
-         </Flex>
+         </StyledFlex>
          <Spacer size="8px" />
          {!state.simpleRecipeYields?.length ? (
             <Text as="p">

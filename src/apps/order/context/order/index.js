@@ -1,4 +1,5 @@
 import React from 'react'
+import { has, isEmpty } from 'lodash'
 import { useMutation } from '@apollo/react-hooks'
 
 import { MUTATIONS } from '../../graphql'
@@ -10,8 +11,7 @@ const initialState = {
    delivery_config: { orderId: null },
    current_view: 'SUMMARY',
    sachet: { id: null, product: { name: null } },
-   inventory: { id: null },
-   readytoeat: { id: null },
+   current_product: { id: null },
    orders: {
       limit: 10,
       offset: 0,
@@ -35,32 +35,19 @@ const reducers = (state, { type, payload }) => {
             current_view: 'SACHET_ITEM',
             sachet: { id: payload.id, product: payload.product },
          }
-      case 'SELECT_INVENTORY':
+      case 'SELECT_PRODUCT':
          return {
             ...state,
-            current_view: 'INVENTORY',
-            inventory: {
-               id: payload,
-            },
-         }
-      case 'SELECT_READYTOEAT':
-         return {
-            ...state,
-            current_view: 'READYTOEAT',
-            readytoeat: {
-               id: payload,
-            },
+            current_product: payload,
          }
       case 'SWITCH_VIEW': {
          return {
             ...state,
             sachet: {
-               name: null,
+               product: { name: null },
                id: null,
             },
 
-            inventory: { id: null },
-            readytoeat: { id: null },
             current_view: payload.view,
          }
       }
@@ -74,13 +61,28 @@ const reducers = (state, { type, payload }) => {
          }
       }
       case 'SET_FILTER': {
+         const existingOr = state.orders.where._or
+         const { _or: incomingOr = [], ...rest } = payload
+         let result = []
+         if (!isEmpty(incomingOr)) {
+            let keys = incomingOr.map(node => Object.keys(node)).flat()
+            result = existingOr.filter(
+               node => !keys.some(key => has(node, key))
+            )
+         }
          return {
             ...state,
             orders: {
                loading: true,
                limit: 10,
                offset: 0,
-               where: { ...state.orders.where, ...payload },
+               where: {
+                  ...state.orders.where,
+                  ...(!isEmpty(incomingOr) && {
+                     _or: [...result, ...incomingOr],
+                  }),
+                  ...rest,
+               },
             },
          }
       }
@@ -154,19 +156,6 @@ const reducers = (state, { type, payload }) => {
             },
          }
       }
-      case 'CLEAR_STATION_FILTER': {
-         const { _or, ...rest } = state.orders.where
-         return {
-            ...state,
-            loading: true,
-            orders: {
-               loading: true,
-               limit: 10,
-               offset: 0,
-               where: rest,
-            },
-         }
-      }
       case 'TOGGLE_FILTER_TUNNEL': {
          return {
             ...state,
@@ -208,26 +197,6 @@ export const useOrder = () => {
       [dispatch]
    )
 
-   const selectInventory = React.useCallback(
-      id => {
-         dispatch({
-            type: 'SELECT_INVENTORY',
-            payload: id,
-         })
-      },
-      [dispatch]
-   )
-
-   const selectReadyToEat = React.useCallback(
-      id => {
-         dispatch({
-            type: 'SELECT_READYTOEAT',
-            payload: id,
-         })
-      },
-      [dispatch]
-   )
-
    const switchView = React.useCallback(
       view => {
          dispatch({
@@ -256,7 +225,5 @@ export const useOrder = () => {
       switchView,
       updateOrder,
       selectSachet,
-      selectInventory,
-      selectReadyToEat,
    }
 }

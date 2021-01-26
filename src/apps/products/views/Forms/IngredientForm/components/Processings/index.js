@@ -130,92 +130,95 @@ const Processings = ({ state }) => {
          </Tunnels>
          <Flex>
             {state.ingredientProcessings?.length ? (
-               <StyledSection>
-                  <StyledListing>
-                     <StyledListingHeader>
-                        <Flex container>
-                           <Text as="h3">
-                              Processings ({state.ingredientProcessings?.length}
-                              )
-                           </Text>
-                           <Tooltip identifier="ingredient_form_processings" />
-                        </Flex>
-                        <span
-                           role="button"
-                           tabIndex="0"
-                           onClick={() => openProcessingTunnel(1)}
-                           onKeyDown={e =>
-                              e.charCode === 13 && openProcessingTunnel(1)
-                           }
-                        >
-                           <AddIcon color="#555B6E" size="18" stroke="2.5" />
-                        </span>
-                     </StyledListingHeader>
-                     {state.ingredientProcessings?.map((processing, i) => (
-                        <StyledListingTile
-                           key={processing.id}
-                           active={ingredientState.processingIndex === i}
-                           onClick={() =>
-                              ingredientDispatch({
-                                 type: 'PROCESSING_INDEX',
-                                 payload: i,
-                              })
-                           }
-                        >
-                           <Actions
-                              active={ingredientState.processingIndex === i}
-                           >
-                              <span
-                                 role="button"
-                                 tabIndex="0"
-                                 onClick={() => openPriceTunnel(1)}
-                                 onKeyDown={e =>
-                                    e.charCode === 13 && openPriceTunnel(1)
-                                 }
-                              >
-                                 <DollarIcon color="#fff" />
-                              </span>
-                              <span
-                                 role="button"
-                                 tabIndex="0"
-                                 onClick={() => openNutritionTunnel(1)}
-                                 onKeyDown={e =>
-                                    e.charCode === 13 && openNutritionTunnel(1)
-                                 }
-                              >
-                                 <FileIcon color="#fff" />
-                              </span>
-                              <span
-                                 role="button"
-                                 tabIndex="0"
-                                 onClick={() => remove(processing)}
-                                 onKeyDown={e =>
-                                    e.charCode === 13 && remove(processing)
-                                 }
-                              >
-                                 <DeleteIcon />
-                              </span>
-                           </Actions>
-                           <h3>{processing.processingName}</h3>
-                           <p>
-                              Sachets: {processing.ingredientSachets?.length}
-                           </p>
-                           <p>Recipes: NA</p>
-                        </StyledListingTile>
-                     ))}
-                     <ButtonTile
-                        type="primary"
-                        size="lg"
+               <>
+                  <StyledListingHeader>
+                     <Flex container>
+                        <Text as="h3">
+                           Processings ({state.ingredientProcessings?.length})
+                        </Text>
+                        <Tooltip identifier="ingredient_form_processings" />
+                     </Flex>
+                     <span
+                        role="button"
+                        tabIndex="0"
                         onClick={() => openProcessingTunnel(1)}
-                     />
-                  </StyledListing>
-                  <StyledDisplay>
-                     <Sachets
-                        state={state}
-                        openNutritionTunnel={openNutritionTunnel}
-                     />
-                  </StyledDisplay>
-               </StyledSection>
+                        onKeyDown={e =>
+                           e.charCode === 13 && openProcessingTunnel(1)
+                        }
+                     >
+                        <AddIcon color="#555B6E" size="18" stroke="2.5" />
+                     </span>
+                  </StyledListingHeader>
+                  <StyledSection>
+                     <StyledListing>
+                        {state.ingredientProcessings?.map((processing, i) => (
+                           <StyledListingTile
+                              key={processing.id}
+                              active={ingredientState.processingIndex === i}
+                              onClick={() =>
+                                 ingredientDispatch({
+                                    type: 'PROCESSING_INDEX',
+                                    payload: i,
+                                 })
+                              }
+                           >
+                              <Actions
+                                 active={ingredientState.processingIndex === i}
+                              >
+                                 <span
+                                    role="button"
+                                    tabIndex="0"
+                                    onClick={() => openPriceTunnel(1)}
+                                    onKeyDown={e =>
+                                       e.charCode === 13 && openPriceTunnel(1)
+                                    }
+                                 >
+                                    <DollarIcon color="#fff" />
+                                 </span>
+                                 <span
+                                    role="button"
+                                    tabIndex="0"
+                                    onClick={() => openNutritionTunnel(1)}
+                                    onKeyDown={e =>
+                                       e.charCode === 13 &&
+                                       openNutritionTunnel(1)
+                                    }
+                                 >
+                                    <FileIcon color="#fff" />
+                                 </span>
+                                 <span
+                                    role="button"
+                                    tabIndex="0"
+                                    onClick={() => remove(processing)}
+                                    onKeyDown={e =>
+                                       e.charCode === 13 && remove(processing)
+                                    }
+                                 >
+                                    <DeleteIcon />
+                                 </span>
+                              </Actions>
+                              <h3>{processing.processingName}</h3>
+                              <p>
+                                 Sachets: {processing.ingredientSachets?.length}
+                              </p>
+                              <p>Recipes: NA</p>
+                           </StyledListingTile>
+                        ))}
+
+                        <ButtonTile
+                           type="primary"
+                           size="lg"
+                           onClick={() => openProcessingTunnel(1)}
+                        />
+                     </StyledListing>
+                     <StyledDisplay>
+                        <Sachets
+                           state={state}
+                           openNutritionTunnel={openNutritionTunnel}
+                        />
+                     </StyledDisplay>
+                  </StyledSection>
+               </>
             ) : (
                <ButtonTile
                   type="primary"

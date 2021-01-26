@@ -1,6 +1,6 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Flex, Form, Spacer, Text } from '@dailykit/ui'
+import { Flex, Form, Spacer, Text, Toggle } from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
@@ -27,7 +27,7 @@ import {
    S_SIMPLE_RECIPE_PRODUCT,
    UPDATE_SIMPLE_RECIPE_PRODUCT,
 } from '../../../../graphql'
-import { StyledRule } from '../styled'
+import { ResponsiveFlex, StyledFlex, StyledRule } from '../styled'
 import validator from '../validators'
 import { Assets, Description, Recipe } from './components'
 import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
@@ -175,13 +175,7 @@ export default function SimpleRecipeProduct() {
          <ModifiersContext.Provider
             value={{ modifiersState, modifiersDispatch }}
          >
-            <Flex
-               as="header"
-               container
-               padding="16px 32px"
-               alignItems="start"
-               justifyContent="space-between"
-            >
+            <ResponsiveFlex>
                <Form.Group>
                   <Form.Label htmlFor="title" title="title">
                      Product Name*
@@ -203,19 +197,24 @@ export default function SimpleRecipeProduct() {
                         <Form.Error key={index}>{error}</Form.Error>
                      ))}
                </Form.Group>
-               <Flex container alignItems="center">
+               <Spacer xAxis size="16px" />
+
+               <div>
                   {state.isValid?.status ? (
-                     <>
+                     <Flex container alignItems="center">
                         <TickIcon color="#00ff00" stroke={2} />
                         <Text as="p">All good!</Text>
-                     </>
+                     </Flex>
                   ) : (
-                     <>
+                     <Flex container alignItems="center">
                         <CloseIcon color="#ff0000" />
                         <Text as="p">{state.isValid?.error}</Text>
-                     </>
+                     </Flex>
                   )}
-                  <Spacer xAxis size="16px" />
+               </div>
+               <Spacer size="16px" />
+
+               <Flex container alignItems="center">
                   <Form.Checkbox
                      name="popup"
                      value={state.isPopupAllowed}
@@ -226,6 +225,7 @@ export default function SimpleRecipeProduct() {
                         <Tooltip identifier="simple_recipe_product_popup_checkbox" />
                      </Flex>
                   </Form.Checkbox>
+
                   <Spacer xAxis size="16px" />
                   <Form.Toggle
                      name="published"
@@ -234,26 +234,23 @@ export default function SimpleRecipeProduct() {
                   >
                      <Flex container alignItems="center">
                         Published
+                        <Spacer xAxis size="16px" />
                         <Tooltip identifier="simple_recipe_product_publish" />
                      </Flex>
                   </Form.Toggle>
                </Flex>
-            </Flex>
+            </ResponsiveFlex>
             <Flex
                as="main"
                padding="32px"
                minHeight="calc(100vh - 130px)"
                style={{ background: '#f3f3f3' }}
             >
-               <Flex as="section" container>
-                  <Flex flex="2">
-                     <Description state={state} />
-                  </Flex>
+               <StyledFlex as="section" container>
+                  <Description state={state} />
                   <Spacer xAxis size="16px" />
-                  <Flex flex="1">
-                     <Assets state={state} />
-                  </Flex>
-               </Flex>
+                  <Assets state={state} />
+               </StyledFlex>
                <Spacer size="16px" />
                <StyledRule />
                <Spacer size="16px" />
