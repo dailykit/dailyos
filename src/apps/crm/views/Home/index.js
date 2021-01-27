@@ -1,9 +1,10 @@
 import React, { useContext } from 'react'
-import { DashboardTile, SearchBox, Text } from '@dailykit/ui'
+import { DashboardTile, Text } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 import BrandContext from '../../context/Brand'
 // State
-import { useTabs } from '../../context'
+
+import { useTabs } from '../../../../shared/providers'
 import { StyledHome, StyledCardList, StyledHeader } from './styled'
 import { CUSTOMERS_COUNT, COUPON_TOTAL, CAMPAIGN_TOTAL } from '../../graphql'
 

@@ -3,12 +3,11 @@ import { Text, Avatar, useTunnel, Flex } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useQuery } from '@apollo/react-hooks'
 import { ORDER } from '../../../../graphql'
-import { useTabs } from '../../../../context'
 import { capitalizeString } from '../../../../Utils'
 import { PaymentCard } from '../../../../components'
 import { ChevronRight } from '../../../../../../shared/assets/icons'
 import { Tooltip, InlineLoader } from '../../../../../../shared/components'
-import { useTooltip } from '../../../../../../shared/providers'
+import { useTooltip, useTabs } from '../../../../../../shared/providers'
 import { toast } from 'react-toastify'
 import {
    OrderStatusTunnel,

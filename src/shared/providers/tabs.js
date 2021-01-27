@@ -22,6 +22,21 @@ const reducers = (state, { type, payload }) => {
             tabs,
          }
       }
+      case 'STORE_TAB_DATA': {
+         const tabs = state.tabs
+         const tabIndex = tabs.findIndex(tab => tab.path === payload.path)
+         if (tabIndex !== -1) {
+            tabs[tabIndex].data = {
+               ...tabs[tabIndex].data,
+               ...payload.data,
+            }
+            return {
+               ...state,
+               tabs,
+            }
+         }
+         return state
+      }
       case 'ADD_TAB': {
          const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
          if (tabIndex === -1) {
@@ -133,7 +148,7 @@ export const useTabs = () => {
    }, [switchTab, dispatch])
 
    const setRoutes = React.useCallback(
-      routes => dispatch({ type: 'SET_ROUTES', payload: routes }),
+      nodes => dispatch({ type: 'SET_ROUTES', payload: nodes }),
       []
    )
 
@@ -142,6 +157,7 @@ export const useTabs = () => {
       tabs,
       addTab,
       routes,
+      dispatch,
       setRoutes,
       switchTab,
       removeTab,

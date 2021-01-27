@@ -3,9 +3,9 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Text, TunnelHeader, Loader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { TunnelBody, SolidTile } from './styled'
-import { useTabs } from '../../../../context'
 import { CREATE_CAMPAIGN, CAMPAIGN_TYPE } from '../../../../graphql'
 import { randomSuffix } from '../../../../../../shared/utils'
+import { useTabs } from '../../../../../../shared/providers'
 
 export default function CampaignTypeTunnel({ close }) {
    const { addTab } = useTabs()
