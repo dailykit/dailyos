@@ -17,7 +17,7 @@ import {
    PURCHASE_ORDERS_COUNT_SUBSCRIPTION,
    PACKAGINGS_COUNT_SUBSCRIPTION,
 } from '../../graphql/subscriptions/index'
-import { useTabs } from '../../context'
+import { useTabs } from '../../../../shared/providers'
 
 const address = 'apps.inventory.views.home.'
 

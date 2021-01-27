@@ -15,10 +15,9 @@ import {
    InlineLoader,
    Tooltip,
 } from '../../../../../shared/components'
-import { useTooltip } from '../../../../../shared/providers'
+import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import { dateFmt } from '../../../../../shared/utils/dateFmt'
-import { useTabs } from '../../../context'
 import { SACHET_WORK_ORDERS_SUBSCRIPTION } from '../../../graphql'
 import tableOptions from '../tableOption'
 

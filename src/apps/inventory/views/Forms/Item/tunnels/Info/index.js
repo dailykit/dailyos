@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { ERROR_UPDATING_ITEM_INFORMATION } from '../../../../../constants/errorMessages'
-import { useTabs } from '../../../../../context'
+import { useTabs } from '../../../../../../../shared/providers'
 import {
    UNITS_SUBSCRIPTION,
    UPDATE_SUPPLIER_ITEM,

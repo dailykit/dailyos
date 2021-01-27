@@ -1,4 +1,3 @@
-import Tabs from './Tabs'
 import Separator from './Form/Spacer'
 import { TunnelContainer } from './Form/styled'
 import ItemCard from './WorkOrder/ItemCard'
@@ -8,7 +7,6 @@ import StatusSwitch from './WorkOrder/StatusSwitch/index'
 import DataCard from './DataCard'
 
 export {
-   Tabs,
    Separator,
    TunnelContainer,
    FormHeading,

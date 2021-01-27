@@ -2,14 +2,13 @@ import { useSubscription } from '@apollo/react-hooks'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { Filler } from '@dailykit/ui'
 import React from 'react'
-import { ErrorState } from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers/tooltip'
 import { logger } from '../../../../../shared/utils/index'
 import { NO_BULK_ITEMS_LISTINGS } from '../../../constants/emptyMessages'
-import { useTabs } from '../../../context'
+import { useTabs } from '../../../../../shared/providers'
+import { InlineLoader, ErrorState } from '../../../../../shared/components'
 import { SUPPLIER_ITEMS_LISTINGS_BULK } from '../../../graphql'
 import tableOptions from '../tableOption'
-import { InlineLoader } from '../../../../../shared/components'
 
 export default function BulkItemsListings({ tableRef }) {
    const { addTab } = useTabs()

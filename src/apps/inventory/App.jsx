@@ -5,28 +5,47 @@ import '@dailykit/react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 import '@dailykit/react-tabulator/lib/styles.css'
 import '../../shared/styled/tableStyles.css'
 
-import ErrorBoundary from '../../shared/components/ErrorBoundary'
-
-// Sections
-import Header from './sections/Header'
-import Sidebar from './sections/Sidebar'
 import Main from './sections/Main'
-
-// Styled
-import { StyledWrapper } from '../../styled'
+import { useTabs } from '../../shared/providers'
+import { ErrorBoundary } from '../../shared/components'
 
 const App = () => {
-   const [isSidebarVisible, toggleSidebar] = React.useState(false)
+   const { addTab, setRoutes } = useTabs()
+
+   React.useEffect(() => {
+      setRoutes([
+         {
+            id: 1,
+            title: 'Suppliers',
+            onClick: () => addTab('Suppliers', '/inventory/suppliers'),
+         },
+         {
+            id: 2,
+            title: 'Supplier Items',
+            onClick: () => addTab('Supplier Items', '/inventory/items'),
+         },
+         {
+            id: 3,
+            title: 'Work Orders',
+            onClick: () => addTab('Work Orders', '/inventory/work-orders'),
+         },
+         {
+            id: 4,
+            title: 'Purchase Orders',
+            onClick: () =>
+               addTab('Purchase Orders', '/inventory/purchase-orders'),
+         },
+         {
+            id: 5,
+            title: 'Packagings',
+            onClick: () => addTab('Packagings', '/inventory/packagings'),
+         },
+      ])
+   }, [])
    return (
-      <StyledWrapper>
-         <BrowserRouter basename={process.env.PUBLIC_URL}>
-            <Header toggleSidebar={toggleSidebar} />
-            <Sidebar visible={isSidebarVisible} toggleSidebar={toggleSidebar} />
-            <ErrorBoundary rootRoute="/apps/inventory">
-               <Main />
-            </ErrorBoundary>
-         </BrowserRouter>
-      </StyledWrapper>
+      <ErrorBoundary rootRoute="/apps/inventory">
+         <Main />
+      </ErrorBoundary>
    )
 }
 
