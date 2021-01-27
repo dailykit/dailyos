@@ -1,32 +1,39 @@
 import React from 'react'
-import { BrowserRouter as Router } from 'react-router-dom'
 
 import '@dailykit/react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 import '@dailykit/react-tabulator/lib/styles.css'
 import './views/Listings/tableStyle.css'
 
-// Sections
-import Header from './sections/Header'
-import Sidebar from './sections/Sidebar'
 import Main from './sections/Main'
-
+import { useTabs } from '../../shared/providers'
 import { ErrorBoundary } from '../../shared/components'
 
-// Styled
-import { StyledWrapper } from '../../styled'
-
 const App = () => {
-   const [isSidebarVisible, toggleSidebar] = React.useState(false)
+   const { addTab, setRoutes } = useTabs()
+
+   React.useEffect(() => {
+      setRoutes([
+         {
+            id: 1,
+            title: 'Products',
+            onClick: () => addTab('Products', '/products/products'),
+         },
+         {
+            id: 2,
+            title: 'Recipes',
+            onClick: () => addTab('Recipes', '/products/recipes'),
+         },
+         {
+            id: 3,
+            title: 'Ingredients',
+            onClick: () => addTab('Ingredients', '/products/ingredients'),
+         },
+      ])
+   }, [])
    return (
-      <StyledWrapper>
-         <Router basename={process.env.PUBLIC_URL}>
-            <Header toggleSidebar={toggleSidebar} />
-            <Sidebar visible={isSidebarVisible} toggleSidebar={toggleSidebar} />
-            <ErrorBoundary rootRoute="/apps/products">
-               <Main />
-            </ErrorBoundary>
-         </Router>
-      </StyledWrapper>
+      <ErrorBoundary rootRoute="/apps/products">
+         <Main />
+      </ErrorBoundary>
    )
 }
 
