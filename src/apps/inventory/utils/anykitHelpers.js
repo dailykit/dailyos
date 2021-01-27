@@ -66,6 +66,8 @@ async function getSupplierItemMatches(supplierItemId, controller) {
                      id
                      sachet {
                         processing {
+                           id
+                           name
                            ingredient {
                               id
                               name
@@ -302,6 +304,33 @@ async function updateIngredientSachetItemMatch(variables) {
    return 'Cannot update this match'
 }
 
+async function getRecipeRawIngredient(variables) {
+   const query = `
+      query GetRecipeRawIngredient($where: recipes_recipe_ingredient_bool_exp) {
+         recipes_recipe_ingredient(where: $where) {
+            recipe {
+               id
+               name
+               url
+            }
+         }
+      }
+   `
+   const response = await fetch(BASE_URL, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+         query,
+         variables,
+      }),
+   }).then(r => r.json())
+
+   if (response?.data?.recipes_recipe_ingredient?.length)
+      return response.data.recipes_recipe_ingredient
+
+   console.log(response?.errors)
+}
+
 export default {
    getSachetItemMatches,
    getSupplierItemMatches,
@@ -310,4 +339,5 @@ export default {
    updateSachetSachetItem,
    updateSachetIngredientSachet,
    updateSachetSupplierItemMatch,
+   getRecipeRawIngredient,
 }
