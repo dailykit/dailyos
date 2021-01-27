@@ -5,6 +5,7 @@ const Context = React.createContext()
 
 const initialState = {
    tabs: [],
+   routes: [],
 }
 
 const reducers = (state, { type, payload }) => {
@@ -37,7 +38,6 @@ const reducers = (state, { type, payload }) => {
          }
          return state
       }
-      // Delete Tab
       case 'DELETE_TAB': {
          return {
             ...state,
@@ -48,6 +48,11 @@ const reducers = (state, { type, payload }) => {
          return {
             ...state,
             tabs: [],
+         }
+      case 'SET_ROUTES':
+         return {
+            ...state,
+            routes: payload,
          }
       default:
          return state
@@ -69,7 +74,7 @@ export const useTabs = () => {
    const location = useLocation()
 
    const {
-      state: { tabs },
+      state: { tabs, routes },
       dispatch,
    } = React.useContext(Context)
 
@@ -102,13 +107,13 @@ export const useTabs = () => {
    const switchTab = React.useCallback(path => history.push(path), [history])
 
    const removeTab = React.useCallback(
-      ({ tab, index }) => {
-         dispatch({ type: 'DELETE_TAB', payload: { tab, index } })
+      ({ tab: node, index }) => {
+         dispatch({ type: 'DELETE_TAB', payload: { tab: node, index } })
 
          const tabsCount = tabs.length
          // closing last remaining tab
          if (index === 0 && tabsCount === 1) {
-            history.push('/settings')
+            history.push('/')
          }
          // closing first tab when there's more than one tab
          else if (index === 0 && tabsCount > 1) {
@@ -124,19 +129,23 @@ export const useTabs = () => {
 
    const closeAllTabs = React.useCallback(() => {
       dispatch({ type: 'CLOSE_ALL_TABS' })
-      switchTab('/settings')
+      switchTab('/')
    }, [switchTab, dispatch])
 
-   const doesTabExists = path => tabs.find(tab => tab.path === path) || false
+   const setRoutes = React.useCallback(
+      routes => dispatch({ type: 'SET_ROUTES', payload: routes }),
+      []
+   )
 
    return {
       tab,
       tabs,
       addTab,
+      routes,
+      setRoutes,
       switchTab,
       removeTab,
       setTabTitle,
       closeAllTabs,
-      doesTabExists,
    }
 }

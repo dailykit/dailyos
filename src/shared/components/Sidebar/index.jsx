@@ -2,7 +2,6 @@ import React from 'react'
 import gql from 'graphql-tag'
 import { isEmpty } from 'lodash'
 import { Flex, Avatar } from '@dailykit/ui'
-import { useHistory } from 'react-router-dom'
 import { useSubscription } from '@apollo/react-hooks'
 
 import Styles from './styled'
@@ -42,8 +41,7 @@ const fullName = (f, l) => {
    return name
 }
 
-export const Sidebar = ({ open, links }) => {
-   const history = useHistory()
+export const Sidebar = ({ links }) => {
    const { user, logout } = useAuth()
    const [tab, setTab] = React.useState('PAGES')
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
@@ -57,7 +55,7 @@ export const Sidebar = ({ open, links }) => {
    })
 
    return (
-      <Styles.Sidebar visible={open}>
+      <Styles.Sidebar>
          {!isEmpty(users) && (
             <Flex as="header" padding="12px">
                {users[0]?.firstName && (
@@ -97,12 +95,7 @@ export const Sidebar = ({ open, links }) => {
                   <InlineLoader />
                ) : (
                   apps.map(app => (
-                     <Styles.AppItem
-                        key={app.id}
-                        onClick={() =>
-                           history.push(app.route) || window.location.reload()
-                        }
-                     >
+                     <Styles.AppItem key={app.id} to={app.route}>
                         {app.icon && <img src={app.icon} alt={app.title} />}
                         {app.title}
                      </Styles.AppItem>

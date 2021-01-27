@@ -1,12 +1,11 @@
 import React from 'react'
 import { render } from 'react-dom'
-import Loadable from 'react-loadable'
 import i18n from 'i18next'
 import Keycloak from 'keycloak-js'
 import { initReactI18next } from 'react-i18next'
-import { Loader } from '@dailykit/ui'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
+import { BrowserRouter as Router } from 'react-router-dom'
 
 // Toasts
 import { ToastContainer } from 'react-toastify'
@@ -24,16 +23,12 @@ import { getMainDefinition } from 'apollo-utilities'
 
 import Backend from 'i18next-http-backend'
 
-import { AuthProvider } from './shared/providers/auth'
+import App from './App'
+import { AuthProvider, TabProvider } from './shared/providers'
 
 import './global.css'
 
 const languages = ['en', 'fr', 'es', 'he', 'de', 'el', 'hi', 'it']
-
-const App = Loadable({
-   loader: () => import('./App'),
-   loading: Loader,
-})
 
 Sentry.init({
    dsn:
@@ -122,18 +117,22 @@ i18n
       render(
          <ApolloProvider client={client}>
             <AuthProvider keycloak={keycloak}>
-               <ToastContainer
-                  position="bottom-left"
-                  autoClose={3000}
-                  hideProgressBar={false}
-                  newestOnTop={false}
-                  closeOnClick
-                  rtl={false}
-                  pauseOnFocusLoss
-                  draggable
-                  pauseOnHover
-               />
-               <App />
+               <Router basename={process.env.PUBLIC_URL}>
+                  <TabProvider>
+                     <ToastContainer
+                        position="bottom-left"
+                        autoClose={3000}
+                        hideProgressBar={false}
+                        newestOnTop={false}
+                        closeOnClick
+                        rtl={false}
+                        pauseOnFocusLoss
+                        draggable
+                        pauseOnHover
+                     />
+                     <App />
+                  </TabProvider>
+               </Router>
             </AuthProvider>
          </ApolloProvider>,
          document.getElementById('root')

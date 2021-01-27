@@ -4,10 +4,11 @@ import Loadable from 'react-loadable'
 import { Loader } from '@dailykit/ui'
 import styled from 'styled-components'
 import { useSubscription } from '@apollo/react-hooks'
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+import { Switch, Route, Link, useLocation } from 'react-router-dom'
 
+import { useTabs } from './shared/providers'
 import { isKeycloakSupported } from './shared/utils'
-import { Lang, RedirectBanner } from './shared/components'
+import { TabBar, Lang, RedirectBanner, Sidebar } from './shared/components'
 
 const APPS = gql`
    subscription apps {
@@ -20,12 +21,70 @@ const APPS = gql`
    }
 `
 
+const Safety = Loadable({
+   loader: () => import('./apps/safety'),
+   loading: Loader,
+})
+const Inventory = Loadable({
+   loader: () => import('./apps/inventory'),
+   loading: Loader,
+})
+const Products = Loadable({
+   loader: () => import('./apps/products'),
+   loading: Loader,
+})
+const Menu = Loadable({
+   loader: () => import('./apps/menu'),
+   loading: Loader,
+})
+const Settings = Loadable({
+   loader: () => import('./apps/settings'),
+   loading: Loader,
+})
+
+const Order = Loadable({
+   loader: () => import('./apps/order'),
+   loading: Loader,
+})
+
+const CRM = Loadable({
+   loader: () => import('./apps/crm'),
+   loading: Loader,
+})
+
+const Subscription = Loadable({
+   loader: () => import('./apps/subscription'),
+   loading: Loader,
+})
+
+const Insights = Loadable({
+   loader: () => import('./apps/insights'),
+   loading: Loader,
+})
+
+const Brands = Loadable({
+   loader: () => import('./apps/brands'),
+   loading: Loader,
+})
+
 const App = () => {
+   const location = useLocation()
+   const { routes, setRoutes } = useTabs()
+   const [open, toggle] = React.useState(true)
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
+
+   React.useEffect(() => {
+      if (location.pathname === '/') {
+         setRoutes([])
+      }
+   }, [location.pathname])
+
    if (loading) return <Loader />
    return (
-      <>
-         <Router basename={process.env.PUBLIC_URL}>
+      <Layout open={open}>
+         <TabBar toggle={toggle} />
+         <Sidebar links={routes} />
+         <main>
             <Switch>
                <Route path="/" exact>
                   <AppList>
@@ -41,21 +100,21 @@ const App = () => {
                      ))}
                   </AppList>
                </Route>
-               {apps.map(app => (
-                  <Route
-                     key={app.id}
-                     path={app.route}
-                     component={Loadable({
-                        loading: Loader,
-                        loader: () => import(`./apps${app.route}`),
-                     })}
-                  />
-               ))}
+               <Route path="/inventory" component={Inventory} />
+               <Route path="/safety" component={Safety} />
+               <Route path="/products" component={Products} />
+               <Route path="/menu" component={Menu} />
+               <Route path="/settings" component={Settings} />
+               <Route path="/order" component={Order} />
+               <Route path="/crm" component={CRM} />
+               <Route path="/subscription" component={Subscription} />
+               <Route path="/insights" component={Insights} />
+               <Route path="/brands" component={Brands} />
             </Switch>
-         </Router>
+         </main>
          {!isKeycloakSupported() && <RedirectBanner />}
          <Lang />
-      </>
+      </Layout>
    )
 }
 
@@ -94,5 +153,25 @@ const AppItem = styled.li`
          margin-right: 14px;
          display: inline-block;
       }
+   }
+`
+
+const Layout = styled.div`
+   display: grid;
+   height: 100vh;
+   overflow: hidden;
+   grid-template-rows: 40px 1fr;
+   grid-template-columns: ${({ open }) => (open ? '280px 1fr' : '1fr')};
+   grid-template-areas: ${({ open }) =>
+      open ? "'aside head' 'aside main'" : "'head head' 'main main'"};
+   > header {
+      grid-area: head;
+   }
+   > aside {
+      grid-area: aside;
+      display: ${({ open }) => (open ? 'flex' : 'none')};
+   }
+   > main {
+      grid-area: main;
    }
 `

@@ -1,17 +1,10 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
 
-import { useTabs } from '../../context'
-import { useWindowSize } from '../../../../shared/hooks'
+import { useTabs } from '../../providers'
+import { useWindowSize } from '../../hooks'
 import { StyledTabs, StyledTab, Button, Dropdown } from './styled'
-import {
-   CloseIcon,
-   ChevronUp,
-   ChevronDown,
-} from '../../../../shared/assets/icons'
-
-const address = 'apps.settings.components.tabs.'
+import { CloseIcon, ChevronUp, ChevronDown } from '../../assets/icons'
 
 const Tabs = () => {
    const view = useWindowSize()
@@ -57,7 +50,6 @@ const Tabs = () => {
 export default Tabs
 
 const Tab = ({ index, tab, ...props }) => {
-   const { t } = useTranslation()
    const location = useLocation()
    const { switchTab, removeTab } = useTabs()
    return (
@@ -69,7 +61,8 @@ const Tab = ({ index, tab, ...props }) => {
       >
          <span title={tab.title}>{tab.title}</span>
          <button
-            title={t(address.concat('close tab'))}
+            type="button"
+            title="Close Tab"
             onClick={e => {
                e.stopPropagation()
                removeTab({ tab, index })

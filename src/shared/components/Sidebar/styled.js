@@ -1,15 +1,13 @@
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
+import { Link } from 'react-router-dom'
 
 const Styles = {
-   Sidebar: styled.aside(
-      ({ visible }) => css`
-         color: #fff;
-         background: rgb(0, 60, 73);
-         @media screen and (max-width: 767px) {
-            width: ${visible ? '100%' : null};
-         }
-      `
-   ),
+   Sidebar: styled.aside`
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      background: rgb(0, 60, 73);
+   `,
    Heading: styled.h3`
       color: #76acc7;
       font-size: 16px;
@@ -30,12 +28,14 @@ const Styles = {
       }
    `,
    Apps: styled.ul``,
-   AppItem: styled.li`
+   AppItem: styled(Link)`
       height: 40px;
       display: flex;
       cursor: pointer;
       padding: 0 12px;
       align-items: center;
+      color: #ffffff;
+      text-decoration: none;
       :hover {
          background-color: rgb(1, 67, 82);
       }
