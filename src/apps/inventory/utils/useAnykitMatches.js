@@ -57,6 +57,8 @@ export const useAnykitMatches = ({
             }
             setSatchetItemMatches(matches)
          }
+
+         setLoading(false)
       }
 
       resolveData()
@@ -95,6 +97,19 @@ export const useAnykitMatches = ({
       }
    }
 
+   const getRecipeByRawIngredient = async rawIngredientId => {
+      try {
+         const data = await helpers.getRecipeRawIngredient({
+            where: { ingredientId: { _eq: rawIngredientId } },
+         })
+
+         return data
+      } catch (e) {
+         console.log('failed to get recipes from anykit')
+         console.error(e)
+      }
+   }
+
    return {
       ingredientSupplierItemMatches,
       sachetSupplierItemMatches,
@@ -102,5 +117,6 @@ export const useAnykitMatches = ({
       error,
       loading,
       setApproved,
+      getRecipeByRawIngredient,
    }
 }
