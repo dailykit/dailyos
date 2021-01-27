@@ -19,12 +19,12 @@ import {
    Tooltip,
 } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils'
+import { useTabs } from '../../../../../shared/providers'
 import {
    CollectionContext,
    reducer,
    state as initialState,
 } from '../../../context/collection'
-import { useTabs } from '../../../context/tabs'
 import { S_COLLECTION, UPDATE_COLLECTION } from '../../../graphql'
 import validator from '../validators'
 import { Availability, Products } from './components'
