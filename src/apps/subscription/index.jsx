@@ -1,6 +1,5 @@
 import React from 'react'
 
-import { TabProvider } from './context'
 import { AccessProvider, TooltipProvider } from '../../shared/providers'
 
 import App from './App'
@@ -12,9 +11,7 @@ import './tableStyle.css'
 const Subscription = () => (
    <TooltipProvider app="Subscription App">
       <AccessProvider app="Subscription App">
-         <TabProvider>
-            <App />
-         </TabProvider>
+         <App />
       </AccessProvider>
    </TooltipProvider>
 )
