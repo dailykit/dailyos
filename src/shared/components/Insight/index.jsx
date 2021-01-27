@@ -182,10 +182,9 @@ function CounterBar({ aggregates }) {
 const StyledContainer = styled.div`
    position: relative;
    width: 100%;
-   margin: 1rem auto;
-   padding: 1rem 2rem;
    background: #ffffff;
    border-radius: 10px;
+   padding: 16px;
 `
 const StyledGrid = styled.div`
    display: grid;

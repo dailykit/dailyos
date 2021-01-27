@@ -1,13 +1,7 @@
 import React from 'react'
 
-import { TabProvider } from './context'
-
 import App from './App'
 
-const Insights = () => (
-   <TabProvider>
-      <App />
-   </TabProvider>
-)
+const Insights = () => <App />
 
 export default Insights

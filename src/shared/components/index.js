@@ -9,9 +9,11 @@ import NutritionTunnel from './NutritionTunnel'
 import InsightDashboard from './InsightDashboard'
 import Gallery from './Gallery'
 import DragNDrop from './DragNDrop'
+import Insight from './Insight'
 
 export {
    Lang,
+   Insight,
    Nutrition,
    BasicInfo,
    HorizontalCard,
