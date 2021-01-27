@@ -15,50 +15,31 @@ async function getSupplierItemMatches(supplierItemId, controller) {
          signal: controller.signal,
          body: JSON.stringify({
             query: `
-                  query GetIngredientSupplierItemMatches($supplierItemId: Int) {
-                     matches_ingredientSupplierItemMatch(
-                        where: {
-                           organizationSupplierItemId: { _eq: $supplierItemId }
-                        }
-                     ) {
+               query GetIngredientSupplierItemMatches($supplierItemId: Int) {
+                  matches_ingredientSupplierItemMatch(
+                     where: {
+                        organizationSupplierItemId: { _eq: $supplierItemId }
+                     }
+                  ) {
+                     id
+                     ingredient {
                         id
-                        ingredient {
-                           processings_aggregate {
-                              aggregate {
-                                 count
-                              }
-                              nodes {
-                                 name
-                                 sachets {
-                                    processing {
-                                       ingredient {
-                                          id
-                                          name
-                                       }
-                                    }
+                        name
+                        processings {
+                           sachets {
+                              id
+                              rawingredient_sachets {
+                                 rawIngredient {
                                     id
-                                    minQuantity
-                                    maxQuantity
-                                    unit
-                                    rawingredient_sachets {
-                                       rawIngredient {
-                                          id
-                                          data
-                                          recipe_ingredients {
-                                             recipe {
-                                                name
-                                                url
-                                             }
-                                          }
-                                       }
-                                    }
+                                    data
                                  }
                               }
                            }
                         }
                      }
                   }
-               `,
+               }
+            `,
             variables: { supplierItemId },
          }),
       }).then(r => r.json())
