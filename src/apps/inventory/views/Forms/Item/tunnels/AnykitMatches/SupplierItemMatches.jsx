@@ -164,8 +164,6 @@ function SachetMatches({ supplierItemId }) {
 
    if (loading) return <InlineLoader />
 
-   console.log(sachetSupplierItemMatches)
-
    return (
       <SectionTabs>
          <SectionTabList>
