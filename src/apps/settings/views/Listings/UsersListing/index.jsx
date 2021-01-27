@@ -5,12 +5,11 @@ import { ReactTabulator } from '@dailykit/react-tabulator'
 import { Avatar, Text, Flex, ComboButton } from '@dailykit/ui'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 
-import { useTabs } from '../../../context'
+import { USERS } from '../../../graphql'
 import tableOptions from '../tableOption'
 import { logger } from '../../../../../shared/utils'
-import { USERS } from '../../../graphql'
 import { AddIcon } from '../../../../../shared/assets/icons'
-import { useTooltip } from '../../../../../shared/providers'
+import { useTooltip, useTabs } from '../../../../../shared/providers'
 import {
    ErrorState,
    InlineLoader,

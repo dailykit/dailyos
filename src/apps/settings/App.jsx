@@ -1,21 +1,18 @@
 import React from 'react'
-import { BrowserRouter as Router } from 'react-router-dom'
 
 import '@dailykit/react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 import '@dailykit/react-tabulator/lib/styles.css'
 import './views/Listings/tableStyle.css'
 
 import Main from './sections/Main'
-import { useTabs } from './context'
-import Header from './sections/Header'
-import { StyledWrapper } from '../../styled'
-import { ErrorBoundary, Sidebar } from '../../shared/components'
+import { ErrorBoundary } from '../../shared/components'
+import { useTabs } from '../../shared/providers'
 
 const App = () => {
-   const { addTab } = useTabs()
-   const [isSidebarVisible, toggleSidebar] = React.useState(true)
-   const links = React.useMemo(
-      () => [
+   const { addTab, setRoutes } = useTabs()
+
+   React.useEffect(() => {
+      setRoutes([
          {
             id: 1,
             title: 'Users',
@@ -23,37 +20,36 @@ const App = () => {
          },
          {
             id: 2,
-            title: 'Devices',
-            onClick: () => addTab('Devices', '/settings/devices'),
-         },
-         {
-            id: 3,
             title: 'Roles',
             onClick: () => addTab('Roles', '/settings/roles'),
          },
          {
-            id: 4,
-            title: 'Apps',
-            onClick: () => addTab('Apps', '/settings/apps'),
+            id: 3,
+            title: 'Devices',
+            onClick: () => addTab('Devices', '/settings/devices'),
          },
          {
-            id: 5,
+            id: 4,
             title: 'Stations',
             onClick: () => addTab('Stations', '/settings/stations'),
          },
-      ],
-      []
-   )
+         {
+            id: 5,
+            title: 'Master Lists',
+            onClick: () => addTab('Master Lists', '/settings/master-lists'),
+         },
+         {
+            id: 6,
+            title: 'Apps',
+            onClick: () => addTab('Apps', '/settings/apps'),
+         },
+      ])
+   }, [])
+
    return (
-      <StyledWrapper isOpen={isSidebarVisible}>
-         <Router basename={process.env.PUBLIC_URL}>
-            <Header toggleSidebar={toggleSidebar} />
-            <Sidebar links={links} open={isSidebarVisible} />
-            <ErrorBoundary rootRoute="/apps/settings">
-               <Main />
-            </ErrorBoundary>
-         </Router>
-      </StyledWrapper>
+      <ErrorBoundary rootRoute="/apps/settings">
+         <Main />
+      </ErrorBoundary>
    )
 }
 

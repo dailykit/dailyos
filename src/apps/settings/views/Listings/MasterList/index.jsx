@@ -6,9 +6,8 @@ import { ReactTabulator } from '@dailykit/react-tabulator'
 
 import tableOptions from '../tableOption'
 import { MASTER } from '../../../graphql'
-import { useTabs } from '../../../context'
 import { Tooltip } from '../../../../../shared/components'
-import { useTooltip } from '../../../../../shared/providers'
+import { useTooltip, useTabs } from '../../../../../shared/providers'
 
 const address = 'apps.settings.views.listings.masterlist.'
 

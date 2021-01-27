@@ -7,10 +7,10 @@ import { TextButton, Text, HelperText, Form, Flex } from '@dailykit/ui'
 
 import validate from './validator'
 import { USERS } from '../../../graphql'
-import { useTabs } from '../../../context'
 import { Section, StyledTemp } from './styled'
 import { initialState, reducers } from './store'
 import { logger } from '../../../../../shared/utils'
+import { useTabs } from '../../../../../shared/providers'
 import {
    ErrorState,
    InlineLoader,

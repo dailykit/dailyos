@@ -29,9 +29,9 @@ import {
    Filler,
 } from '@dailykit/ui'
 
-import { useTabs } from '../../../context'
 import { logger } from '../../../../../shared/utils'
 import { DEVICES, PRINT_JOB } from '../../../graphql'
+import { useTabs } from '../../../../../shared/providers'
 import { PrinterIcon } from '../../../../../shared/assets/icons'
 import { InlineLoader, Tooltip } from '../../../../../shared/components'
 

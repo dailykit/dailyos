@@ -15,8 +15,8 @@ import {
    Flex,
 } from '@dailykit/ui'
 
-import { useTabs } from '../../../context'
 import { APPS } from '../../../graphql'
+import { useTabs } from '../../../../../shared/providers'
 import { InlineLoader } from '../../../../../shared/components'
 
 const address = 'apps.settings.views.listings.appslisting.'

@@ -1,5 +1,4 @@
 import React from 'react'
-import _ from 'lodash'
 import { toast } from 'react-toastify'
 import { Text, Flex } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
@@ -7,9 +6,8 @@ import { ReactTabulator } from '@dailykit/react-tabulator'
 
 import { ROLES } from '../../../graphql'
 import tableOptions from '../tableOption'
-import { useTabs } from '../../../context'
 import { logger } from '../../../../../shared/utils'
-import { useTooltip } from '../../../../../shared/providers'
+import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { InlineLoader, Tooltip } from '../../../../../shared/components'
 
 const RolesListing = () => {

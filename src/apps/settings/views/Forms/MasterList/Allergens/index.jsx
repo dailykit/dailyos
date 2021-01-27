@@ -15,10 +15,9 @@ import {
 
 import { AddTypesTunnel } from './tunnels'
 import { MASTER } from '../../../../graphql'
-import { useTabs } from '../../../../context'
 import { logger } from '../../../../../../shared/utils'
 import tableOptions from '../../../Listings/tableOption'
-import { useTooltip } from '../../../../../../shared/providers'
+import { useTooltip, useTabs } from '../../../../../../shared/providers'
 import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
 import {
    Tooltip,

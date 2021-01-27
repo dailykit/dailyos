@@ -6,10 +6,9 @@ import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { ComboButton, Text, Flex, IconButton } from '@dailykit/ui'
 
 import tableOptions from '../tableOption'
-import { useTabs } from '../../../context'
 import { STATIONS } from '../../../graphql'
 import { logger } from '../../../../../shared/utils'
-import { useTooltip } from '../../../../../shared/providers'
+import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { InlineLoader, Tooltip } from '../../../../../shared/components'
 import { AddIcon, DeleteIcon } from '../../../../../shared/assets/icons'
 
