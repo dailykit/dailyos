@@ -7,11 +7,15 @@ import {
    HorizontalTabs,
    SectionTab,
    SectionTabList,
+   SectionTabPanel,
    SectionTabPanels,
    SectionTabs,
+   Spacer,
+   Text,
    TunnelHeader,
 } from '@dailykit/ui'
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+import { NewTab } from '../../../../../../../shared/assets/icons'
 import {
    ErrorState,
    InlineLoader,
@@ -68,14 +72,30 @@ function IngredientMatches({ supplierItemId }) {
       showSupplierItemMatches: true /* default value */,
    })
 
+   // returns comman separated rawIngredient as string
+   const getParsedFrom = useCallback(
+      ing => {
+         const result = []
+
+         ing.processings.forEach(proc => {
+            proc.sachets.forEach(sachet => {
+               sachet.rawingredient_sachets.forEach(rs => {
+                  result.push(rs.rawIngredient)
+               })
+            })
+         })
+
+         return result
+      },
+      [ingredientSupplierItemMatches]
+   )
+
    if (error) {
       logger(error)
       return <ErrorState />
    }
 
    if (loading) return <InlineLoader />
-
-   console.log(ingredientSupplierItemMatches)
 
    return (
       <SectionTabs>
@@ -89,8 +109,40 @@ function IngredientMatches({ supplierItemId }) {
             ))}
          </SectionTabList>
          <SectionTabPanels>
-            {/* show panels */}
-            Parsed from section tabs
+            {ingredientSupplierItemMatches.map(ing => {
+               const rawIngs = getParsedFrom(ing.ingredient)
+               return (
+                  <SectionTabPanel key={ing.id}>
+                     <SectionTabs>
+                        <SectionTabList>
+                           <Text as="subtitle">Parsed from </Text>
+                           <Spacer size="8px" />
+                           {rawIngs.map(rawIng => (
+                              <SectionTab key={rawIng.id}>
+                                 <Flex
+                                    padding="14px"
+                                    style={{ textAlign: 'left' }}
+                                 >
+                                    {rawIng.data}
+                                 </Flex>
+                              </SectionTab>
+                           ))}
+                        </SectionTabList>
+                        <SectionTabPanels>
+                           {rawIngs.map(rawIng => {
+                              return (
+                                 <SectionTabPanel key={rawIng.id}>
+                                    <Text as="h3">Used in Recipes</Text>
+                                    <Spacer size="8px" />
+                                    <RecipeSource rawIngredientId={rawIng.id} />
+                                 </SectionTabPanel>
+                              )
+                           })}
+                        </SectionTabPanels>
+                     </SectionTabs>
+                  </SectionTabPanel>
+               )
+            })}
          </SectionTabPanels>
       </SectionTabs>
    )
@@ -114,5 +166,86 @@ function SachetMatches({ supplierItemId }) {
 
    console.log(sachetSupplierItemMatches)
 
-   return ''
+   return (
+      <SectionTabs>
+         <SectionTabList>
+            {sachetSupplierItemMatches.map(match => (
+               <SectionTab key={match.id}>
+                  <Flex padding="14px" style={{ textAlign: 'left' }}>
+                     {/* refactor it into a function for handling null values */}
+                     {match.sachet.processing.ingredient.name},{' '}
+                     {match.sachet.processing.name},{' '}
+                     {match.sachet.minQuantity || match.sachet.maxQuantity}{' '}
+                     {match.sachet.unit || 'unit'}
+                  </Flex>
+               </SectionTab>
+            ))}
+         </SectionTabList>
+         <SectionTabPanels>
+            {sachetSupplierItemMatches.map(match => (
+               <SectionTabPanel key={match.id}>
+                  <SectionTabs>
+                     <SectionTabList>
+                        <Text as="subtitle">Parsed from</Text>
+                        <Spacer size="8px" />
+                        {match.sachet.rawingredient_sachets.map(rs => (
+                           <SectionTab key={rs.rawIngredient.id}>
+                              <Flex
+                                 padding="14px"
+                                 style={{ textAlign: 'left' }}
+                              >
+                                 {rs.rawIngredient.data}
+                              </Flex>
+                           </SectionTab>
+                        ))}
+                     </SectionTabList>
+                     <SectionTabPanels>
+                        {match.sachet.rawingredient_sachets.map(rs => (
+                           <SectionTabPanel key={rs.rawIngredient.id}>
+                              <Text as="h3">Used in Recipes</Text>
+                              <Spacer size="8px" />
+                              <RecipeSource
+                                 rawIngredientId={rs.rawIngredient.id}
+                              />
+                           </SectionTabPanel>
+                        ))}
+                     </SectionTabPanels>
+                  </SectionTabs>
+               </SectionTabPanel>
+            ))}
+         </SectionTabPanels>
+      </SectionTabs>
+   )
+}
+
+function RecipeSource({ rawIngredientId }) {
+   const [recipes, setRecipes] = useState([])
+   const { getRecipeByRawIngredient } = useAnykitMatches({})
+
+   useEffect(() => {
+      getRecipeByRawIngredient(rawIngredientId).then(resc => setRecipes(resc))
+   }, [rawIngredientId])
+
+   return (
+      <>
+         {recipes.map(data => (
+            <Flex
+               key={data.recipe.id}
+               as="button"
+               container
+               alignItems="center"
+               style={{ cursor: 'pointer', background: 'none', border: '0' }}
+               onClick={() => {
+                  window.open(data.recipe.url, '_blank')
+               }}
+            >
+               <Text style={{ color: '#00A7E1' }} as="h2">
+                  {data.recipe.name}
+               </Text>
+               <Spacer xAxis size="4px" />
+               <NewTab />
+            </Flex>
+         ))}
+      </>
+   )
 }
