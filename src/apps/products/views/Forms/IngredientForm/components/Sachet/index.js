@@ -8,6 +8,8 @@ import {
    Form,
    Flex,
    Spacer,
+   Collapsible,
+   ComboButton,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 
@@ -17,9 +19,16 @@ import { UPDATE_MODE } from '../../../../../graphql'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { currencyFmt, logger } from '../../../../../../../shared/utils'
 import { CloseIcon, EditIcon, TickIcon } from '../../../../../assets/icons'
-import { Nutrition, Tooltip } from '../../../../../../../shared/components'
+import {
+   DragNDrop,
+   Nutrition,
+   Tooltip,
+} from '../../../../../../../shared/components'
+import { useDnd } from '../../../../../../../shared/components/DragNDrop/useDnd'
 
 const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
+   const { initiatePriority } = useDnd()
+
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
@@ -45,6 +54,16 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
          )
       }
    }, [state, ingredientState.processingIndex, ingredientState.sachetIndex])
+
+   React.useEffect(() => {
+      if (sachet.modeOfFulfillments.length) {
+         initiatePriority({
+            tablename: 'modeOfFulfillment',
+            schemaname: 'ingredient',
+            data: sachet.modeOfFulfillments,
+         })
+      }
+   }, [sachet])
 
    // Mutation
    const [updateMode] = useMutation(UPDATE_MODE, {
@@ -78,14 +97,6 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
          type: 'EDIT_MODE',
          payload: {
             ...mode,
-            priority: {
-               value: mode.priority,
-               meta: {
-                  isTouched: false,
-                  isValid: true,
-                  errors: [],
-               },
-            },
             packaging: mode.packaging
                ? {
                     ...mode.packaging,
@@ -117,6 +128,28 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
          payload: mode.type,
       })
       openEditSachetTunnel(2)
+   }
+
+   const renderModeType = type => {
+      switch (type) {
+         case 'realTime':
+            return 'Real Time'
+         case 'plannedLot':
+            return 'Planned Lot'
+         default:
+            return 'Invalid mode!'
+      }
+   }
+
+   const renderItemName = mode => {
+      switch (mode.type) {
+         case 'realTime':
+            return `${mode.bulkItem.supplierItem.name} ${mode.bulkItem.processingName}`
+         case 'plannedLot':
+            return `${mode.sachetItem.bulkItem.supplierItem.name} ${mode.sachetItem.bulkItem.processingName} ${mode.sachetItem.unitSize} ${mode.sachetItem.unit}`
+         default:
+            return 'Invalid mode!'
+      }
    }
 
    return (
@@ -157,100 +190,121 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
                </Flex>
             </Grid>
          </Container>
-         <StyledTable cellSpacing="0">
-            <thead>
-               <tr>
-                  <th>
-                     <Flex container alignItems="center">
-                        Mode of Fulfillment
-                        <Tooltip identifier="sachet_mof" />
+         <DragNDrop
+            list={sachet.modeOfFulfillments}
+            droppableId="mofDroppableId"
+            tablename="modeOfFulfillment"
+            schemaname="ingredient"
+         >
+            {sachet.modeOfFulfillments?.map(mode => (
+               <Collapsible
+                  key={mode.id}
+                  isDraggable
+                  title={renderModeType(mode.type)}
+                  head={
+                     <Flex
+                        container
+                        alignItems="center"
+                        justifyContent="space-between"
+                        width="100%"
+                     >
+                        <Flex container alignItems="center">
+                           <Flex>
+                              <Text as="subtitle">Item</Text>
+                              <Text as="p">{renderItemName(mode)}</Text>
+                           </Flex>
+                           <Spacer xAxis size="24px" />
+                           <Flex>
+                              <Text as="subtitle">Cost</Text>
+                              <Text as="p">
+                                 {currencyFmt(
+                                    Number(mode.cost.toFixed(2)) || 0
+                                 )}
+                              </Text>
+                           </Flex>
+                           <Spacer xAxis size="24px" />
+                           <Flex>
+                              <Text as="subtitle">Accuracy</Text>
+                              <Text as="p">
+                                 {mode.accuracy
+                                    ? `Atleast ${mode.accuracy} %`
+                                    : "Don't Weigh"}
+                              </Text>
+                           </Flex>
+                           <Spacer xAxis size="24px" />
+                        </Flex>
+                        <Flex container alignItems="center">
+                           {mode.isLive ? (
+                              <ComboButton
+                                 type="ghost"
+                                 size="sm"
+                                 onClick={() => setLive(mode, !mode.isLive)}
+                              >
+                                 <CloseIcon
+                                    color="#36B6E2"
+                                    size={14}
+                                    stroke={1.5}
+                                 />
+                                 Make Unavailable
+                              </ComboButton>
+                           ) : (
+                              <ComboButton
+                                 type="outline"
+                                 size="sm"
+                                 onClick={() => setLive(mode, !mode.isLive)}
+                              >
+                                 <TickIcon
+                                    color="#36B6E2"
+                                    size={14}
+                                    stroke={1.5}
+                                 />
+                                 Make Available
+                              </ComboButton>
+                           )}
+                           <Spacer xAxis size="24px" />
+                           <IconButton
+                              type="ghost"
+                              onClick={() => editMOF(mode)}
+                           >
+                              <EditIcon color="#00A7E1" />
+                           </IconButton>
+                        </Flex>
                      </Flex>
-                  </th>
-                  <th>
-                     <Flex container alignItems="center">
-                        Priority
-                        <Tooltip identifier="sachet_mode_priority" />
+                  }
+                  body={
+                     <Flex
+                        container
+                        alignItems="center"
+                        height="60px"
+                        margin="8px 0 0 0"
+                        width="100%"
+                     >
+                        <Flex container alignItems="center">
+                           <Flex>
+                              <Text as="subtitle">Packaging</Text>
+                              <Text as="p">{mode.packaging?.name || '-'}</Text>
+                           </Flex>
+                           <Spacer xAxis size="24px" />
+                           <Flex>
+                              <Text as="subtitle">Station</Text>
+                              <Text as="p">
+                                 {mode.operationConfig?.station?.name || '-'}
+                              </Text>
+                           </Flex>
+                           <Spacer xAxis size="24px" />
+                           <Flex>
+                              <Text as="subtitle">Label Template</Text>
+                              <Text as="p">
+                                 {mode.operationConfig?.labelTemplate?.name ||
+                                    '-'}
+                              </Text>
+                           </Flex>
+                        </Flex>
                      </Flex>
-                  </th>
-                  <th>
-                     <Flex container alignItems="center">
-                        Item
-                        <Tooltip identifier="sachet_mode_item" />
-                     </Flex>
-                  </th>
-                  <th>
-                     <Flex container alignItems="center">
-                        Cost
-                        <Tooltip identifier="sachet_mode_cost" />
-                     </Flex>
-                  </th>
-                  <th>
-                     <Flex container alignItems="center">
-                        Accuracy
-                        <Tooltip identifier="sachet_mode_accuracy" />
-                     </Flex>
-                  </th>
-                  <th>
-                     <Flex container alignItems="center">
-                        Packaging
-                        <Tooltip identifier="sachet_mode_packaging" />
-                     </Flex>
-                  </th>
-                  <th>
-                     <Flex container alignItems="center">
-                        Operational Configuration
-                        <Tooltip identifier="sachet_mode_opconfig" />
-                     </Flex>
-                  </th>
-                  <th> </th>
-               </tr>
-            </thead>
-            <tbody>
-               {sachet.modeOfFulfillments?.map(mode => (
-                  <tr key={mode.id}>
-                     <td>
-                        <Form.Checkbox
-                           name={`${mode.type}-modeLive`}
-                           value={mode.isLive}
-                           onChange={() => setLive(mode, !mode.isLive)}
-                        >
-                           {mode.type === 'realTime'
-                              ? 'Real Time'
-                              : 'Planned Lot'}
-                        </Form.Checkbox>
-                     </td>
-                     <td>{mode.priority}</td>
-                     <td>
-                        {mode.bulkItem &&
-                           `${mode.bulkItem.supplierItem.name} ${mode.bulkItem.processingName}`}
-                        {mode.sachetItem &&
-                           `${mode.sachetItem.bulkItem.supplierItem.name} ${mode.sachetItem.bulkItem.processingName} ${mode.sachetItem.unitSize} ${mode.sachetItem.unit}`}
-                     </td>
-                     <td>{currencyFmt(Number(mode.cost.toFixed(2)) || 0)}</td>
-                     <td>
-                        {mode.accuracy
-                           ? `Atleast ${mode.accuracy} %`
-                           : "Don't Weigh"}
-                     </td>
-                     <td>{mode.packaging?.name || '-'}</td>
-                     <td>
-                        {mode.operationConfig ? (
-                           <>
-                              {`${mode.operationConfig.station.name} - ${mode.operationConfig.labelTemplate.name}`}
-                           </>
-                        ) : (
-                           '-'
-                        )}
-                     </td>
-                     <td>
-                        <IconButton type="ghost" onClick={() => editMOF(mode)}>
-                           <EditIcon color="#00A7E1" />
-                        </IconButton>
-                     </td>
-                  </tr>
-               ))}
-            </tbody>
-         </StyledTable>
+                  }
+               />
+            ))}
+         </DragNDrop>
          <Container top="32">
             <Flex container maxWidth="200px">
                <Text as="subtitle"> Cost </Text>

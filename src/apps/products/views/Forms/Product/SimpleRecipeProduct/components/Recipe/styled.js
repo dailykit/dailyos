@@ -131,3 +131,14 @@ export const Modifier = styled.span`
       }
    }
 `
+
+export const StyledProductOption = styled.div`
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+   height: 40px;
+
+   span:not(:last-child) {
+      margin-right: 16px;
+   }
+`
