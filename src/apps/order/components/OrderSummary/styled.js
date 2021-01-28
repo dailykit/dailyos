@@ -1,3 +1,4 @@
+import { IconButton } from '@dailykit/ui'
 import styled, { css } from 'styled-components'
 
 export const Wrapper = styled.aside`
@@ -26,3 +27,9 @@ export const Spacer = styled.div(
       ${xAxis ? `width: ${size};` : `height: ${size};`}
    `
 )
+export const StyledIconButton = styled(IconButton)`
+   display: none;
+   @media (orientation: portrait) {
+      display: block;
+   }
+`

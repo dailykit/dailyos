@@ -12,7 +12,7 @@ import Main from './sections/Main'
 import Footer from './sections/Footer'
 
 // Styled
-import { StyledWrapper } from './styled'
+import { StyledWrapper, StyledTunnel, OrderSummaryTunnel } from './styled'
 import {
    OrderSummary,
    FilterTunnel,
@@ -23,11 +23,17 @@ import {
 } from './components'
 
 import { ErrorBoundary } from '../../shared/components'
+import BottomQuickInfoBar from './components/BottomQuickInfoBar'
 
 const App = () => {
    const { state, dispatch } = useOrder()
    const { state: configState } = useConfig()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+   const [
+      orderSummaryTunnels,
+      openOrderSummaryTunnel,
+      closeOrderSummaryTunnel,
+   ] = useTunnel(1)
    const [filterTunnels, openFilterTunnel, closeFilterTunnel] = useTunnel(1)
    const [configTunnels, openConfigTunnel, closeConfigTunnel] = useTunnel(1)
    const [position, setPosition] = React.useState('left')
@@ -119,6 +125,7 @@ const App = () => {
             </main>
          </Router>
          <Footer />
+         <BottomQuickInfoBar openOrderSummaryTunnel={openOrderSummaryTunnel} />
          {isOpen && (
             <Portal>
                <Notifications
@@ -149,6 +156,24 @@ const App = () => {
                </Tunnel>
             </Tunnels>
          </ErrorBoundary>
+         <OrderSummaryTunnel>
+            <ErrorBoundary>
+               <Tunnels mt={0} tunnels={orderSummaryTunnels}>
+                  <StyledTunnel layer="1" size="md">
+                     {state.current_view === 'SUMMARY' && (
+                        <OrderSummary
+                           closeOrderSummaryTunnel={closeOrderSummaryTunnel}
+                        />
+                     )}
+                     {state.current_view === 'SACHET_ITEM' && (
+                        <ProcessSachet
+                           closeOrderSummaryTunnel={closeOrderSummaryTunnel}
+                        />
+                     )}
+                  </StyledTunnel>
+               </Tunnels>
+            </ErrorBoundary>
+         </OrderSummaryTunnel>
       </StyledWrapper>
    )
 }

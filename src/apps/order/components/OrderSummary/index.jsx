@@ -10,18 +10,19 @@ import {
    ClearIcon,
    IconButton,
    TextButton,
+   CloseIcon,
 } from '@dailykit/ui'
 
 import { useOrder } from '../../context'
 import { MetricItem } from '../MetricItem'
 import { QUERIES } from '../../graphql'
-import { Wrapper, FilterSection } from './styled'
+import { Wrapper, FilterSection, StyledIconButton } from './styled'
 import { logger, currencyFmt } from '../../../../shared/utils'
 import { InlineLoader, ErrorState } from '../../../../shared/components'
 
 const address = 'apps.order.components.ordersummary.'
 
-export const OrderSummary = () => {
+export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
    const { t } = useTranslation()
    const { state, dispatch } = useOrder()
    const { data: { orders = {} } = {} } = useSubscription(
@@ -61,7 +62,16 @@ export const OrderSummary = () => {
    return (
       <Wrapper>
          <Spacer size="8px" />
-         <Text as="h4">{t(address.concat('quick info'))}</Text>
+         <Flex container alignItems="center" justifyContent="space-between">
+            <Text as="h4">{t(address.concat('quick info'))}</Text>
+            <StyledIconButton
+               type="outline"
+               size="sm"
+               onClick={() => closeOrderSummaryTunnel(1)}
+            >
+               <CloseIcon />
+            </StyledIconButton>
+         </Flex>
          <Spacer size="8px" />
          <MetricItem
             title="ALL"
