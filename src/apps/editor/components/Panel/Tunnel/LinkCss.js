@@ -25,7 +25,7 @@ export default function LinkCss({
    const { loading, error } = useSubscription(GET_FILES, {
       variables: {
          fileType: 'css',
-         linkedCss: files,
+         linkedFiles: files,
       },
       onSubscriptionData: ({
          subscriptionData: {

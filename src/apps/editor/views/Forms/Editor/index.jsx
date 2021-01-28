@@ -128,6 +128,12 @@ const Editor = () => {
          monacoRef.current.KeyMod.Shift && monacoRef.current.KeyCode.KEY_2,
          () => toggleModal(!isModalVisible)
       )
+      editorRef.current.addCommand(
+         monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.KEY_S,
+         function () {
+            draft()
+         }
+      )
    }
 
    const publish = message => {
