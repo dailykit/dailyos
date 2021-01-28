@@ -1,7 +1,8 @@
 import styled from 'styled-components'
 
 export const StyledCategoryWrapper = styled.div`
-   margin-bottom: 16px;
+   margin: 8px;
+   width: 400px;
 `
 
 export const StyledHeader = styled.div`
@@ -16,6 +17,7 @@ export const StyledProductWrapper = styled.div`
    align-items: center;
    justify-content: space-between;
    padding: 0 8px;
+   margin-bottom: 8px;
 `
 
 export const ProductContent = styled.div`

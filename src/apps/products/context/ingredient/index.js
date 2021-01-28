@@ -13,14 +13,6 @@ export const state = {
       sachetItem: undefined,
       station: undefined,
       packaging: undefined,
-      priority: {
-         value: 1,
-         meta: {
-            isTouched: false,
-            isValid: true,
-            errors: [],
-         },
-      },
       accuracy: 0,
       operationConfig: undefined,
    },
@@ -32,14 +24,6 @@ export const state = {
       sachetItem: undefined,
       station: undefined,
       packaging: undefined,
-      priority: {
-         value: 2,
-         meta: {
-            isTouched: false,
-            isValid: true,
-            errors: [],
-         },
-      },
       accuracy: 0,
       operationConfig: undefined,
    },
@@ -83,14 +67,6 @@ export const reducers = (state, { type, payload }) => {
                sachetItem: undefined,
                station: undefined,
                packaging: undefined,
-               priority: {
-                  value: 1,
-                  meta: {
-                     isTouched: false,
-                     isValid: true,
-                     errors: [],
-                  },
-               },
                accuracy: 0,
             },
             plannedLot: {
@@ -102,14 +78,6 @@ export const reducers = (state, { type, payload }) => {
                sachetItem: undefined,
                station: undefined,
                packaging: undefined,
-               priority: {
-                  value: 2,
-                  meta: {
-                     isTouched: false,
-                     isValid: true,
-                     errors: [],
-                  },
-               },
                accuracy: 0,
             },
             currentMode: undefined,
