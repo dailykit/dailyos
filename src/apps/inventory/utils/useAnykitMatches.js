@@ -6,7 +6,7 @@ export const useAnykitMatches = ({
    supplierItemId,
    sachetId,
    showSachetItemMatches = false,
-   showSupplierItemMatches = true,
+   showSupplierItemMatches = false,
    showIngredientSachetMatches = false,
 }) => {
    const [error, setError] = useState(null)
