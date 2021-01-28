@@ -8,10 +8,11 @@ export const StyledTabs = styled.ul`
 
 export const StyledTab = styled.li(
    ({ active }) => css`
-      width: 220px;
+      width: 160px;
       height: 40px;
       display: grid;
       cursor: pointer;
+      font-size: 14px;
       align-items: center;
       grid-template-columns: 1fr 40px;
       background: ${active ? '#fff' : 'transparent'};
