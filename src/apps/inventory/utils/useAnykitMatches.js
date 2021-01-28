@@ -56,6 +56,7 @@ export const useAnykitMatches = ({
                return
             }
             setSatchetItemMatches(matches)
+            return
          }
 
          setLoading(false)
@@ -88,9 +89,9 @@ export const useAnykitMatches = ({
 
       if (showSachetItemMatches) {
          if (meta.isSachetMatch) {
-            message = helpers.updateSachetSachetItem(vars)
+            message = await helpers.updateSachetSachetItem(vars)
          } else {
-            message = helpers.updateIngredientSachetItemMatch(vars)
+            message = await helpers.updateIngredientSachetItemMatch(vars)
          }
 
          return message

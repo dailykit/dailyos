@@ -72,7 +72,6 @@ function IngredientMatches({ supplierItemId }) {
       showSupplierItemMatches: true /* default value */,
    })
 
-   // returns comman separated rawIngredient as string
    const getParsedFrom = useCallback(
       ing => {
          const result = []
