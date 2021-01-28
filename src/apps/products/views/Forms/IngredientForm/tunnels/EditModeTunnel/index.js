@@ -71,7 +71,6 @@ const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
             variables: {
                id: ingredientState.editMode.id,
                set: {
-                  priority: ingredientState.editMode.priority.value ?? 1,
                   accuracy: ingredientState.editMode.accuracy,
                   bulkItemId: ingredientState.editMode.bulkItem?.id || null,
                   sachetItemId: ingredientState.editMode.sachetItem?.id || null,
@@ -114,7 +113,6 @@ const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
                <thead>
                   <tr>
                      <th>Mode of Fulfillment</th>
-                     <th>Priority</th>
                      <th>Item</th>
                      <th>Accuracy</th>
                      <th>Packaging</th>
@@ -127,51 +125,6 @@ const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
                         {ingredientState?.editMode?.type === 'realTime'
                            ? 'Real Time'
                            : 'Planned Lot'}
-                     </td>
-                     <td>
-                        <Flex maxWidth="100px">
-                           <Form.Stepper
-                              id="editModePriority"
-                              name="editModePriority"
-                              value={ingredientState.editMode.priority.value}
-                              placeholder="Enter priority"
-                              onChange={value =>
-                                 ingredientDispatch({
-                                    type: 'EDIT_MODE',
-                                    payload: {
-                                       ...ingredientState?.editMode,
-                                       priority: {
-                                          ...ingredientState?.editMode.priority,
-                                          value,
-                                       },
-                                    },
-                                 })
-                              }
-                              onBlur={() => {
-                                 const { isValid, errors } = validator.priority(
-                                    ingredientState.editMode.priority.value
-                                 )
-                                 ingredientDispatch({
-                                    type: 'EDIT_MODE',
-                                    payload: {
-                                       ...ingredientState?.editMode.priority,
-                                       meta: {
-                                          isTouched: true,
-                                          isValid,
-                                          errors,
-                                       },
-                                    },
-                                 })
-                              }}
-                           />
-                           {ingredientState.editMode.priority.meta.isTouched &&
-                              !ingredientState.editMode.priority.meta.isValid &&
-                              ingredientState.editMode.priority.meta.errors.map(
-                                 (error, index) => (
-                                    <Form.Error key={index}>{error}</Form.Error>
-                                 )
-                              )}
-                        </Flex>
                      </td>
                      <td>
                         {ingredientState?.editMode?.bulkItem ||
