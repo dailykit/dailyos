@@ -122,30 +122,40 @@ async function getSachetItemMatches(sachetId, supplierItemId, controller) {
       signal: controller.signal,
       body: JSON.stringify({
          query: `
-                  query GetSachetSupplierItemMatches($sachetId: Int) {
-                     matches_sachetSachetItemMatch(
-                        where: { organizationSachetItemId: { _eq: $sachetId } }
-                     ) {
+            query GetSachetSachetItemMatches($sachetId: Int) {
+               matches_sachetSachetItemMatch(
+                  where: { organizationSachetItemId: { _eq: $sachetId } }
+               ) {
+                  id
+                  sachet {
+                     processing {
                         id
-                        sachet {
-                           minQuantity
-                           maxQuantity
-                           rawingredient_sachets {
-                              rawIngredient {
-                                 id
-                                 data
-                              }
-                           }
-                           processing {
-                              name
-                              ingredient {
+                        name
+                        ingredient {
+                           id
+                           name
+                        }
+                     }
+                     id
+                     minQuantity
+                     maxQuantity
+                     unit
+                     rawingredient_sachets {
+                        rawIngredient {
+                           id
+                           data
+                           recipe_ingredients {
+                              recipe {
                                  name
+                                 url
                               }
                            }
                         }
                      }
                   }
-               `,
+               }
+            }
+         `,
          variables: { sachetId },
       }),
    }).then(r => r.json())
@@ -156,7 +166,6 @@ async function getSachetItemMatches(sachetId, supplierItemId, controller) {
 
    sachetItemMatches = [
       ...(sachetSachetItemMatches?.data?.matches_sachetSachetItemMatch || []),
-      ...sachetItemMatches,
    ]
 
    return [sachetItemMatches, err]
