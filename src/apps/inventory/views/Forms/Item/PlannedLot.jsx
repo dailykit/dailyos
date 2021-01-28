@@ -33,7 +33,11 @@ import {
 import { NO_SACHET_HISTORIES } from '../../../constants/infoMessages'
 import { SACHET_ITEM_HISTORIES } from '../../../graphql'
 import tableOptions from '../../Listings/tableOption'
-import { ConfigureSachetTunnel, SachetItemMatches, SupplierItemMatches } from './tunnels'
+import {
+   ConfigureSachetTunnel,
+   SachetItemMatches,
+   SupplierItemMatches,
+} from './tunnels'
 
 const address = 'apps.inventory.views.forms.item.'
 
@@ -126,7 +130,7 @@ function PlannedLotStats({ sachet }) {
          ) : (
             <>
                <Tunnels tunnels={anykitMatchesTunnel}>
-                  <Tunnel style={{ overflowY: 'auto' }} layer={1} size="lg">
+                  <Tunnel style={{ overflowY: 'auto' }} layer={1} size="full">
                      <SachetItemMatches
                         sachetItemId={sachet.id}
                         close={closeAnykitMatchesTunnel}
