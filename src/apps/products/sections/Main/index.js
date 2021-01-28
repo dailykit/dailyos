@@ -30,7 +30,7 @@ const Main = () => {
             </AccessCheck>
          </Route>
 
-         <Route path="/products/recipes">
+         <Route exact path="/products/recipes">
             <AccessCheck
                title="recipes"
                message="You do not have sufficient permission to see recipes listing."
@@ -48,7 +48,7 @@ const Main = () => {
             </AccessCheck>
          </Route>
 
-         <Route path="/products/ingredients">
+         <Route exact path="/products/ingredients">
             <AccessCheck
                title="ingredients"
                message="You do not have sufficient permission to see ingredients listing."
@@ -66,7 +66,7 @@ const Main = () => {
             </AccessCheck>
          </Route>
 
-         <Route path="/products/products">
+         <Route exact path="/products/products">
             <AccessCheck
                title="products"
                message="You do not have sufficient permission to access products listing."

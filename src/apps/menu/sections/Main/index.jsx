@@ -24,7 +24,7 @@ const Main = () => {
                <Home />
             </AccessCheck>
          </Route>
-         <Route path="/menu/collections">
+         <Route exact path="/menu/collections">
             <AccessCheck
                title="collections"
                message="You do not have sufficient permission to access collections listing."
