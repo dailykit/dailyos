@@ -10,6 +10,8 @@ const initialState = {
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
+      case 'SET_TABS':
+         return { ...state, tabs: payload }
       case 'SET_TITLE': {
          const { tabs } = state
          const index = tabs.findIndex(tab => tab.path === payload.path)
@@ -17,6 +19,7 @@ const reducers = (state, { type, payload }) => {
             ...tabs[index],
             title: payload.title,
          }
+         localStorage.setItem('tabs', JSON.stringify(tabs))
          return {
             ...state,
             tabs,
@@ -30,6 +33,7 @@ const reducers = (state, { type, payload }) => {
                ...tabs[tabIndex].data,
                ...payload.data,
             }
+            localStorage.setItem('tabs', JSON.stringify(tabs))
             return {
                ...state,
                tabs,
@@ -40,30 +44,36 @@ const reducers = (state, { type, payload }) => {
       case 'ADD_TAB': {
          const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
          if (tabIndex === -1) {
+            const tabs = [
+               {
+                  title: payload.title,
+                  path: payload.path,
+               },
+               ...state.tabs,
+            ]
+            localStorage.setItem('tabs', JSON.stringify(tabs))
             return {
                ...state,
-               tabs: [
-                  {
-                     title: payload.title,
-                     path: payload.path,
-                  },
-                  ...state.tabs,
-               ],
+               tabs,
             }
          }
          return state
       }
       case 'DELETE_TAB': {
+         const tabs = state.tabs.filter((_, index) => index !== payload.index)
+         localStorage.setItem('tabs', JSON.stringify(tabs))
          return {
             ...state,
-            tabs: state.tabs.filter((_, index) => index !== payload.index),
+            tabs,
          }
       }
-      case 'CLOSE_ALL_TABS':
+      case 'CLOSE_ALL_TABS': {
+         localStorage.setItem('tabs', JSON.stringify([]))
          return {
             ...state,
             tabs: [],
          }
+      }
       case 'SET_ROUTES':
          return {
             ...state,
@@ -76,6 +86,13 @@ const reducers = (state, { type, payload }) => {
 
 export const TabProvider = ({ children }) => {
    const [state, dispatch] = React.useReducer(reducers, initialState)
+
+   React.useEffect(() => {
+      const tabs = localStorage.getItem('tabs')
+      if (tabs) {
+         dispatch({ type: 'SET_TABS', payload: JSON.parse(tabs || []) })
+      }
+   }, [])
 
    return (
       <Context.Provider value={{ state, dispatch }}>
