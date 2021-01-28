@@ -23,6 +23,36 @@ const App = () => {
             title: 'Collections',
             onClick: () => addTab('Collections', '/menu/collections'),
          },
+         {
+            id: 3,
+            title: 'Pre-Order Delivery',
+            onClick: () =>
+               addTab(
+                  'Pre-Order Delivery',
+                  '/menu/recurrences/PREORDER_DELIVERY'
+               ),
+         },
+         {
+            id: 4,
+            title: 'Pre-Order Pickup',
+            onClick: () =>
+               addTab('Pre-Order Pickup', '/menu/recurrences/PREORDER_PICKUP'),
+         },
+         {
+            id: 5,
+            title: 'On-Demand Delivery',
+            onClick: () =>
+               addTab(
+                  'On-Demand Delivery',
+                  '/menu/recurrences/ONDEMAND_DELIVERY'
+               ),
+         },
+         {
+            id: 6,
+            title: 'On-Demand Pickup',
+            onClick: () =>
+               addTab('On-Demand Pickup', '/menu/recurrences/ONDEMAND_PICKUP'),
+         },
       ])
    }, [])
    return (
