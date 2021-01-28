@@ -15,16 +15,21 @@ const App = () => {
       setRoutes([
          {
             id: 1,
+            title: 'Home',
+            onClick: () => addTab('Home', '/products'),
+         },
+         {
+            id: 2,
             title: 'Products',
             onClick: () => addTab('Products', '/products/products'),
          },
          {
-            id: 2,
+            id: 3,
             title: 'Recipes',
             onClick: () => addTab('Recipes', '/products/recipes'),
          },
          {
-            id: 3,
+            id: 4,
             title: 'Ingredients',
             onClick: () => addTab('Ingredients', '/products/ingredients'),
          },

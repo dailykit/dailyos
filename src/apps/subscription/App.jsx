@@ -11,11 +11,16 @@ const App = () => {
       setRoutes([
          {
             id: 1,
+            title: 'Home',
+            onClick: () => addTab('Home', '/subscription'),
+         },
+         {
+            id: 2,
             title: 'Menu',
             onClick: () => addTab('Menu', '/subscription/menu'),
          },
          {
-            id: 2,
+            id: 3,
             title: 'Subscriptions',
             onClick: () =>
                addTab('Subscriptions', '/subscription/subscriptions'),

@@ -15,6 +15,11 @@ const App = () => {
       setRoutes([
          {
             id: 1,
+            title: 'Home',
+            onClick: () => addTab('Home', '/safety'),
+         },
+         {
+            id: 2,
             title: 'Safety Checks',
             onClick: () => addTab('Safety Checks', '/safety/checks'),
          },

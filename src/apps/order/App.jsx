@@ -38,11 +38,16 @@ const App = () => {
       setRoutes([
          {
             id: 1,
+            title: 'Home',
+            onClick: () => addTab('Home', '/order'),
+         },
+         {
+            id: 2,
             title: 'Orders',
             onClick: () => addTab('Orders', '/order/orders'),
          },
          {
-            id: 2,
+            id: 3,
             title: 'Planned',
             onClick: () => addTab('Planned', '/order/planned'),
          },

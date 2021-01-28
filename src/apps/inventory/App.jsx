@@ -16,27 +16,32 @@ const App = () => {
       setRoutes([
          {
             id: 1,
+            title: 'Home',
+            onClick: () => addTab('Home', '/inventory'),
+         },
+         {
+            id: 2,
             title: 'Suppliers',
             onClick: () => addTab('Suppliers', '/inventory/suppliers'),
          },
          {
-            id: 2,
+            id: 3,
             title: 'Supplier Items',
             onClick: () => addTab('Supplier Items', '/inventory/items'),
          },
          {
-            id: 3,
+            id: 4,
             title: 'Work Orders',
             onClick: () => addTab('Work Orders', '/inventory/work-orders'),
          },
          {
-            id: 4,
+            id: 5,
             title: 'Purchase Orders',
             onClick: () =>
                addTab('Purchase Orders', '/inventory/purchase-orders'),
          },
          {
-            id: 5,
+            id: 6,
             title: 'Packagings',
             onClick: () => addTab('Packagings', '/inventory/packagings'),
          },

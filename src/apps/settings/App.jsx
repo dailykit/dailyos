@@ -15,31 +15,36 @@ const App = () => {
       setRoutes([
          {
             id: 1,
+            title: 'Home',
+            onClick: () => addTab('Home', '/settings'),
+         },
+         {
+            id: 2,
             title: 'Users',
             onClick: () => addTab('Users', '/settings/users'),
          },
          {
-            id: 2,
+            id: 3,
             title: 'Roles',
             onClick: () => addTab('Roles', '/settings/roles'),
          },
          {
-            id: 3,
+            id: 4,
             title: 'Devices',
             onClick: () => addTab('Devices', '/settings/devices'),
          },
          {
-            id: 4,
+            id: 5,
             title: 'Stations',
             onClick: () => addTab('Stations', '/settings/stations'),
          },
          {
-            id: 5,
+            id: 6,
             title: 'Master Lists',
             onClick: () => addTab('Master Lists', '/settings/master-lists'),
          },
          {
-            id: 6,
+            id: 7,
             title: 'Apps',
             onClick: () => addTab('Apps', '/settings/apps'),
          },

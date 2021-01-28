@@ -17,16 +17,21 @@ const App = () => {
       setRoutes([
          {
             id: 1,
+            title: 'Home',
+            onClick: () => addTab('Home', '/crm'),
+         },
+         {
+            id: 2,
             title: 'Customers',
             onClick: () => addTab('Customers', '/crm/customers'),
          },
          {
-            id: 2,
+            id: 3,
             title: 'Coupons',
             onClick: () => addTab('Coupons', '/crm/coupons'),
          },
          {
-            id: 3,
+            id: 4,
             title: 'Campaign',
             onClick: () => addTab('Campaign', '/crm/campaign'),
          },
