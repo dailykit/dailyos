@@ -5,8 +5,9 @@ import { useSubscription } from '@apollo/react-hooks'
 
 import { QUERIES } from '../../../graphql'
 import { NewTabIcon } from '../../../assets/icons'
-import { useTabs, useOrder } from '../../../context'
+import { useOrder } from '../../../context'
 import { logger } from '../../../../../shared/utils'
+import { useTabs } from '../../../../../shared/providers'
 import {
    Tooltip,
    ErrorState,
@@ -214,7 +215,7 @@ const Sachet = ({ sachet }) => {
 
    const openOrder = (e, id) => {
       e.stopPropagation()
-      addTab(`ORD${id}`, `/apps/order/orders/${id}`)
+      addTab(`ORD${id}`, `/order/orders/${id}`)
    }
 
    const select = (id, name) => {

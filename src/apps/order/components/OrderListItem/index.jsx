@@ -1,6 +1,4 @@
 import React from 'react'
-import { isNull } from 'lodash'
-import { Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
