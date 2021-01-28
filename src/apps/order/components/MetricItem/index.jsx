@@ -3,6 +3,7 @@ import React from 'react'
 import { ListItem } from './styled'
 import { useOrder } from '../../context'
 import { currencyFmt } from '../../../../shared/utils'
+import { useWindowSize } from '../../../../shared/hooks'
 
 export const MetricItem = ({
    title,
@@ -10,10 +11,13 @@ export const MetricItem = ({
    variant,
    amount = 0,
    average = 0,
+   closeOrderSummaryTunnel,
 }) => {
    const { state, dispatch } = useOrder()
+   const { width, height } = useWindowSize()
 
    const changeStatus = () => {
+      const isPortrait = height > width
       dispatch({ type: 'SET_ORDERS_STATUS', payload: true })
       dispatch({
          type: 'SET_FILTER',
@@ -53,6 +57,7 @@ export const MetricItem = ({
          document.title,
          window.location.pathname + window.location.search
       )
+      if (isPortrait) closeOrderSummaryTunnel(1)
    }
    return (
       <ListItem

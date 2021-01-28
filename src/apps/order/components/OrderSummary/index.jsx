@@ -25,6 +25,7 @@ const address = 'apps.order.components.ordersummary.'
 export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
    const { t } = useTranslation()
    const { state, dispatch } = useOrder()
+
    const { data: { orders = {} } = {} } = useSubscription(
       QUERIES.ORDERS.AGGREGATE.TOTAL
    )
@@ -36,6 +37,7 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
       error,
       data: { orderByStatus = [] } = {},
    } = useSubscription(QUERIES.ORDERS.AGGREGATE.BY_STATUS)
+
    const { data: { station = {} } = {} } = useQuery(QUERIES.STATIONS.ONE, {
       variables: {
          id:
@@ -79,6 +81,7 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
             count={orders?.aggregate?.count}
             amount={orders?.aggregate?.sum?.amountPaid}
             average={orders?.aggregate?.avg?.amountPaid}
+            closeOrderSummaryTunnel={closeOrderSummaryTunnel}
          />
          <ul>
             {orderByStatus.map(({ value, orders }) => (
@@ -89,6 +92,7 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
                   title={value.split('_').join(' ')}
                   amount={orders.aggregate.sum.amount || 0}
                   average={orders.aggregate.avg.amountPaid || 0}
+                  closeOrderSummaryTunnel={closeOrderSummaryTunnel}
                />
             ))}
          </ul>
@@ -98,6 +102,7 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
             count={cancelledOrders?.aggregate?.count}
             amount={cancelledOrders?.aggregate?.sum?.amountPaid}
             average={cancelledOrders?.aggregate?.avg?.amountPaid}
+            closeOrderSummaryTunnel={closeOrderSummaryTunnel}
          />
          <Flex container alignItems="center" justifyContent="space-between">
             <Text as="h4">Advanced Filters</Text>
