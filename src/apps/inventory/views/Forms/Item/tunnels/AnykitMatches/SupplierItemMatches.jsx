@@ -14,8 +14,8 @@ import {
    Text,
    TunnelHeader,
 } from '@dailykit/ui'
-import React, { useCallback, useEffect, useState } from 'react'
-import { NewTab } from '../../../../../../../shared/assets/icons'
+import React, { useCallback } from 'react'
+
 import {
    ErrorState,
    InlineLoader,
@@ -24,6 +24,7 @@ import {
 import { logger } from '../../../../../../../shared/utils'
 import { useAnykitMatches } from '../../../../../utils/useAnykitMatches'
 import { TunnelBody } from '../styled'
+import { RecipeSource } from './RecipeSource'
 
 export default function SupplierItemMatches({ close, supplierItemId }) {
    // ...SectionTabs in ingredientsMatches
@@ -69,7 +70,7 @@ function IngredientMatches({ supplierItemId }) {
    // ...and sachetSupplierItemMatches
    const { error, ingredientSupplierItemMatches, loading } = useAnykitMatches({
       supplierItemId,
-      showSupplierItemMatches: true /* default value */,
+      showSupplierItemMatches: true,
    })
 
    const getParsedFrom = useCallback(
@@ -212,37 +213,5 @@ function SachetMatches({ supplierItemId }) {
             ))}
          </SectionTabPanels>
       </SectionTabs>
-   )
-}
-
-function RecipeSource({ rawIngredientId }) {
-   const [recipes, setRecipes] = useState([])
-   const { getRecipeByRawIngredient } = useAnykitMatches({})
-
-   useEffect(() => {
-      getRecipeByRawIngredient(rawIngredientId).then(resc => setRecipes(resc))
-   }, [rawIngredientId])
-
-   return (
-      <>
-         {recipes.map(data => (
-            <Flex
-               key={data.recipe.id}
-               as="button"
-               container
-               alignItems="center"
-               style={{ cursor: 'pointer', background: 'none', border: '0' }}
-               onClick={() => {
-                  window.open(data.recipe.url, '_blank')
-               }}
-            >
-               <Text style={{ color: '#00A7E1' }} as="h2">
-                  {data.recipe.name}
-               </Text>
-               <Spacer xAxis size="4px" />
-               <NewTab />
-            </Flex>
-         ))}
-      </>
    )
 }
