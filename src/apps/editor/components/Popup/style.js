@@ -46,3 +46,23 @@ export const Type = styled.div`
       background-color: #f3f3f3;
    }
 `
+export const PhotoGrid = styled.div`
+   display: grid;
+   grid-template-columns: repeat(4, minmax(200px, 1fr));
+   grid-gap: 1rem;
+   max-height: 80vh;
+   overflow: auto;
+   .theme {
+      background: #ede7f6;
+      padding: 1rem;
+      border-radius: 8px;
+      img {
+         width: 100%;
+      }
+      button {
+         &:hover {
+            background: tomato;
+         }
+      }
+   }
+`

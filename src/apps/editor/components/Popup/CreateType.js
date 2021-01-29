@@ -20,6 +20,10 @@ export default function CreateType({ show, closePopup, setCreateType }) {
                <CreateFile size="24" />
                <p>New File</p>
             </Type>
+            <Type onClick={() => setCreateType('template')}>
+               <CreateFile size="24" />
+               <p>Explore Templates</p>
+            </Type>
             <Spacer size="16px" />
          </Flex>
       </Popup>

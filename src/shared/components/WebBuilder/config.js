@@ -2,6 +2,7 @@ import grapesjsTabs from 'grapesjs-tabs'
 import grapesjsCustomCode from 'grapesjs-custom-code'
 export const config = {
    container: '#gjs',
+   allowScripts: 1,
    fromElement: true,
    height: '100%',
    width: '100%',
