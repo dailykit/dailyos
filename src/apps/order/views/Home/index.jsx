@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next'
 import { useSubscription } from '@apollo/react-hooks'
 import { DashboardTile, Text, Flex, Spacer } from '@dailykit/ui'
 
-import { useTabs } from '../../context/tabs'
 import { QUERIES } from '../../graphql'
 import { logger } from '../../../../shared/utils'
+import { useTabs } from '../../../../shared/providers'
 import {
    Tooltip,
    ErrorState,
@@ -50,14 +50,14 @@ const Home = () => {
                title={t(address.concat('orders'))}
                conf="All available"
                count={data?.ordersAggregate?.aggregate?.count}
-               onClick={() => addTab('Orders', '/apps/order/orders')}
+               onClick={() => addTab('Orders', '/order/orders')}
             />
             <Spacer size="16px" xAxis />
             <DashboardTile
                count={0}
                title="Planned"
                conf="All available"
-               onClick={() => addTab('Planned', '/apps/order/planned')}
+               onClick={() => addTab('Planned', '/order/planned')}
             />
          </Flex>
       </Flex>

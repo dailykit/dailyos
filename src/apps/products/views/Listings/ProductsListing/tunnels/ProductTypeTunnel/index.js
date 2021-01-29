@@ -5,7 +5,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import { randomSuffix } from '../../../../../../../shared/utils'
 import { TunnelBody, SolidTile } from '../styled'
-import { useTabs } from '../../../../../context'
+import { useTabs } from '../../../../../../../shared/providers'
 import {
    CREATE_COMBO_PRODUCT,
    CREATE_CUSTOMIZABLE_PRODUCT,

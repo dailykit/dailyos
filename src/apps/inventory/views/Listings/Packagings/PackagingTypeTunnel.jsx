@@ -9,7 +9,7 @@ import {
    ADD_PACKAGING_TUNNEL_ASSEMBLY_PACKET,
    ADD_PACKAGING_TUNNEL_SACHETS,
 } from '../../../constants/infoMessages'
-import { useTabs } from '../../../context'
+import { useTabs } from '../../../../../shared/providers'
 import { CREATE_PACKAGING } from '../../../graphql'
 import { SolidTile } from '../styled'
 

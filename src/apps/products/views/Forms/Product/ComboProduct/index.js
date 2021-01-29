@@ -12,7 +12,7 @@ import {
 } from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
 import { CloseIcon, TickIcon } from '../../../../assets/icons'
-import { useTabs } from '../../../../context'
+import { useTabs } from '../../../../../../shared/providers'
 import {
    ComboProductContext,
    reducers,

@@ -5,10 +5,9 @@ import { ReactTabulator } from '@dailykit/react-tabulator'
 import { Text, ComboButton, PlusIcon, Flex } from '@dailykit/ui'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
-import { useTabs } from '../../../context'
 import options from '../../../tableOption'
 import { logger } from '../../../../../shared/utils'
-import { useTooltip } from '../../../../../shared/providers'
+import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { TITLES, UPSERT_SUBSCRIPTION_TITLE } from '../../../graphql'
 import {
    Tooltip,

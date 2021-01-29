@@ -13,7 +13,6 @@ import {
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { useTabs } from '../../../context'
 import {
    StyledWrapper,
    InputWrapper,
@@ -37,9 +36,10 @@ import {
 import { CloseIcon, TickIcon } from '../../../../../shared/assets/icons'
 import CampaignContext from '../../../context/Campaign/CampaignForm'
 import moment from 'moment'
+import { useTabs } from '../../../../../shared/providers'
 
 const CampaignForm = () => {
-   const { addTab, tab, setTitle: setTabTitle } = useTabs()
+   const { addTab, tab, setTabTitle } = useTabs()
    const { id: campaignId } = useParams()
    const [campaignTitle, setCampaignTitle] = useState({
       value: '',

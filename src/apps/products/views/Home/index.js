@@ -3,9 +3,7 @@ import { DashboardTile } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 import { useTranslation } from 'react-i18next'
 
-// State
-import { useTabs } from '../../context'
-
+import { useTabs } from '../../../../shared/providers'
 import { StyledHome, StyledCardList } from './styled'
 
 import {

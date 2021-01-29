@@ -1,23 +1,14 @@
 import React from 'react'
-import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from '@apollo/react-hooks'
-import {
-   Text,
-   Flex,
-   Spacer,
-   IconButton,
-   TextButton,
-   ComboButton,
-} from '@dailykit/ui'
+import { Flex, Spacer, IconButton, TextButton, ComboButton } from '@dailykit/ui'
 
 import { StyledStatus } from './styled'
-import { QUERIES } from '../../../graphql'
 import { formatDate } from '../../../utils'
-import { useTabs, useOrder } from '../../../context'
+import { useOrder } from '../../../context'
 import pickUpIcon from '../../../assets/svgs/pickup.png'
 import deliveryIcon from '../../../assets/svgs/delivery.png'
 import { NewTabIcon, PrintIcon } from '../../../assets/icons'
+import { useTabs } from '../../../../../shared/providers'
 
 const address = 'apps.order.components.orderlistitem.'
 
@@ -28,7 +19,7 @@ export const Header = ({ order }) => {
    const { t } = useTranslation()
    const { dispatch } = useOrder()
    const createTab = () => {
-      addTab(`ORD${order.id}`, `/apps/order/orders/${order.id}`)
+      addTab(`ORD${order.id}`, `/order/orders/${order.id}`)
    }
    const print = () => {
       const template = encodeURIComponent(

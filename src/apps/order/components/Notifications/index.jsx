@@ -9,10 +9,10 @@ import {
    TunnelHeader,
 } from '@dailykit/ui'
 
-import { useTabs } from '../../context'
 import { QUERIES } from '../../graphql'
 import { Notifs, Notif, Main } from './styled'
 import { InlineLoader } from '../../../../shared/components'
+import { useTabs } from '../../../../shared/providers'
 
 export const Notifications = ({ isOpen, closePortal }) => {
    const { addTab } = useTabs()

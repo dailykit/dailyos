@@ -6,7 +6,7 @@ import { ErrorState, InlineLoader } from '../../../../../shared/components'
 import { useTooltip } from '../../../../../shared/providers/tooltip'
 import { logger } from '../../../../../shared/utils/index'
 import { NO_SUPPLIER_ITEMS_LISTINGS } from '../../../constants/emptyMessages'
-import { useTabs } from '../../../context'
+import { useTabs } from '../../../../../shared/providers'
 import { SUPPLIER_ITEM_LISTINGS } from '../../../graphql'
 import tableOptions from '../tableOption'
 

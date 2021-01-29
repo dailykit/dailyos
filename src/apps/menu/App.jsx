@@ -1,28 +1,64 @@
 import React from 'react'
-import { BrowserRouter as Router } from 'react-router-dom'
 
 import '@dailykit/react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 import '@dailykit/react-tabulator/lib/styles.css'
 import './views/Listings/tableStyle.css'
 
-// Sections
-import Header from './sections/Header'
-import Sidebar from './sections/Sidebar'
 import Main from './sections/Main'
-
-// Styled
-import { StyledWrapper } from '../../styled'
+import { useTabs } from '../../shared/providers'
+import { ErrorBoundary } from '../../shared/components'
 
 const App = () => {
-   const [isSidebarVisible, toggleSidebar] = React.useState(false)
+   const { addTab, setRoutes } = useTabs()
+
+   React.useEffect(() => {
+      setRoutes([
+         {
+            id: 1,
+            title: 'Home',
+            onClick: () => addTab('Home', '/menu'),
+         },
+         {
+            id: 2,
+            title: 'Collections',
+            onClick: () => addTab('Collections', '/menu/collections'),
+         },
+         {
+            id: 3,
+            title: 'Pre-Order Delivery',
+            onClick: () =>
+               addTab(
+                  'Pre-Order Delivery',
+                  '/menu/recurrences/PREORDER_DELIVERY'
+               ),
+         },
+         {
+            id: 4,
+            title: 'Pre-Order Pickup',
+            onClick: () =>
+               addTab('Pre-Order Pickup', '/menu/recurrences/PREORDER_PICKUP'),
+         },
+         {
+            id: 5,
+            title: 'On-Demand Delivery',
+            onClick: () =>
+               addTab(
+                  'On-Demand Delivery',
+                  '/menu/recurrences/ONDEMAND_DELIVERY'
+               ),
+         },
+         {
+            id: 6,
+            title: 'On-Demand Pickup',
+            onClick: () =>
+               addTab('On-Demand Pickup', '/menu/recurrences/ONDEMAND_PICKUP'),
+         },
+      ])
+   }, [])
    return (
-      <StyledWrapper>
-         <Router basename={process.env.PUBLIC_URL}>
-            <Header toggleSidebar={toggleSidebar} />
-            <Sidebar visible={isSidebarVisible} toggleSidebar={toggleSidebar} />
-            <Main />
-         </Router>
-      </StyledWrapper>
+      <ErrorBoundary rootRoute="/apps/menu">
+         <Main />
+      </ErrorBoundary>
    )
 }
 

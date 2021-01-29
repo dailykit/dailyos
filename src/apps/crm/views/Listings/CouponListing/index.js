@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
+import { useLocation } from 'react-router-dom'
 import {
    Text,
    ButtonGroup,
@@ -18,14 +19,11 @@ import {
    CREATE_COUPON,
    DELETE_COUPON,
 } from '../../../graphql'
-import { useTabs } from '../../../context'
 import { StyledWrapper } from './styled'
-import { randomSuffix } from '../../../../../shared/utils'
-import { useLocation } from 'react-router-dom'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
-import { useTooltip } from '../../../../../shared/providers'
-import { currencyFmt, logger } from '../../../../../shared/utils'
+import { useTooltip, useTabs } from '../../../../../shared/providers'
+import { currencyFmt, logger, randomSuffix } from '../../../../../shared/utils'
 import options from '../../tableOptions'
 
 const CouponListing = () => {

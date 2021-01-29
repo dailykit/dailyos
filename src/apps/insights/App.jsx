@@ -1,24 +1,30 @@
 import React from 'react'
-import { BrowserRouter as Router } from 'react-router-dom'
 
-// Sections
-import Header from './sections/Header'
-import Sidebar from './sections/Sidebar'
 import Main from './sections/Main'
-
-// Styled
-import { StyledWrapper } from '../../styled'
+import { useTabs } from '../../shared/providers'
+import { ErrorBoundary } from '../../shared/components'
 
 const App = () => {
-   const [isSidebarVisible, toggleSidebar] = React.useState(false)
+   const { addTab, setRoutes } = useTabs()
+
+   React.useEffect(() => {
+      setRoutes([
+         {
+            id: 1,
+            title: 'Home',
+            onClick: () => addTab('Home', '/insights'),
+         },
+         {
+            id: 2,
+            title: 'Recipe Insights',
+            onClick: () => addTab('Recipe Insights', '/insights/recipe'),
+         },
+      ])
+   }, [])
    return (
-      <StyledWrapper>
-         <Router basename={process.env.PUBLIC_URL}>
-            <Header toggleSidebar={toggleSidebar} />
-            <Sidebar visible={isSidebarVisible} toggleSidebar={toggleSidebar} />
-            <Main />
-         </Router>
-      </StyledWrapper>
+      <ErrorBoundary rootRoute="/apps/insights">
+         <Main />
+      </ErrorBoundary>
    )
 }
 

@@ -6,13 +6,3 @@ export const StyledHeader = styled.div`
    align-items: center;
    justify-content: space-between;
 `
-export const StyledWrapper = styled.div`
-   margin: 0 auto;
-   margin-bottom: 80px;
-   h1 {
-      color: #555b6e;
-      font-size: 20px;
-      font-weight: 500;
-      line-height: 23px;
-   }
-`

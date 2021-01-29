@@ -1,9 +1,8 @@
-import OrderListItem from './OrderListItem'
 import Button from './Button'
-import Tabs from './Tabs'
 import Loader from './Loader'
+import OrderListItem from './OrderListItem'
 
-export { OrderListItem, Button, Tabs, Loader }
+export { OrderListItem, Button, Loader }
 export * from './MetricItem'
 export * from './OrderSummary'
 export * from './ProcessSachet'

@@ -23,7 +23,7 @@ import {
 } from '@dailykit/ui'
 
 import { ItemInfo, StyledTable } from './styled'
-import { useTabs } from '../../../../../../context'
+import { useTabs } from '../../../../../../../../shared/providers'
 import {
    ProductTypeTunnel,
    ProductsTunnel,
