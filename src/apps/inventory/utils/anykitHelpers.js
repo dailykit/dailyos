@@ -22,6 +22,7 @@ async function getSupplierItemMatches(supplierItemId, controller) {
                      }
                   ) {
                      id
+                     isApproved
                      ingredient {
                         id
                         name
@@ -179,6 +180,25 @@ async function updateIngredientSupplierItemMatch(variables) {
       ) {
          update_matches_ingredientSupplierItemMatch(where: $where, _set: $set) {
             affected_rows
+            returning {
+               id
+               isApproved
+               ingredient {
+                  id
+                  name
+                  processings {
+                     sachets {
+                        id
+                        rawingredient_sachets {
+                           rawIngredient {
+                              id
+                              data
+                           }
+                        }
+                     }
+                  }
+               }
+            }
          }
       }
    `
@@ -194,9 +214,13 @@ async function updateIngredientSupplierItemMatch(variables) {
    if (
       response?.data?.update_matches_ingredientSupplierItemMatch?.affected_rows
    )
-      return 'Updated!'
+      return response?.data?.update_matches_ingredientSupplierItemMatch
+         ?.returning[0]
 
-   console.log(response?.errors)
+   console.error(
+      'error updating ingredientSupplierItemMatches',
+      response?.errors
+   )
 
    return 'Cannot update this match'
 }
@@ -224,7 +248,7 @@ async function updateSachetSachetItem(variables) {
    if (response?.data?.update_matches_sachetSachetItemMatch?.affected_rows)
       return 'Updated!'
 
-   console.log(response?.errors)
+   console.error('error updating sachetSachetItemMatches', response?.errors)
 
    return 'Cannot update this match'
 }
@@ -252,7 +276,7 @@ async function updateSachetSupplierItemMatch(variables) {
    if (response?.data?.update_matches_sachetSachetItemMatch?.affected_rows)
       return 'Updated!'
 
-   console.log(response?.errors)
+   console.error('error updating sachetSupplierItemMatches', response?.errors)
 
    return 'Cannot update this match'
 }
@@ -280,7 +304,7 @@ async function updateSachetIngredientSachet(variables) {
    if (response?.data?.update_matches_sachetSachetItemMatch?.affected_rows)
       return 'Updated!'
 
-   console.log(response?.errors)
+   console.error('error updating sachetIngredientSachetMatch', response?.errors)
 
    return 'Cannot update this match'
 }
@@ -308,7 +332,7 @@ async function updateIngredientSachetItemMatch(variables) {
    if (response?.data?.update_matches_sachetSachetItemMatch?.affected_rows)
       return 'Updated!'
 
-   console.log(response?.errors)
+   console.error('error updating ingredienSachetItemMatch', response?.errors)
 
    return 'Cannot update this match'
 }
