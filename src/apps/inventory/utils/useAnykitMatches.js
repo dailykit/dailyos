@@ -74,27 +74,39 @@ export const useAnykitMatches = ({
          where: { id: { _eq: matchId } },
          set: { isApproved },
       }
-      let message = ''
+      let response = ''
 
       if (showSupplierItemMatches) {
          // update the match in anykit
          if (meta.isSachetMatch) {
-            message = await helpers.updateIngredientSupplierItemMatch(vars)
+            response = await helpers.updateSachetSupplierItemMatch(vars)
          } else {
-            message = await helpers.updateSachetSupplierItemMatch(vars)
+            // response is the returned match that got updated
+            response = await helpers.updateIngredientSupplierItemMatch(vars)
+
+            // !string is the response from the fired mutation.
+            if (typeof response !== 'string') {
+               const oldMatches = ingredientSupplierItemMatches.filter(
+                  m => m.id !== response.id
+               )
+
+               setIngredientSupplierItemMatches([...oldMatches, response])
+
+               response = 'Match updated successfully!'
+            }
          }
 
-         return message || 'Unexpected error occured!'
+         return response || 'Unexpected error occured!'
       }
 
       if (showSachetItemMatches) {
          if (meta.isSachetMatch) {
-            message = await helpers.updateSachetSachetItem(vars)
+            response = await helpers.updateSachetSachetItem(vars)
          } else {
-            message = await helpers.updateIngredientSachetItemMatch(vars)
+            response = await helpers.updateIngredientSachetItemMatch(vars)
          }
 
-         return message
+         return response
       }
    }
 
