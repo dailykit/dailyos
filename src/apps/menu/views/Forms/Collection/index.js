@@ -8,6 +8,8 @@ import {
    HorizontalTabPanel,
    HorizontalTabPanels,
    HorizontalTabs,
+   Text,
+   Spacer,
 } from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
@@ -28,10 +30,12 @@ import {
 import { S_COLLECTION, UPDATE_COLLECTION } from '../../../graphql'
 import validator from '../validators'
 import { Availability, Products } from './components'
+import { useDnd } from '../../../../../shared/components/DragNDrop/useDnd'
 
 const address = 'apps.menu.views.forms.collection.'
 
 const CollectionForm = () => {
+   const { initiatePriority } = useDnd()
    const { t } = useTranslation()
 
    const { setTabTitle, tab, addTab } = useTabs()
@@ -58,12 +62,29 @@ const CollectionForm = () => {
          id: collectionId,
       },
       onSubscriptionData: data => {
-         console.log(data.subscriptionData.data)
          setState(data.subscriptionData.data.collection)
          setTitle({
             ...title,
             value: data.subscriptionData.data.collection.name,
          })
+         const categories =
+            data.subscriptionData.data.collection.productCategories
+         if (categories.length) {
+            initiatePriority({
+               tablename: 'collection_productCategory',
+               schemaname: 'onDemand',
+               data: categories,
+            })
+            categories.forEach(category => {
+               if (category.products.length) {
+                  initiatePriority({
+                     tablename: 'collection_productCategory_product',
+                     schemaname: 'onDemand',
+                     data: category.products,
+                  })
+               }
+            })
+         }
       },
    })
 
@@ -151,6 +172,20 @@ const CollectionForm = () => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
+                  <Flex container alignItems="flex-end">
+                     <Text as="h2">{state.productCategories.length}</Text>
+                     <Spacer xAxis size="8px" />
+                     <Text as="subtitle">Categories</Text>
+                     <Spacer xAxis size="16px" />
+                     <Text as="h2">
+                        {state.productCategories.reduce(
+                           (acc, cat) => cat.products.length + acc,
+                           0
+                        )}
+                     </Text>
+                     <Spacer xAxis size="8px" />
+                     <Text as="subtitle">Products</Text>
+                  </Flex>
                </Flex>
                <Flex padding="16px 32px">
                   <HorizontalTabs>

@@ -29,7 +29,7 @@ import {
    ProductsTunnel,
    ProductOptionsTunnel,
 } from '../../tunnels'
-import { Tooltip } from '../../../../../../../../shared/components'
+import { DragNDrop, Tooltip } from '../../../../../../../../shared/components'
 import { DeleteIcon, LinkIcon } from '../../../../../../assets/icons'
 import {
    currencyFmt,
@@ -148,37 +148,44 @@ const Products = ({ state }) => {
                </SectionTabsListHeader>
                <SectionTabs>
                   <SectionTabList>
-                     {state.customizableProductOptions.map(option => (
-                        <SectionTab key={option.id}>
-                           <ItemInfo>
-                              {Boolean(
-                                 option.simpleRecipeProduct?.assets?.images
-                                    ?.length ||
-                                    option.inventoryProduct?.assets?.images
-                                       ?.length
-                              ) && (
-                                 <img
-                                    src={
-                                       option.simpleRecipeProduct?.assets
-                                          ?.images[0] ||
-                                       option.inventoryProduct?.assets
-                                          ?.images[0]
-                                    }
-                                 />
-                              )}
-                              <h3>
-                                 {option.inventoryProduct?.name ||
-                                    option.simpleRecipeProduct?.name}
-                              </h3>
-                              <button onClick={() => remove(option)}>
-                                 <DeleteIcon color="#fff" />
-                              </button>
-                              <label hidden={state.default !== option.id}>
-                                 {t(address.concat('default'))}
-                              </label>
-                           </ItemInfo>
-                        </SectionTab>
-                     ))}
+                     <DragNDrop
+                        list={state.customizableProductOptions}
+                        droppableId="customizableProductOptionsDroppableId"
+                        tablename="customizableProductOption"
+                        schemaname="products"
+                     >
+                        {state.customizableProductOptions.map(option => (
+                           <SectionTab key={option.id}>
+                              <ItemInfo>
+                                 {Boolean(
+                                    option.simpleRecipeProduct?.assets?.images
+                                       ?.length ||
+                                       option.inventoryProduct?.assets?.images
+                                          ?.length
+                                 ) && (
+                                    <img
+                                       src={
+                                          option.simpleRecipeProduct?.assets
+                                             ?.images[0] ||
+                                          option.inventoryProduct?.assets
+                                             ?.images[0]
+                                       }
+                                    />
+                                 )}
+                                 <h3>
+                                    {option.inventoryProduct?.name ||
+                                       option.simpleRecipeProduct?.name}
+                                 </h3>
+                                 <button onClick={() => remove(option)}>
+                                    <DeleteIcon color="#fff" />
+                                 </button>
+                                 <label hidden={state.default !== option.id}>
+                                    {t(address.concat('default'))}
+                                 </label>
+                              </ItemInfo>
+                           </SectionTab>
+                        ))}
+                     </DragNDrop>
                   </SectionTabList>
                   <SectionTabPanels>
                      {state.customizableProductOptions.map(option => (

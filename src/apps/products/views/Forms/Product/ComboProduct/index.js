@@ -22,11 +22,13 @@ import { S_COMBO_PRODUCT, UPDATE_COMBO_PRODUCT } from '../../../../graphql'
 import { ResponsiveFlex, StyledFlex, StyledRule } from '../styled'
 import validator from '../validators'
 import { Assets, Description, Items, Pricing } from './components'
+import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
 
 const address = 'apps.menu.views.forms.product.comboproduct.'
 
 export default function ComboProduct() {
    const { t } = useTranslation()
+   const { initiatePriority } = useDnd()
 
    const { id: productId } = useParams()
 
@@ -58,6 +60,18 @@ export default function ComboProduct() {
             ...title,
             value: data.subscriptionData.data.comboProduct.name,
          })
+         if (
+            data.subscriptionData.data.comboProduct.comboProductComponents
+               .length
+         ) {
+            initiatePriority({
+               tablename: 'comboProductComponent',
+               schemaname: 'products',
+               data:
+                  data.subscriptionData.data.comboProduct
+                     .comboProductComponents,
+            })
+         }
       },
    })
 
