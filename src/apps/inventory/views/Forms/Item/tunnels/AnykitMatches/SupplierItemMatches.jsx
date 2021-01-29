@@ -12,9 +12,11 @@ import {
    SectionTabs,
    Spacer,
    Text,
+   Toggle,
    TunnelHeader,
 } from '@dailykit/ui'
 import React, { useCallback } from 'react'
+import { toast } from 'react-toastify'
 
 import {
    ErrorState,
@@ -68,19 +70,28 @@ export default function SupplierItemMatches({ close, supplierItemId }) {
 function IngredientMatches({ supplierItemId }) {
    // supplierItemMatches: true returns both ingredientSupplierItemMatches
    // ...and sachetSupplierItemMatches
-   const { error, ingredientSupplierItemMatches, loading } = useAnykitMatches({
+   const {
+      error,
+      ingredientSupplierItemMatches,
+      setApproved,
+      loading,
+   } = useAnykitMatches({
       supplierItemId,
       showSupplierItemMatches: true,
    })
 
    const getParsedFrom = useCallback(
-      ing => {
+      match => {
          const result = []
 
-         ing.processings.forEach(proc => {
+         match.ingredient.processings.forEach(proc => {
             proc.sachets.forEach(sachet => {
                sachet.rawingredient_sachets.forEach(rs => {
-                  result.push(rs.rawIngredient)
+                  result.push({
+                     ...rs.rawIngredient,
+                     matchId: match.id,
+                     isApproved: match.isApproved,
+                  })
                })
             })
          })
@@ -110,7 +121,7 @@ function IngredientMatches({ supplierItemId }) {
          </SectionTabList>
          <SectionTabPanels>
             {ingredientSupplierItemMatches.map(ing => {
-               const rawIngs = getParsedFrom(ing.ingredient)
+               const rawIngs = getParsedFrom(ing)
                return (
                   <SectionTabPanel key={ing.id}>
                      <SectionTabs>
@@ -132,9 +143,35 @@ function IngredientMatches({ supplierItemId }) {
                            {rawIngs.map(rawIng => {
                               return (
                                  <SectionTabPanel key={rawIng.id}>
-                                    <Text as="h3">Used in Recipes</Text>
-                                    <Spacer size="8px" />
-                                    <RecipeSource rawIngredientId={rawIng.id} />
+                                    <Flex
+                                       container
+                                       justifyContent="space-between"
+                                    >
+                                       <Flex>
+                                          <Text as="h3">Used in Recipes</Text>
+                                          <Spacer size="8px" />
+                                          <RecipeSource
+                                             rawIngredientId={rawIng.id}
+                                          />
+                                       </Flex>
+                                       <Spacer xAxis size="18px" />
+                                       <Flex>
+                                          <Toggle
+                                             checked={rawIng.isApproved}
+                                             label="Is Approved"
+                                             setChecked={async () => {
+                                                const message = await setApproved(
+                                                   rawIng.matchId,
+                                                   !rawIng.isApproved,
+                                                   { isSachetMatch: false }
+                                                )
+
+                                                if (typeof message === 'string')
+                                                   toast.info(message)
+                                             }}
+                                          />
+                                       </Flex>
+                                    </Flex>
                                  </SectionTabPanel>
                               )
                            })}
