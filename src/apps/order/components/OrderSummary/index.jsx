@@ -46,7 +46,6 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
                ?.assemblyStationId?._eq,
       },
    })
-
    const clearFilters = () => {
       dispatch({ type: 'CLEAR_READY_BY_FILTER' })
       dispatch({ type: 'CLEAR_FULFILLMENT_FILTER' })
