@@ -261,6 +261,36 @@ async function updateSachetSupplierItemMatch(variables) {
       ) {
          update_matches_sachetSupplierItemMatch(where: $where, _set: $set) {
             affected_rows
+            returning {
+               id
+               isApproved
+               sachet {
+                  processing {
+                     id
+                     name
+                     ingredient {
+                        id
+                        name
+                     }
+                  }
+                  id
+                  minQuantity
+                  maxQuantity
+                  unit
+                  rawingredient_sachets {
+                     rawIngredient {
+                        id
+                        data
+                        recipe_ingredients {
+                           recipe {
+                              name
+                              url
+                           }
+                        }
+                     }
+                  }
+               }
+            }
          }
       }
    `
@@ -274,7 +304,7 @@ async function updateSachetSupplierItemMatch(variables) {
    }).then(r => r.json())
 
    if (response?.data?.update_matches_sachetSachetItemMatch?.affected_rows)
-      return 'Updated!'
+      return response?.data?.update_matches_sachetSachetItemMatch?.returning[0]
 
    console.error('error updating sachetSupplierItemMatches', response?.errors)
 

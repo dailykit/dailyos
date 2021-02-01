@@ -80,6 +80,14 @@ function IngredientMatches({ supplierItemId }) {
       showSupplierItemMatches: true,
    })
 
+   const handleSetApproved = async rawIng => {
+      const message = await setApproved(rawIng.matchId, !rawIng.isApproved, {
+         isSachetMatch: false,
+      })
+
+      if (typeof message === 'string') toast.info(message)
+   }
+
    const getParsedFrom = useCallback(
       match => {
          const result = []
@@ -159,16 +167,9 @@ function IngredientMatches({ supplierItemId }) {
                                           <Toggle
                                              checked={rawIng.isApproved}
                                              label="Is Approved"
-                                             setChecked={async () => {
-                                                const message = await setApproved(
-                                                   rawIng.matchId,
-                                                   !rawIng.isApproved,
-                                                   { isSachetMatch: false }
-                                                )
-
-                                                if (typeof message === 'string')
-                                                   toast.info(message)
-                                             }}
+                                             setChecked={() =>
+                                                handleSetApproved(rawIng)
+                                             }
                                           />
                                        </Flex>
                                     </Flex>
@@ -189,10 +190,23 @@ function SachetMatches({ supplierItemId }) {
    // supplierItemMatches: true returns both ingredientSupplierItemMatches
    // ...and sachetSupplierItemMatches
    // TODO: add option to get sachetSupplierItemMatches and ingredientSupplierItemMatches
-   const { error, sachetSupplierItemMatches, loading } = useAnykitMatches({
+   const {
+      error,
+      sachetSupplierItemMatches,
+      loading,
+      setApproved,
+   } = useAnykitMatches({
       supplierItemId,
       showSupplierItemMatches: true /* default value */,
    })
+
+   const handleSetApproved = async match => {
+      const message = await setApproved(match.id, !match.isApproved, {
+         isSachetMatch: true,
+      })
+
+      if (typeof message === 'string') toast.info(message)
+   }
 
    if (error) {
       logger(error)
@@ -237,11 +251,25 @@ function SachetMatches({ supplierItemId }) {
                      <SectionTabPanels>
                         {match.sachet.rawingredient_sachets.map(rs => (
                            <SectionTabPanel key={rs.rawIngredient.id}>
-                              <Text as="h3">Used in Recipes</Text>
-                              <Spacer size="8px" />
-                              <RecipeSource
-                                 rawIngredientId={rs.rawIngredient.id}
-                              />
+                              <Flex container justifyContent="space-between">
+                                 <Flex>
+                                    <Text as="h3">Used in Recipes</Text>
+                                    <Spacer size="8px" />
+                                    <RecipeSource
+                                       rawIngredientId={rs.rawIngredient.id}
+                                    />
+                                 </Flex>
+                                 <Spacer xAxis size="18px" />
+                                 <Flex>
+                                    <Toggle
+                                       checked={rs.rawIngredient.isApproved}
+                                       label="Is Approved"
+                                       setChecked={() =>
+                                          handleSetApproved(match)
+                                       }
+                                    />
+                                 </Flex>
+                              </Flex>
                            </SectionTabPanel>
                         ))}
                      </SectionTabPanels>

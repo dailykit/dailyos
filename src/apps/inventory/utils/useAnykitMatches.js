@@ -79,7 +79,19 @@ export const useAnykitMatches = ({
       if (showSupplierItemMatches) {
          // update the match in anykit
          if (meta.isSachetMatch) {
+            // response is the returned match that got updated
             response = await helpers.updateSachetSupplierItemMatch(vars)
+
+            // !string is the response from the fired mutation.
+            if (typeof response !== 'string') {
+               const oldMatches = sachetSupplierItemMatches.filter(
+                  m => m.id !== response.id
+               )
+
+               setSachetSupplierItemMatches([...oldMatches, response])
+
+               response = 'Match updated successfully!'
+            }
          } else {
             // response is the returned match that got updated
             response = await helpers.updateIngredientSupplierItemMatch(vars)
@@ -108,6 +120,7 @@ export const useAnykitMatches = ({
 
          return response
       }
+
    }
 
    const getRecipeByRawIngredient = async rawIngredientId => {
