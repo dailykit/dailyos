@@ -17,7 +17,7 @@ export const useAnykitMatches = ({
    const [sachetSupplierItemMatches, setSachetSupplierItemMatches] = useState(
       []
    )
-   const [sachetItemMatches, setSatchetItemMatches] = useState([])
+   const [sachetItemMatches, setSachetItemMatches] = useState([])
    const [loading, setLoading] = useState(false)
 
    const controller = new window.AbortController()
@@ -55,7 +55,7 @@ export const useAnykitMatches = ({
                setError(err)
                return
             }
-            setSatchetItemMatches(matches)
+            setSachetItemMatches(matches)
             return
          }
 
@@ -113,14 +113,25 @@ export const useAnykitMatches = ({
 
       if (showSachetItemMatches) {
          if (meta.isSachetMatch) {
+            // response is the returned match that got updated
             response = await helpers.updateSachetSachetItem(vars)
+
+            // !string is the response from the fired mutation.
+            if (typeof response !== 'string') {
+               const oldMatches = sachetItemMatches.filter(
+                  m => m.id !== response.id
+               )
+
+               setSachetItemMatches([...oldMatches, response])
+
+               response = 'Match updated successfully!'
+            }
          } else {
             response = await helpers.updateIngredientSachetItemMatch(vars)
          }
 
          return response
       }
-
    }
 
    const getRecipeByRawIngredient = async rawIngredientId => {

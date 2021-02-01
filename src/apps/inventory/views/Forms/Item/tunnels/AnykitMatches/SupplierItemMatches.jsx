@@ -231,51 +231,54 @@ function SachetMatches({ supplierItemId }) {
             ))}
          </SectionTabList>
          <SectionTabPanels>
-            {sachetSupplierItemMatches.map(match => (
-               <SectionTabPanel key={match.id}>
-                  <SectionTabs>
-                     <SectionTabList>
-                        <Text as="subtitle">Parsed from</Text>
-                        <Spacer size="8px" />
-                        {match.sachet.rawingredient_sachets.map(rs => (
-                           <SectionTab key={rs.rawIngredient.id}>
-                              <Flex
-                                 padding="14px"
-                                 style={{ textAlign: 'left' }}
-                              >
-                                 {rs.rawIngredient.data}
-                              </Flex>
-                           </SectionTab>
-                        ))}
-                     </SectionTabList>
-                     <SectionTabPanels>
-                        {match.sachet.rawingredient_sachets.map(rs => (
-                           <SectionTabPanel key={rs.rawIngredient.id}>
-                              <Flex container justifyContent="space-between">
-                                 <Flex>
-                                    <Text as="h3">Used in Recipes</Text>
-                                    <Spacer size="8px" />
-                                    <RecipeSource
-                                       rawIngredientId={rs.rawIngredient.id}
-                                    />
+            {sachetSupplierItemMatches.map(match => {
+               console.log('isApproved', match.isApproved)
+               return (
+                  <SectionTabPanel key={match.id}>
+                     <SectionTabs>
+                        <SectionTabList>
+                           <Text as="subtitle">Parsed from</Text>
+                           <Spacer size="8px" />
+                           {match.sachet.rawingredient_sachets.map(rs => (
+                              <SectionTab key={rs.rawIngredient.id}>
+                                 <Flex
+                                    padding="14px"
+                                    style={{ textAlign: 'left' }}
+                                 >
+                                    {rs.rawIngredient.data}
                                  </Flex>
-                                 <Spacer xAxis size="18px" />
-                                 <Flex>
-                                    <Toggle
-                                       checked={rs.rawIngredient.isApproved}
-                                       label="Is Approved"
-                                       setChecked={() =>
-                                          handleSetApproved(match)
-                                       }
-                                    />
+                              </SectionTab>
+                           ))}
+                        </SectionTabList>
+                        <SectionTabPanels>
+                           {match.sachet.rawingredient_sachets.map(rs => (
+                              <SectionTabPanel key={rs.rawIngredient.id}>
+                                 <Flex container justifyContent="space-between">
+                                    <Flex>
+                                       <Text as="h3">Used in Recipes</Text>
+                                       <Spacer size="8px" />
+                                       <RecipeSource
+                                          rawIngredientId={rs.rawIngredient.id}
+                                       />
+                                    </Flex>
+                                    <Spacer xAxis size="18px" />
+                                    <Flex>
+                                       <Toggle
+                                          checked={match.isApproved}
+                                          label="Is Approved"
+                                          setChecked={() =>
+                                             handleSetApproved(match)
+                                          }
+                                       />
+                                    </Flex>
                                  </Flex>
-                              </Flex>
-                           </SectionTabPanel>
-                        ))}
-                     </SectionTabPanels>
-                  </SectionTabs>
-               </SectionTabPanel>
-            ))}
+                              </SectionTabPanel>
+                           ))}
+                        </SectionTabPanels>
+                     </SectionTabs>
+                  </SectionTabPanel>
+               )
+            })}
          </SectionTabPanels>
       </SectionTabs>
    )

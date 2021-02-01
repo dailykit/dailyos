@@ -8,8 +8,10 @@ import {
    Spacer,
    Text,
    TunnelHeader,
+   Toggle,
 } from '@dailykit/ui'
 import React from 'react'
+import { toast } from 'react-toastify'
 
 import {
    ErrorState,
@@ -41,10 +43,18 @@ export default function SachetItemMatches({ close, sachetItemId }) {
 }
 
 function SachetSachetItemMatches({ sachetItemId }) {
-   const { error, sachetItemMatches, loading } = useAnykitMatches({
+   const { error, sachetItemMatches, loading, setApproved } = useAnykitMatches({
       sachetId: sachetItemId,
       showSachetItemMatches: true,
    })
+
+   const handleSetApproved = async match => {
+      const message = await setApproved(match.id, !match.isApproved, {
+         isSachetMatch: true,
+      })
+
+      if (typeof message === 'string') toast.info(message)
+   }
 
    if (error) {
       logger(error)
@@ -92,11 +102,25 @@ function SachetSachetItemMatches({ sachetItemId }) {
                      <SectionTabPanels>
                         {match.sachet.rawingredient_sachets.map(rs => (
                            <SectionTabPanel key={rs.rawIngredient.id}>
-                              <Text as="h3">Used in Recipes</Text>
-                              <Spacer size="8px" />
-                              <RecipeSource
-                                 rawIngredientId={rs.rawIngredient.id}
-                              />
+                              <Flex container justifyContent="space-between">
+                                 <Flex>
+                                    <Text as="h3">Used in Recipes</Text>
+                                    <Spacer size="8px" />
+                                    <RecipeSource
+                                       rawIngredientId={rs.rawIngredient.id}
+                                    />
+                                 </Flex>
+                                 <Spacer xAxis size="18px" />
+                                 <Flex>
+                                    <Toggle
+                                       checked={rs.rawIngredient.isApproved}
+                                       label="Is Approved"
+                                       setChecked={() =>
+                                          handleSetApproved(match)
+                                       }
+                                    />
+                                 </Flex>
+                              </Flex>
                            </SectionTabPanel>
                         ))}
                      </SectionTabPanels>
