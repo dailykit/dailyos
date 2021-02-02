@@ -13,6 +13,7 @@ import {
 } from '../../../assets/icons'
 import { Styles, StyledStat } from './styled'
 import { currencyFmt } from '../../../../../shared/utils'
+import { useWindowSize } from '../../../../../shared/hooks'
 
 const address = 'apps.order.components.orderlistitem.'
 
@@ -23,7 +24,7 @@ export const Details = ({ order }) => {
       name: '',
    })
    const [currentPanel, setCurrentPanel] = React.useState('customer')
-
+   const { width } = useWindowSize()
    React.useEffect(() => {
       if (!isNull(order.brand) && !isEmpty(order.brand)) {
          if (order.source === 'a-la-carte') {
@@ -47,7 +48,10 @@ export const Details = ({ order }) => {
             setBrand({ name, logo })
          }
       }
-   }, [order])
+      if (width < 1023) {
+         setCurrentPanel('')
+      }
+   }, [order, width])
 
    return (
       <aside>

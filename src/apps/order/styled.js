@@ -30,6 +30,21 @@ export const StyledWrapper = styled.div(
       > footer {
          grid-area: footer;
       }
+      @media only screen and (max-width: 767px) {
+         grid-template-columns: ${position === 'left'
+            ? '240px 1fr'
+            : '1fr 240px'};
+      }
+      @media only screen and (max-width: 1439px) and (orientation: landscape) {
+         > main > main > div > section {
+            width: calc(100vw - 340px);
+         }
+      }
+      @media only screen and (max-width: 767px) and (orientation: landscape) {
+         > main > main > div > section {
+            width: calc(100vw - 240px);
+         }
+      }
       @media only screen and (orientation: portrait) {
          grid-template-areas: 'main' 'bottomBar' 'footer';
          grid-template-columns: 100vw;

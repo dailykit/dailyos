@@ -11,7 +11,7 @@ import {
    ComboButton,
 } from '@dailykit/ui'
 
-import { StyledStatus } from './styled'
+import { StyledStatus, HeaderFlex } from './styled'
 import { QUERIES } from '../../../graphql'
 import { formatDate } from '../../../utils'
 import { useTabs, useOrder } from '../../../context'
@@ -41,70 +41,74 @@ export const Header = ({ order }) => {
       )
    }
    return (
-      <Flex as="header" container alignItems="center">
-         {!order.thirdPartyOrderId && (
-            <>
-               <Flex
-                  container
-                  width="28px"
-                  height="28px"
-                  alignItems="center"
-                  justifyContent="center"
-               >
-                  {isPickup(order.fulfillmentType) ? (
-                     <img
-                        alt="Pick Up"
-                        width="28px"
-                        title="Pick Up"
-                        src={pickUpIcon}
-                     />
-                  ) : (
-                     <img
-                        alt="Delivery"
-                        width="28px"
-                        title="Delivery"
-                        src={deliveryIcon}
-                     />
-                  )}
-               </Flex>
-               <Spacer size="8px" xAxis />
-            </>
-         )}
-         <ComboButton
-            size="sm"
-            type="outline"
-            onClick={() => createTab(order.id)}
-         >
-            {'ORD' + order.id + (Boolean(order?.cart?.isTest) ? '(Test)' : '')}
-            <NewTabIcon size={14} />
-         </ComboButton>
-         <Spacer size="8px" xAxis />
-         {!order.thirdPartyOrderId && (
-            <IconButton size="sm" type="outline" onClick={() => print()}>
-               <PrintIcon size={16} />
-            </IconButton>
-         )}
-         {!order.thirdPartyOrderId && !isPickup(order.fulfillmentType) && (
-            <>
-               <Spacer size="8px" xAxis />
-               <TextButton
-                  size="sm"
-                  type="outline"
-                  fallBackMessage="Pending order confirmation!"
-                  hasAccess={Boolean(order.isAccepted && !order.isRejected)}
-                  onClick={() =>
-                     dispatch({
-                        type: 'DELIVERY_PANEL',
-                        payload: { orderId: order.id },
-                     })
-                  }
-               >
-                  {order?.deliveryCompany?.name ? 'View' : 'Select'} Delivery
-               </TextButton>
-            </>
-         )}
+      <HeaderFlex as="header" container alignItems="center">
+         <Flex container>
+            {!order.thirdPartyOrderId && (
+               <>
+                  <Flex
+                     container
+                     width="28px"
+                     height="28px"
+                     alignItems="center"
+                     justifyContent="center"
+                  >
+                     {isPickup(order.fulfillmentType) ? (
+                        <img
+                           alt="Pick Up"
+                           width="28px"
+                           title="Pick Up"
+                           src={pickUpIcon}
+                        />
+                     ) : (
+                        <img
+                           alt="Delivery"
+                           width="28px"
+                           title="Delivery"
+                           src={deliveryIcon}
+                        />
+                     )}
+                  </Flex>
+                  <Spacer size="8px" xAxis />
+               </>
+            )}
+            <ComboButton
+               size="sm"
+               type="outline"
+               onClick={() => createTab(order.id)}
+            >
+               {'ORD' +
+                  order.id +
+                  (Boolean(order?.cart?.isTest) ? '(Test)' : '')}
+               <NewTabIcon size={14} />
+            </ComboButton>
+            <Spacer size="8px" xAxis />
+            {!order.thirdPartyOrderId && (
+               <IconButton size="sm" type="outline" onClick={() => print()}>
+                  <PrintIcon size={16} />
+               </IconButton>
+            )}
+            {!order.thirdPartyOrderId && !isPickup(order.fulfillmentType) && (
+               <>
+                  <Spacer size="8px" xAxis />
+                  <TextButton
+                     size="sm"
+                     type="outline"
+                     fallBackMessage="Pending order confirmation!"
+                     hasAccess={Boolean(order.isAccepted && !order.isRejected)}
+                     onClick={() =>
+                        dispatch({
+                           type: 'DELIVERY_PANEL',
+                           payload: { orderId: order.id },
+                        })
+                     }
+                  >
+                     {order?.deliveryCompany?.name ? 'View' : 'Select'} Delivery
+                  </TextButton>
+               </>
+            )}
+         </Flex>
          <Spacer size="24px" xAxis />
-         <Flex as="section" container alignItems="center">
+         <HeaderFlex as="section" container alignItems="center">
             <StyledStatus>
                <span>{t(address.concat('ordered on'))}:&nbsp;</span>
                <span>{formatDate(order?.created_at)}</span>
@@ -123,8 +127,8 @@ export const Header = ({ order }) => {
                   />
                </>
             )}
-         </Flex>
-      </Flex>
+         </HeaderFlex>
+      </HeaderFlex>
    )
 }
 
