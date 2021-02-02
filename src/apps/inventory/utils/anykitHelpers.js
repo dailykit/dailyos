@@ -220,7 +220,65 @@ async function getIngredientSachetItemMatches(sachetId, controller) {
          ?.matches_ingredientSachetItemMatch || []),
    ]
 
-   console.log('helper', matches)
+   return [matches, err]
+}
+
+async function getIngredientSachetMatches(sachetId, controller) {
+   let matches = []
+   let err = null
+   const ingredientSachetMatches = await fetch(BASE_URL, {
+      method: 'POST',
+      headers,
+      signal: controller.signal,
+      body: JSON.stringify({
+         query: `
+            query GetSachetIngredientSachetMatches($sachetId: Int) {
+               matches_sachetIngredientSachetMatch(
+                  where: { organizationIngredientSachetId: { _eq: $sachetId } }
+               ) {
+                  id
+                  isApproved
+                  sachet {
+                     processing {
+                        id
+                        name
+                        ingredient {
+                           id
+                           name
+                        }
+                     }
+                     id
+                     minQuantity
+                     maxQuantity
+                     unit
+                     rawingredient_sachets {
+                        rawIngredient {
+                           id
+                           data
+                           recipe_ingredients {
+                              recipe {
+                                 name
+                                 url
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         `,
+         variables: { sachetId },
+      }),
+   }).then(r => r.json())
+
+   if (ingredientSachetMatches?.errors?.length)
+      err =
+         ingredientSachetMatches.errors[0].message || 'Unexpected error occured'
+
+   matches = [
+      ...(ingredientSachetMatches?.data?.matches_sachetIngredientSachetMatch ||
+         []),
+   ]
 
    return [matches, err]
 }
@@ -463,7 +521,8 @@ async function updateIngredientSachetItemMatch(variables) {
    }).then(r => r.json())
 
    if (response?.data?.update_matches_ingredientSachetItemMatch?.affected_rows)
-      return response?.data?.update_matches_ingredientSachetItemMatch?.returning[0]
+      return response?.data?.update_matches_ingredientSachetItemMatch
+         ?.returning[0]
 
    console.error('error updating ingredienSachetItemMatch', response?.errors)
 
@@ -494,7 +553,7 @@ async function getRecipeRawIngredient(variables) {
    if (response?.data?.recipes_recipe_ingredient?.length)
       return response.data.recipes_recipe_ingredient
 
-   console.log(response?.errors)
+   console.error(response?.errors)
 }
 
 export default {
@@ -507,4 +566,5 @@ export default {
    updateSachetSupplierItemMatch,
    getRecipeRawIngredient,
    getIngredientSachetItemMatches,
+   getIngredientSachetMatches,
 }
