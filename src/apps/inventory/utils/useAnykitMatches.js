@@ -7,6 +7,7 @@ export const useAnykitMatches = ({
    sachetId,
    showSachetItemMatches = false,
    showSupplierItemMatches = false,
+   showIngredientSachetItemMatches = false,
    showIngredientSachetMatches = false,
 }) => {
    const [error, setError] = useState(null)
@@ -18,6 +19,10 @@ export const useAnykitMatches = ({
       []
    )
    const [sachetItemMatches, setSachetItemMatches] = useState([])
+   const [
+      ingredientSachetItemMatches,
+      setIngredientSachetItemMatches,
+   ] = useState([])
    const [loading, setLoading] = useState(false)
 
    const controller = new window.AbortController()
@@ -46,7 +51,6 @@ export const useAnykitMatches = ({
          if (showSachetItemMatches) {
             const [matches, err] = await helpers.getSachetItemMatches(
                sachetId,
-               supplierItemId,
                controller
             )
 
@@ -56,6 +60,21 @@ export const useAnykitMatches = ({
                return
             }
             setSachetItemMatches(matches)
+            return
+         }
+
+         if (showIngredientSachetItemMatches) {
+            const [matches, err] = await helpers.getIngredientSachetItemMatches(
+               sachetId,
+               controller
+            )
+
+            setLoading(false)
+            if (err) {
+               setError(err)
+               return
+            }
+            setIngredientSachetItemMatches(matches)
             return
          }
 
@@ -132,6 +151,26 @@ export const useAnykitMatches = ({
 
          return response
       }
+
+      if (showIngredientSachetItemMatches) {
+         if (!meta.isSachetMatch) {
+            // response is the returned match that got updated
+            response = await helpers.updateIngredientSachetItemMatch(vars)
+
+            // !string is the response from the fired mutation.
+            if (typeof response !== 'string') {
+               const oldMatches = ingredientSachetItemMatches.filter(
+                  m => m.id !== response.id
+               )
+
+               setIngredientSachetItemMatches([...oldMatches, response])
+
+               response = 'Match updated successfully!'
+            }
+         }
+
+         return response || 'Unexpected error occured!'
+      }
    }
 
    const getRecipeByRawIngredient = async rawIngredientId => {
@@ -151,6 +190,7 @@ export const useAnykitMatches = ({
       ingredientSupplierItemMatches,
       sachetSupplierItemMatches,
       sachetItemMatches,
+      ingredientSachetItemMatches,
       error,
       loading,
       setApproved,
