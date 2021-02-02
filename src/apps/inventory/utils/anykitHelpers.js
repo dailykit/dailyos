@@ -115,7 +115,7 @@ async function getSupplierItemMatches(supplierItemId, controller) {
    }
 }
 
-async function getSachetItemMatches(sachetId, supplierItemId, controller) {
+async function getSachetItemMatches(sachetId, controller) {
    let sachetItemMatches = []
    let err = null
    const sachetSachetItemMatches = await fetch(BASE_URL, {
@@ -171,6 +171,58 @@ async function getSachetItemMatches(sachetId, supplierItemId, controller) {
    ]
 
    return [sachetItemMatches, err]
+}
+
+async function getIngredientSachetItemMatches(sachetId, controller) {
+   let matches = []
+   let err = null
+   const ingredientSachetItemMatches = await fetch(BASE_URL, {
+      method: 'POST',
+      headers,
+      signal: controller.signal,
+      body: JSON.stringify({
+         query: `
+            query GetIngredientSachetItemMatches($sachetId: Int) {
+               matches_ingredientSachetItemMatch(
+                  where: { organizationSachetItemId: { _eq: $sachetId } }
+               ) {
+                  id
+                  isApproved
+                  ingredient {
+                     id
+                     name
+                     processings {
+                        sachets {
+                           id
+                           rawingredient_sachets {
+                              rawIngredient {
+                                 id
+                                 data
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         `,
+         variables: { sachetId },
+      }),
+   }).then(r => r.json())
+
+   if (ingredientSachetItemMatches?.errors?.length)
+      err =
+         ingredientSachetItemMatches.errors[0].message ||
+         'Unexpected error occured'
+
+   matches = [
+      ...(ingredientSachetItemMatches?.data
+         ?.matches_ingredientSachetItemMatch || []),
+   ]
+
+   console.log('helper', matches)
+
+   return [matches, err]
 }
 
 async function updateIngredientSupplierItemMatch(variables) {
@@ -379,6 +431,25 @@ async function updateIngredientSachetItemMatch(variables) {
       ) {
          update_matches_ingredientSachetItemMatch(where: $where, _set: $set) {
             affected_rows
+            returning {
+               id
+               isApproved
+               ingredient {
+                  id
+                  name
+                  processings {
+                     sachets {
+                        id
+                        rawingredient_sachets {
+                           rawIngredient {
+                              id
+                              data
+                           }
+                        }
+                     }
+                  }
+               }
+            }
          }
       }
    `
@@ -391,8 +462,8 @@ async function updateIngredientSachetItemMatch(variables) {
       }),
    }).then(r => r.json())
 
-   if (response?.data?.update_matches_sachetSachetItemMatch?.affected_rows)
-      return 'Updated!'
+   if (response?.data?.update_matches_ingredientSachetItemMatch?.affected_rows)
+      return response?.data?.update_matches_ingredientSachetItemMatch?.returning[0]
 
    console.error('error updating ingredienSachetItemMatch', response?.errors)
 
@@ -435,4 +506,5 @@ export default {
    updateSachetIngredientSachet,
    updateSachetSupplierItemMatch,
    getRecipeRawIngredient,
+   getIngredientSachetItemMatches,
 }
