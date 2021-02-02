@@ -9,8 +9,13 @@ import {
    Text,
    TunnelHeader,
    Toggle,
+   HorizontalTabs,
+   HorizontalTabList,
+   HorizontalTab,
+   HorizontalTabPanel,
+   HorizontalTabPanels,
 } from '@dailykit/ui'
-import React from 'react'
+import React, { useCallback } from 'react'
 import { toast } from 'react-toastify'
 
 import {
@@ -36,7 +41,22 @@ export default function SachetItemMatches({ close, sachetItemId }) {
          />
 
          <TunnelBody>
-            <SachetSachetItemMatches sachetItemId={sachetItemId} />
+            <HorizontalTabs>
+               <HorizontalTabList>
+                  <HorizontalTab>Ingredients</HorizontalTab>
+                  <HorizontalTab>Sachets</HorizontalTab>
+               </HorizontalTabList>
+
+               <HorizontalTabPanels>
+                  <HorizontalTabPanel>
+                     <IngredientSachetItemMatches sachetItemId={sachetItemId} />
+                  </HorizontalTabPanel>
+
+                  <HorizontalTabPanel>
+                     <SachetSachetItemMatches sachetItemId={sachetItemId} />
+                  </HorizontalTabPanel>
+               </HorizontalTabPanels>
+            </HorizontalTabs>
          </TunnelBody>
       </>
    )
@@ -127,6 +147,127 @@ function SachetSachetItemMatches({ sachetItemId }) {
                   </SectionTabs>
                </SectionTabPanel>
             ))}
+         </SectionTabPanels>
+      </SectionTabs>
+   )
+}
+
+function IngredientSachetItemMatches({ sachetItemId }) {
+   const {
+      error,
+      ingredientSachetItemMatches,
+      setApproved,
+      loading,
+   } = useAnykitMatches({
+      sachetId: sachetItemId,
+      showIngredientSachetItemMatches: true,
+   })
+
+   const getParsedFrom = useCallback(
+      match => {
+         const result = []
+
+         match.ingredient.processings.forEach(proc => {
+            proc.sachets.forEach(sachet => {
+               sachet.rawingredient_sachets.forEach(rs => {
+                  result.push({
+                     ...rs.rawIngredient,
+                     matchId: match.id,
+                     isApproved: match.isApproved,
+                  })
+               })
+            })
+         })
+
+         return result
+      },
+      [ingredientSachetItemMatches]
+   )
+
+   const handleSetApproved = async rawIng => {
+      const message = await setApproved(rawIng.matchId, !rawIng.isApproved, {
+         isSachetMatch: false,
+      })
+
+      if (typeof message === 'string') toast.info(message)
+   }
+
+   if (error) {
+      logger(error)
+      return <ErrorState />
+   }
+
+   if (loading) return <InlineLoader />
+
+   if (!ingredientSachetItemMatches.length)
+      return <ErrorState message="No matches found!" />
+
+   return (
+      <SectionTabs>
+         <SectionTabList>
+            {ingredientSachetItemMatches.map(ing => (
+               <SectionTab key={ing.id}>
+                  <Flex padding="14px" style={{ textAlign: 'left' }}>
+                     {ing.ingredient?.name}
+                  </Flex>
+               </SectionTab>
+            ))}
+         </SectionTabList>
+         <SectionTabPanels>
+            {ingredientSachetItemMatches.map(ing => {
+               const rawIngs = getParsedFrom(ing)
+               return (
+                  <SectionTabPanel key={ing.id}>
+                     <SectionTabs>
+                        <SectionTabList>
+                           <Text as="subtitle">Parsed from </Text>
+                           <Spacer size="8px" />
+                           {rawIngs.map(rawIng => (
+                              <SectionTab key={rawIng.id}>
+                                 <Flex
+                                    padding="14px"
+                                    style={{ textAlign: 'left' }}
+                                 >
+                                    {rawIng.data}
+                                 </Flex>
+                              </SectionTab>
+                           ))}
+                        </SectionTabList>
+                        <SectionTabPanels>
+                           {rawIngs.map(rawIng => {
+                             console.log(rawIng)
+                              return (
+                                 <SectionTabPanel key={rawIng.id}>
+                                    <Flex
+                                       container
+                                       justifyContent="space-between"
+                                    >
+                                       <Flex>
+                                          <Text as="h3">Used in Recipes</Text>
+                                          <Spacer size="8px" />
+                                          <RecipeSource
+                                             rawIngredientId={rawIng.id}
+                                          />
+                                       </Flex>
+                                       <Spacer xAxis size="18px" />
+                                       <Flex>
+                                          <Toggle
+                                             checked={rawIng.isApproved}
+                                             label="Is Approved"
+                                             setChecked={() =>
+                                                handleSetApproved(rawIng)
+                                             }
+                                          />
+                                       </Flex>
+                                    </Flex>
+                                 </SectionTabPanel>
+                              )
+                           })}
+                        </SectionTabPanels>
+                     </SectionTabs>
+                  </SectionTabPanel>
+               )
+            })}
          </SectionTabPanels>
       </SectionTabs>
    )
