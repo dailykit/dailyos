@@ -26,9 +26,9 @@ import {
 import Serving from './Serving'
 import validate from '../validate'
 import { usePlan } from '../state'
-import { useTabs } from '../../../../context'
 import { Header, Section, Wrapper } from '../styled'
 import { logger } from '../../../../../../shared/utils'
+import { useTabs } from '../../../../../../shared/providers'
 import {
    Tooltip,
    ErrorState,

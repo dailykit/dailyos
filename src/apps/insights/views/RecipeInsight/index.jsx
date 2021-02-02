@@ -1,12 +1,14 @@
 import React from 'react'
-import { StyledWrapper } from '../styled'
-import Insight from '../../../../shared/components/Insight'
+import { Flex } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
 
+import { useTabs } from '../../../../shared/providers'
+import { Insight, InlineLoader } from '../../../../shared/components'
+
 import { INSIGHTS } from '../../graphql'
-import { Flex } from '@dailykit/ui'
 
 const ReferralPlansListing = () => {
+   const { tab, addTab } = useTabs()
    const {
       data: { insights_insights: insights = [] } = {},
       loading,
@@ -16,17 +18,24 @@ const ReferralPlansListing = () => {
       },
    })
 
-   if (loading) return <p>Loading...</p>
+   React.useEffect(() => {
+      if (!tab) {
+         addTab('Recipe Insights', '/insights/recipe')
+      }
+   }, [tab, addTab])
+
+   if (loading) return <InlineLoader />
 
    return (
-      <StyledWrapper>
+      <Flex
+         padding="16px"
+         overflowY="auto"
+         height="calc(100vh - 40px)"
+         style={{ background: '#ececec' }}
+      >
          {insights.map(insight => {
             return (
-               <Flex
-                  key={insight.identifier}
-                  width="calc(100% - 64px)"
-                  margin="0 auto"
-               >
+               <Flex key={insight.identifier}>
                   <Insight
                      identifier={insight.identifier}
                      includeChart
@@ -38,7 +47,7 @@ const ReferralPlansListing = () => {
                </Flex>
             )
          })}
-      </StyledWrapper>
+      </Flex>
    )
 }
 

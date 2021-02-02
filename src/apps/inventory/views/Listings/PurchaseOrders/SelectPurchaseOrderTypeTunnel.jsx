@@ -10,7 +10,7 @@ import {
    ITEM_PURCHASE_ORDERS_CREATE_TUNNEL,
    PACKAGING_PURCHASE_ORDERS_CREATE_TUNNEL,
 } from '../../../constants/infoMessages'
-import { useTabs } from '../../../context'
+import { useTabs } from '../../../../../shared/providers'
 import {
    CREATE_ITEM_PURCHASE_ORDER,
    CREATE_PURCHASE_ORDER,

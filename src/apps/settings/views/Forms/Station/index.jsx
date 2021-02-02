@@ -15,15 +15,14 @@ import {
    HorizontalTabPanels,
 } from '@dailykit/ui'
 
-import { useTabs } from '../../../context'
-import { STATIONS } from '../../../graphql'
-
 import { TabContent } from './styled'
 import { Users } from './sections/Users'
 import { Scales } from './sections/Scales'
+import { STATIONS } from '../../../graphql'
 import { logger } from '../../../../../shared/utils'
 import { KotPrinters } from './sections/KotPrinters'
 import { LabelPrinters } from './sections/LabelPrinters'
+import { useTabs } from '../../../../../shared/providers'
 import { InlineLoader, Tooltip } from '../../../../../shared/components'
 
 const StationForm = () => {

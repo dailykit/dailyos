@@ -10,9 +10,11 @@ import InsightDashboard from './InsightDashboard'
 import Gallery from './Gallery'
 import WebBuilder from './WebBuilder'
 import DragNDrop from './DragNDrop'
+import Insight from './Insight'
 
 export {
    Lang,
+   Insight,
    Nutrition,
    BasicInfo,
    HorizontalCard,
@@ -34,3 +36,5 @@ export * from './OperationConfig'
 export * from './Tooltip'
 export * from './ErrorState'
 export * from './RedirectBanner'
+export * from './Sidebar'
+export * from './TabBar'

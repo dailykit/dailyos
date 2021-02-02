@@ -15,9 +15,7 @@ import {
 
 // shared dir imports
 import { Tooltip } from '../../../../../shared/components'
-
-// context imports
-import { useTabs } from '../../../context'
+import { useTabs } from '../../../../../shared/providers'
 
 // local imports
 import { AddIcon } from '../../../assets/icons'

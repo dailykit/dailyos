@@ -1,9 +1,9 @@
 import React, { useRef, useState, useEffect, useContext } from 'react'
+import { toast } from 'react-toastify'
 import { Text, Loader, Flex, IconButton } from '@dailykit/ui'
 import { useSubscription, useQuery, useMutation } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { useLocation } from 'react-router-dom'
-import { useTabs } from '../../../context'
 import { StyledWrapper } from './styled'
 import { HeadingTile } from '../../../components'
 import BrandContext from '../../../context/Brand'
@@ -15,10 +15,9 @@ import {
 } from '../../../graphql'
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
-import { useTooltip } from '../../../../../shared/providers'
+import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { currencyFmt, logger } from '../../../../../shared/utils'
 import options from '../../tableOptions'
-import { toast } from 'react-toastify'
 
 const CustomerListing = () => {
    const location = useLocation()

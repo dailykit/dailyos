@@ -1,11 +1,11 @@
 import React from 'react'
-import { useSubscription } from '@apollo/react-hooks'
 import { DashboardTile } from '@dailykit/ui'
-
 import { useTranslation } from 'react-i18next'
+import { useSubscription } from '@apollo/react-hooks'
+
 import { SAFETY_CHECKS_COUNT } from '../../graphql'
 import { StyledCardList, StyledHome } from './styled'
-import { useTabs } from '../../context'
+import { useTabs } from '../../../../shared/providers'
 
 const address = 'apps.safety.views.home.'
 

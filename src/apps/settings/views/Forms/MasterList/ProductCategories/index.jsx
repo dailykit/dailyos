@@ -15,10 +15,9 @@ import {
 
 import { Add } from './tunnels'
 import { MASTER } from '../../../../graphql'
-import { useTabs } from '../../../../context'
 import { logger } from '../../../../../../shared/utils'
 import tableOptions from '../../../Listings/tableOption'
-import { useTooltip } from '../../../../../../shared/providers'
+import { useTooltip, useTabs } from '../../../../../../shared/providers'
 import { AddIcon, DeleteIcon } from '../../../../../../shared/assets/icons'
 import {
    Tooltip,
@@ -100,7 +99,7 @@ const ProductCategoriesForm = () => {
       return <ErrorState />
    }
    return (
-      <Flex width="calc(100vw - 64px)" maxWidth="1280px" margin="0 auto">
+      <Flex width="calc(100% - 32px)" maxWidth="1280px" margin="0 auto">
          <Flex
             as="header"
             container
