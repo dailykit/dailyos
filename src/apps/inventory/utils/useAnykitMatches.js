@@ -23,6 +23,7 @@ export const useAnykitMatches = ({
       ingredientSachetItemMatches,
       setIngredientSachetItemMatches,
    ] = useState([])
+   const [ingredientSachetMatches, setIngredientSachetMatches] = useState([])
    const [loading, setLoading] = useState(false)
 
    const controller = new window.AbortController()
@@ -75,6 +76,22 @@ export const useAnykitMatches = ({
                return
             }
             setIngredientSachetItemMatches(matches)
+            return
+         }
+
+         if (showIngredientSachetMatches) {
+            const [matches, err] = await helpers.getIngredientSachetMatches(
+               sachetId,
+               controller
+            )
+
+            setLoading(false)
+
+            if (err) {
+               setError(err)
+               return
+            }
+            setIngredientSachetMatches(matches)
             return
          }
 
@@ -195,5 +212,7 @@ export const useAnykitMatches = ({
       loading,
       setApproved,
       getRecipeByRawIngredient,
+      ingredientSachetItemMatches,
+      ingredientSachetMatches,
    }
 }
