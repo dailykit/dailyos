@@ -188,6 +188,24 @@ export const useAnykitMatches = ({
 
          return response || 'Unexpected error occured!'
       }
+
+      if (showIngredientSachetMatches) {
+         // response is the returned match that got updated
+         response = await helpers.updateSachetIngredientSachet(vars)
+
+         // !string is the response from the fired mutation.
+         if (typeof response !== 'string') {
+            const oldMatches = ingredientSachetMatches.filter(
+               m => m.id !== response.id
+            )
+
+            setIngredientSachetMatches([...oldMatches, response])
+
+            response = 'Match updated successfully!'
+         }
+
+         return response || 'Unexpected error occured!'
+      }
    }
 
    const getRecipeByRawIngredient = async rawIngredientId => {

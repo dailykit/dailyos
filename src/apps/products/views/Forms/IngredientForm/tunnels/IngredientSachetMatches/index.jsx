@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react'
-import {toast} from 'react-toastify'
+import React, { useState, useEffect } from 'react'
+import { toast } from 'react-toastify'
 import {
    Flex,
    SectionTab,
@@ -45,8 +45,6 @@ const IngredientSachetMatches = ({ sachetId, close }) => {
       return <ErrorState />
    }
 
-   console.log(ingredientSachetMatches)
-
    return (
       <>
          <TunnelHeader
@@ -72,7 +70,6 @@ const IngredientSachetMatches = ({ sachetId, close }) => {
                </SectionTabList>
                <SectionTabPanels>
                   {ingredientSachetMatches.map(match => {
-                     console.log('isApproved', match.isApproved)
                      return (
                         <SectionTabPanel key={match.id}>
                            <SectionTabs>
@@ -133,7 +130,7 @@ const IngredientSachetMatches = ({ sachetId, close }) => {
    )
 }
 
-function RecipeSource({ rawIngredientId })  {
+function RecipeSource({ rawIngredientId }) {
    const [recipes, setRecipes] = useState([])
    const { getRecipeByRawIngredient } = useAnykitMatches({})
 
