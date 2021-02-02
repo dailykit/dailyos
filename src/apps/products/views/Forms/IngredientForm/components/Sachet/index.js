@@ -8,6 +8,10 @@ import {
    Form,
    Flex,
    Spacer,
+   TextButton,
+   Tunnels,
+   Tunnel,
+   useTunnel,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 
@@ -19,6 +23,8 @@ import { currencyFmt, logger } from '../../../../../../../shared/utils'
 import { CloseIcon, EditIcon, TickIcon } from '../../../../../assets/icons'
 import { Nutrition, Tooltip } from '../../../../../../../shared/components'
 
+import { IngredientSachetMatchesTunnel } from '../../tunnels'
+
 const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
@@ -28,6 +34,8 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
       state.ingredientProcessings[ingredientState.processingIndex]
          .ingredientSachets[ingredientState.sachetIndex]
    )
+
+   const [anykitMatches, openAnykitMatches, closeAnykitMatches] = useTunnel(1)
 
    React.useEffect(() => {
       if (
@@ -121,7 +129,21 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
 
    return (
       <>
+         <Tunnels tunnels={anykitMatches}>
+            <Tunnel layer={1} size="full">
+               <IngredientSachetMatchesTunnel
+                  sachetId={sachet.id}
+                  close={closeAnykitMatches}
+               />
+            </Tunnel>
+         </Tunnels>
+
          <Container bottom="32">
+            <Flex container justifyContent="flex-end">
+               <TextButton type="outline" onClick={() => openAnykitMatches(1)}>
+                  Show Anykit Matches
+               </TextButton>
+            </Flex>
             <Grid>
                <Flex container alignItems="center">
                   <span>

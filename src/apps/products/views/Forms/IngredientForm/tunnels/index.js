@@ -8,6 +8,7 @@ import EditItemTunnel from './EditItemTunnel'
 import EditPackagingTunnel from './EditPackagingTunnel'
 import PhotoTunnel from './PhotoTunnel'
 import PriceTunnel from './PriceTunnel'
+import IngredientSachetMatchesTunnel from './IngredientSachetMatches'
 
 export {
    ProcessingsTunnel,
@@ -20,4 +21,5 @@ export {
    EditPackagingTunnel,
    PhotoTunnel,
    PriceTunnel,
+   IngredientSachetMatchesTunnel,
 }
