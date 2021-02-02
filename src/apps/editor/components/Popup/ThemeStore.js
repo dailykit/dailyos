@@ -1,10 +1,64 @@
 import React from 'react'
+import axios from 'axios'
+import { toast } from 'react-toastify'
 import { Flex, Spacer, ComboButton } from '@dailykit/ui'
 import { EditIcon, CloseIcon } from '../../assets/Icons'
 import { Popup } from '../../../../shared/components'
 import { Cross, PhotoGrid } from './style'
+import { logger } from '../../../../shared/utils'
 
 export default function ThemeStore({ show, closePopup, setCreateType }) {
+   const [templates, setTemplates] = React.useState([])
+   const [isLoading, setIsLoading] = React.useState(false)
+   const copyTemplate = async templatePath => {
+      setIsLoading(true)
+      try {
+         await axios.post(
+            `https://test.dailykit.org/template/download${templatePath}`
+         )
+         setIsLoading(false)
+         closePopup()
+         toast.success('Template Copied successfully')
+      } catch (error) {
+         setIsLoading(false)
+         closePopup()
+         toast.error('Something went wrong while copying template')
+         logger(error)
+      }
+   }
+   React.useEffect(() => {
+      const getTemplates = async () => {
+         try {
+            const { data } = await axios({
+               url: process.env.REACT_APP_THEME_STORE_DATA_HUB_URI,
+               method: 'POST',
+               headers: {
+                  'Content-Type': 'application/json',
+                  'x-hasura-admin-secret':
+                     process.env
+                        .REACT_APP_THEME_STORE_HASURA_GRAPHQL_ADMIN_SECRET,
+               },
+               data: {
+                  query: `
+                  query getTemplateInfo {
+                     editor_template {
+                       id
+                       name
+                       route
+                       thumbnail
+                     }
+                   }         
+        `,
+               },
+            })
+            setTemplates(data?.data?.editor_template)
+         } catch (error) {
+            toast.error('Failed to load templates!')
+            logger(error)
+         }
+      }
+      getTemplates()
+   }, [])
    return (
       <Popup show={show} size="1200px">
          <Flex container alignItems="start" justifyContent="space-between">
@@ -12,16 +66,18 @@ export default function ThemeStore({ show, closePopup, setCreateType }) {
             <Cross onClick={() => closePopup()}>{CloseIcon}</Cross>
          </Flex>
          <PhotoGrid>
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(item => (
-               <div className="theme">
-                  <img
-                     key={item}
-                     src="https://dailykit-133-test.s3.amazonaws.com/images/18965-image (5).png"
-                     alt="template"
-                  />
+            {templates.map(template => (
+               <div className="theme" key={template.id}>
+                  <h3>{template.name}</h3>
+                  <img src={template.thumbnail} alt={template.name} />
                   <Spacer size="4px" />
-                  <ComboButton type="solid" size="sm">
-                     <EditIcon size="20" color="#fff" /> Edit
+                  <ComboButton
+                     type="ghost"
+                     size="sm"
+                     isLoading={isLoading}
+                     onClick={() => copyTemplate(template.route)}
+                  >
+                     <EditIcon size="20" /> Edit
                   </ComboButton>
                </div>
             ))}

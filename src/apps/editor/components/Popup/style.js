@@ -48,21 +48,23 @@ export const Type = styled.div`
 `
 export const PhotoGrid = styled.div`
    display: grid;
-   grid-template-columns: repeat(4, minmax(200px, 1fr));
+   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
    grid-gap: 1rem;
    max-height: 80vh;
    overflow: auto;
+   padding: 1rem;
    .theme {
       background: #ede7f6;
       padding: 1rem;
       border-radius: 8px;
+      &:hover {
+         box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.4);
+      }
       img {
          width: 100%;
       }
       button {
-         &:hover {
-            background: tomato;
-         }
+         color: #000;
       }
    }
 `
