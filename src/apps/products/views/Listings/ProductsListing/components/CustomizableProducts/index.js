@@ -9,9 +9,8 @@ import {
    ErrorState,
    InlineLoader,
 } from '../../../../../../../shared/components'
-import { useTooltip } from '../../../../../../../shared/providers'
+import { useTooltip, useTabs } from '../../../../../../../shared/providers'
 import { logger } from '../../../../../../../shared/utils'
-import { useTabs } from '../../../../../context'
 import {
    DELETE_CUSTOMIZABLE_PRODUCTS,
    S_CUSTOMIZABLE_PRODUCTS,

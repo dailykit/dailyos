@@ -2,10 +2,19 @@ import React from 'react'
 import _, { isEmpty } from 'lodash'
 
 import { useConfig } from '../../context'
-import { Wrapper, Section, StatusBadge } from './styled'
-import { LabelPrinterIcon, KotPrinterIcon, ScaleIcon } from '../../assets/icons'
+import { SettingsIcon } from '../../../../shared/assets/icons'
+import { Wrapper, Section, StatusBadge, StyledNav } from './styled'
+import {
+   BellIcon,
+   ScaleIcon,
+   LeftPanelIcon,
+   RightPanelIcon,
+   KotPrinterIcon,
+   LabelPrinterIcon,
+} from '../../assets/icons'
 
-const Footer = () => {
+const Footer = ({ isOpen, openPortal, closePortal, setPosition }) => {
+   const { state, dispatch } = useConfig()
    const {
       state: { current_station: station },
    } = useConfig()
@@ -14,7 +23,7 @@ const Footer = () => {
       return (
          <Wrapper>
             <Section title="Station">
-               Station: You're are not assigned to any station!
+               Station: You&apos;re are not assigned to any station!
             </Section>
          </Wrapper>
       )
@@ -80,6 +89,46 @@ const Footer = () => {
                />
             </Section>
          ) : null}
+         <StyledNav align="right">
+            <button
+               type="button"
+               title="Settings"
+               onClick={() =>
+                  state.tunnel.visible
+                     ? dispatch({
+                          type: 'TOGGLE_TUNNEL',
+                          payload: { visible: false },
+                       })
+                     : dispatch({
+                          type: 'TOGGLE_TUNNEL',
+                          payload: { visible: true },
+                       })
+               }
+            >
+               <SettingsIcon color="#000" size="20" />
+            </button>
+            <button
+               type="button"
+               title="Notifications"
+               onClick={e => (isOpen ? closePortal(e) : openPortal(e))}
+            >
+               <BellIcon color="#000" size="20" />
+            </button>
+            <button
+               type="button"
+               title="Panel on Left"
+               onClick={() => setPosition('left')}
+            >
+               <LeftPanelIcon color="#000" size="20" />
+            </button>
+            <button
+               type="button"
+               title="Panel on Right"
+               onClick={() => setPosition('right')}
+            >
+               <RightPanelIcon color="#000" size="20" />
+            </button>
+         </StyledNav>
       </Wrapper>
    )
 }

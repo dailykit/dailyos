@@ -3,7 +3,6 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Text, TunnelHeader, Tunnel, Tunnels, Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { TunnelBody, SolidTile } from './styled'
-import { useTabs } from '../../../../../context'
 import { CREATE_REWARD, CAMPAIGN_DATA } from '../../../../../graphql'
 import { logger } from '../../../../../../../shared/utils'
 import { Tooltip, InlineLoader } from '../../../../../../../shared/components'
@@ -15,7 +14,6 @@ export default function RewardTypeTunnel({
    openRewardTunnel,
    getRewardId,
 }) {
-   const { addTab } = useTabs()
    const context = useContext(CampaignContext)
 
    const [types, setTypes] = useState([])

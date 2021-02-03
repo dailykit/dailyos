@@ -21,11 +21,10 @@ import {
    CAMPAIGN_ACTIVE,
    DELETE_CAMPAIGN,
 } from '../../../graphql'
-import { useTabs } from '../../../context'
 import { StyledWrapper } from './styled'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
-import { useTooltip } from '../../../../../shared/providers'
+import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import CampaignTypeTunnel from './Tunnel'
 import options from '../../tableOptions'

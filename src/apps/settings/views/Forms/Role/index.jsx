@@ -16,8 +16,8 @@ import {
 } from '@dailykit/ui'
 
 import { ROLES } from '../../../graphql'
-import { useTabs } from '../../../context'
 import { Spacer } from '../../../../../shared/styled'
+import { useTabs } from '../../../../../shared/providers'
 import { Apps, AppsTunnel, Users, UsersTunnel } from './sections'
 import {
    ErrorState,

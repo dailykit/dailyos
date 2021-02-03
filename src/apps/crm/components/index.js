@@ -1,4 +1,3 @@
-import Tabs from './Tabs'
 import HeadingTile from './HeadingTile'
 import CustomerCard from './CustomerCard'
 import ContactInfoCard from './ContactInfoCard'
@@ -15,7 +14,6 @@ import {
 } from './CardAtTop'
 
 export {
-   Tabs,
    HeadingTile,
    CustomerCard,
    ContactInfoCard,

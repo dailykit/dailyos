@@ -12,7 +12,7 @@ import {
 } from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
 import { CloseIcon, TickIcon } from '../../../../assets/icons'
-import { useTabs } from '../../../../context'
+import { useTabs } from '../../../../../../shared/providers'
 import {
    ModifiersContext,
    reducers as modifiersReducers,
@@ -30,11 +30,13 @@ import {
 import { ResponsiveFlex, StyledFlex, StyledRule } from '../styled'
 import validator from '../validators'
 import { Assets, Description, Recipe } from './components'
+import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
 
 const address = 'apps.menu.views.forms.product.simplerecipeproduct.'
 
 export default function SimpleRecipeProduct() {
    const { t } = useTranslation()
+   const { initiatePriority } = useDnd()
 
    const { id: productId } = useParams()
 
@@ -70,6 +72,26 @@ export default function SimpleRecipeProduct() {
             ...title,
             value: data.subscriptionData.data.simpleRecipeProduct.name,
          })
+         const mealKitOptions = data.subscriptionData.data.simpleRecipeProduct.simpleRecipeProductOptions.filter(
+            ({ type }) => type === 'mealKit'
+         )
+         const readyToEatOptions = data.subscriptionData.data.simpleRecipeProduct.simpleRecipeProductOptions.filter(
+            ({ type }) => type === 'readyToEat'
+         )
+         if (mealKitOptions.length) {
+            initiatePriority({
+               tablename: 'simpleRecipeProductOption',
+               schemaname: 'products',
+               data: mealKitOptions,
+            })
+         }
+         if (readyToEatOptions.length) {
+            initiatePriority({
+               tablename: 'simpleRecipeProductOption',
+               schemaname: 'products',
+               data: readyToEatOptions,
+            })
+         }
       },
    })
 

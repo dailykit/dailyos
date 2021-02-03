@@ -1,6 +1,6 @@
 import React from 'react'
 import { TruckIcon } from '../../assets/icons'
-import { useTabs } from '../../context'
+import { useTabs } from '../../../../shared/providers'
 import {
    ActionButton,
    CardContent,

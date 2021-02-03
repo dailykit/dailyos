@@ -1,12 +1,11 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Flex, Form, Loader, Spacer, Text } from '@dailykit/ui'
+import { Flex, Form, Spacer, Text } from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../shared/utils'
 import { CloseIcon, TickIcon } from '../../../assets/icons'
-import { useTabs } from '../../../context'
 import {
    IngredientContext,
    reducers,
@@ -20,6 +19,7 @@ import {
    InlineLoader,
    Tooltip,
 } from '../../../../../shared/components'
+import { useTabs } from '../../../../../shared/providers'
 import { HeaderWrapper, InputTextWrapper } from './styled'
 
 const IngredientForm = () => {

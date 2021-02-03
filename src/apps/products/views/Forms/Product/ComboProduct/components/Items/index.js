@@ -20,8 +20,8 @@ import {
    useTunnel,
 } from '@dailykit/ui'
 import { ItemInfo, StyledTable } from './styled'
-import { useTabs } from '../../../../../../context'
-import { Tooltip } from '../../../../../../../../shared/components'
+import { useTabs } from '../../../../../../../../shared/providers'
+import { DragNDrop, Tooltip } from '../../../../../../../../shared/components'
 import { DeleteIcon, LinkIcon } from '../../../../../../assets/icons'
 import {
    currencyFmt,
@@ -167,68 +167,75 @@ const Items = ({ state }) => {
                         <PlusIcon color="#555b6e" />
                      </IconButton>
                   </SectionTabsListHeader>
-                  {state.comboProductComponents.map(component => (
-                     <React.Fragment key={component.id}>
-                        <Flex
-                           container
-                           alignItems="center"
-                           justifyContent="space-between"
-                        >
-                           <Text as="h4"> {component.label} </Text>
-                           <IconButton
-                              type="ghost"
-                              onClick={() => removeComponent(component)}
+                  <DragNDrop
+                     list={state.comboProductComponents}
+                     droppableId="comboProductComponentsDroppableId"
+                     tablename="comboProductComponent"
+                     schemaname="products"
+                  >
+                     {state.comboProductComponents.map(component => (
+                        <React.Fragment key={component.id}>
+                           <Flex
+                              container
+                              alignItems="center"
+                              justifyContent="space-between"
                            >
-                              <DeleteIcon color="#FF5A52" />
-                           </IconButton>
-                        </Flex>
-                        <SectionTab>
-                           {Boolean(
-                              component.customizableProduct ||
-                                 component.inventoryProduct ||
-                                 component.simpleRecipeProduct
-                           ) ? (
-                              <ItemInfo>
-                                 {Boolean(
-                                    component.simpleRecipeProduct?.assets
-                                       ?.images?.length ||
-                                       component.inventoryProduct?.assets
+                              <Text as="h4"> {component.label} </Text>
+                              <IconButton
+                                 type="ghost"
+                                 onClick={() => removeComponent(component)}
+                              >
+                                 <DeleteIcon color="#FF5A52" />
+                              </IconButton>
+                           </Flex>
+                           <SectionTab>
+                              {Boolean(
+                                 component.customizableProduct ||
+                                    component.inventoryProduct ||
+                                    component.simpleRecipeProduct
+                              ) ? (
+                                 <ItemInfo>
+                                    {Boolean(
+                                       component.simpleRecipeProduct?.assets
                                           ?.images?.length ||
-                                       component.customizableProduct?.assets
-                                          ?.images?.length
-                                 ) && (
-                                    <img
-                                       src={
-                                          component.simpleRecipeProduct?.assets
-                                             ?.images[0] ||
                                           component.inventoryProduct?.assets
-                                             ?.images[0] ||
+                                             ?.images?.length ||
                                           component.customizableProduct?.assets
-                                             ?.images[0]
-                                       }
-                                    />
-                                 )}
-                                 <h3>
-                                    {component.inventoryProduct?.name ||
-                                       component.simpleRecipeProduct?.name ||
-                                       component.customizableProduct?.name}
-                                 </h3>
-                                 <button
-                                    onClick={() => removeProduct(component)}
-                                 >
-                                    <DeleteIcon color="#fff" />
-                                 </button>
-                              </ItemInfo>
-                           ) : (
-                              <ButtonTile
-                                 type="secondary"
-                                 text="Add Product"
-                                 onClick={() => open(component.id)}
-                              />
-                           )}
-                        </SectionTab>
-                     </React.Fragment>
-                  ))}
+                                             ?.images?.length
+                                    ) && (
+                                       <img
+                                          src={
+                                             component.simpleRecipeProduct
+                                                ?.assets?.images[0] ||
+                                             component.inventoryProduct?.assets
+                                                ?.images[0] ||
+                                             component.customizableProduct
+                                                ?.assets?.images[0]
+                                          }
+                                       />
+                                    )}
+                                    <h3>
+                                       {component.inventoryProduct?.name ||
+                                          component.simpleRecipeProduct?.name ||
+                                          component.customizableProduct?.name}
+                                    </h3>
+                                    <button
+                                       onClick={() => removeProduct(component)}
+                                    >
+                                       <DeleteIcon color="#fff" />
+                                    </button>
+                                 </ItemInfo>
+                              ) : (
+                                 <ButtonTile
+                                    type="secondary"
+                                    text="Add Product"
+                                    onClick={() => open(component.id)}
+                                 />
+                              )}
+                           </SectionTab>
+                        </React.Fragment>
+                     ))}
+                  </DragNDrop>
                </SectionTabList>
                <SectionTabPanels>
                   {state.comboProductComponents.map(component => (

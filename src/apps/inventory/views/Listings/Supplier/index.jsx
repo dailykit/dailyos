@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import DeleteIcon from '../../../../../shared/assets/icons/Delete'
 import { Tooltip } from '../../../../../shared/components/Tooltip'
-import { useTooltip } from '../../../../../shared/providers'
+import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { logger, randomSuffix } from '../../../../../shared/utils/index'
 import { AddIcon } from '../../../assets/icons'
 import {
@@ -25,7 +25,6 @@ import {
    CONFIRM_DELETE_SUPPLIER,
    SUPPLIER_DELETED,
 } from '../../../constants/successMessages'
-import { useTabs } from '../../../context'
 import {
    ALL_SUPPLIERS_SUBSCRIPTION,
    CREATE_SUPPLIER,

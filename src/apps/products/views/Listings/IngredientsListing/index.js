@@ -17,10 +17,9 @@ import {
    InlineLoader,
    Tooltip,
 } from '../../../../../shared/components'
-import { useTooltip } from '../../../../../shared/providers'
+import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { logger, randomSuffix } from '../../../../../shared/utils'
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
-import { useTabs } from '../../../context'
 import {
    CREATE_INGREDIENT,
    DELETE_INGREDIENTS,
