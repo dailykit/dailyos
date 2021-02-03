@@ -16,7 +16,7 @@ import { Flex, ErrorBoundary } from '../../../../shared/components'
 
 const Main = () => {
    return (
-      <>
+      <main>
          <Route path="/order" exact>
             <AccessCheck
                title="home"
@@ -73,7 +73,7 @@ const Main = () => {
                <MealKitProduct />
             </AccessCheck>
          </Route>
-      </>
+      </main>
    )
 }
 
