@@ -29,9 +29,9 @@ export const FILE_LINKS = gql`
 `
 
 export const GET_FILES = gql`
-   subscription GET_FILES($linkedCss: [Int!]!, $fileType: String!) {
+   subscription GET_FILES($linkedFiles: [Int!]!, $fileType: String!) {
       editor_file_aggregate(
-         where: { id: { _nin: $linkedCss }, fileType: { _eq: $fileType } }
+         where: { id: { _nin: $linkedFiles }, fileType: { _eq: $fileType } }
       ) {
          nodes {
             id

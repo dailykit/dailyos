@@ -24,7 +24,7 @@ export default function LinkCss({
    const { loading, error } = useSubscription(GET_FILES, {
       variables: {
          fileType: 'js',
-         linkedCss: files,
+         linkedFiles: files,
       },
       onSubscriptionData: ({
          subscriptionData: { data: { editor_file_aggregate = [] } = {} } = {},
@@ -37,9 +37,9 @@ export default function LinkCss({
                type: file.fileType,
             }
          })
+         console.log(jsResult)
          setJsOptions(jsResult)
       },
-      skip: files.length === 0,
    })
 
    //mutation for linking js files

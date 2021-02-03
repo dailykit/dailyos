@@ -37,12 +37,8 @@ const Builder = React.forwardRef(
          return fileUrl
       })
       const [mount, setMount] = useState(false)
+      const [blocks, setBlocks] = useState([])
       const toggler = useRef(true)
-
-      // React.useEffect(() => {
-      //    setLinkedCssArray(linkedCss)
-      //    setLinkedJsArray(linkedJs)
-      // }, [CssArray, JsArray])
 
       // mutation for saving the template
       const updateCode = (updatedCode, filePath) => {
@@ -101,20 +97,58 @@ const Builder = React.forwardRef(
          }
       }, [])
 
-      // useEffect(() => {
-      //    if (editorRef.current) {
-      //       return () => {
-      //          console.log('before unmounting')
-      //          console.log('editor', editorRef.current)
-      //          const code =
-      //             editorRef.current.getHtml() +
-      //             `<style>+ ${editorRef.current.getCss()} +</style>`
-      //          onChangeContent(code)
-      //          editorRef.current.destroy()
-      //          console.log('after unmounting')
-      //       }
-      //    }
-      // }, [])
+      React.useEffect(() => {
+         const getBlocks = async () => {
+            try {
+               const { data } = await axios({
+                  url: process.env.REACT_APP_THEME_STORE_DATA_HUB_URI,
+                  method: 'POST',
+                  headers: {
+                     'Content-Type': 'application/json',
+                     'x-hasura-admin-secret':
+                        process.env
+                           .REACT_APP_THEME_STORE_HASURA_GRAPHQL_ADMIN_SECRET,
+                  },
+                  data: {
+                     query: `
+               query getBlocks {
+                  editor_block {
+                    category
+                    fileId
+                    name
+                    path
+                    assets
+                  }
+                }                
+           `,
+                  },
+               })
+               const blocksData = await Promise.all(
+                  data.data.editor_block.map(async block => {
+                     try {
+                        const blockContent = await axios.get(
+                           `https://test.dailykit.org/template/files${block.path}`
+                        )
+                        return {
+                           content: blockContent.data,
+                           assets: block.assets,
+                           name: block.name,
+                           category: block.category,
+                        }
+                     } catch (err) {
+                        console.log(err)
+                     }
+                  })
+               )
+
+               setBlocks(blocksData)
+            } catch (error) {
+               toast.error('Failed to load blocks!')
+               logger(error)
+            }
+         }
+         getBlocks()
+      }, [])
 
       React.useImperativeHandle(ref, () => ({
          func(action) {
@@ -156,6 +190,17 @@ const Builder = React.forwardRef(
          axios.get(`${url}?type=images`).then(data => {
             data.data.data.map(image => {
                return assetManager.add(image.url)
+            })
+         })
+
+         blocks.forEach(block => {
+            editor.BlockManager.add(block?.name, {
+               label: `<div>
+                   <img src="${block?.assets?.icon}" height="60px" width="60px"/>
+                   <div class="my-label-block">${block?.name}</div>
+                 </div>`,
+               content: block?.content,
+               category: block.category,
             })
          })
 
