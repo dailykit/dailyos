@@ -106,7 +106,6 @@ const CollectionsListing = () => {
             )
          },
          cssClass: 'colHover',
-         width: 150,
       },
       {
          title: t(address.concat('categories')),
@@ -129,7 +128,6 @@ const CollectionsListing = () => {
          field: 'rrule',
          hozAlign: 'left',
          headerHozAlign: 'left',
-         width: 150,
       },
       {
          title: 'Actions',

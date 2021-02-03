@@ -326,6 +326,7 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
       simpleRecipeProduct(id: $id) {
          id
          name
+         additionalText
          assets
          isValid
          isPublished
@@ -386,6 +387,7 @@ export const S_INVENTORY_PRODUCT = gql`
       inventoryProduct(id: $id) {
          id
          name
+         additionalText
          assets
          recommendations
          isValid
@@ -466,6 +468,7 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
       customizableProduct(id: $id) {
          id
          name
+         additionalText
          default
          isValid
          isPublished
@@ -540,6 +543,7 @@ export const S_COMBO_PRODUCT = gql`
       comboProduct(id: $id) {
          id
          name
+         additionalText
          description
          tags
          price

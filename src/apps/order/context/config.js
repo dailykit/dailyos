@@ -11,7 +11,7 @@ const ConfigContext = React.createContext()
 const initialState = {
    tunnel: { visible: false },
    stations: [],
-   current_station: {},
+   current_station: { id: null },
    scale: {
       weight_simulation: {
          app: 'order',

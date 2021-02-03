@@ -1,6 +1,6 @@
 import React from 'react'
 import { toast } from 'react-toastify'
-import { ReactTabulator } from '@dailykit/react-tabulator'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import {
    Form,
@@ -19,12 +19,14 @@ import { usePlan } from '../state'
 import tableOptions from '../../../../tableOption'
 import { logger } from '../../../../../../shared/utils'
 import { useTooltip } from '../../../../../../shared/providers'
+import { DeleteIcon } from '../../../../../../shared/assets/icons'
 import {
    Tooltip,
    ErrorState,
    InlineLoader,
 } from '../../../../../../shared/components'
 import {
+   ZIPCODE,
    SUBSCRIPTION_ZIPCODES,
    INSERT_SUBSCRIPTION_ZIPCODES,
 } from '../../../../graphql'
@@ -33,6 +35,15 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
    const tableRef = React.useRef()
    const { tooltip } = useTooltip()
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
+   const [remove] = useMutation(ZIPCODE.DELETE, {
+      onCompleted: () => {
+         toast.success('Successfully deleted the zipcode!')
+      },
+      onError: error => {
+         toast.success('Failed to delete the zipcode!')
+         logger(error)
+      },
+   })
    const {
       error,
       loading,
@@ -69,6 +80,28 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
          },
       },
       {
+         title: 'Delivery From',
+         headerFilter: true,
+         headerTooltip: column => {
+            const identifier = 'listing_delivery_from_column_zipcode'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+         formatter: cell => cell.getData().deliveryTime.from,
+      },
+      {
+         title: 'Delivery To',
+         headerFilter: true,
+         headerTooltip: column => {
+            const identifier = 'listing_delivery_from_column_zipcode'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+         formatter: cell => cell.getData().deliveryTime.to,
+      },
+      {
          field: 'isActive',
          title: 'Active',
          formatter: 'tick',
@@ -78,6 +111,15 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+      },
+      {
+         width: 150,
+         title: 'Actions',
+         headerFilter: false,
+         headerSort: false,
+         hozAlign: 'center',
+         cssClass: 'center-text',
+         formatter: reactFormatter(<Delete remove={remove} />),
       },
    ]
 
@@ -116,9 +158,11 @@ export default DeliveryAreas
 
 const AreasTunnel = ({ tunnels, closeTunnel }) => {
    const { state } = usePlan()
+   const [from, setFrom] = React.useState('')
+   const [to, setTo] = React.useState('')
    const [price, setPrice] = React.useState('')
    const [zipcodes, setZipcodes] = React.useState('')
-   const [insertSubscriptionZipcodes] = useMutation(
+   const [insertSubscriptionZipcodes, { loading }] = useMutation(
       INSERT_SUBSCRIPTION_ZIPCODES,
       {
          onCompleted: () => {
@@ -137,6 +181,10 @@ const AreasTunnel = ({ tunnels, closeTunnel }) => {
       const objects = zips.map(zip => ({
          zipcode: zip,
          deliveryPrice: Number(price),
+         deliveryTime: {
+            from,
+            to,
+         },
          subscriptionId: state.subscription.id,
       }))
       insertSubscriptionZipcodes({
@@ -152,7 +200,12 @@ const AreasTunnel = ({ tunnels, closeTunnel }) => {
             <TunnelHeader
                title="Add Zipcodes"
                close={() => closeTunnel(1)}
-               right={{ action: () => save(), title: 'Save' }}
+               right={{
+                  title: 'Save',
+                  isLoading: loading,
+                  action: () => save(),
+                  disabled: !zipcodes || !price || !from || !to,
+               }}
                tooltip={
                   <Tooltip identifier="form_subscription_tunnel_zipcode_heading" />
                }
@@ -190,8 +243,57 @@ const AreasTunnel = ({ tunnels, closeTunnel }) => {
                      onChange={e => setPrice(e.target.value)}
                   />
                </Form.Group>
+               <Spacer size="24px" />
+               <Form.Group>
+                  <Form.Label htmlFor="from" title="from">
+                     <Flex container alignItems="center">
+                        Delivery From*
+                        <Tooltip identifier="form_subscription_tunnel_zipcode_field_delivery_from" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Time
+                     id="from"
+                     name="from"
+                     value={from}
+                     placeholder="Enter delivery from"
+                     onChange={e => setFrom(e.target.value)}
+                  />
+               </Form.Group>
+               <Spacer size="24px" />
+               <Form.Group>
+                  <Form.Label htmlFor="to" title="to">
+                     <Flex container alignItems="center">
+                        Delivery To*
+                        <Tooltip identifier="form_subscription_tunnel_zipcode_field_delivery_to" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Time
+                     id="to"
+                     name="to"
+                     value={to}
+                     placeholder="Enter delivery to"
+                     onChange={e => setTo(e.target.value)}
+                  />
+               </Form.Group>
             </Flex>
          </Tunnel>
       </Tunnels>
+   )
+}
+
+const Delete = ({ cell, remove }) => {
+   const removeItem = () => {
+      const { subscriptionId, zipcode } = cell.getData()
+      if (
+         window.confirm(`Are your sure you want to delete ${zipcode} zipcode?`)
+      ) {
+         remove({ variables: { subscriptionId, zipcode } })
+      }
+   }
+
+   return (
+      <IconButton size="sm" type="ghost" onClick={removeItem}>
+         <DeleteIcon color="#FF5A52" />
+      </IconButton>
    )
 }

@@ -134,7 +134,6 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
       {
          title: 'Name',
          field: 'name',
-         width: 150,
          headerFilter: true,
          cellClick: (e, cell) => {
             const { name, id } = cell._cell.row.data
@@ -148,7 +147,7 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
          },
          cssClass: 'colHover',
       },
-      { title: 'Author', width: 150, field: 'author', headerFilter: true },
+      { title: 'Author', field: 'author', headerFilter: true },
       {
          title: 'Cooking Time',
          field: 'cookingTime',

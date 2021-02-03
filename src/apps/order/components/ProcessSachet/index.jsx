@@ -286,7 +286,7 @@ export const ProcessSachet = () => {
                   <span>
                      <ScaleIcon size={24} color="#fff" />
                   </span>
-                  {isNull(sachet.labelTemplateId) && (
+                  {!isNull(sachet.labelTemplateId) && (
                      <button onClick={() => print()}>Print Label</button>
                   )}
                </header>

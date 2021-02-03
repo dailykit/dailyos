@@ -20,6 +20,7 @@ import { UserIcon } from '../../../assets/icons'
 import ProductModifiers from './modifiers'
 import { MUTATIONS } from '../../../graphql'
 import { logger } from '../../../../../shared/utils'
+import { useAccess } from '../../../../../shared/providers'
 import { Legend, Styles, Scroll, StyledProductTitle } from '../styled'
 import { ErrorState, InlineLoader } from '../../../../../shared/components'
 
@@ -31,6 +32,8 @@ export const ReadyToEats = ({
 }) => {
    const { state } = useConfig()
    const { t } = useTranslation()
+   const { isSuperUser } = useAccess()
+   const { state: config } = useConfig()
    const [label, setLabel] = React.useState('')
    const [current, setCurrent] = React.useState({})
 
@@ -93,6 +96,23 @@ export const ReadyToEats = ({
       }
    }, [loading, readytoeats, setCurrent])
 
+   const isOrderConfirmed =
+      current?.order?.isAccepted && !current?.order?.isRejected
+   const hasStationAccess = () => {
+      let access = false
+      if (isOrderConfirmed) {
+         access = true
+      }
+      if (isSuperUser) {
+         access = true
+      } else if (current?.assemblyStationId === config.current_station?.id) {
+         access = true
+      } else {
+         access = false
+      }
+      return access
+   }
+
    if (loading) return <InlineLoader />
    if (error)
       return <ErrorState message="Failed to fetch ready to eat products!" />
@@ -123,11 +143,16 @@ export const ReadyToEats = ({
                <TextButton
                   size="sm"
                   type="solid"
+                  hasAccess={hasStationAccess()}
                   disabled={current?.assemblyStatus === 'COMPLETED'}
-                  fallBackMessage="Pending order confirmation!"
-                  hasAccess={Boolean(
-                     current?.order?.isAccepted && !current?.order?.isRejected
-                  )}
+                  fallBackMessage={
+                     isOrderConfirmed
+                        ? current?.assemblyStationId ===
+                          config.current_station?.id
+                           ? 'Mark Packed'
+                           : 'You do not have access to pack this product'
+                        : 'Pending order confirmation!'
+                  }
                   onClick={() =>
                      update({
                         variables: {
@@ -147,14 +172,19 @@ export const ReadyToEats = ({
                <TextButton
                   size="sm"
                   type="solid"
+                  hasAccess={hasStationAccess()}
                   disabled={
                      current?.isAssembled ||
                      current?.assemblyStatus !== 'COMPLETED'
                   }
-                  fallBackMessage="Pending order confirmation!"
-                  hasAccess={Boolean(
-                     current?.order?.isAccepted && !current?.order?.isRejected
-                  )}
+                  fallBackMessage={
+                     isOrderConfirmed
+                        ? current?.assemblyStationId ===
+                          config.current_station?.id
+                           ? ''
+                           : 'You do not have access to assemble this product'
+                        : 'Pending order confirmation!'
+                  }
                   onClick={() =>
                      update({
                         variables: {

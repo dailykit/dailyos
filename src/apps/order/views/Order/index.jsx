@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
 import {
+   Tag,
    Flex,
    Text,
    Spacer,
@@ -22,9 +23,9 @@ import {
 
 import { Styles } from './styled'
 import { formatDate } from '../../utils'
-import { useOrder, useTabs } from '../../context'
 import { QUERIES, MUTATIONS } from '../../graphql'
 import { PrintIcon, UserIcon } from '../../assets/icons'
+import { useConfig, useOrder, useTabs } from '../../context'
 import { currencyFmt, logger } from '../../../../shared/utils'
 import { MealKits, Inventories, ReadyToEats } from './sections'
 import {
@@ -43,6 +44,7 @@ const Order = () => {
    const { t } = useTranslation()
    const params = useParams()
    const { tab, addTab } = useTabs()
+   const { state: config } = useConfig()
    const { state, switchView, dispatch } = useOrder()
    const [isThirdParty, setIsThirdParty] = React.useState(false)
    const [updateOrder] = useMutation(MUTATIONS.ORDER.UPDATE, {
@@ -69,16 +71,9 @@ const Order = () => {
       {
          variables: {
             id: params.id,
-            ...(!isEmpty(state.orders.where?._or) && {
-               packingStationId: {
-                  _eq:
-                     state.orders.where?._or[0].orderInventoryProducts
-                        .assemblyStationId._eq,
-               },
+            ...(config.current_station?.id && {
                assemblyStationId: {
-                  _eq:
-                     state.orders.where?._or[0].orderInventoryProducts
-                        .assemblyStationId._eq,
+                  _eq: config.current_station?.id,
                },
             }),
          },
@@ -97,16 +92,9 @@ const Order = () => {
    } = useSubscription(QUERIES.ORDER.MEALKITS, {
       variables: {
          orderId: params.id,
-         ...(!isEmpty(state.orders.where?._or) && {
+         ...(config.current_station?.id && {
             packingStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-            assemblyStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
+               _eq: config.current_station?.id,
             },
          }),
       },
@@ -119,16 +107,9 @@ const Order = () => {
    } = useSubscription(QUERIES.ORDER.READY_TO_EAT.LIST, {
       variables: {
          orderId: params.id,
-         ...(!isEmpty(state.orders.where?._or) && {
+         ...(config.current_station?.id && {
             packingStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-            assemblyStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
+               _eq: config.current_station?.id,
             },
          }),
       },
@@ -141,16 +122,9 @@ const Order = () => {
    } = useSubscription(QUERIES.ORDER.INVENTORY.LIST, {
       variables: {
          orderId: params.id,
-         ...(!isEmpty(state.orders.where?._or) && {
+         ...(config.current_station?.id && {
             packingStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
-            },
-            assemblyStationId: {
-               _eq:
-                  state.orders.where?._or[0].orderInventoryProducts
-                     .assemblyStationId._eq,
+               _eq: config.current_station?.id,
             },
          }),
       },
@@ -243,6 +217,12 @@ const Order = () => {
          >
             <Flex container alignItems="center">
                <Text as="h4">ORD{order?.id}</Text>
+               {!isThirdParty && Boolean(order?.cart?.isTest) && (
+                  <>
+                     <Spacer size="8px" xAxis />
+                     <Tag>Test</Tag>
+                  </>
+               )}
                {!sourceLoading && isThirdParty && !isEmpty(orderSource) && (
                   <>
                      <Spacer size="16px" xAxis />
@@ -318,8 +298,8 @@ const Order = () => {
                   </Text>
                </Flex>
                {!isThirdParty && (
-                <>
-                 {/* 
+                  <>
+                     {/* 
                     <Spacer size="32px" xAxis />
                      <Flex as="section" container alignItems="center">
                         <Flex container alignItems="center">
@@ -337,15 +317,18 @@ const Order = () => {
                         </Text>
                      </Flex> 
                   */}
-                   <Spacer size="32px" xAxis />
-                   <Flex as="section" container alignItems="center">
-                      <TimeSlot
-                         type={order?.fulfillmentType}
-                         data={{ pickup: order.pickup, dropoff: order.dropoff }}
-                      />
-                   </Flex>
-                </>
-               )} 
+                     <Spacer size="32px" xAxis />
+                     <Flex as="section" container alignItems="center">
+                        <TimeSlot
+                           type={order?.fulfillmentType}
+                           data={{
+                              pickup: order.pickup,
+                              dropoff: order.dropoff,
+                           }}
+                        />
+                     </Flex>
+                  </>
+               )}
             </Flex>
          </Flex>
          <Spacer size="16px" />
