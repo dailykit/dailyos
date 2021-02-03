@@ -45,9 +45,9 @@ export const StyledWrapper = styled.div(
       }
       @media only screen and (orientation: portrait) {
          grid-template-areas: 'main' 'bottomBar' 'footer';
-         grid-template-columns: 100vw;
-         grid-template-rows: calc(100vh - 120px) 80px 40px;
-         > main > main {
+         grid-template-columns: 100%;
+         grid-template-rows: calc(100vh - 160px) 80px 40px;
+         > main {
             height: calc(100vh - 160px);
          }
       }

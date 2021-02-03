@@ -135,6 +135,25 @@ const App = () => {
          <Main />
          <Footer />
          <BottomQuickInfoBar openOrderSummaryTunnel={openOrderSummaryTunnel} />
+         <OrderSummaryTunnel>
+            <ErrorBoundary>
+               <Tunnels mt={0} tunnels={orderSummaryTunnels}>
+                  <StyledTunnel layer="1" size="md">
+                     {state.current_view === 'SUMMARY' && (
+                        <OrderSummary
+                           closeOrderSummaryTunnel={closeOrderSummaryTunnel}
+                        />
+                     )}
+                     {state.current_view === 'SACHET_ITEM' && (
+                        <ProcessSachet
+                           closeOrderSummaryTunnel={closeOrderSummaryTunnel}
+                        />
+                     )}
+                  </StyledTunnel>
+               </Tunnels>
+            </ErrorBoundary>
+         </OrderSummaryTunnel>
+
          {isOpen && (
             <Portal>
                <Notifications
@@ -165,24 +184,6 @@ const App = () => {
                </Tunnel>
             </Tunnels>
          </ErrorBoundary>
-         <OrderSummaryTunnel>
-            <ErrorBoundary>
-               <Tunnels mt={0} tunnels={orderSummaryTunnels}>
-                  <StyledTunnel layer="1" size="md">
-                     {state.current_view === 'SUMMARY' && (
-                        <OrderSummary
-                           closeOrderSummaryTunnel={closeOrderSummaryTunnel}
-                        />
-                     )}
-                     {state.current_view === 'SACHET_ITEM' && (
-                        <ProcessSachet
-                           closeOrderSummaryTunnel={closeOrderSummaryTunnel}
-                        />
-                     )}
-                  </StyledTunnel>
-               </Tunnels>
-            </ErrorBoundary>
-         </OrderSummaryTunnel>
       </StyledWrapper>
    )
 }
