@@ -22,6 +22,7 @@ import {
    Flex,
    TextButton,
    PlusIcon,
+   Spacer,
 } from '@dailykit/ui'
 
 import { Recommendations } from '..'
@@ -263,44 +264,61 @@ export default function Item({ state }) {
             closeTunnel={closeOperationConfigTunnel}
             onSelect={saveOperationConfig}
          />
-         {state.sachetItem || state.supplierItem ? (
+         {state.sachetItem ||
+         state.supplierItem ||
+         state.inventoryProductOptions?.length ? (
             <SectionTabs>
                <SectionTabList>
                   <SectionTab>
-                     <ItemInfo>
-                        {Boolean(
-                           state.supplierItem?.bulkItemAsShipped?.image ||
-                              state.sachetItem?.bulkItem?.image
-                        ) && (
-                           <img
-                              src={
-                                 state.supplierItem?.bulkItemAsShipped.image ||
+                     {state.sachetItem || state.supplierItem ? (
+                        <ItemInfo>
+                           {Boolean(
+                              state.supplierItem?.bulkItemAsShipped?.image ||
                                  state.sachetItem?.bulkItem?.image
-                              }
-                           />
-                        )}
-                        <h3>
-                           {state.supplierItem?.name ||
-                              `${state.sachetItem?.bulkItem?.supplierItem?.name} ${state.sachetItem?.bulkItem?.processingName}`}
-                        </h3>
-                        <button onClick={deleteItem}>
-                           <DeleteIcon color="#fff" />
-                        </button>
-                     </ItemInfo>
+                           ) && (
+                              <img
+                                 src={
+                                    state.supplierItem?.bulkItemAsShipped
+                                       .image ||
+                                    state.sachetItem?.bulkItem?.image
+                                 }
+                              />
+                           )}
+                           <h3>
+                              {state.supplierItem?.name ||
+                                 `${state.sachetItem?.bulkItem?.supplierItem?.name} ${state.sachetItem?.bulkItem?.processingName}`}
+                           </h3>
+                           <button onClick={deleteItem}>
+                              <DeleteIcon color="#fff" />
+                           </button>
+                        </ItemInfo>
+                     ) : (
+                        <ButtonTile
+                           type="secondary"
+                           size="lg"
+                           text={t(address.concat('add item'))}
+                           onClick={() => openTunnel(1)}
+                        />
+                     )}
                   </SectionTab>
                </SectionTabList>
                <SectionTabPanels>
                   <SectionTabPanel>
-                     <Text as="h1">
-                        {state.supplierItem?.name ||
-                           `${state.sachetItem?.bulkItem?.supplierItem?.name} ${state.sachetItem?.bulkItem?.processingName}`}
-                     </Text>
-                     <Text as="p">
-                        {t(address.concat('unit size'))}:{' '}
-                        {state.supplierItem?.unitSize +
-                           state.supplierItem?.unit ||
-                           state.sachetItem?.unitSize + state.sachetItem?.unit}
-                     </Text>
+                     {(state.sachetItem || state.supplierItem) && (
+                        <>
+                           <Text as="h1">
+                              {state.supplierItem?.name ||
+                                 `${state.sachetItem?.bulkItem?.supplierItem?.name} ${state.sachetItem?.bulkItem?.processingName}`}
+                           </Text>
+                           <Text as="p">
+                              {t(address.concat('unit size'))}:{' '}
+                              {state.supplierItem?.unitSize +
+                                 state.supplierItem?.unit ||
+                                 state.sachetItem?.unitSize +
+                                    state.sachetItem?.unit}
+                           </Text>
+                        </>
+                     )}
                      <HorizontalTabs>
                         <HorizontalTabList>
                            <HorizontalTab>
@@ -572,12 +590,21 @@ export default function Item({ state }) {
                </SectionTabPanels>
             </SectionTabs>
          ) : (
-            <ButtonTile
-               type="primary"
-               size="lg"
-               text={t(address.concat('add item'))}
-               onClick={() => openTunnel(1)}
-            />
+            <>
+               <ButtonTile
+                  type="primary"
+                  size="lg"
+                  text={t(address.concat('add item'))}
+                  onClick={() => openTunnel(1)}
+               />
+               <Spacer size="20px" />
+               <ButtonTile
+                  type="primary"
+                  text="Add Option"
+                  onClick={addOption}
+                  style={{ margin: '20px 0' }}
+               />
+            </>
          )}
       </>
    )

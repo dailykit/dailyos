@@ -219,6 +219,55 @@ const ModifierFormTunnel = ({
       }
    }
 
+   const createIndependentOption = () => {
+      modifiersDispatch({
+         type: 'ADD_CATEGORY_OPTION',
+         payload: {
+            option: {
+               name: {
+                  value: '',
+                  meta: {
+                     isValid: true,
+                     isTouched: false,
+                     errors: [],
+                  },
+               },
+               originalName: '',
+               image: { value: '' },
+               isActive: { value: true },
+               isVisible: { value: true },
+               productQuantity: {
+                  value: 1,
+                  meta: {
+                     isValid: true,
+                     isTouched: false,
+                     errors: [],
+                  },
+               },
+               discount: {
+                  value: 10,
+                  meta: {
+                     isValid: true,
+                     isTouched: false,
+                     errors: [],
+                  },
+               },
+               price: {
+                  value: 1,
+                  meta: {
+                     isValid: true,
+                     isTouched: false,
+                     errors: [],
+                  },
+               },
+               isAlwaysCharged: { value: false },
+               unit: null,
+               operationConfig: { value: null },
+            },
+         },
+      })
+   }
+
    React.useEffect(() => {
       if (modifierOpConfig && clickedOption.current) {
          console.log('Op Config: ', modifierOpConfig)
@@ -949,20 +998,27 @@ const ModifierFormTunnel = ({
                         </OptionBottom>
                      </OptionWrapper>
                   ))}
-                  <ButtonTile
-                     type="secondary"
-                     text="Add Option"
-                     onClick={() => {
-                        modifiersDispatch({
-                           type: 'META',
-                           payload: {
-                              name: 'selectedCategoryIndex',
-                              value: index,
-                           },
-                        })
-                        open(3)
-                     }}
-                  />
+                  <Grid>
+                     <ButtonTile
+                        type="secondary"
+                        text="Add Option"
+                        onClick={createIndependentOption}
+                     />
+                     <ButtonTile
+                        type="secondary"
+                        text="Add Option from Existing Items"
+                        onClick={() => {
+                           modifiersDispatch({
+                              type: 'META',
+                              payload: {
+                                 name: 'selectedCategoryIndex',
+                                 value: index,
+                              },
+                           })
+                           open(3)
+                        }}
+                     />
+                  </Grid>
                </CategoryWrapper>
             ))}
             <ButtonTile
