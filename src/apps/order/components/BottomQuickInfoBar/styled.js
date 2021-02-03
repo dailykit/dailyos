@@ -54,3 +54,37 @@ export const Wrapper = styled.button(
       }
    `
 )
+
+export const SachetWrapper = styled.button`
+   padding: 4px 16px;
+   border: none;
+   section:first-child {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      h4 {
+         font-size: 14px;
+         color: #555b6e;
+      }
+   }
+   > section:nth-of-type(2) {
+      display: flex;
+      flex-direction: column;
+      section {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         span:first-child {
+            color: #9aa5ab;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+         }
+      }
+   }
+   display: none;
+   @media (orientation: portrait) {
+      display: block;
+   }
+`

@@ -14,4 +14,10 @@ export const Wrapper = styled.div`
    [data-reach-tab-panel] {
       padding: 16px;
    }
+   @media only screen and (max-width: 1439px) and (orientation: landscape) {
+      width: calc(100vw - 340px);
+   }
+   @media only screen and (max-width: 767px) and (orientation: landscape) {
+      width: calc(100vw - 240px);
+   }
 `

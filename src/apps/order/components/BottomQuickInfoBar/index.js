@@ -6,6 +6,7 @@ import { QUERIES } from '../../graphql'
 import { InlineLoader, ErrorState } from '../../../../shared/components'
 import { toast } from 'react-toastify'
 import { useOrder } from '../../context'
+import SachetBar from './SachetBar'
 
 const BottomQuickInfoBar = ({ openOrderSummaryTunnel }) => {
    const { state } = useOrder()
@@ -58,18 +59,26 @@ const BottomQuickInfoBar = ({ openOrderSummaryTunnel }) => {
       return cardText
    }
    const { title, count, amount, average } = getCardText()
-
    return (
-      <Wrapper variant={title} onClick={() => openOrderSummaryTunnel(1)}>
-         <header>
-            <h2>{title}</h2>
-            <span title="Average">{currencyFmt(Number(average) || 0)}</span>
-         </header>
-         <main>
-            <span>{count}</span>
-            <span title="Total">{currencyFmt(Number(amount) || 0)}</span>
-         </main>
-      </Wrapper>
+      <>
+         {state.current_view === 'SUMMARY' && (
+            <Wrapper variant={title} onClick={() => openOrderSummaryTunnel(1)}>
+               <header>
+                  <h2>{title}</h2>
+                  <span title="Average">
+                     {currencyFmt(Number(average) || 0)}
+                  </span>
+               </header>
+               <main>
+                  <span>{count}</span>
+                  <span title="Total">{currencyFmt(Number(amount) || 0)}</span>
+               </main>
+            </Wrapper>
+         )}
+         {state.current_view === 'SACHET_ITEM' && (
+            <SachetBar openOrderSummaryTunnel={openOrderSummaryTunnel} />
+         )}
+      </>
    )
 }
 
