@@ -1,6 +1,5 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
-   Avatar,
    Flex,
    Form,
    IconButton,
@@ -11,8 +10,8 @@ import {
    SectionTabPanels,
    SectionTabs,
    SectionTabsListHeader,
+   Spacer,
    Text,
-   TextButton,
    Tunnel,
    Tunnels,
    useTunnel,
@@ -21,7 +20,6 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { EditIcon } from '../../../../../shared/assets/icons'
 import AddIcon from '../../../../../shared/assets/icons/Add'
 import { Tooltip } from '../../../../../shared/components'
 import { currencyFmt } from '../../../../../shared/utils'
@@ -36,12 +34,15 @@ import {
    UPDATE_SUPPLIER_ITEM,
 } from '../../../graphql'
 import { validators } from '../../../utils/validators'
+import ContactPerson from './Components/ContactPerson'
 import ProcessingView from './ProcessingView'
 import {
    StyledGrid,
    StyledInfo,
    StyledSupplier,
-   TransparentIconButton,
+   MiseInPlaceItems,
+   MiseInPlaceWrapper,
+   ReceivedFromSupplier,
 } from './styled'
 import {
    ConfigTunnel,
@@ -327,65 +328,65 @@ export default function ItemForm() {
                      </div>
                   </div>
                </StyledGrid>
+               <SectionTabsListHeader>
+                  <Text as="title">
+                     <Flex container alignItems="center">
+                        {t(address.concat('processings'))} (
+                        {formState.bulkItems?.length})
+                        <Tooltip identifier="supplieritem_form_processings" />
+                     </Flex>
+                  </Text>
+                  <IconButton
+                     onClick={() => {
+                        if (!formState.supplier)
+                           return toast.error('Select a supplier first!')
 
+                        openProcessingTunnel(1)
+                     }}
+                     type="outline"
+                  >
+                     <AddIcon size="18" strokeWidth="3" color="#555B6E" />
+                  </IconButton>
+               </SectionTabsListHeader>
                <SectionTabs
                   style={{
                      width: 'calc(100vw - 64px)',
                      margin: '24px auto 0 auto',
                   }}
                >
-                  <SectionTabList>
-                     <SectionTabsListHeader>
-                        <Text as="title">
-                           <Flex container alignItems="center">
-                              {t(address.concat('processings'))} (
-                              {formState.bulkItems?.length})
-                              <Tooltip identifier="supplieritem_form_processings" />
-                           </Flex>
-                        </Text>
-                        <IconButton
-                           onClick={() => {
-                              if (!formState.supplier)
-                                 return toast.error('Select a supplier first!')
-
-                              openProcessingTunnel(1)
-                           }}
-                           type="outline"
-                        >
-                           <AddIcon size="18" strokeWidth="3" color="#555B6E" />
-                        </IconButton>
-                     </SectionTabsListHeader>
-                     {formState.bulkItemAsShipped?.name ? (
-                        <>
-                           <Flex
-                              container
-                              alignItems="center"
-                              margin="0 0 8px 0"
-                           >
-                              <Text as="subtitle">
-                                 as received from supplier
-                              </Text>
-                              <Tooltip identifier="supplieritem_form_as_received_from_supplier_bulkitems" />
-                           </Flex>
-
-                           <SectionTab>
+                  <SectionTabList style={{ alignItems: 'baseline' }}>
+                     <ReceivedFromSupplier>
+                        {formState.bulkItemAsShipped?.name ? (
+                           <>
                               <Flex
                                  container
-                                 style={{ textAlign: 'left' }}
-                                 padding="14px"
-                                 justifyContent="space-between"
+                                 alignItems="center"
+                                 margin="0 0 8px 0"
                               >
-                                 <div>
-                                    <h3 style={{ marginBottom: '5px' }}>
-                                       {formState.bulkItemAsShipped.name}
-                                    </h3>
-                                    <Text as="subtitle">
-                                       {t(address.concat('on hand'))}:{' '}
-                                       {formState.bulkItemAsShipped.onHand}{' '}
-                                       {formState.bulkItemAsShipped?.unit || ''}
-                                    </Text>
-                                    {/* prettier-ignore */}
-                                    <Text as="subtitle">
+                                 <Text as="subtitle">
+                                    as received from supplier
+                                 </Text>
+                                 <Tooltip identifier="supplieritem_form_as_received_from_supplier_bulkitems" />
+                              </Flex>
+                              <SectionTab>
+                                 <Flex
+                                    container
+                                    style={{ textAlign: 'left' }}
+                                    padding="14px"
+                                    justifyContent="space-between"
+                                 >
+                                    <div>
+                                       <h3 style={{ marginBottom: '5px' }}>
+                                          {formState.bulkItemAsShipped.name}
+                                       </h3>
+                                       <Text as="subtitle">
+                                          {t(address.concat('on hand'))}:{' '}
+                                          {formState.bulkItemAsShipped.onHand}{' '}
+                                          {formState.bulkItemAsShipped?.unit ||
+                                             ''}
+                                       </Text>
+                                       {/* prettier-ignore */}
+                                       <Text as="subtitle">
                                        {t(address.concat('shelf life'))}:{' '}
                                        {formState.bulkItemAsShipped.shelfLife
                                           ?.value || 'N/A'}{' '}
@@ -394,50 +395,66 @@ export default function ItemForm() {
                                           ? formState.bulkItemAsShipped.shelfLife?.unit
                                           : ''}
                                     </Text>
-                                 </div>
+                                    </div>
+                                 </Flex>
+                              </SectionTab>
+                           </>
+                        ) : null}
+                     </ReceivedFromSupplier>
+                     <MiseInPlaceWrapper>
+                        {formState.bulkItems?.length ? (
+                           <>
+                              <Flex
+                                 container
+                                 alignItems="center"
+                                 margin="8px 0"
+                              >
+                                 <Text as="subtitle">Mise en place</Text>
+                                 <Tooltip identifier="supplieritem_form_derived_from_received_processing_bulkitems" />
                               </Flex>
-                           </SectionTab>
-                        </>
-                     ) : null}
-
-                     {formState.bulkItems?.length ? (
-                        <>
-                           <Flex container alignItems="center" margin="8px 0">
-                              <Text as="subtitle">Mise en place</Text>
-                              <Tooltip identifier="supplieritem_form_derived_from_received_processing_bulkitems" />
-                           </Flex>
-
-                           {formState.bulkItems?.map(procs => {
-                              if (procs.id === formState.bulkItemAsShippedId)
-                                 return null
-                              return (
-                                 <SectionTab key={procs.id}>
-                                    <Flex
-                                       style={{
-                                          textAlign: 'left',
-                                       }}
-                                       padding="14px"
-                                    >
-                                       <h3 style={{ marginBottom: '5px' }}>
-                                          {procs.name}
-                                       </h3>
-                                       <Text as="subtitle">
-                                          {t(address.concat('on hand'))}:{' '}
-                                          {procs.onHand} {procs.unit}
-                                       </Text>
-                                       <Text as="subtitle">
-                                          {t(address.concat('shelf life'))}:{' '}
-                                          {procs?.shelfLife?.value || 'N/A'}{' '}
-                                          {procs?.shelfLife?.value
-                                             ? procs?.shelfLife?.unit
-                                             : ''}
-                                       </Text>
-                                    </Flex>
-                                 </SectionTab>
-                              )
-                           })}
-                        </>
-                     ) : null}
+                              <MiseInPlaceItems>
+                                 {formState.bulkItems?.map(procs => {
+                                    if (
+                                       procs.id ===
+                                       formState.bulkItemAsShippedId
+                                    )
+                                       return null
+                                    return (
+                                       <SectionTab key={procs.id}>
+                                          <Flex
+                                             style={{
+                                                textAlign: 'left',
+                                             }}
+                                             padding="14px"
+                                          >
+                                             <h3
+                                                style={{ marginBottom: '5px' }}
+                                             >
+                                                {procs.name}
+                                             </h3>
+                                             <Text as="subtitle">
+                                                {t(address.concat('on hand'))}:{' '}
+                                                {procs.onHand} {procs.unit}
+                                             </Text>
+                                             <Text as="subtitle">
+                                                {t(
+                                                   address.concat('shelf life')
+                                                )}
+                                                :{' '}
+                                                {procs?.shelfLife?.value ||
+                                                   'N/A'}{' '}
+                                                {procs?.shelfLife?.value
+                                                   ? procs?.shelfLife?.unit
+                                                   : ''}
+                                             </Text>
+                                          </Flex>
+                                       </SectionTab>
+                                    )
+                                 })}
+                              </MiseInPlaceItems>
+                           </>
+                        ) : null}
+                     </MiseInPlaceWrapper>
                   </SectionTabList>
                   <SectionTabPanels>
                      <SectionTabPanel>
@@ -464,32 +481,6 @@ export default function ItemForm() {
                </SectionTabs>
             </>
          </div>
-      </>
-   )
-}
-
-function ContactPerson({ formState, open }) {
-   if (!formState.supplier)
-      return (
-         <TextButton type="outline" onClick={() => open(1)}>
-            Add Supplier
-         </TextButton>
-      )
-
-   return (
-      <>
-         <span>{formState.supplier.name}</span>
-         {formState.supplier?.contactPerson?.firstName ? (
-            <Avatar
-               withName
-               title={`${formState.supplier?.contactPerson.firstName} ${
-                  formState.supplier?.contactPerson?.lastName || ''
-               }`}
-            />
-         ) : null}
-         <TransparentIconButton type="outline" onClick={() => open(1)}>
-            <EditIcon size="18" color="#555B6E" />
-         </TransparentIconButton>
       </>
    )
 }

@@ -61,7 +61,7 @@ export default function Configurator({
    return (
       <>
          <Separator />
-         <Flex container>
+         <Flex container margin="0px 0px 0px 16px">
             <Flex>
                <Form.Group>
                   <Form.Label htmlFor="quantity" title="quantity">
@@ -156,8 +156,10 @@ export default function Configurator({
             {state.user?.firstName ? (
                <Flex
                   container
-                  margin="16px 0 16px 0"
-                  justifyContent="space-between"
+                  margin="16px 0 0 16px"
+                  padding="20px"
+                  width="fit-content"
+                  style={{ backgroundColor: '#f3f3f3', borderRadius: '4px' }}
                >
                   <Avatar
                      withName
@@ -165,6 +167,7 @@ export default function Configurator({
                         state.user.lastName || ''
                      }`}
                   />
+                  <Spacer xAxis size="68px" />
                   <IconButton onClick={() => openUserTunnel(1)} type="outline">
                      <EditIcon />
                   </IconButton>
@@ -180,7 +183,7 @@ export default function Configurator({
          </>
 
          <Spacer size="8px" />
-         <Flex container>
+         <Flex container margin="0px 0px 0px 16px">
             <Form.Group>
                <Form.Label htmlFor="scheduledDate" title="scheduledDate">
                   {t(address.concat('scheduled on'))}

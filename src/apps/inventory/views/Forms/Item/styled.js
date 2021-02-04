@@ -150,6 +150,10 @@ export const StyledGrid = styled.div`
          }
       }
    }
+   @media screen and (max-width: 568px) {
+      grid-template-columns: auto;
+      height: auto;
+   }
 `
 
 export const ProcessingButton = styled.div`
@@ -186,4 +190,16 @@ export const ItemTab = styled.div`
    min-width: 58px;
    text-align: center;
    cursor: pointer;
+`
+export const ReceivedFromSupplier = styled.div`
+   min-width: fit-content;
+`
+export const MiseInPlaceWrapper = styled.div`
+   min-width: fit-content;
+`
+export const MiseInPlaceItems = styled.div`
+   @media screen and (max-width: 767px) {
+      display: flex;
+      overflow-x: auto;
+   }
 `

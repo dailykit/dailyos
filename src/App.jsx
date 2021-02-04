@@ -181,5 +181,32 @@ const AppItem = styled.li`
       :hover {
          background: #f8f8f8;
       }
+      img {
+         height: 32px;
+         width: 32px;
+         margin-right: 14px;
+         display: inline-block;
+      }
+   }
+`
+
+const Layout = styled.div`
+   display: grid;
+   height: 100vh;
+   overflow: hidden;
+   grid-template-rows: 40px 1fr;
+   grid-template-columns: ${({ open }) => (open ? '280px 1fr' : '1fr')};
+   grid-template-areas: ${({ open }) =>
+      open ? "'aside head' 'aside main'" : "'head head' 'main main'"};
+   > header {
+      grid-area: head;
+   }
+   > aside {
+      grid-area: aside;
+      display: ${({ open }) => (open ? 'flex' : 'none')};
+   }
+   > main {
+      grid-area: main;
+      overflow-y: auto;
    }
 `

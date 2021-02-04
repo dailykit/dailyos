@@ -324,9 +324,6 @@ export default function Recipe({ state }) {
                                           title={`Serves ${option.simpleRecipeYield.yield.serving}`}
                                           head={
                                              <OptionHead
-                                                deleteAction={() =>
-                                                   remove(option)
-                                                }
                                                 editAction={() =>
                                                    editOption(option)
                                                 }
@@ -556,10 +553,6 @@ const OptionHead = ({
             <Spacer xAxis size="24px" />
             <IconButton type="ghost" onClick={editAction}>
                <EditIcon color="#00A7E1" />
-            </IconButton>
-            <Spacer xAxis size="16px" />
-            <IconButton type="ghost" onClick={deleteAction}>
-               <DeleteIcon color="#FF5A52" />
             </IconButton>
          </Flex>
       </Flex>
