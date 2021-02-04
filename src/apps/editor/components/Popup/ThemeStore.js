@@ -10,8 +10,10 @@ import { logger } from '../../../../shared/utils'
 export default function ThemeStore({ show, closePopup, setCreateType }) {
    const [templates, setTemplates] = React.useState([])
    const [isLoading, setIsLoading] = React.useState(false)
-   const copyTemplate = async templatePath => {
+   const [clickedTempId, setClickedTempId] = React.useState(0)
+   const copyTemplate = async (templatePath, templateId) => {
       setIsLoading(true)
+      setClickedTempId(templateId)
       try {
          await axios.post(
             `https://test.dailykit.org/template/download${templatePath}`
@@ -19,6 +21,7 @@ export default function ThemeStore({ show, closePopup, setCreateType }) {
          setIsLoading(false)
          closePopup()
          toast.success('Template Copied successfully')
+         window.location.reload()
       } catch (error) {
          setIsLoading(false)
          closePopup()
@@ -74,8 +77,8 @@ export default function ThemeStore({ show, closePopup, setCreateType }) {
                   <ComboButton
                      type="ghost"
                      size="sm"
-                     isLoading={isLoading}
-                     onClick={() => copyTemplate(template.route)}
+                     isLoading={clickedTempId === template.id && isLoading}
+                     onClick={() => copyTemplate(template.route, template.id)}
                   >
                      <EditIcon size="20" /> Edit
                   </ComboButton>

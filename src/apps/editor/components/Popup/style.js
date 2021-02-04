@@ -54,9 +54,10 @@ export const PhotoGrid = styled.div`
    overflow: auto;
    padding: 1rem;
    .theme {
-      background: #ede7f6;
+      background: #fff;
       padding: 1rem;
       border-radius: 8px;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
       &:hover {
          box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.4);
       }

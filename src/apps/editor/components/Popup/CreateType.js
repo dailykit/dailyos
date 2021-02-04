@@ -1,6 +1,11 @@
 import React from 'react'
 import { Flex, Spacer } from '@dailykit/ui'
-import { CreateFolder, CreateFile, CloseIcon } from '../../assets/Icons'
+import {
+   CreateFolder,
+   CreateFile,
+   TemplateIcon,
+   CloseIcon,
+} from '../../assets/Icons'
 import { Popup } from '../../../../shared/components'
 import { Cross, Type } from './style'
 
@@ -13,15 +18,15 @@ export default function CreateType({ show, closePopup, setCreateType }) {
          </Flex>
          <Flex container justifyContent="space-between" flexDirection="column">
             <Type onClick={() => setCreateType('folder')}>
-               <CreateFolder size="24" />
+               <CreateFolder size="24" color="#000" />
                <p>New Folder</p>
             </Type>
             <Type onClick={() => setCreateType('file')}>
-               <CreateFile size="24" />
+               <CreateFile size="24" color="#000" />
                <p>New File</p>
             </Type>
             <Type onClick={() => setCreateType('template')}>
-               <CreateFile size="24" />
+               <TemplateIcon size="24" color="#000" />
                <p>Explore Templates</p>
             </Type>
             <Spacer size="16px" />
