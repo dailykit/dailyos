@@ -122,7 +122,7 @@ export default function ProcessingView({ formState, proc = {}, isDefault }) {
 
 function RealtimePanel({ formState, proc }) {
    return (
-      <Flex container>
+      <Flex container flexDirection="column">
          <Flex flex={4}>
             <RealTimeView proc={proc} formState={formState} />
          </Flex>

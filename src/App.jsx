@@ -173,5 +173,6 @@ const Layout = styled.div`
    }
    > main {
       grid-area: main;
+      overflow-y: auto;
    }
 `
