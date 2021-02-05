@@ -25,7 +25,7 @@ const File = ({ linkedFiles, selectedOption, emptyOptions }) => {
    const { loading, error } = useSubscription(GET_FILES, {
       variables: {
          linkedFile: linkedIds,
-         fileType: 'html',
+         fileTypes: ['html', 'liquid', 'pug', 'mustache', 'ejs'],
       },
       onSubscriptionData: ({
          subscriptionData: {

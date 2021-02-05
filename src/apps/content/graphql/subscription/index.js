@@ -137,9 +137,9 @@ export const PAGE_INFO = gql`
    }
 `
 export const GET_FILES = gql`
-   subscription GET_FILES($linkedFile: [Int!]!, $fileType: String!) {
+   subscription GET_FILES($linkedFile: [Int!]!, $fileTypes: [String!]!) {
       editor_file_aggregate(
-         where: { id: { _nin: $linkedFile }, fileType: { _eq: $fileType } }
+         where: { id: { _nin: $linkedFile }, fileType: { _in: $fileTypes } }
       ) {
          nodes {
             id
