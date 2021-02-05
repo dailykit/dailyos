@@ -80,15 +80,15 @@ const FileExplorer = () => {
       }
    }, [queryData])
 
-   const onToggle = node => {
-      const mutated = toggleNode(data, node)
+   const onToggle = async node => {
+      const mutated = await toggleNode(data, node)
       setData(mutated)
    }
 
-   const onSelection = (node, nodeIndex) => {
+   const onSelection = async (node, nodeIndex) => {
       if (node.type === 'folder') {
-         onToggle(node.path)
-         if (data[nodeIndex].isOpen) {
+         await onToggle(node.path)
+         if (data.length && data[nodeIndex] && data[nodeIndex].isOpen) {
             onToggleInfo({
                name: node.name,
                path: node.path.replace(process.env.REACT_APP_ROOT_FOLDER, ''),

@@ -1,19 +1,11 @@
-import {
-   ButtonTile,
-   Flex,
-   Spacer,
-   Tunnel,
-   Tunnels,
-   useTunnel,
-} from '@dailykit/ui'
+import { Flex, Spacer, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { EditIcon } from '../../../../../shared/assets/icons'
 import { Ranger } from '../../../../../shared/components/Ranger'
 import { DataCard } from '../../../components'
 import { ShadowCard } from '../styled'
 import PackagingInformation from './PackagingInformation'
-import { ImageContainer } from './styled'
+import { ResponsiveFlex, StyledFlex } from './styled'
 import { PhotoTunnel } from './Tunnels'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../shared/utils'
@@ -52,8 +44,8 @@ export default function PackagingStats({ state }) {
                <PhotoTunnel state={state} close={closePhotoTunnel} />
             </Tunnel>
          </Tunnels>
-         <Flex container>
-            <Flex flex={2}>
+         <ResponsiveFlex container alignItems="center">
+            <Flex width="100%">
                {state?.images != null && state?.images?.length ? (
                   <Gallery
                      list={state?.images || []}
@@ -73,20 +65,20 @@ export default function PackagingStats({ state }) {
                )}
             </Flex>
             <Spacer xAxis size="16px" />
-            <Flex flex={3}>
+            <Flex width="100%">
                <ShadowCard>
                   <RangedStat packaging={state} />
                   <Spacer size="16px" />
-                  <Flex container>
+                  <StyledFlex container>
                      <DataCard title="Awaiting" quantity={state.awaiting} />
                      <Spacer xAxis size="16px" />
                      <DataCard title="Committed" quantity={state.committed} />
                      <Spacer xAxis size="16px" />
                      <DataCard title="Consumed" quantity={state.consumed} />
-                  </Flex>
+                  </StyledFlex>
                </ShadowCard>
             </Flex>
-         </Flex>
+         </ResponsiveFlex>
          <Spacer size="16px" />
          <PackagingInformation state={state} />
       </>

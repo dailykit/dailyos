@@ -16,11 +16,9 @@ export const StyledWrapper = styled.div(
       }
       > main {
          grid-area: main;
-         > main {
-            overflow-y: auto;
-            scroll-behavior: smooth;
-            height: calc(100vh - 80px);
-         }
+         overflow-y: auto;
+         scroll-behavior: smooth;
+         height: calc(100vh - 80px);
       }
       > footer {
          grid-area: footer;

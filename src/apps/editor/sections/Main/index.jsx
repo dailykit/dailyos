@@ -4,7 +4,12 @@ import { useQuery } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { Loader } from '@dailykit/ui'
 import { useGlobalContext, useDailyGit } from '../../context'
-import { FormType, FileType, CreateType } from '../../components/Popup'
+import {
+   FormType,
+   FileType,
+   CreateType,
+   ThemeStore,
+} from '../../components/Popup'
 import { GET_NESTED_FOLDER } from '../../graphql'
 import { Home, Editor } from '../../views'
 import { logger } from '../../../../shared/utils'
@@ -63,21 +68,31 @@ const Main = () => {
       if (createType === 'folder') {
          setContextMenuInfo({
             ...option,
-            contextPath: './templates',
             showPopup: {
                createTypePopup: false,
                fileTypePopup: false,
                formTypePopup: true,
+               themeStorePopup: false,
             },
          })
-      } else {
+      } else if (createType === 'file') {
          setContextMenuInfo({
             ...option,
-            contextPath: './templates',
             showPopup: {
                createTypePopup: false,
                fileTypePopup: true,
                formTypePopup: false,
+               themeStorePopup: false,
+            },
+         })
+      } else if (createType === 'template') {
+         setContextMenuInfo({
+            ...option,
+            showPopup: {
+               createTypePopup: false,
+               fileTypePopup: false,
+               formTypePopup: false,
+               themeStorePopup: true,
             },
          })
       }
@@ -89,6 +104,7 @@ const Main = () => {
          createTypePopup: false,
          fileTypePopup: false,
          formTypePopup: true,
+         themeStorePopup: false,
       })
    }
 
@@ -197,6 +213,11 @@ const Main = () => {
             />
             <CreateType
                show={globalState.popupInfo.createTypePopup}
+               closePopup={closePopup}
+               setCreateType={nodeType => setCreateType(nodeType)}
+            />
+            <ThemeStore
+               show={globalState.popupInfo.themeStorePopup}
                closePopup={closePopup}
                setCreateType={nodeType => setCreateType(nodeType)}
             />

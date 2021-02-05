@@ -166,7 +166,7 @@ function Content({ item, orderQuantity, setOrderQuantity }) {
                />
 
                <Separator />
-               <Flex container alignItems="flex-end">
+               <Flex container alignItems="flex-end" margin="0px 0px 0px 16px">
                   <Form.Group>
                      <Form.Label htmlFor="quantity" title="quantity">
                         <Flex container alignItems="center">
