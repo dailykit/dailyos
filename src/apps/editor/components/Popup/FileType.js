@@ -1,9 +1,16 @@
 import React from 'react'
 import { Flex, Spacer } from '@dailykit/ui'
 import { Popup } from '../../../../shared/components'
-import { Javascript, Html, Css, Pug, CloseIcon } from '../../assets/Icons'
+import {
+   Javascript,
+   Html,
+   Css,
+   Pug,
+   FileIcon,
+   CloseIcon,
+} from '../../assets/Icons'
 import { useGlobalContext } from '../../context'
-import { Card, Cross } from './style'
+import { Card, Cross, FileTypeWrapper } from './style'
 
 export default function FileType({ show, closePopup, setFileType }) {
    return (
@@ -12,29 +19,36 @@ export default function FileType({ show, closePopup, setFileType }) {
             <Popup.Text>Select the file type</Popup.Text>
             <Cross onClick={closePopup}>{CloseIcon}</Cross>
          </Flex>
-         <Flex container alignItems="center" justifyContent="space-between">
-            <Spacer size="16px" />
+         <FileTypeWrapper>
             <Card onClick={() => setFileType('js')}>
                <Javascript />
                <p>Javascript</p>
             </Card>
-            <Spacer size="16px" />
             <Card onClick={() => setFileType('html')}>
                <Html />
                <p>Html</p>
             </Card>
-            <Spacer size="16px" />
             <Card onClick={() => setFileType('css')}>
                <Css />
                <p>Css</p>
             </Card>
-            <Spacer size="16px" />
             <Card onClick={() => setFileType('pug')}>
                <Pug />
                <p>Pug</p>
             </Card>
-            <Spacer size="16px" />
-         </Flex>
+            <Card onClick={() => setFileType('json')}>
+               <FileIcon size="64" />
+               <p>Json</p>
+            </Card>
+            <Card onClick={() => setFileType('ejs')}>
+               <FileIcon size="64" />
+               <p>Ejs</p>
+            </Card>
+            <Card onClick={() => setFileType('liquid')}>
+               <FileIcon size="64" />
+               <p>Liquid</p>
+            </Card>
+         </FileTypeWrapper>
       </Popup>
    )
 }

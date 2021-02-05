@@ -125,7 +125,7 @@ const Editor = () => {
       editor.getAction('editor.action.formatDocument').run()
       editorRef.current = editor
       editorRef.current.addCommand(
-         monacoRef.current.KeyMod.Shift && monacoRef.current.KeyCode.KEY_2,
+         monacoRef.current.KeyMod.Shift | monacoRef.current.KeyCode.KEY_2,
          () => toggleModal(!isModalVisible)
       )
       editorRef.current.addCommand(

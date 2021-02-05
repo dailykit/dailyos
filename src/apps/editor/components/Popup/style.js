@@ -69,3 +69,11 @@ export const PhotoGrid = styled.div`
       }
    }
 `
+export const FileTypeWrapper = styled.div`
+   display: grid;
+   grid-template-columns: repeat(4, minmax(200px, 1fr));
+   grid-gap: 1rem;
+   max-height: 80vh;
+   overflow: auto;
+   padding: 1rem;
+`
