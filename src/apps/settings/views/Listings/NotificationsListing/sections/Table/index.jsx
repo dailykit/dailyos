@@ -38,8 +38,7 @@ import AddEmailAdresses from '../../../../Forms/Notification/'
 const NotificationTable = () => {
    const tableRef = React.useRef()
    const { tab, addTab } = useTabs()
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-   const [typeid,SetTypeid]= React.useState(null)
+
    React.useEffect(() => {
       if (!tab) {
          addTab('Notifications', '/settings/notifications')
@@ -61,14 +60,6 @@ const NotificationTable = () => {
       addTab(notificationItem.app, `/notifications/${notificationItem.id}`)
    }
 
-   
-   const rowClick = (e, cell) => {
-      const { id = null, } = cell.getData() || {}
-      if (id) {
-SetTypeid(id)
-      }
-   }
-
    const nestedOptions = [
       {
          title: 'Show on App',
@@ -83,6 +74,49 @@ SetTypeid(id)
          editor: true,
       },
    ]
+   const ConfigureEmailTunnel = () => {
+      const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+      return (
+         <>
+            <TextButton type="ghost" onClick={() => openTunnel(1)}>
+               Configure Emails
+            </TextButton>
+            <Tunnels tunnels={tunnels}>
+               <Tunnel layer={1} size="md">
+                  <TunnelHeader
+                     title="Configure Email"
+                     right={{ action: () => openTunnel(2), title: 'Next' }}
+                     close={() => closeTunnel(1)}
+                  />
+                  <NotificationForm />
+               </Tunnel>
+
+               <Tunnel layer={2} size="md">
+                  <TunnelHeader
+                     title="Tunnel 3"
+                     right={{
+                        title: 'Next',
+                        action: () => openTunnel(3),
+                     }}
+                     close={() => closeTunnel(2)}
+                  />
+               </Tunnel>
+
+               <Tunnel layer={4} size="sm">
+                  <TunnelHeader
+                     title="Tunnel 4"
+                     right={{
+                        title: 'Close',
+                        action: () => closeTunnel(4),
+                     }}
+                     close={() => closeTunnel(4)}
+                     nextAction="Done"
+                  />
+               </Tunnel>
+            </Tunnels>
+         </>
+      )
+   }
 
    const editableColumns = [
       {
@@ -128,25 +162,9 @@ SetTypeid(id)
       {
          title: 'Send Emails',
          field: 'email',
-         formatter: reactFormatter(<>
-         <TextButton type="ghost" onClick={() => openTunnel(1)}>
-               Configure Emails
-            </TextButton>
-            <Tunnels tunnels={tunnels}>
-               <Tunnel layer={1} size="md">
-                  <TunnelHeader
-                     title="Configure Email"
-                     close={() => closeTunnel(1)}
-                  />
-                  <NotificationForm typeid={typeid} />
-               </Tunnel>
-
-            </Tunnels>
-  
-         </>),
+         formatter: reactFormatter(<ConfigureEmailTunnel />),
          editor: true,
-         cellClick: (e, cell) => rowClick(e, cell)
-            },
+      },
 
       {
          title: 'Active',
@@ -167,8 +185,6 @@ SetTypeid(id)
                groupBy: 'app',
             }}
          />
-
-
       </>
    )
 }
