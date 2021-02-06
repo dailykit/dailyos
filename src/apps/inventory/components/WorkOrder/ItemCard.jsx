@@ -48,6 +48,7 @@ export default function ItemCard({
                </Flex>
             ) : null}
          </Flex>
+         <Spacer xAxis size="68px" />
 
          {edit && (
             <Flex>
@@ -62,8 +63,10 @@ export default function ItemCard({
 
 const StyledCard = styled.div`
    display: flex;
-   justify-content: space-between;
    align-items: center;
-   margin-top: 16px;
-   margin-left: 16px;
+   margin: 16px 0px 40px 16px;
+   background-color: #f3f3f3;
+   padding: 20px;
+   border-radius: 4px;
+   width: fit-content;
 `

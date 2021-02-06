@@ -39,7 +39,7 @@ export default function NutritionTunnel({ values, close, save }) {
    const calcDailyValue = value => (value / 100) * 100
 
    return (
-      <React.Fragment>
+      <>
          <TunnelHeader>
             <div>
                <span onClick={() => close(1)}>
@@ -516,6 +516,6 @@ export default function NutritionTunnel({ values, close, save }) {
             </FlexContainer>
             <br />
          </TunnelBody>
-      </React.Fragment>
+      </>
    )
 }

@@ -3,7 +3,6 @@ import { useHistory } from 'react-router-dom'
 import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import { useTunnel, Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { useTabs } from '../../../context'
 import {
    CUSTOMER_DATA,
    SUBSCRIPTION,
@@ -40,6 +39,7 @@ import {
 } from '../../../components'
 import { PaymentTunnel, AddressTunnel } from './Tunnel'
 import { currencyFmt, logger } from '../../../../../shared/utils'
+import { useTabs } from '../../../../../shared/providers'
 import BrandContext from '../../../context/Brand'
 import {
    InlineLoader,
@@ -51,7 +51,7 @@ const CustomerRelation = ({ match }) => {
    const prevBrandId = useRef(context.brandId)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
-   const { dispatch, tab, setTitle: setTabTitle, closeAllTabs } = useTabs()
+   const { dispatch, tab, closeAllTabs } = useTabs()
    const history = useHistory()
    const {
       data: { customers = [] } = {},

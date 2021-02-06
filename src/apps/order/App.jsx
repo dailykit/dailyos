@@ -1,13 +1,10 @@
 import React from 'react'
 import usePortal from 'react-useportal'
 import { Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
-import { BrowserRouter as Router } from 'react-router-dom'
 
 // Context
 import { useOrder, useConfig } from './context'
 
-// Sections
-import Header from './sections/Header'
 import Main from './sections/Main'
 import Footer from './sections/Footer'
 
@@ -22,10 +19,12 @@ import {
    Notifications,
 } from './components'
 
+import { useTabs } from '../../shared/providers'
 import { ErrorBoundary } from '../../shared/components'
 
 const App = () => {
    const { state, dispatch } = useOrder()
+   const { addTab, setRoutes } = useTabs()
    const { state: configState } = useConfig()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [filterTunnels, openFilterTunnel, closeFilterTunnel] = useTunnel(1)
@@ -34,6 +33,26 @@ const App = () => {
    const { openPortal, closePortal, isOpen, Portal } = usePortal({
       bindTo: document && document.getElementById('notifications'),
    })
+
+   React.useEffect(() => {
+      setRoutes([
+         {
+            id: 1,
+            title: 'Home',
+            onClick: () => addTab('Home', '/order'),
+         },
+         {
+            id: 2,
+            title: 'Orders',
+            onClick: () => addTab('Orders', '/order/orders'),
+         },
+         {
+            id: 3,
+            title: 'Planned',
+            onClick: () => addTab('Planned', '/order/planned'),
+         },
+      ])
+   }, [])
 
    React.useEffect(() => {
       if (configState.current_station?.id) {
@@ -107,18 +126,13 @@ const App = () => {
             {state.current_view === 'SUMMARY' && <OrderSummary />}
             {state.current_view === 'SACHET_ITEM' && <ProcessSachet />}
          </ErrorBoundary>
-         <Router>
-            <main>
-               <Header
-                  isOpen={isOpen}
-                  openPortal={openPortal}
-                  closePortal={closePortal}
-                  setPosition={setPosition}
-               />
-               <Main />
-            </main>
-         </Router>
-         <Footer />
+         <Main />
+         <Footer
+            isOpen={isOpen}
+            openPortal={openPortal}
+            closePortal={closePortal}
+            setPosition={setPosition}
+         />
          {isOpen && (
             <Portal>
                <Notifications

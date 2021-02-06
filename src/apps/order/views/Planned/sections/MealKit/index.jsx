@@ -5,8 +5,9 @@ import { useSubscription } from '@apollo/react-hooks'
 
 import { QUERIES } from '../../../../graphql'
 // import { NewTabIcon } from '../../../../assets/icons'
-import { useOrder, useTabs } from '../../../../context'
+import { useOrder } from '../../../../context'
 import { logger } from '../../../../../../shared/utils'
+import { useTabs } from '../../../../../../shared/providers'
 import {
    Tooltip,
    ErrorState,

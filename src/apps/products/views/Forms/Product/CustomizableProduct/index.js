@@ -12,7 +12,7 @@ import {
 } from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
 import { CloseIcon, TickIcon } from '../../../../assets/icons'
-import { useTabs } from '../../../../context'
+import { useTabs } from '../../../../../../shared/providers'
 import {
    CustomizableProductContext,
    reducers,
@@ -25,11 +25,13 @@ import {
 import { ResponsiveFlex, StyledFlex, StyledRule } from '../styled'
 import validator from '../validators'
 import { Assets, Description, Products, Pricing } from './components'
+import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
 
 const address = 'apps.menu.views.forms.product.customizableproduct.'
 
 export default function CustomizableProduct() {
    const { t } = useTranslation()
+   const { initiatePriority } = useDnd()
 
    const { setTabTitle, tab, addTab } = useTabs()
 
@@ -62,6 +64,18 @@ export default function CustomizableProduct() {
             ...title,
             value: data.subscriptionData.data.customizableProduct.name,
          })
+         if (
+            data.subscriptionData.data.customizableProduct
+               .customizableProductOptions.length
+         ) {
+            initiatePriority({
+               tablename: 'customizableProductOption',
+               schemaname: 'products',
+               data:
+                  data.subscriptionData.data.customizableProduct
+                     .customizableProductOptions,
+            })
+         }
       },
    })
 

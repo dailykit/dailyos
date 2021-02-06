@@ -16,24 +16,22 @@ import {
    InlineLoader,
    Tooltip,
 } from '../../../../../shared/components'
-import { useTooltip } from '../../../../../shared/providers'
-import { logger, randomSuffix } from '../../../../../shared/utils'
+import { ResponsiveFlex } from '../styled'
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
-import { useTabs } from '../../../context'
+import { logger, randomSuffix } from '../../../../../shared/utils'
+import { useTooltip, useTabs } from '../../../../../shared/providers'
 import {
    CREATE_COLLECTION,
    DELETE_COLLECTION,
    S_COLLECTIONS,
 } from '../../../graphql'
 import tableOptions from '../tableOption'
-import styled from 'styled-components'
 
-import { ResponsiveFlex } from '../styled'
 const address = 'apps.menu.views.listings.collectionslisting.'
 
 const CollectionsListing = () => {
    const { t } = useTranslation()
-   const { addTab } = useTabs()
+   const { tab, addTab } = useTabs()
    const { tooltip } = useTooltip()
 
    const tableRef = React.useRef()
@@ -42,6 +40,12 @@ const CollectionsListing = () => {
    const { data: { collections = [] } = {}, loading, error } = useSubscription(
       S_COLLECTIONS
    )
+
+   React.useEffect(() => {
+      if (!tab) {
+         addTab('Collections', '/menu/collections')
+      }
+   }, [tab, addTab])
 
    // Mutation
    const [createCollection] = useMutation(CREATE_COLLECTION, {

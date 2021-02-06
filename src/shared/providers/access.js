@@ -4,7 +4,7 @@ import { groupBy, isEmpty, uniqBy } from 'lodash'
 import { useSubscription } from '@apollo/react-hooks'
 
 import { APPS } from '../graphql'
-import { useAuth } from '../providers'
+import { useAuth } from './auth'
 
 const AccessContext = React.createContext()
 

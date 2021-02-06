@@ -46,3 +46,17 @@ export const ImageContainer = styled.div`
       }
    }
 `
+export const ResponsiveFlex = styled.div`
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 16px 0;
+   @media screen and (max-width: 767px) {
+      flex-direction: column;
+      align-items: flex-start;
+      input[type='text'] {
+         width: calc(100vw - 64px);
+         margin-bottom: 8px;
+      }
+   }
+`

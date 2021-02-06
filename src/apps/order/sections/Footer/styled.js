@@ -2,10 +2,35 @@ import styled, { css } from 'styled-components'
 
 export const Wrapper = styled.footer`
    display: flex;
-   padding: 0 12px;
+   padding-left: 12px;
    background: #d9e9f1;
    align-items: center;
 `
+
+export const StyledNav = styled.div(
+   ({ align }) => css`
+      display: flex;
+      ${align === 'right' &&
+      css`
+         margin-left: auto;
+      `}
+      border-left: 1px solid #b4d5e6;
+      button {
+         width: 40px;
+         height: 40px;
+         border: none;
+         cursor: pointer;
+         background: transparent;
+         :hover,
+         :focus {
+            background: #fff;
+         }
+         svg {
+            display: unset;
+         }
+      }
+   `
+)
 
 export const Section = styled.section`
    display: flex;

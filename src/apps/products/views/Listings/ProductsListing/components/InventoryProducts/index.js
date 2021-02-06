@@ -4,7 +4,7 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { IconButton, Loader, Spacer, TextButton } from '@dailykit/ui'
+import { IconButton, Spacer, TextButton } from '@dailykit/ui'
 
 import { DeleteIcon } from '../../../../../../../shared/assets/icons'
 import { logger } from '../../../../../../../shared/utils'
@@ -14,10 +14,8 @@ import {
    S_INVENTORY_PRODUCTS,
 } from '../../../../../graphql'
 
-import { useTabs } from '../../../../../context'
-
 import tableOptions from '../../../tableOption'
-import { useTooltip } from '../../../../../../../shared/providers'
+import { useTooltip, useTabs } from '../../../../../../../shared/providers'
 import {
    ErrorState,
    InlineLoader,

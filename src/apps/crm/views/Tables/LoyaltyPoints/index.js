@@ -2,11 +2,10 @@ import React, { useRef, useState, useContext } from 'react'
 import { Text, Flex } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useParams } from 'react-router-dom'
-import { useTabs } from '../../../context'
+import { toast } from 'react-toastify'
 import { useQuery } from '@apollo/react-hooks'
 import options from '../../tableOptions'
 import { useTooltip } from '../../../../../shared/providers'
-import { toast } from 'react-toastify'
 import { logger } from '../../../../../shared/utils'
 import { LOYALTYPOINTS_LISTING } from '../../../graphql'
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
@@ -14,7 +13,6 @@ import BrandContext from '../../../context/Brand'
 
 const LoyaltyPointTable = () => {
    const [context, setContext] = useContext(BrandContext)
-   const { addTab } = useTabs()
    const tableRef = useRef()
    const { tooltip } = useTooltip()
    const { id } = useParams()

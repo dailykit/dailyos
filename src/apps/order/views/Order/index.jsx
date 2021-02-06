@@ -26,10 +26,10 @@ import { formatDate } from '../../utils'
 import { findAndSelectSachet } from './methods'
 import { QUERIES, MUTATIONS } from '../../graphql'
 import { PrintIcon, UserIcon } from '../../assets/icons'
-import { useAccess } from '../../../../shared/providers'
-import { useConfig, useOrder, useTabs } from '../../context'
+import { useConfig, useOrder } from '../../context'
 import { currencyFmt, logger } from '../../../../shared/utils'
 import { MealKits, Inventories, ReadyToEats } from './sections'
+import { useAccess, useTabs } from '../../../../shared/providers'
 import {
    Tooltip,
    ErrorState,
@@ -211,7 +211,7 @@ const Order = () => {
 
    React.useEffect(() => {
       if (!loading && order?.id && !tab) {
-         addTab(`ORD${order?.id}`, `/apps/order/orders/${order?.id}`)
+         addTab(`ORD${order?.id}`, `/order/orders/${order?.id}`)
       }
    }, [loading, order, tab, addTab])
 

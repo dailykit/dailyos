@@ -78,11 +78,11 @@ export const S_INGREDIENT = gql`
                   id
                   type
                }
-               modeOfFulfillments(order_by: { created_at: desc }) {
+               modeOfFulfillments(order_by: { position: desc_nulls_last }) {
                   id
                   accuracy
                   isLive
-                  priority
+                  position
                   cost
                   type
                   operationConfig {
@@ -340,11 +340,15 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
             name
             image
          }
-         simpleRecipeProductOptions(order_by: { created_at: desc }) {
+         simpleRecipeProductOptions(
+            where: { isArchived: { _eq: false } }
+            order_by: { position: desc_nulls_last }
+         ) {
             id
             isActive
             price
             type
+            position
             operationConfig {
                id
                station {
@@ -422,12 +426,13 @@ export const S_INVENTORY_PRODUCT = gql`
          }
          inventoryProductOptions(
             where: { isArchived: { _eq: false } }
-            order_by: { created_at: desc }
+            order_by: { position: desc_nulls_last }
          ) {
             id
             label
             price
             quantity
+            position
             operationConfig {
                id
                station {
@@ -479,10 +484,11 @@ export const S_CUSTOMIZABLE_PRODUCT = gql`
          isPopupAllowed
          customizableProductOptions(
             where: { isArchived: { _eq: false } }
-            order_by: { created_at: desc }
+            order_by: { position: desc_nulls_last }
          ) {
             id
             options
+            position
             inventoryProduct {
                id
                name
@@ -553,10 +559,11 @@ export const S_COMBO_PRODUCT = gql`
          isPopupAllowed
          comboProductComponents(
             where: { isArchived: { _eq: false } }
-            order_by: { created_at: desc }
+            order_by: { position: desc_nulls_last }
          ) {
             id
             label
+            position
             options
             customizableProduct {
                id

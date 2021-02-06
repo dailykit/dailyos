@@ -12,7 +12,7 @@ import {
 } from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
 import { CloseIcon, TickIcon } from '../../../../assets/icons'
-import { useTabs } from '../../../../context'
+import { useTabs } from '../../../../../../shared/providers'
 import {
    initialState,
    InventoryProductContext,
@@ -30,12 +30,14 @@ import {
 import { ResponsiveFlex, StyledFlex, StyledRule } from '../styled'
 import validator from '../validators'
 import { Assets, Description, Item } from './components'
+import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
 
 const address = 'apps.menu.views.forms.product.inventoryproduct.'
 
 export default function InventoryProduct() {
    const { t } = useTranslation()
    const { id: productId } = useParams()
+   const { initiatePriority } = useDnd()
 
    // Context
    const [productState, productDispatch] = React.useReducer(
@@ -71,6 +73,15 @@ export default function InventoryProduct() {
             ...title,
             value: data.subscriptionData.data.inventoryProduct.name,
          })
+         const options =
+            data.subscriptionData.data.inventoryProduct.inventoryProductOptions
+         if (options.length) {
+            initiatePriority({
+               tablename: 'inventoryProductOption',
+               schemaname: 'products',
+               data: options,
+            })
+         }
       },
    })
 

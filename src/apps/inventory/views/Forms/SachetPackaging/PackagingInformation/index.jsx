@@ -11,7 +11,6 @@ import {
 } from '@dailykit/ui'
 import React from 'react'
 import { toast } from 'react-toastify'
-import styled from 'styled-components'
 import { EditIcon } from '../../../../../../shared/assets/icons'
 import { Tooltip } from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
@@ -21,6 +20,7 @@ import { ShadowCard } from '../../styled'
 import AdditionalInfo from '../AdditionalInfo'
 import { OtherProperties, PackagingMaterial } from '../Tunnels'
 import renderIcon from './renderIcon'
+import { ResponsiveFlex, Content } from './styled'
 
 // Props<{state: Packaging}>
 export default function PackagingInformation({ state }) {
@@ -65,7 +65,7 @@ export default function PackagingInformation({ state }) {
             </Tunnel>
          </Tunnels>
 
-         <Flex container>
+         <ResponsiveFlex container>
             <Flex flex={2}>
                <AdditionalInfo id={state.id} />
             </Flex>
@@ -143,20 +143,7 @@ export default function PackagingInformation({ state }) {
                   <Spacer size="16px" />
                </ShadowCard>
             </Flex>
-         </Flex>
+         </ResponsiveFlex>
       </>
    )
 }
-
-const Content = styled.div`
-   display: flex;
-   width: 70%;
-   justify-content: space-between;
-   align-items: center;
-
-   h4 {
-      font-weight: 500;
-      font-size: 14px;
-      color: #555b6e;
-   }
-`

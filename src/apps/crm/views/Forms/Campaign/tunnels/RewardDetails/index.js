@@ -14,7 +14,6 @@ import {
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { TunnelBody, StyledContainer, InputWrap } from './styled'
-import { useTabs } from '../../../../../context'
 import { UPDATE_REWARD } from '../../../../../graphql'
 import { logger } from '../../../../../../../shared/utils'
 import { Tooltip } from '../../../../../../../shared/components'
@@ -30,7 +29,6 @@ export default function RewardDetailsunnel({
    closeRewardTypeTunnel,
    updateConditionId,
 }) {
-   const { addTab } = useTabs()
    const [priority, setPriority] = useState({
       value: 1,
       meta: {

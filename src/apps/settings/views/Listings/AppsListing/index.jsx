@@ -15,8 +15,8 @@ import {
    Flex,
 } from '@dailykit/ui'
 
-import { useTabs } from '../../../context'
 import { APPS } from '../../../graphql'
+import { useTabs } from '../../../../../shared/providers'
 import { InlineLoader } from '../../../../../shared/components'
 
 const address = 'apps.settings.views.listings.appslisting.'
@@ -33,7 +33,7 @@ const AppsListing = () => {
    }, [tab, addTab])
 
    return (
-      <Flex>
+      <Flex margin="0 auto" width="calc(100% - 32px)" maxWidth="1280px">
          <div>
             <Flex
                container
@@ -54,31 +54,35 @@ const AppsListing = () => {
                   </TableRow>
                </TableHead>
                <TableBody>
-                  {apps.map(apps => (
-                     <TableRow key={apps.title}>
-                        <TableCell>
-                           <AvatarGroup>
-                              <Avatar
-                                 withName
-                                 type="round"
-                                 url=""
-                                 title={apps.title}
-                              />
-                           </AvatarGroup>
-                        </TableCell>
-                        <TableCell>
-                           <AvatarGroup>
-                              {apps.roles.map(({ role }) => (
+                  {loading ? (
+                     <InlineLoader />
+                  ) : (
+                     apps.map(node => (
+                        <TableRow key={node.title}>
+                           <TableCell>
+                              <AvatarGroup>
                                  <Avatar
+                                    withName
+                                    type="round"
                                     url=""
-                                    key={role.id}
-                                    title={role.title}
+                                    title={node.title}
                                  />
-                              ))}
-                           </AvatarGroup>
-                        </TableCell>
-                     </TableRow>
-                  ))}
+                              </AvatarGroup>
+                           </TableCell>
+                           <TableCell>
+                              <AvatarGroup>
+                                 {node.roles.map(({ role }) => (
+                                    <Avatar
+                                       url=""
+                                       key={role.id}
+                                       title={role.title}
+                                    />
+                                 ))}
+                              </AvatarGroup>
+                           </TableCell>
+                        </TableRow>
+                     ))
+                  )}
                </TableBody>
             </Table>
          </div>

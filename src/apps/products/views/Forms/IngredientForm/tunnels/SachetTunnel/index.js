@@ -155,7 +155,7 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                      type: 'realTime',
                      isPublished: ingredientState.realTime.isPublished,
                      isLive: ingredientState.realTime.isLive,
-                     priority: ingredientState.realTime.priority.value ?? 1,
+                     position: 0,
                      bulkItemId: ingredientState.realTime.bulkItem?.id || null,
                      sachetItemId: null,
                      accuracy: ingredientState.realTime.accuracy,
@@ -168,7 +168,7 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                      type: 'plannedLot',
                      isPublished: ingredientState.plannedLot.isPublished,
                      isLive: ingredientState.plannedLot.isLive,
-                     priority: ingredientState.plannedLot.priority.value ?? 2,
+                     position: 1000000,
                      bulkItemId: null,
                      sachetItemId:
                         ingredientState.plannedLot.sachetItem?.id || null,
@@ -298,12 +298,6 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                            </th>
                            <th>
                               <Flex container alignItems="center">
-                                 Priority
-                                 <Tooltip identifier="sachet_mode_priority" />
-                              </Flex>
-                           </th>
-                           <th>
-                              <Flex container alignItems="center">
                                  Item
                                  <Tooltip identifier="sachet_mode_item" />
                               </Flex>
@@ -346,68 +340,6 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                                     Real Time
                                  </Form.Checkbox>
                                  <Tooltip identifier="sachet_real_time" />
-                              </Flex>
-                           </td>
-                           <td>
-                              <Flex maxWidth="100px">
-                                 <Form.Stepper
-                                    id="realTimePriority"
-                                    name="realTimePriority"
-                                    value={
-                                       ingredientState.realTime.priority.value
-                                    }
-                                    placeholder="Enter priority"
-                                    onChange={value =>
-                                       ingredientDispatch({
-                                          type: 'MODE',
-                                          payload: {
-                                             mode: 'realTime',
-                                             name: 'priority',
-                                             value: {
-                                                ...ingredientState.realTime
-                                                   .priority,
-                                                value,
-                                             },
-                                          },
-                                       })
-                                    }
-                                    onBlur={() => {
-                                       const {
-                                          isValid,
-                                          errors,
-                                       } = validator.priority(
-                                          ingredientState.realTime.priority
-                                             .value
-                                       )
-                                       ingredientDispatch({
-                                          type: 'MODE',
-                                          payload: {
-                                             mode: 'realTime',
-                                             name: 'priority',
-                                             value: {
-                                                ...ingredientState.realTime
-                                                   .priority,
-                                                meta: {
-                                                   isTouched: true,
-                                                   isValid,
-                                                   errors,
-                                                },
-                                             },
-                                          },
-                                       })
-                                    }}
-                                 />
-                                 {ingredientState.realTime.priority.meta
-                                    .isTouched &&
-                                    !ingredientState.realTime.priority.meta
-                                       .isValid &&
-                                    ingredientState.realTime.priority.meta.errors.map(
-                                       (error, index) => (
-                                          <Form.Error key={index}>
-                                             {error}
-                                          </Form.Error>
-                                       )
-                                    )}
                               </Flex>
                            </td>
                            <td>
@@ -501,68 +433,6 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                                     Planned Lot
                                  </Form.Checkbox>
                                  <Tooltip identifier="sachet_planned_lot" />
-                              </Flex>
-                           </td>
-                           <td>
-                              <Flex maxWidth="100px">
-                                 <Form.Stepper
-                                    id="plannedLotPriority"
-                                    name="plannedLotPriority"
-                                    value={
-                                       ingredientState.plannedLot.priority.value
-                                    }
-                                    placeholder="Enter priority"
-                                    onChange={value =>
-                                       ingredientDispatch({
-                                          type: 'MODE',
-                                          payload: {
-                                             mode: 'plannedLot',
-                                             name: 'priority',
-                                             value: {
-                                                ...ingredientState.plannedLot
-                                                   .priority,
-                                                value,
-                                             },
-                                          },
-                                       })
-                                    }
-                                    onBlur={() => {
-                                       const {
-                                          isValid,
-                                          errors,
-                                       } = validator.priority(
-                                          ingredientState.plannedLot.priority
-                                             .value
-                                       )
-                                       ingredientDispatch({
-                                          type: 'MODE',
-                                          payload: {
-                                             mode: 'plannedLot',
-                                             name: 'priority',
-                                             value: {
-                                                ...ingredientState.plannedLot
-                                                   .priority,
-                                                meta: {
-                                                   isTouched: true,
-                                                   isValid,
-                                                   errors,
-                                                },
-                                             },
-                                          },
-                                       })
-                                    }}
-                                 />
-                                 {ingredientState.plannedLot.priority.meta
-                                    .isTouched &&
-                                    !ingredientState.plannedLot.priority.meta
-                                       .isValid &&
-                                    ingredientState.plannedLot.priority.meta.errors.map(
-                                       (error, index) => (
-                                          <Form.Error key={index}>
-                                             {error}
-                                          </Form.Error>
-                                       )
-                                    )}
                               </Flex>
                            </td>
                            <td>

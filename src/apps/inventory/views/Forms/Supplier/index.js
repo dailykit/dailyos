@@ -22,11 +22,11 @@ import EditIcon from '../../../assets/icons/Edit'
 import { AddressCard } from '../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import { GENERAL_SUCCESS_MESSAGE } from '../../../constants/successMessages'
-import { useTabs } from '../../../context'
+import { useTabs } from '../../../../../shared/providers'
 import { SUPPLIER_SUBSCRIPTION, UPDATE_SUPPLIER } from '../../../graphql'
 import { validators } from '../../../utils/validators'
 import { StyledWrapper } from '../styled'
-import { ImageContainer } from './styled'
+import { ImageContainer, ResponsiveFlex } from './styled'
 import AddressTunnel from './Tunnels/AddressTunnel'
 import LogoTunnel from './Tunnels/LogoTunnel'
 import PersonContactTunnel from './Tunnels/PersonContactTunnel'
@@ -136,12 +136,7 @@ export default function SupplierForm() {
          </Tunnels>
 
          <StyledWrapper>
-            <Flex
-               container
-               alignItems="center"
-               justifyContent="space-between"
-               padding="16px 0"
-            >
+            <ResponsiveFlex>
                <Form.Group>
                   <Form.Label htmlFor="supplierName" title="Supplier Name">
                      <Flex container alignItems="center">
@@ -187,39 +182,11 @@ export default function SupplierForm() {
                      <Form.Error>{name.meta.errors[0]}</Form.Error>
                   )}
                </Form.Group>
-
-               <Flex width="110px">
+               <Flex>
                   <ShowAvailability formState={formState} />
                </Flex>
-            </Flex>
-            {/* {formState.logo ? (
-               <ImageContainer>
-                  <div>
-                     <span
-                        role="button"
-                        tabIndex="0"
-                        onClick={() => openAssetTunnel(1)}
-                        onKeyDown={e => e.charCode === 13 && openAssetTunnel(1)}
-                     >
-                        <EditIcon />
-                     </span>
-                  </div>
-                  <img src={formState.logo} alt="supplier logo" />
-               </ImageContainer>
-            ) : (
-               <ButtonTile
-                  onClick={() => openAssetTunnel(1)}
-                  type="primary"
-                  size="lg"
-                  text={t(address.concat('add logo of the supplier'))}
-                  helper={t(
-                     address.concat(
-                        'upto 1MB - only JPGs, PNGs, and PDFs are allowed'
-                     )
-                  )}
-               />
-            )} */}
-            <Flex width="500px">
+            </ResponsiveFlex>
+            <Flex width="100%">
                {formState?.logo != null && formState?.logo?.length ? (
                   <Gallery
                      list={formState?.logo || []}
@@ -354,7 +321,10 @@ function ShowAvailability({ formState }) {
                })
             }}
          >
-            Available
+            <Flex container alignItems="center">
+               Available
+               <Spacer xAxis size="16px" />
+            </Flex>
          </Form.Toggle>
       </Form.Group>
    )
