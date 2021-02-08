@@ -10,6 +10,7 @@ const options = {
     persistenceMode: 'cookie',
     pagination: 'local',
     paginationSize: 10,
+    padding:'16px'
  }
  
  export default options

@@ -1,12 +1,19 @@
 import React from 'react'
-import { Form, Spacer, Text,TunnelHeader,Flex,ButtonTile } from '@dailykit/ui'
-import { initialState, reducers } from './store'
-import { logger } from '../../../../../../shared/utils'
+import { useParams } from 'react-router-dom'
+import {
+   Form,
+   Spacer,
+   Text,
+   TunnelHeader,
+   Flex,
+   ButtonTile,
+} from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { initialState, reducers } from './store'
 import { NOTIFICATIONS } from '../../../../graphql'
-import { useParams } from 'react-router-dom'
+import { logger } from '../../../../../../shared/utils'
 import validate from '../../User/validator'
 import {
    ErrorState,
@@ -14,111 +21,98 @@ import {
    Tooltip,
 } from '../../../../../../shared/components'
 
-const AddEmailAdresses = () => {
-   const params = useParams()
-   const [emails, setEmails] = React.useState([])
-   const {
-      loading,
-      error,
-      data: { notificationTypes = [] } = {},
-   } = useSubscription(NOTIFICATIONS.LIST,{
-variables:{id:params.id}
+const AddEmailAdresses = ({ typeid }) => {
+   const [
+      createNotificationEmailConfigs,
+      { data, loading: loadingNotificationEmailConfigs },
+   ] = useMutation(NOTIFICATIONS.CREATE_EMAIL_CONFIGS, {
+      onCompleted: () => {
+         toast.success('Email added.')
+      
+      },
+      onError: error => {
+         toast.error('Failed to add Email!')
+         logger(error)
+         console.log(error)
+      },
    })
 
-   if (error) {
-      logger(error)
+   const [emails, setEmails] = React.useState([{ email: null ,typeId:typeid }])
+
+   const handleChange = (i, event) => {
+      const values = [...emails]
+      values[i].email = event.target.value
+      setEmails(values)
+      console.log(emails)
    }
 
-   const [createEmailConfigs, { loading: creatingEmailConfigs }] = useMutation(
-      NOTIFICATIONS.CREATE_EMAIL_CONFIGS,
-      {
-         onCompleted: () => {
-            toast.success('Emails added')
-         
-         },
-         onError: error => {
-            toast.error('Failed to add Email')
-            logger(error)
-         },
-      }
-   )
+   const handleAdd = () => {
+      const values = [...emails]
 
-   const onChange = (e, i) => {
-      const createdEmails = emails
-      const value = e.target.value.trim()
-      createdEmails[i] = value
-      setEmails([...createdEmails])
+      setEmails(values)
+
+      values.push({ email: null, typeId:typeid })
    }
 
-   const add = () =>
-   {
-      try {
-         const objects = emails.filter(Boolean).map(email =>
-         (
-            {
-               email: email,
-               typeId:notificationTypes.id
-            }
-            ))
-         if (!objects.length)
+   const handleRemove = i => {
+      const values = [...emails]
+      values.splice(i, 1)
+      setEmails(values)
+   }
+
+   const add = () => {
+      let inputVariables = {
+         objects:
          {
-            throw Error('Nothing to add')
+            typeid:emails.typeId
          }
-         createEmailConfigs(
-            {
-               variables:objects
-            }
-         )
-      
+}
+      try {
+
+         createNotificationEmailConfigs({
+           emails
+         })
       }
-      catch (error)
-      {
+      catch (error) {
          toast.error(error.message)
       }
-      }
-
+   }
 
    return (
       <>
-      
-    <TunnelHeader
-            title="Add New Emails"
+         <TunnelHeader
+            title="Add Email Addresses"
             right={{
                action: add,
-               title: 'Add Email',
-               isLoading: creatingEmailConfigs,
-
+               title: 'Add',
+               disabled: emails.filter(Boolean).length === 0,
             }}
+         />
 
-      /> 
-         <Flex padding="16px">
-            {emails.map((email, i) => (
-               <>
-                  <Form.Group>
-                     <Form.Label htmlFor={`email-${i}`} title={`email-${i}`}>
-                        Enter Email*
-                     </Form.Label>
-                     <Form.Text
-                        value={email}
-                        id={`email-${i}`}
-                        name={`email-${i}`}
-                        onChange={e => onChange(e, i)}
-                        placeholder="Enter the Email"
-                     />
-                  </Form.Group>
-                  <Spacer size="16px" />
-               </>
-            ))}
+         <Flex padding="50px">
+            {emails.map((emailField, idx) => {
+               return (
+                  <>
+                     <Form.Group>
+                        <div key={`${emailField}-${idx}`}>
+                           <Form.Label>Enter Email</Form.Label>
+                           <Form.Text
+                              placeholder="Enter text"
+                              onChange={e => handleChange(idx, e)}
+                           />
+                        </div>
+                     </Form.Group>
+                     <Spacer size="16px" />
+                  </>
+               )
+            })}
             <ButtonTile
                type="secondary"
                text="Add New Email"
-               onClick={() => setEmails([...emails, ''])}
+               onClick={() => handleAdd()}
             />
          </Flex>
       </>
-
-      
    )
 }
-
-export default AddEmailAdresses;
+export default AddEmailAdresses

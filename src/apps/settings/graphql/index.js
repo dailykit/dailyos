@@ -917,6 +917,9 @@ export const NOTIFICATIONS = {
             isGlobal 
             isLocal
             playAudio
+            emailConfigs{
+               email
+             }
          }
       }
    `,
@@ -981,5 +984,13 @@ UPDATE_EMAIL_CONFIGS:gql`mutation updateEmailConfigs($_set: notifications_emailC
    }
  }
 `, 
-   
+   UPDATE_NOTIFICATION_TYPE: gql`
+   mutation updateNotificationType($id: uuid!, $_set: notifications_type_set_input = {}) {
+      updateNotificationType(pk_columns: {id: $id}, _set: $_set) {
+        isActive
+        isGlobal
+        isLocal
+      }
+    }
+    `,
 }

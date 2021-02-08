@@ -1,6 +1,6 @@
 import React from 'react'
 import { ScrollSection } from '../../../../../../../shared/components'
-import { Spacer,Flex } from '@dailykit/ui'
+import { Text,Spacer,Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { isEmpty, groupBy } from 'lodash'
 import { useParams } from 'react-router-dom'
@@ -31,8 +31,9 @@ export const NotificationSidebar = () => {
 
    
    return (
-      <Flex margin="0 auto" maxWidth="1280px" width="calc(100vw - 64px)">
-      
+      <Flex margin="0 auto" maxWidth="1280px" padding="16px" width="calc(100vw - 164px)">
+         <Spacer size="20"/>
+      <Text as='h1'>Notifications</Text>
                <NotificationTable />
 
          </Flex>

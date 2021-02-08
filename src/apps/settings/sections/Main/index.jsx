@@ -16,113 +16,13 @@ import {
    StationForm,
    MasterList,
    NotificationForm,
-   NotificationsListing
+   NotificationsListing,
 } from '../../views'
 import { useAccess } from '../../../../shared/providers'
 import { ErrorBoundary, Flex } from '../../../../shared/components'
 
 const Main = () => {
    return (
-<<<<<<< HEAD
-      <main>
-         <Switch>
-            <Route path="/settings" exact>
-               <AccessCheck
-                  title="home"
-                  message="You do not have sufficient permission to see settings app."
-               >
-                  <Home />
-               </AccessCheck>
-            </Route>
-            <Route path="/settings/apps" exact>
-               <AccessCheck
-                  title="apps"
-                  message="You do not have sufficient permission to see apps listing."
-               >
-                  <AppsListing />
-               </AccessCheck>
-            </Route>
-            <Route path="/settings/users" exact>
-               <AccessCheck
-                  title="users"
-                  message="You do not have sufficient permission to see users listing."
-               >
-                  <UsersListing />
-               </AccessCheck>
-            </Route>
-            <Route path="/settings/users/:id">
-               <AccessCheck
-                  title="user"
-                  message="You do not have sufficient permission to see user details."
-               >
-                  <UserForm />
-               </AccessCheck>
-            </Route>
-            <Route path="/settings/roles" exact>
-               <RolesListing />
-            </Route>
-            <Route path="/settings/roles/:id">
-               <RoleForm />
-            </Route>
-            <Route path="/settings/devices" exact>
-               <AccessCheck
-                  title="devices"
-                  message="You do not have sufficient permission to see devices listing."
-               >
-                  <DevicesListing />
-               </AccessCheck>
-            </Route>
-            <Route path="/settings/stations" exact>
-               <AccessCheck
-                  title="stations"
-                  message="You do not have sufficient permission to see stations listing."
-               >
-                  <StationsListing />
-               </AccessCheck>
-            </Route>
-            <Route path="/settings/stations/:id">
-               <AccessCheck
-                  title="station"
-                  message="You do not have sufficient permission to see station details."
-               >
-                  <StationForm />
-               </AccessCheck>
-            </Route>
-            <Route path="/settings/master-lists" exact>
-               <AccessCheck
-                  title="master-lists"
-                  message="You do not have sufficient permission to see master listing."
-               >
-                  <MasterList />
-               </AccessCheck>
-            </Route>
-            <Route path="/settings/master-lists/:list">
-               <AccessCheck
-                  title="master-list"
-                  message="You do not have sufficient permission to see master list details"
-               >
-                  <MasterListForm />
-               </AccessCheck>
-            </Route>
-            <Route path="/settings/notifications" exact>
-               <AccessCheck
-                  title="notifications"
-                  message="You do not have sufficient permission to see apps listing."
-               >
-                  <NotificationsListing />
-               </AccessCheck>
-            </Route>
-            <Route path="/settings/notifications/:id">
-               <AccessCheck
-                  title="station"
-                  message="You do not have sufficient permission to see station details."
-               >
-                  <NotificationForm />
-               </AccessCheck>
-            </Route>
-         </Switch>
-      </main>
-=======
       <>
          <Route path="/settings" exact>
             <AccessCheck
@@ -202,8 +102,24 @@ const Main = () => {
                <MasterListForm />
             </AccessCheck>
          </Route>
+         <Route path="/settings/notifications" exact>
+            <AccessCheck
+               title="notifications"
+               message="You do not have sufficient permission to see Notification details"
+            >
+               <NotificationsListing />
+            </AccessCheck>
+         </Route>
+
+         <Route path="/settings/notifications/:id">
+            <AccessCheck
+               title="notifications"
+               message="You do not have sufficient permission to see master list details"
+            >
+               <NotificationForm />
+            </AccessCheck>
+         </Route>
       </>
->>>>>>> 26b551399e135a1695973aa8292ce491d1866190
    )
 }
 

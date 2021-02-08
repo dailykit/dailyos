@@ -48,6 +48,13 @@ const App = () => {
             title: 'Apps',
             onClick: () => addTab('Apps', '/settings/apps'),
          },
+         {
+            id: 7,
+            title: 'Notifications',
+            onClick: () => addTab('Apps', '/settings/notifications'),
+         },
+     
+     
       ])
    }, [])
 

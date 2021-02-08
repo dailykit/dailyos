@@ -5,13 +5,9 @@ import { useSubscription } from '@apollo/react-hooks'
 import { DashboardTile, Text, Loader } from '@dailykit/ui'
 
 import { StyledHome, StyledCardList } from './styled'
-<<<<<<< HEAD
 
 import { STATIONS, ROLES, USERS, NOTIFICATIONS } from '../../graphql'
-=======
-import { STATIONS, ROLES, USERS } from '../../graphql'
 import { useTabs } from '../../../../shared/providers'
->>>>>>> 26b551399e135a1695973aa8292ce491d1866190
 
 const address = 'apps.settings.views.home.'
 

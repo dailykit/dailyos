@@ -110,6 +110,7 @@ const App = () => {
                <Route path="/subscription" component={Subscription} />
                <Route path="/insights" component={Insights} />
                <Route path="/brands" component={Brands} />
+
             </Switch>
          </main>
          {!isKeycloakSupported() && <RedirectBanner />}

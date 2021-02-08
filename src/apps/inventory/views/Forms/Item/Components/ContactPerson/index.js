@@ -10,7 +10,7 @@ export default function ContactPerson({ formState, open }) {
             Add Supplier
          </TextButton>
       )
-
+   
    return (
       <>
          <span>{formState.supplier.name}</span>

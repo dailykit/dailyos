@@ -1,6 +1,6 @@
 import React from 'react'
 import tableOptions from '../tableOption'
-import { useTabs } from '../../../context'
+import { useTabs } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import { useTooltip } from '../../../../../shared/providers'
 import { InlineLoader, Tooltip } from '../../../../../shared/components'
