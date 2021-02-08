@@ -16,24 +16,10 @@ import { logger } from '../../../../../../../../../shared/utils'
 export const PlanMetaDetails = ({ update }) => {
    const params = useParams()
    const [form, setForm] = React.useState({
-      selectButtonLabel: {
-         value: '',
-         meta: {
-            isValid: false,
-            isTouched: false,
-            errors: [],
-         },
-      },
+      selectButtonLabel: '',
       subscriptionTitleThumbnail: false,
       subscriptionTitleDescription: false,
-      subscriptionYieldInformation: {
-         value: '',
-         meta: {
-            isValid: false,
-            isTouched: false,
-            errors: [],
-         },
-      },
+      subscriptionYieldInformation: '',
       subscriptionItemCountTotal: false,
       subscriptionItemCountPerServing: false,
    })
@@ -59,51 +45,19 @@ export const PlanMetaDetails = ({ update }) => {
             const { brand, id } = subscriptionSetting[index]
             setSettingId(id)
             if (!isNull(brand) && !isEmpty(brand)) {
-               setForm(form => ({
-                  ...form,
-                  ...(brand.value?.selectButtonLabel && {
-                     selectButtonLabel: {
-                        value: brand.value.selectButtonLabel,
-                        meta: {
-                           isValid: true,
-                           isTouched: false,
-                           errors: [],
-                        },
-                     },
-                  }),
-                  ...(brand.value?.subscriptionYield && {
-                     ...(brand.value?.subscriptionYield?.information && {
-                        subscriptionYieldInformation: {
-                           value: brand.value.subscriptionYield.information,
-                           meta: {
-                              isValid: true,
-                              isTouched: false,
-                              errors: [],
-                           },
-                        },
-                     }),
-                  }),
-                  ...(brand.value?.subscriptionTitle && {
-                     ...(brand.value?.subscriptionTitle?.thumbnail && {
-                        subscriptionTitleThumbnail:
-                           brand.value.subscriptionTitle.thumbnail,
-                     }),
-                     ...(brand.value?.subscriptionTitle?.description && {
-                        subscriptionTitleDescription:
-                           brand.value.subscriptionTitle.description,
-                     }),
-                  }),
-                  ...(brand.value?.subscriptionItemCount && {
-                     ...(brand.value?.subscriptionItemCount?.total && {
-                        subscriptionItemCountTotal:
-                           brand.value.subscriptionItemCount.total,
-                     }),
-                     ...(brand.value?.subscriptionItemCount?.perServing && {
-                        subscriptionItemCountPerServing:
-                           brand.value.subscriptionItemCount.perServing,
-                     }),
-                  }),
-               }))
+               setForm({
+                  selectButtonLabel: brand.value?.selectButtonLabel || '',
+                  subscriptionYieldInformation:
+                     brand.value?.subscriptionYield?.information || '',
+                  subscriptionTitleThumbnail:
+                     brand.value?.subscriptionTitle?.thumbnail,
+                  subscriptionTitleDescription:
+                     brand.value?.subscriptionTitle?.description,
+                  subscriptionItemCountTotal:
+                     brand.value?.subscriptionItemCount?.total,
+                  subscriptionItemCountPerServing:
+                     brand.value?.subscriptionItemCount?.perServing,
+               })
             }
          }
       },
@@ -111,81 +65,34 @@ export const PlanMetaDetails = ({ update }) => {
 
    const updateSetting = React.useCallback(() => {
       if (!settingId) return
-      if (
-         form.selectButtonLabel.meta.isValid &&
-         form.subscriptionYieldInformation.meta.isValid
-      ) {
-         update({
-            id: settingId,
-            value: {
-               selectButtonLabel: form.selectButtonLabel.value,
-               subscriptionTitle: {
-                  thumbnail: form.subscriptionTitleThumbnail,
-                  description: form.subscriptionTitleDescription,
-               },
-               subscriptionYield: {
-                  information: form.subscriptionYieldInformation.value,
-               },
-               subscriptionItemCount: {
-                  total: form.subscriptionItemCountTotal,
-                  perServing: form.subscriptionItemCountPerServing,
-               },
+      update({
+         id: settingId,
+         value: {
+            ...(form.selectButtonLabel.trim() && {
+               selectButtonLabel: form.selectButtonLabel,
+            }),
+            subscriptionTitle: {
+               thumbnail: form.subscriptionTitleThumbnail,
+               description: form.subscriptionTitleDescription,
             },
-         })
-      } else {
-         toast.error('Plan Details must be provided')
-      }
+            ...(form.subscriptionYieldInformation.trim() && {
+               subscriptionYield: {
+                  information: form.subscriptionYieldInformation,
+               },
+            }),
+            subscriptionItemCount: {
+               total: form.subscriptionItemCountTotal,
+               perServing: form.subscriptionItemCountPerServing,
+            },
+         },
+      })
    }, [form, settingId, update])
 
-   const handleChange = e => {
-      const { name, value } = e.target
-      if (name === 'selectButtonLabel') {
-         setForm({
-            ...form,
-            selectButtonLabel: {
-               ...form.selectButtonLabel,
-               value: value,
-            },
-         })
-      } else {
-         setForm({
-            ...form,
-            subscriptionYieldInformation: {
-               ...form.subscriptionYieldInformation,
-               value: value,
-            },
-         })
-      }
-   }
-   const onBlur = e => {
-      const { name, value } = e.target
-      if (name === 'selectButtonLabel') {
-         setForm({
-            ...form,
-            selectButtonLabel: {
-               ...form.selectButtonLabel,
-               meta: {
-                  ...form.selectButtonLabel.meta,
-                  isTouched: true,
-                  errors: validator.text(value).errors,
-                  isValid: validator.text(value).isValid,
-               },
-            },
-         })
-      } else {
-         setForm({
-            ...form,
-            subscriptionYieldInformation: {
-               ...form.subscriptionYieldInformation,
-               meta: {
-                  ...form.subscriptionYieldInformation.meta,
-                  isTouched: true,
-                  errors: validator.text(value).errors,
-                  isValid: validator.text(value).isValid,
-               },
-            },
-         })
-      }
+   const handleChange = (name, value) => {
+      setForm({
+         ...form,
+         [name]: value,
+      })
    }
 
    if (error) {
@@ -207,15 +114,9 @@ export const PlanMetaDetails = ({ update }) => {
                <Form.Text
                   id="selectButtonLabel"
                   name="selectButtonLabel"
-                  value={form.selectButtonLabel.value}
-                  onChange={e => handleChange(e)}
-                  onBlur={onBlur}
+                  value={form.selectButtonLabel}
+                  onChange={e => handleChange(e.target.name, e.target.value)}
                />
-               {form.selectButtonLabel.meta.isTouched &&
-                  !form.selectButtonLabel.meta.isValid &&
-                  form.selectButtonLabel.meta.errors.map((error, index) => (
-                     <Form.Error key={index}>{error}</Form.Error>
-                  ))}
             </Form.Group>
 
             <Spacer size="24px" />
@@ -308,17 +209,9 @@ export const PlanMetaDetails = ({ update }) => {
                <Form.TextArea
                   id="subscriptionYieldInformation"
                   name="subscriptionYieldInformation"
-                  value={form.subscriptionYieldInformation.value}
-                  onChange={e => handleChange(e)}
-                  onBlur={onBlur}
+                  value={form.subscriptionYieldInformation}
+                  onChange={e => handleChange(e.target.name, e.target.value)}
                />
-               {form.subscriptionYieldInformation.meta.isTouched &&
-                  !form.subscriptionYieldInformation.meta.isValid &&
-                  form.subscriptionYieldInformation.meta.errors.map(
-                     (error, index) => (
-                        <Form.Error key={index}>{error}</Form.Error>
-                     )
-                  )}
             </Form.Group>
 
             <Spacer size="16px" />
