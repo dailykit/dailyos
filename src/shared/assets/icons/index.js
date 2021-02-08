@@ -20,6 +20,7 @@ import ToggleArrow from './ToggleArrow'
 import PlusIcon from './Plus'
 import RectangularIcon from './Rectangular'
 import RoundedCloseIcon from './RoundedClose'
+import RoundedMenuIcon from './RoundedMenu'
 export {
    AddIcon,
    MenuIcon,
@@ -43,6 +44,7 @@ export {
    PlusIcon,
    RectangularIcon,
    RoundedCloseIcon,
+   RoundedMenuIcon,
 }
 
 export * from './Tick'

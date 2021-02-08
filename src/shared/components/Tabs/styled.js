@@ -3,7 +3,6 @@ import styled, { css } from 'styled-components'
 export const StyledTabs = styled.ul`
    flex: 1;
    display: flex;
-   border-left: 1px solid #b4d5e6;
 `
 
 export const StyledTab = styled.li(

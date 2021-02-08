@@ -1,20 +1,19 @@
+import { Flex } from '@dailykit/ui'
 import React from 'react'
+import { useTabs } from '../../providers'
 
 import Tabs from '../Tabs'
+import Logo from './Logo'
 import Styles from './styled'
-import { MenuIcon } from '../../assets/icons'
+import TabStatus from './TabStatus'
 
-export const TabBar = ({ toggle }) => {
+export const TabBar = () => {
+   const { tabs } = useTabs()
    return (
       <Styles.Header>
-         <Styles.Menu
-            title="Menu"
-            type="button"
-            onClick={() => toggle(open => !open)}
-         >
-            <MenuIcon color="#000" size="24" />
-         </Styles.Menu>
-         <Tabs />
+         <Logo />
+         {tabs.length ? <TabStatus /> : null}
+         {/* <Tabs /> */}
       </Styles.Header>
    )
 }

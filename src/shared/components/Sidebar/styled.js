@@ -65,8 +65,6 @@ const Styles = {
    Apps: styled.ul``,
 
    AppItem: styled(Link)`
-      display: flex;
-      align-items: center;
       margin: 10px 0px 10px 12px;
       text-decoration: none;
    `,
@@ -74,6 +72,25 @@ const Styles = {
       display: flex;
       flex-direction: column;
       padding-bottom: 18px;
+   `,
+   Menu: styled.button`
+      margin-top: 4px;
+      width: 48px;
+      height: 48px;
+      border: none;
+      cursor: pointer;
+      background-color: #fff;
+      :hover,
+      :focus {
+         background: #fff;
+      }
+      border-radius: 0px 24px 24px 0px;
+      box-shadow: 5px -5px 10px rgba(219, 219, 219, 0.2),
+         -5px 5px 10px rgba(219, 219, 219, 0.2),
+         5px 5px 10px rgba(255, 255, 255, 0.9),
+         -5px -5px 13px rgba(219, 219, 219, 0.9),
+         inset -1px -1px 2px rgba(255, 255, 255, 0.3),
+         inset 1px 1px 2px rgba(219, 219, 219, 0.5);
    `,
 }
 
