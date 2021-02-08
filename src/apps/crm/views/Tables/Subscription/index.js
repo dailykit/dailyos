@@ -15,53 +15,57 @@ import { currencyFmt, logger } from '../../../../../shared/utils'
 import { toast } from 'react-toastify'
 import BrandContext from '../../../context/Brand'
 
-const SubscriptionTable = ({ id, sid }) => {
+const SubscriptionTable = ({ id = 0, sid = 0 }) => {
    const [context, setContext] = useContext(BrandContext)
    const { dispatch, tab } = useTabs()
    const { tooltip } = useTooltip()
    const history = useHistory()
    const [occurences, setOccurences] = useState([])
    const tableRef = useRef(null)
+
    const { loading: listLoading, data: occurencesData } = useQuery(OCCURENCES, {
       variables: {
          keycloakId: id,
          sid,
-         brandId: context.brandId,
+         brandId: context?.brandId,
       },
       onCompleted: ({ subscriptionOccurencesAggregate = {} }) => {
+         console.log(subscriptionOccurencesAggregate)
          let action = ''
-         const result = subscriptionOccurencesAggregate.nodes.map(occurence => {
-            if (
-               occurence.customers.length !== 0 &&
-               occurence.customers[0].isSkipped
-            ) {
-               action = 'Skipped'
-            } else if (
-               occurence.customers.length !== 0 &&
-               occurence.customers[0].orderCart &&
-               occurence.customers[0].orderCart.orderId
-            ) {
-               action = 'Order Placed'
-            } else if (
-               occurence.customers.length !== 0 &&
-               occurence.customers[0].orderCart &&
-               occurence.customers[0].orderCart.id
-            ) {
-               action = 'Added To Cart'
-            } else {
-               action = 'No Action'
+         const result = subscriptionOccurencesAggregate?.nodes.map(
+            occurence => {
+               if (
+                  occurence?.customers.length !== 0 &&
+                  occurence?.customers[0]?.isSkipped
+               ) {
+                  action = 'Skipped'
+               } else if (
+                  occurence?.customers.length !== 0 &&
+                  occurence?.customers[0]?.orderCart &&
+                  occurence?.customers[0]?.orderCart?.orderId
+               ) {
+                  action = 'Order Placed'
+               } else if (
+                  occurence?.customers.length !== 0 &&
+                  occurence?.customers[0]?.orderCart &&
+                  occurence?.customers[0]?.orderCart?.id
+               ) {
+                  action = 'Added To Cart'
+               } else {
+                  action = 'No Action'
+               }
+               return {
+                  startTimeStamp: occurence?.startTimeStamp || 'N/A',
+                  cutoffTimeStamp: occurence?.cutoffTimeStamp || 'N/A',
+                  date: occurence?.fulfillmentDate || 'N/A',
+                  action,
+                  oid: occurence?.customers?.[0]?.orderCart?.orderId || 'N/A',
+                  amountPaid: `${currencyFmt(
+                     Number(occurence?.customers?.[0]?.orderCart?.amount) || 0
+                  )}`,
+               }
             }
-            return {
-               startTimeStamp: occurence?.startTimeStamp || 'N/A',
-               cutoffTimeStamp: occurence?.cutoffTimeStamp || 'N/A',
-               date: occurence?.fulfillmentDate || 'N/A',
-               action,
-               oid: occurence?.customers?.[0]?.orderCart?.orderId || 'N/A',
-               amountPaid: `${currencyFmt(
-                  Number(occurence?.customers?.[0]?.orderCart?.amount) || 0
-               )}`,
-            }
-         })
+         )
          setOccurences(result)
       },
       onError: error => {
