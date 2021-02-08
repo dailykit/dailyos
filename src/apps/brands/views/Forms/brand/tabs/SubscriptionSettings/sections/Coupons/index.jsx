@@ -63,8 +63,8 @@ export const Coupons = ({ update }) => {
          <Spacer size="8px" />
          <Flex container alignItems="center" justifyContent="space-between">
             <Form.Toggle
-               name="available"
                value={isAvailable}
+               name="isCouponsAvailable"
                onChange={() => setIsAvailable(!isAvailable)}
             >
                <Flex container alignItems="center">

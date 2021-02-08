@@ -63,8 +63,8 @@ export const LoyaltyPoints = ({ update }) => {
          <Spacer size="8px" />
          <Flex container alignItems="center" justifyContent="space-between">
             <Form.Toggle
-               name="available"
                value={isAvailable}
+               name="isLoyaltyPointsAvailable"
                onChange={() => setIsAvailable(!isAvailable)}
             >
                <Flex container alignItems="center">

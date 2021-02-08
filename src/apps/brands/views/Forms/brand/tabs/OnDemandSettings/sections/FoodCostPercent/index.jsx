@@ -53,14 +53,24 @@ export const FoodCostPercent = ({ update }) => {
             }
             const { brand, id } = storeSettings[index]
             setSettingId(id)
-            if ('lowerLimit' in brand.value || 'upperLimit' in brand.value) {
+            if ('lowerLimit' in brand.value) {
                setLowerLimit({
-                  ...lowerLimit,
                   value: brand.value.lowerLimit,
+                  meta: {
+                     errors: [],
+                     isTouched: false,
+                     isValid: Boolean(brand.value.lowerLimit),
+                  },
                })
+            }
+            if ('upperLimit' in brand.value) {
                setUpperLimit({
-                  ...upperLimit,
                   value: brand.value.upperLimit,
+                  meta: {
+                     errors: [],
+                     isTouched: false,
+                     isValid: Boolean(brand.value.upperLimit),
+                  },
                })
             }
          }

@@ -103,9 +103,9 @@ export const Store = ({ update }) => {
          update({
             id: settingId,
             value: {
+               isOpen,
                to: to.value,
                from: from.value,
-               isOpen: isOpen.value,
                shutMessage: message.value,
             },
          })

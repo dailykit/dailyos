@@ -84,7 +84,7 @@ const LoyaltyPointsUsage = ({ update }) => {
                setMax({
                   value: brand.value.max,
                   meta: {
-                     isValid: false,
+                     isValid: true,
                      isTouched: false,
                      errors: [],
                   },
