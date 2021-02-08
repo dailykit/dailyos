@@ -100,6 +100,8 @@ export const PriceLabels = ({ update }) => {
                         pricePerPlanIsVisible:
                            brand.value.pricePerPlan.isVisible,
                      }),
+                  }),
+                  ...(brand?.value?.pricePerServing && {
                      ...(brand.value?.pricePerServing?.prefix && {
                         pricePerServingPrefix: {
                            value: brand.value.pricePerServing.prefix,
@@ -319,16 +321,16 @@ export const PriceLabels = ({ update }) => {
                name="pricePerPlanIsVisible"
                value={form.pricePerPlanIsVisible}
                onChange={() =>
-                  handleChange(
-                     'pricePerPlanIsVisible',
-                     !form.pricePerPlanIsVisible
-                  )
+                  setForm(form => ({
+                     ...form,
+                     pricePerPlanIsVisible: !form.pricePerPlanIsVisible,
+                  }))
                }
             />
 
             <Spacer size="24px" />
             <Flex container alignItems="center">
-               <Text as="h3">Plan Labels</Text>
+               <Text as="h3">Serving Labels</Text>
                <Tooltip identifier="brand_serving_plan_label_info" />
             </Flex>
             <Spacer size="16px" />
@@ -386,10 +388,10 @@ export const PriceLabels = ({ update }) => {
                name="pricePerServingIsVisible"
                value={form.pricePerServingIsVisible}
                onChange={() =>
-                  handleChange(
-                     'pricePerServingIsVisible',
-                     !form.pricePerServingIsVisible
-                  )
+                  setForm(form => ({
+                     ...form,
+                     pricePerServingIsVisible: !form.pricePerServingIsVisible,
+                  }))
                }
             />
 
