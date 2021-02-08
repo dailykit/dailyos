@@ -161,7 +161,7 @@ const Layout = styled.div`
    height: 100vh;
    overflow: hidden;
    grid-template-rows: 40px 1fr;
-   grid-template-columns: ${({ open }) => (open ? '280px 1fr' : '1fr')};
+   grid-template-columns: ${({ open }) => (open ? '250px 1fr' : '1fr')};
    grid-template-areas: ${({ open }) =>
       open ? "'aside head' 'aside main'" : "'head head' 'main main'"};
    > header {
