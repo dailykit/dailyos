@@ -4,17 +4,13 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import {
    Text,
-   Form,
-   Spacer,
    PlusIcon,
    ComboButton,
    IconButton,
    Tunnel,
    Tunnels,
    useTunnel,
-   TunnelHeader,
 } from '@dailykit/ui'
-import validator from '../../validator'
 import { BRANDS } from '../../../graphql'
 import tableOptions from '../../../tableOption'
 import { logger } from '../../../../../shared/utils'
@@ -22,6 +18,7 @@ import { StyledWrapper, StyledHeader } from '../styled'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { InlineLoader, Flex, Tooltip } from '../../../../../shared/components'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
+import CreateBrandTunnel from './CreateBrandTunnel'
 
 export const Brands = () => {
    const { tooltip } = useTooltip()
@@ -187,94 +184,6 @@ export const Brands = () => {
       []
    )
 
-   const save = () => {
-      if (form.title.meta.isValid && form.domain.meta.isValid) {
-         return create({
-            variables: {
-               object: {
-                  title: form.title.value,
-                  domain: form.domain.value,
-               },
-            },
-         })
-      }
-      return toast.error('Title and Domain is required!')
-   }
-
-   const handleChange = e => {
-      const { name, value } = e.target
-      if (name === 'title') {
-         setForm({
-            ...form,
-            title: {
-               ...form.title,
-               value: value,
-            },
-         })
-      } else {
-         setForm({
-            ...form,
-            domain: {
-               ...form.domain,
-               value: value,
-            },
-         })
-      }
-   }
-
-   const onBlur = e => {
-      const { name, value } = e.target
-      if (name === 'title') {
-         setForm({
-            ...form,
-            title: {
-               ...form.title,
-               meta: {
-                  ...form.title.meta,
-                  isTouched: true,
-                  errors: validator.text(value).errors,
-                  isValid: validator.text(value).isValid,
-               },
-            },
-         })
-      } else {
-         setForm({
-            ...form,
-            domain: {
-               ...form.domain,
-               meta: {
-                  ...form.domain.meta,
-                  isTouched: true,
-                  errors: validator.text(value).errors,
-                  isValid: validator.text(value).isValid,
-               },
-            },
-         })
-      }
-   }
-
-   const close = () => {
-      setForm({
-         title: {
-            value: '',
-            meta: {
-               isValid: false,
-               isTouched: false,
-               errors: [],
-            },
-         },
-         domain: {
-            value: '',
-            meta: {
-               isValid: false,
-               isTouched: false,
-               errors: [],
-            },
-         },
-      })
-      closeTunnel(1)
-   }
-
    if (error) {
       toast.error('Something went wrong!')
       logger(error)
@@ -310,58 +219,7 @@ export const Brands = () => {
          )}
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="md">
-               <TunnelHeader
-                  title="Add Brand"
-                  right={{
-                     action: save,
-                     title: loading ? 'Saving...' : 'Save',
-                  }}
-                  close={close}
-                  tooltip={<Tooltip identifier="create_brand_tunnelHeader" />}
-               />
-               <Flex padding="16px">
-                  <Form.Group>
-                     <Form.Label htmlFor="title" title="title">
-                        <Flex container alignItems="center">
-                           Title
-                           <Tooltip identifier="brand_title_info" />
-                        </Flex>
-                     </Form.Label>
-                     <Form.Text
-                        id="title"
-                        name="title"
-                        value={form.title.value}
-                        onChange={e => handleChange(e)}
-                        onBlur={e => onBlur(e, 'title')}
-                     />
-                     {form.title.meta.isTouched &&
-                        !form.title.meta.isValid &&
-                        form.title.meta.errors.map((error, index) => (
-                           <Form.Error key={index}>{error}</Form.Error>
-                        ))}
-                  </Form.Group>
-                  <Spacer size="24px" />
-                  <Form.Group>
-                     <Form.Label htmlFor="domain" title="domain">
-                        <Flex container alignItems="center">
-                           Domain
-                           <Tooltip identifier="brand_domain_info" />
-                        </Flex>
-                     </Form.Label>
-                     <Form.Text
-                        id="domain"
-                        name="domain"
-                        value={form.domain.value}
-                        onChange={e => handleChange(e)}
-                        onBlur={e => onBlur(e, 'domain')}
-                     />
-                     {form.domain.meta.isTouched &&
-                        !form.domain.meta.isValid &&
-                        form.domain.meta.errors.map((error, index) => (
-                           <Form.Error key={index}>{error}</Form.Error>
-                        ))}
-                  </Form.Group>
-               </Flex>
+               <CreateBrandTunnel closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
       </StyledWrapper>
