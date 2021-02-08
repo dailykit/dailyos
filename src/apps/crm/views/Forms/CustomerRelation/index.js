@@ -171,8 +171,8 @@ const CustomerRelation = ({ match }) => {
    } else if (tab?.data?.activeCard === 'Subscriber') {
       table = (
          <SubscriptionTable
-            id={match.params.id}
-            sid={subscriptionData[0]?.customer?.subscriptionId || null}
+            id={match?.params?.id || 0}
+            sid={subscriptionData[0]?.customer?.subscriptionId || 0}
          />
       )
    }
