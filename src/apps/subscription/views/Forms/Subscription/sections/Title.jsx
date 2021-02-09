@@ -264,21 +264,28 @@ export default Title
 
 const ServingTunnel = ({ tunnels, closeTunnel }) => {
    const { state, dispatch } = usePlan()
+   const [serving, setServing] = React.useState({
+      id: null,
+      size: '',
+      isActive: false,
+      isDefault: false,
+      meta: { errors: [], isValid: false, isTouched: false },
+   })
    const [upsertTitle] = useMutation(UPSERT_SUBSCRIPTION_TITLE)
    const [upsertServing] = useMutation(UPSERT_SUBSCRIPTION_SERVING, {
       onCompleted: ({ upsertSubscriptionServing = {} }) => {
          const { id } = upsertSubscriptionServing
-         upsertTitle({
-            variables: {
-               object: {
-                  id: state.title.id,
-                  title: state.title.title,
-                  defaultSubscriptionServingId: state.serving.isDefault
-                     ? id
-                     : null,
+         if (serving.isDefault) {
+            upsertTitle({
+               variables: {
+                  object: {
+                     id: state.title.id,
+                     title: state.title.title,
+                     defaultSubscriptionServingId: id,
+                  },
                },
-            },
-         })
+            })
+         }
          hideTunnel()
          toast.success('Successfully created the serving!')
       },
@@ -288,14 +295,24 @@ const ServingTunnel = ({ tunnels, closeTunnel }) => {
       },
    })
 
+   React.useEffect(() => {
+      setServing({
+         id: state.serving?.id,
+         size: state.serving.size,
+         isActive: state.serving.isActive,
+         isDefault: state.serving.isDefault,
+         meta: { errors: [], isValid: false, isTouched: false },
+      })
+   }, [state.serving])
+
    const createServing = () => {
       upsertServing({
          variables: {
             object: {
                subscriptionTitleId: state.title.id,
-               servingSize: Number(state.serving.size),
-               ...(state.serving.id && {
-                  id: state.serving.id,
+               servingSize: Number(serving.size),
+               ...(serving.id && {
+                  id: serving.id,
                }),
             },
          },
@@ -307,16 +324,26 @@ const ServingTunnel = ({ tunnels, closeTunnel }) => {
    }
 
    const onBlur = e => {
-      dispatch({
-         type: 'SET_SERVING',
-         payload: {
-            meta: {
-               isTouched: true,
-               errors: validate.serving(e.target.value).errors,
-               isValid: validate.serving(e.target.value).isValid,
-            },
+      setServing({
+         ...serving,
+         meta: {
+            isTouched: true,
+            errors: validate.serving(e.target.value).errors,
+            isValid: validate.serving(e.target.value).isValid,
          },
       })
+   }
+
+   const makeDefault = () => {
+      setServing(serving => ({
+         ...serving,
+         isDefault: !serving.isDefault,
+         meta: {
+            errors: [],
+            isValid: true,
+            isTouched: false,
+         },
+      }))
    }
 
    return (
@@ -324,11 +351,10 @@ const ServingTunnel = ({ tunnels, closeTunnel }) => {
          <Tunnel layer={1}>
             <TunnelHeader
                close={() => hideTunnel()}
-               title={`${state.serving.id ? 'Edit' : 'Add'} Serving`}
+               title={`${serving.id ? 'Edit' : 'Add'} Serving`}
                right={{
                   title: 'Save',
                   action: () => createServing(),
-                  disabled: !state.serving.meta.isValid,
                }}
                tooltip={
                   <Tooltip identifier="form_subscription_tunnel_serving_create" />
@@ -354,21 +380,18 @@ const ServingTunnel = ({ tunnels, closeTunnel }) => {
                            },
                         })
                      }
-                     value={state.serving.size}
-                     disabled={state.serving.id}
+                     value={serving.size}
+                     disabled={serving.id}
                      placeholder="Enter the serving size"
-                     hasError={
-                        state.serving.meta.isTouched &&
-                        !state.serving.meta.isValid
-                     }
+                     hasError={serving.meta.isTouched && !serving.meta.isValid}
                   />
-                  {state.serving.meta.isTouched &&
-                     !state.serving.meta.isValid &&
-                     state.serving.meta.errors.map((error, index) => (
+                  {serving.meta.isTouched &&
+                     !serving.meta.isValid &&
+                     serving.meta.errors.map((error, index) => (
                         <Form.Error key={index}>{error}</Form.Error>
                      ))}
                </Form.Group>
-               {state.serving.id && (
+               {serving.id && (
                   <HelperText
                      type="hint"
                      message="Serving is not editable right now."
@@ -376,15 +399,9 @@ const ServingTunnel = ({ tunnels, closeTunnel }) => {
                )}
                <Spacer size="16px" />
                <Form.Toggle
-                  value={state.serving.isDefault}
-                  onChange={() =>
-                     dispatch({
-                        type: 'SET_SERVING',
-                        payload: {
-                           isDefault: !state.serving.isDefault,
-                        },
-                     })
-                  }
+                  onChange={makeDefault}
+                  name="makeServingDefault"
+                  value={serving.isDefault}
                >
                   <Flex container alignItems="center">
                      Make Default
