@@ -64,22 +64,7 @@ const Editor = () => {
       onCompleted: data => {
          const { getFile } = data
          const fileType = getFile.path.split('.').pop()
-         switch (fileType) {
-            case 'js':
-               setLanguage('javascript')
-               break
-            case 'html':
-               setLanguage(fileType)
-               break
-            case 'css':
-               setLanguage(fileType)
-               break
-            case 'pug':
-               setLanguage(fileType)
-               break
-            default:
-               setLanguage('javascript')
-         }
+         fileType === 'js' ? setLanguage('javascript') : setLanguage(fileType)
          setCode(getFile.content)
          setFile(getFile)
       },

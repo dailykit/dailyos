@@ -51,6 +51,8 @@ const EditorOptions = ({
    deviceManager,
    saveTemplate,
 }) => {
+   console.log(language)
+
    const [
       linkFilesTunnels,
       openLinkFilesTunnel,
@@ -216,7 +218,9 @@ const EditorOptions = ({
                   value={isDark}
                />
                <Spacer size="20px" xAxis />
-               {language === 'html' && (
+               {['html', 'liquid', 'ejs', 'mustache', 'pug'].includes(
+                  language
+               ) && (
                   <IconButton
                      type="ghost"
                      onClick={() => openLinkFilesTunnel(1)}
