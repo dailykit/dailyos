@@ -961,16 +961,15 @@ export const NOTIFICATIONS = {
    `,
 
    CREATE_EMAIL_CONFIGS: gql`
-   mutation CreateEmailConfigs($objects: [notifications_emailConfig_insert_input!]!) {
+    mutation createNotificationEmailConfigs($objects: [notifications_emailConfig_insert_input!]!) {
       createNotificationEmailConfigs(objects: $objects) {
         returning {
           email
-          id
-          isActive
           typeId
         }
       }
     }
+    
     `
 ,
 

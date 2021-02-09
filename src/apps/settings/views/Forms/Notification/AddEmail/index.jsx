@@ -21,14 +21,13 @@ import {
    Tooltip,
 } from '../../../../../../shared/components'
 
-const AddEmailAdresses = ({ typeid }) => {
+const AddEmailAdresses = ({ typeid,closeTunnel }) => {
    const [
       createNotificationEmailConfigs,
       { data, loading: loadingNotificationEmailConfigs },
    ] = useMutation(NOTIFICATIONS.CREATE_EMAIL_CONFIGS, {
       onCompleted: () => {
          toast.success('Email added.')
-      
       },
       onError: error => {
          toast.error('Failed to add Email!')
@@ -37,7 +36,7 @@ const AddEmailAdresses = ({ typeid }) => {
       },
    })
 
-   const [emails, setEmails] = React.useState([{ email: null ,typeId:typeid }])
+   const [emails, setEmails] = React.useState([{ email: null, typeId: typeid }])
 
    const handleChange = (i, event) => {
       const values = [...emails]
@@ -46,12 +45,12 @@ const AddEmailAdresses = ({ typeid }) => {
       console.log(emails)
    }
 
-   const handleAdd = () => {
+   const handleMultipleMails = () => {
       const values = [...emails]
 
       setEmails(values)
 
-      values.push({ email: null, typeId:typeid })
+      values.push({ email: null, typeId: typeid })
    }
 
    const handleRemove = i => {
@@ -61,19 +60,14 @@ const AddEmailAdresses = ({ typeid }) => {
    }
 
    const add = () => {
-      let inputVariables = {
-         objects:
-         {
-            typeid:emails.typeId
-         }
-}
-      try {
 
-         createNotificationEmailConfigs({
-           emails
-         })
-      }
-      catch (error) {
+      let inputVariables = {
+         "objects": emails
+       }
+
+      try {
+         createNotificationEmailConfigs({variables: inputVariables})
+      } catch (error) {
          toast.error(error.message)
       }
    }
@@ -87,6 +81,8 @@ const AddEmailAdresses = ({ typeid }) => {
                title: 'Add',
                disabled: emails.filter(Boolean).length === 0,
             }}
+            close={() => closeTunnel(1)}
+            
          />
 
          <Flex padding="50px">
@@ -109,7 +105,7 @@ const AddEmailAdresses = ({ typeid }) => {
             <ButtonTile
                type="secondary"
                text="Add New Email"
-               onClick={() => handleAdd()}
+               onClick={() => handleMultipleMails()}
             />
          </Flex>
       </>

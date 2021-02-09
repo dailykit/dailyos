@@ -37,9 +37,8 @@ import MultiValueFormatter from 'react-tabulator/lib/formatters/MultiValueFormat
 import options from './tableOptions'
 import { NOTIFICATIONS } from '../../../../../graphql'
 import NotificationForm from '../../../../Forms/Notification/index'
-import AddEmailAdresses from '../../../../Forms/Notification/'
 import PlayButton from '../../../../../../../../src/shared/assets/icons/PlayButton'
-
+import AddEmailAdresses from '../../../../Forms/Notification/AddEmail/index'
 const PlayAudio = ({ cell }) => {
    const rowData = cell._cell.row.data
    const audio = new Audio(rowData.audioUrl)
@@ -91,6 +90,15 @@ const NotificationTable = () => {
    const { tab, addTab } = useTabs()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [state, setState] = React.useState({})
+
+   const [typeid, SetTypeid] = React.useState(null)
+
+   const rowClick = (e, cell) => {
+      const { id = null } = cell.getData() || {}
+      if (id) {
+         SetTypeid(id)
+      }
+   }
 
    React.useEffect(() => {
       if (!tab) {
@@ -171,14 +179,16 @@ const NotificationTable = () => {
    const ConfigureEmailTunnel = ({ cell }) => {
       const rowData = cell._cell.row.data
       const emailConfigs = rowData.emailConfigs
+      const cellValue = cell._cell.getValue()
       return (
          <>
+            {console.log('Cell Value ' + cellValue)}
             {emailConfigs.length > 0 ? (
                emailConfigs
                   .slice(0, 1)
                   .map(emailConfig => (
                      <Tag onClick={() => openTunnel(1)}>
-                        {emailConfig.email}
+                        {emailConfig.email} <span>+</span>
                      </Tag>
                   ))
             ) : (
@@ -228,6 +238,7 @@ const NotificationTable = () => {
          title: 'Audio',
          columns: [
             {
+               title: 'Audio',
                field: 'playAudio',
                editor: true,
                formatter: reactFormatter(
@@ -236,12 +247,13 @@ const NotificationTable = () => {
                      toggleType="playAudio"
                   />
                ),
-               width:100
+               width: 100,
             },
             {
+               title: 'Play Audio',
                field: 'AudioPlayer',
                formatter: reactFormatter(<PlayAudio />),
-               width:100
+               width: 100,
             },
          ],
       },
@@ -253,6 +265,8 @@ const NotificationTable = () => {
             <ConfigureEmailTunnel openTunnel={openTunnel} />
          ),
          editor: true,
+         cellClick: (e, cell) => rowClick(e, cell)
+            
       },
 
       {
@@ -268,6 +282,7 @@ const NotificationTable = () => {
    if (loading) return <InlineLoader />
    return (
       <>
+
          <ReactTabulator
             columns={editableColumns}
             data={notificationTypes}
@@ -279,11 +294,7 @@ const NotificationTable = () => {
 
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="md">
-               <TunnelHeader
-                  title="Configure Emails"
-                  close={() => closeTunnel(1)}
-               />
-               <NotificationForm />
+               <AddEmailAdresses typeid={typeid}  closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
       </>
