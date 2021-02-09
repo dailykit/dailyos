@@ -19,14 +19,16 @@ import {
    state as initialState,
 } from '../../../../context/product/comboProduct'
 import { S_COMBO_PRODUCT, UPDATE_COMBO_PRODUCT } from '../../../../graphql'
-import { StyledRule } from '../styled'
+import { ResponsiveFlex, StyledFlex, StyledRule } from '../styled'
 import validator from '../validators'
 import { Assets, Description, Items, Pricing } from './components'
+import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
 
 const address = 'apps.menu.views.forms.product.comboproduct.'
 
 export default function ComboProduct() {
    const { t } = useTranslation()
+   const { initiatePriority } = useDnd()
 
    const { id: productId } = useParams()
 
@@ -58,6 +60,18 @@ export default function ComboProduct() {
             ...title,
             value: data.subscriptionData.data.comboProduct.name,
          })
+         if (
+            data.subscriptionData.data.comboProduct.comboProductComponents
+               .length
+         ) {
+            initiatePriority({
+               tablename: 'comboProductComponent',
+               schemaname: 'products',
+               data:
+                  data.subscriptionData.data.comboProduct
+                     .comboProductComponents,
+            })
+         }
       },
    })
 
@@ -138,7 +152,7 @@ export default function ComboProduct() {
 
    return (
       <ComboProductContext.Provider value={{ productState, productDispatch }}>
-         <Flex
+         <ResponsiveFlex
             as="header"
             container
             padding="16px 32px"
@@ -164,19 +178,19 @@ export default function ComboProduct() {
                      <Form.Error key={index}>{error}</Form.Error>
                   ))}
             </Form.Group>
+            {state.isValid?.status ? (
+               <Flex container alignItems="center">
+                  <TickIcon color="#00ff00" stroke={2} />
+                  <Text as="p">All good!</Text>
+               </Flex>
+            ) : (
+               <Flex container alignItems="center">
+                  <CloseIcon color="#ff0000" />
+                  <Text as="p">{state.isValid?.error}</Text>
+               </Flex>
+            )}
+            <Spacer xAxis size="16px" />
             <Flex container alignItems="center">
-               {state.isValid?.status ? (
-                  <>
-                     <TickIcon color="#00ff00" stroke={2} />
-                     <Text as="p">All good!</Text>
-                  </>
-               ) : (
-                  <>
-                     <CloseIcon color="#ff0000" />
-                     <Text as="p">{state.isValid?.error}</Text>
-                  </>
-               )}
-               <Spacer xAxis size="16px" />
                <Form.Checkbox
                   name="popup"
                   value={state.isPopupAllowed}
@@ -195,30 +209,25 @@ export default function ComboProduct() {
                >
                   <Flex container alignItems="center">
                      Published
+                     <Spacer xAxis size="16px" />
                      <Tooltip identifier="combo_product_publish" />
                   </Flex>
                </Form.Toggle>
             </Flex>
-         </Flex>
+         </ResponsiveFlex>
          <Flex
             as="main"
             padding="32px"
             minHeight="calc(100vh - 130px)"
             style={{ background: '#f3f3f3' }}
          >
-            <Flex as="section" container>
-               <Flex flex="2">
-                  <Description state={state} />
-               </Flex>
+            <Pricing updateProduct={updateProduct} state={state} />
+
+            <StyledFlex as="section" container>
+               <Description state={state} />
                <Spacer xAxis size="16px" />
-               <Flex flex="1">
-                  <Pricing updateProduct={updateProduct} state={state} />
-               </Flex>
-               <Spacer xAxis size="16px" />
-               <Flex flex="1">
-                  <Assets state={state} />
-               </Flex>
-            </Flex>
+               <Assets state={state} />
+            </StyledFlex>
             <Spacer size="16px" />
             <StyledRule />
             <Spacer size="16px" />

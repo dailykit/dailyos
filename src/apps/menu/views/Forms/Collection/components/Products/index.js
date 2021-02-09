@@ -1,7 +1,14 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import { Text, ButtonTile, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
+import {
+   Text,
+   ButtonTile,
+   Tunnels,
+   Tunnel,
+   useTunnel,
+   Flex,
+} from '@dailykit/ui'
 import {
    DELETE_COLLECTION_PRODUCT_CATEGORY_PRODUCT,
    DELETE_COLLECTION_PRODUCT_CATEGORY,
@@ -25,6 +32,7 @@ import {
    ActionButton,
 } from './styled'
 import { logger } from '../../../../../../../shared/utils'
+import { DragNDrop } from '../../../../../../../shared/components'
 
 const Products = ({ state }) => {
    const { collectionDispatch } = React.useContext(CollectionContext)
@@ -91,26 +99,41 @@ const Products = ({ state }) => {
                />
             </Tunnel>
          </Tunnels>
-         {state.productCategories.map(category => (
-            <StyledCategoryWrapper key={category.id}>
-               <StyledHeader>
-                  <Text as="h2">{category.productCategoryName}</Text>
-                  <ActionButton onClick={() => deleteCategory(category)}>
-                     <DeleteIcon color="#FF6B5E" />
-                  </ActionButton>
-               </StyledHeader>
-               <Grid>
-                  {category.products.map(product => (
-                     <Product key={product.id} product={product} />
-                  ))}
-                  <ButtonTile
-                     type="secondary"
-                     text="Add Product"
-                     onClick={() => addProduct(category.id)}
-                  />
-               </Grid>
-            </StyledCategoryWrapper>
-         ))}
+         <DragNDrop
+            list={state.productCategories}
+            droppableId="categoriesDroppableId"
+            tablename="collection_productCategory"
+            schemaname="onDemand"
+            direction="horizontal"
+         >
+            {state.productCategories.map(category => (
+               <StyledCategoryWrapper key={category.id}>
+                  <StyledHeader>
+                     <Text as="h2">{category.productCategoryName}</Text>
+                     <ActionButton onClick={() => deleteCategory(category)}>
+                        <DeleteIcon color="#FF6B5E" />
+                     </ActionButton>
+                  </StyledHeader>
+                  <Flex>
+                     <DragNDrop
+                        list={category.products}
+                        droppableId="categoryProductsDroppableId"
+                        tablename="collection_productCategory_product"
+                        schemaname="onDemand"
+                     >
+                        {category.products.map(product => (
+                           <Product key={product.id} product={product} />
+                        ))}
+                     </DragNDrop>
+                     <ButtonTile
+                        type="secondary"
+                        text="Add Product"
+                        onClick={() => addProduct(category.id)}
+                     />
+                  </Flex>
+               </StyledCategoryWrapper>
+            ))}
+         </DragNDrop>
          <ButtonTile
             type="secondary"
             text="Add Category"
