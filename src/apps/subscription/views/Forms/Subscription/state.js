@@ -11,12 +11,13 @@ const initialState = {
       meta: { errors: [], isValid: false, isTouched: false },
    },
    serving: {
+      id: null,
       size: '',
       isActive: false,
       isDefault: false,
-      meta: { errors: [], isValid: false, isTouched: false },
    },
    item: {
+      id: null,
       tax: 0,
       count: '',
       price: '',

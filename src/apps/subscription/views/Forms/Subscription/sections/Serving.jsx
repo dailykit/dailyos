@@ -227,34 +227,53 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
 export default Serving
 
 const ItemCountTunnel = ({ tunnels, closeTunnel }) => {
-   const { state, dispatch } = usePlan()
+   const { state } = usePlan()
+   const [form, setForm] = React.useState({
+      id: null,
+      tax: 0,
+      count: '',
+      price: '',
+      isTaxIncluded: false,
+   })
    const [upsertItemCount] = useMutation(UPSERT_ITEM_COUNT, {
       onCompleted: () => {
          closeTunnel(1)
-         dispatch({
-            type: 'SET_ITEM',
-            payload: { id: null, price: '', count: '' },
-         })
          toast.success('Successfully created the item count!')
       },
       onError: error => {
          logger(error)
-         toast.success('Successfully created the item count!')
+         toast.error('Failed to create the item count!')
       },
    })
 
+   React.useEffect(() => {
+      setForm({
+         id: state.item.id,
+         tax: state.item.tax,
+         count: state.item.count,
+         price: state.item.price,
+         isTaxIncluded: state.item.isTaxIncluded,
+      })
+   }, [state.item])
+
    const save = () => {
+      const { tax, count, price, isTaxIncluded } = form
       upsertItemCount({
          variables: {
             object: {
-               tax: Number(state.item.tax),
-               count: Number(state.item.count),
-               price: Number(state.item.price),
-               ...state.item,
-               ...(state.item.id && { id: state.item.id }),
+               isTaxIncluded,
+               tax: Number(tax),
+               count: Number(count),
+               price: Number(price),
+               subscriptionServingId: state.serving.id,
+               ...(form.id && { id: form.id }),
             },
          },
       })
+   }
+
+   const handleChange = (name, value) => {
+      setForm(node => ({ ...node, [name]: value }))
    }
 
    return (
@@ -266,7 +285,7 @@ const ItemCountTunnel = ({ tunnels, closeTunnel }) => {
                right={{
                   title: 'Save',
                   action: () => save(),
-                  disabled: !state.item.count || !state.item.price,
+                  disabled: !form.count || !form.price,
                }}
                tooltip={
                   <Tooltip identifier="form_subscription_tunnel_item_create" />
@@ -284,14 +303,9 @@ const ItemCountTunnel = ({ tunnels, closeTunnel }) => {
                      id="count"
                      name="count"
                      onChange={e =>
-                        dispatch({
-                           type: 'SET_ITEM',
-                           payload: {
-                              count: Number(e.target.value) || '',
-                           },
-                        })
+                        handleChange(e.target.name, Number(e.target.value))
                      }
-                     value={state.item.count}
+                     value={form.count}
                      placeholder="Enter the item count"
                   />
                </Form.Group>
@@ -307,14 +321,9 @@ const ItemCountTunnel = ({ tunnels, closeTunnel }) => {
                      id="price"
                      name="price"
                      onChange={e =>
-                        dispatch({
-                           type: 'SET_ITEM',
-                           payload: {
-                              price: Number(e.target.value) || '',
-                           },
-                        })
+                        handleChange(e.target.name, Number(e.target.value))
                      }
-                     value={state.item.price}
+                     value={form.price}
                      placeholder="Enter the item price"
                   />
                </Form.Group>
@@ -326,14 +335,9 @@ const ItemCountTunnel = ({ tunnels, closeTunnel }) => {
                   <Form.Number
                      id="tax"
                      name="tax"
-                     value={state.item.tax}
+                     value={form.tax}
                      onChange={e =>
-                        dispatch({
-                           type: 'SET_ITEM',
-                           payload: {
-                              tax: Number(e.target.value) || '',
-                           },
-                        })
+                        handleChange(e.target.name, Number(e.target.value))
                      }
                      placeholder="Enter the tax"
                   />
@@ -342,14 +346,9 @@ const ItemCountTunnel = ({ tunnels, closeTunnel }) => {
                <Flex container alignItems="center">
                   <Form.Toggle
                      onChange={() =>
-                        dispatch({
-                           type: 'SET_ITEM',
-                           payload: {
-                              isTaxIncluded: !state.item.isTaxIncluded,
-                           },
-                        })
+                        handleChange('isTaxIncluded', !form.isTaxIncluded)
                      }
-                     value={state.item.isTaxIncluded}
+                     value={form.isTaxIncluded}
                      name="itemCount_toggle_isTaxIncluded"
                   >
                      Is tax Included?
