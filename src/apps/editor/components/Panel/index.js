@@ -75,6 +75,10 @@ const Panel = () => {
 
    //query to load all files in dropdown
    console.log(tab)
+   const ext = tab?.path.split('.').pop()
+   const isFileValid = ['html', 'ejs', 'liquid', 'pug', 'mustache'].includes(
+      ext
+   )
 
    const { loading: linkLoading } = useSubscription(FILE_LINKS, {
       variables: {
@@ -180,7 +184,7 @@ const Panel = () => {
    if (linkLoading) return <InlineLoader />
    return (
       <PanelWrapper>
-         {tab?.path.split('.').pop() === 'html' ? (
+         {isFileValid ? (
             <Parent>
                <Node
                   isOpen={node.linkCss.isOpen}
