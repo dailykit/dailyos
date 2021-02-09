@@ -1,5 +1,4 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
 
 import 'react-datepicker/dist/react-datepicker.css'
 
@@ -11,14 +10,14 @@ import ProductsSection from './ProductsSection'
 import { useTabs } from '../../../context'
 
 export const Menu = () => {
-   const history = useHistory()
    const { tab, addTab } = useTabs()
 
    React.useEffect(() => {
       if (!tab) {
+         localStorage.removeItem('serving_size')
          addTab('Menu', '/subscription/menu')
       }
-   }, [history, tab, addTab])
+   }, [tab, addTab])
 
    return (
       <MenuProvider>
