@@ -64,17 +64,17 @@ const ItemCount = ({ id, openItemTunnel }) => {
       {
          variables: { id },
          onSubscriptionData: ({
-            subscriptionData: { data: { itemCount = {} } = {} } = {},
+            subscriptionData: { data: { itemCount: node = {} } = {} } = {},
          }) => {
             dispatch({
                type: 'SET_ITEM',
                payload: {
-                  id: itemCount.id,
-                  tax: itemCount.tax,
-                  count: itemCount.count,
-                  price: itemCount.price,
-                  isActive: itemCount.isActive,
-                  isTaxIncluded: itemCount.isTaxIncluded,
+                  id: node.id,
+                  tax: node.tax,
+                  count: node.count,
+                  price: node.price,
+                  isActive: node.isActive,
+                  isTaxIncluded: node.isTaxIncluded,
                },
             })
          },
@@ -104,7 +104,7 @@ const ItemCount = ({ id, openItemTunnel }) => {
          })
          return
       }
-      return upsertItemCount({
+      upsertItemCount({
          variables: {
             object: {
                isActive: !state.item.isActive,
@@ -218,16 +218,6 @@ export default ItemCount
 
 const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
    const { state } = usePlan()
-   const [insertSubscription] = useMutation(INSERT_SUBSCRIPTION, {
-      onCompleted: () => {
-         close()
-         toast.success('Successfully created the subscription!')
-      },
-      onError: error => {
-         logger(error)
-         toast.success('Failed to create the subscription!')
-      },
-   })
    const [days, setDays] = React.useState({
       sunday: false,
       monday: false,
@@ -244,6 +234,35 @@ const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
       startDate: '',
       endDate: '',
    })
+   const close = () => {
+      closeTunnel(1)
+      setDays({
+         sunday: false,
+         monday: false,
+         tuesday: false,
+         wednesday: false,
+         thursday: false,
+         friday: false,
+         saturday: false,
+      })
+      setForm({
+         cutOffTime: '',
+         leadTime: '',
+         startTime: '',
+         startDate: '',
+         endDate: '',
+      })
+   }
+   const [insertSubscription] = useMutation(INSERT_SUBSCRIPTION, {
+      onCompleted: () => {
+         close()
+         toast.success('Successfully created the subscription!')
+      },
+      onError: error => {
+         logger(error)
+         toast.success('Failed to create the subscription!')
+      },
+   })
 
    const save = () => {
       const bridge = {
@@ -258,15 +277,14 @@ const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
 
       const objects = []
 
-      for (let [key, value] of Object.entries(days)) {
-         if (value) {
-            let rule = new RRule({
+      Object.keys(days).forEach(day => {
+         if (days[day]) {
+            const rule = new RRule({
                freq: RRule.WEEKLY,
                interval: 1,
                wkst: RRule.MO,
-               byweekday: bridge[key],
+               byweekday: bridge[day],
             })
-
             objects.push({
                rrule: rule.toString(),
                subscriptionItemCountId: state.item.id,
@@ -275,7 +293,7 @@ const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
                startTime: { unit: 'days', value: Number(form.startTime) },
             })
          }
-      }
+      })
 
       insertSubscription({
          variables: {
@@ -298,26 +316,6 @@ const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
 
    const selectDay = day => {
       setDays({ ...days, [day]: !days[day] })
-   }
-
-   const close = () => {
-      closeTunnel(1)
-      setDays({
-         sunday: false,
-         monday: false,
-         tuesday: false,
-         wednesday: false,
-         thursday: false,
-         friday: false,
-         saturday: false,
-      })
-      setForm({
-         cutOffTime: '',
-         leadTime: '',
-         startTime: '',
-         startDate: '',
-         endDate: '',
-      })
    }
 
    const isValid = () => {

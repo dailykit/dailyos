@@ -66,21 +66,22 @@ const Title = () => {
             id: params.id,
          },
          onSubscriptionData: ({
-            subscriptionData: { data: { title = {} } = {} },
+            subscriptionData: { data: { title: node = {} } = {} },
          }) => {
-            if (isEmpty(title)) return
+            if (isEmpty(node)) return
 
             dispatch({
                type: 'SET_TITLE',
                payload: {
-                  id: title.id,
-                  title: title.title,
-                  isActive: title.isActive,
-                  defaultServing: { id: title.defaultSubscriptionServingId },
+                  id: node.id,
+                  title: node.title,
+                  isActive: node.isActive,
+                  defaultServing: { id: node.defaultSubscriptionServingId },
                },
             })
-            !tab &&
-               addTab(title?.title, `/subscription/subscriptions/${title?.id}`)
+            if (!tab) {
+               addTab(node.title, `/subscription/subscriptions/${node.id}`)
+            }
          },
       }
    )
@@ -172,8 +173,8 @@ const Title = () => {
                />
                {state.title.meta.isTouched &&
                   !state.title.meta.isValid &&
-                  state.title.meta.errors.map((error, index) => (
-                     <Form.Error key={index}>{error}</Form.Error>
+                  state.title.meta.errors.map((node, index) => (
+                     <Form.Error key={index}>{node}</Form.Error>
                   ))}
             </Form.Group>
             <Flex container alignItems="center">
@@ -257,6 +258,9 @@ const ServingTunnel = ({ tunnels, closeTunnel }) => {
       isDefault: false,
       meta: { errors: [], isValid: false, isTouched: false },
    })
+   const hideTunnel = () => {
+      closeTunnel(1)
+   }
    const [upsertTitle] = useMutation(UPSERT_SUBSCRIPTION_TITLE)
    const [upsertServing] = useMutation(UPSERT_SUBSCRIPTION_SERVING, {
       onCompleted: ({ upsertSubscriptionServing = {} }) => {
@@ -305,10 +309,6 @@ const ServingTunnel = ({ tunnels, closeTunnel }) => {
       })
    }
 
-   const hideTunnel = () => {
-      closeTunnel(1)
-   }
-
    const onBlur = e => {
       setServing({
          ...serving,
@@ -321,9 +321,9 @@ const ServingTunnel = ({ tunnels, closeTunnel }) => {
    }
 
    const makeDefault = () => {
-      setServing(serving => ({
-         ...serving,
-         isDefault: !serving.isDefault,
+      setServing(node => ({
+         ...node,
+         isDefault: !node.isDefault,
          meta: {
             errors: [],
             isValid: true,

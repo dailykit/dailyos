@@ -53,16 +53,15 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
       {
          variables: { id },
          onSubscriptionData: ({
-            subscriptionData: { data: { serving = {} } = {} } = {},
+            subscriptionData: { data: { serving: node = {} } = {} } = {},
          }) => {
-            console.log('serving', Number(serving.size))
             dispatch({
                type: 'SET_SERVING',
                payload: {
-                  id: serving.id,
-                  size: Number(serving.size),
-                  isActive: serving.isActive,
-                  isDefault: state.title.defaultServing.id === serving.id,
+                  id: node.id,
+                  size: Number(node.size),
+                  isActive: node.isActive,
+                  isDefault: state.title.defaultServing.id === node.id,
                },
             })
          },
@@ -110,7 +109,7 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
          return
       }
 
-      return upsertServing({
+      upsertServing({
          variables: {
             object: {
                id: state.serving.id,
@@ -189,18 +188,18 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
             {serving.counts.length > 0 ? (
                <HorizontalTabs onChange={index => setTabIndex(index)}>
                   <HorizontalTabList>
-                     {serving.counts.map(({ id, count }) => (
-                        <HorizontalTab key={id}>
+                     {serving.counts.map(({ id: key, count }) => (
+                        <HorizontalTab key={key}>
                            <Text as="title">{count}</Text>
                         </HorizontalTab>
                      ))}
                   </HorizontalTabList>
                   <HorizontalTabPanels>
-                     {serving.counts.map(({ id }, index) => (
-                        <HorizontalTabPanel key={id}>
+                     {serving.counts.map(({ id: key }, index) => (
+                        <HorizontalTabPanel key={key}>
                            {index === tabIndex && (
                               <ItemCount
-                                 id={id}
+                                 id={key}
                                  openItemTunnel={openTunnel}
                                  isActive={isActive && index === tabIndex}
                               />
