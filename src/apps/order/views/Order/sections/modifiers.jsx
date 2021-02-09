@@ -8,7 +8,9 @@ import {
    HorizontalTabPanels,
 } from '@dailykit/ui'
 
-import { MealKits, Inventories, ReadyToEats } from '.'
+import { MealKits } from './mealkit'
+import { Inventories } from './inventory'
+import { ReadyToEats } from './readytoeat'
 
 const ProductModifiers = ({ product }) => {
    const [inventories, setInventories] = React.useState([])
@@ -18,7 +20,8 @@ const ProductModifiers = ({ product }) => {
    React.useEffect(() => {
       if (product?.orderModifiers) {
          product.orderModifiers.forEach(node => {
-            for (let [key, value] of Object.entries(node)) {
+            Object.entries(node).forEach(item => {
+               const [key, value] = item
                if (Array.isArray(value) && !isEmpty(value)) {
                   if (key === 'inventoryProducts') {
                      setInventories(data => uniqBy([...value, ...data], 'id'))
@@ -30,7 +33,7 @@ const ProductModifiers = ({ product }) => {
                      setReadyToEats(data => uniqBy([...value, ...data], 'id'))
                   }
                }
-            }
+            })
          })
       }
       return () => {

@@ -16,10 +16,7 @@ export const QUERIES = {
          }
       `,
       DETAILS: gql`
-         subscription order(
-            $id: oid!
-            $assemblyStationId: Int_comparison_exp = {}
-         ) {
+         subscription order($id: oid!) {
             order(id: $id) {
                id
                tax
@@ -50,84 +47,60 @@ export const QUERIES = {
                restaurant: deliveryInfo(path: "pickup.pickupInfo")
                dropoff: deliveryInfo(path: "dropoff.window")
                customer: deliveryInfo(path: "dropoff.dropoffInfo")
-               total_mealkits: orderMealKitProducts_aggregate(
-                  where: { assemblyStationId: $assemblyStationId }
-               ) {
+               total_mealkits: orderMealKitProducts_aggregate {
                   aggregate {
                      count(columns: id)
                   }
                }
                packed_mealkits: orderMealKitProducts_aggregate(
-                  where: {
-                     assemblyStationId: $assemblyStationId
-                     assemblyStatus: { _eq: "COMPLETED" }
-                  }
+                  where: { assemblyStatus: { _eq: "COMPLETED" } }
                ) {
                   aggregate {
                      count(columns: id)
                   }
                }
                assembled_mealkits: orderMealKitProducts_aggregate(
-                  where: {
-                     assemblyStationId: $assemblyStationId
-                     isAssembled: { _eq: true }
-                  }
+                  where: { isAssembled: { _eq: true } }
                ) {
                   aggregate {
                      count(columns: id)
                   }
                }
 
-               total_readytoeats: orderReadyToEatProducts_aggregate(
-                  where: { assemblyStationId: $assemblyStationId }
-               ) {
+               total_readytoeats: orderReadyToEatProducts_aggregate {
                   aggregate {
                      count(columns: id)
                   }
                }
                packed_readytoeats: orderReadyToEatProducts_aggregate(
-                  where: {
-                     assemblyStationId: $assemblyStationId
-                     assemblyStatus: { _eq: "COMPLETED" }
-                  }
+                  where: { assemblyStatus: { _eq: "COMPLETED" } }
                ) {
                   aggregate {
                      count(columns: id)
                   }
                }
                assembled_readytoeats: orderReadyToEatProducts_aggregate(
-                  where: {
-                     assemblyStationId: $assemblyStationId
-                     isAssembled: { _eq: true }
-                  }
+                  where: { isAssembled: { _eq: true } }
                ) {
                   aggregate {
                      count(columns: id)
                   }
                }
 
-               total_inventories: orderInventoryProducts_aggregate(
-                  where: { assemblyStationId: $assemblyStationId }
-               ) {
+               total_inventories: orderInventoryProducts_aggregate {
                   aggregate {
                      count(columns: id)
                   }
                }
                packed_inventories: orderInventoryProducts_aggregate(
-                  where: {
-                     assemblyStationId: $assemblyStationId
-                     assemblyStatus: { _eq: "COMPLETED" }
-                  }
+                  where: { assemblyStatus: { _eq: "COMPLETED" } }
                ) {
                   aggregate {
                      count(columns: id)
                   }
                }
                assembled_inventories: orderInventoryProducts_aggregate(
-                  where: {
-                     assemblyStationId: $assemblyStationId
-                     isAssembled: { _eq: true }
-                  }
+                  where: { isAssembled: { _eq: true } }
                ) {
                   aggregate {
                      count(columns: id)
@@ -153,17 +126,13 @@ export const QUERIES = {
          }
       `,
       MEALKITS: gql`
-         subscription mealkits(
-            $orderId: Int!
-            $packingStationId: Int_comparison_exp = {}
-            $assemblyStationId: Int_comparison_exp = {}
-         ) {
+         subscription mealkits($orderId: Int!) {
             mealkits: orderMealKitProducts(
                where: {
                   orderId: { _eq: $orderId }
-                  assemblyStationId: $assemblyStationId
                   orderModifierId: { _is_null: true }
                }
+               order_by: { created_at: desc }
             ) {
                id
                isAssembled
@@ -203,7 +172,9 @@ export const QUERIES = {
                   }
                }
                orderModifiers {
-                  inventoryProducts: childOrderInventoryProducts {
+                  inventoryProducts: childOrderInventoryProducts(
+                     order_by: { created_at: desc }
+                  ) {
                      id
                      quantity
                      isAssembled
@@ -239,18 +210,18 @@ export const QUERIES = {
                         quantity
                         label
                      }
-                     orderSachets(
-                        where: { packingStationId: $packingStationId }
-                     ) {
+                     orderSachets(order_by: { position: desc_nulls_last }) {
                         id
                         unit
                         status
                         quantity
+                        position
                         isAssembled
                         isLabelled
                         isPortioned
                         ingredientName
                         processingName
+                        packingStationId
                         packaging {
                            id
                            name
@@ -287,7 +258,9 @@ export const QUERIES = {
                         }
                      }
                   }
-                  mealKitProducts: childOrderMealKitProducts {
+                  mealKitProducts: childOrderMealKitProducts(
+                     order_by: { created_at: desc }
+                  ) {
                      id
                      isAssembled
                      assemblyStatus
@@ -324,18 +297,18 @@ export const QUERIES = {
                            yield
                         }
                      }
-                     orderSachets(
-                        where: { packingStationId: $packingStationId }
-                     ) {
+                     orderSachets(order_by: { position: desc_nulls_last }) {
                         id
                         unit
                         status
                         quantity
+                        position
                         isAssembled
                         isLabelled
                         isPortioned
                         ingredientName
                         processingName
+                        packingStationId
                         packaging {
                            id
                            name
@@ -372,7 +345,9 @@ export const QUERIES = {
                         }
                      }
                   }
-                  readyToEatProducts: childOrderReadyToEatProducts {
+                  readyToEatProducts: childOrderReadyToEatProducts(
+                     order_by: { created_at: desc }
+                  ) {
                      id
                      quantity
                      isAssembled
@@ -410,18 +385,18 @@ export const QUERIES = {
                            yield
                         }
                      }
-                     orderSachets(
-                        where: { packingStationId: $packingStationId }
-                     ) {
+                     orderSachets(order_by: { position: desc_nulls_last }) {
                         id
                         unit
                         status
                         quantity
+                        position
                         isAssembled
                         isLabelled
                         isPortioned
                         ingredientName
                         processingName
+                        packingStationId
                         packaging {
                            id
                            name
@@ -459,17 +434,19 @@ export const QUERIES = {
                      }
                   }
                }
-               orderSachets(where: { packingStationId: $packingStationId }) {
+               orderSachets(order_by: { position: desc_nulls_last }) {
                   id
                   unit
                   status
                   quantity
+                  position
                   isAssembled
                   isLabelled
                   isPortioned
                   ingredientName
                   processingName
                   orderModifierId
+                  packingStationId
                   packaging {
                      id
                      name
@@ -510,17 +487,13 @@ export const QUERIES = {
       `,
       READY_TO_EAT: {
          LIST: gql`
-            subscription readytoeats(
-               $orderId: Int!
-               $packingStationId: Int_comparison_exp = {}
-               $assemblyStationId: Int_comparison_exp = {}
-            ) {
+            subscription readytoeats($orderId: Int!) {
                readytoeats: orderReadyToEatProducts(
                   where: {
                      orderId: { _eq: $orderId }
-                     assemblyStationId: $assemblyStationId
                      orderModifierId: { _is_null: true }
                   }
+                  order_by: { created_at: desc }
                ) {
                   id
                   isAssembled
@@ -560,7 +533,9 @@ export const QUERIES = {
                      }
                   }
                   orderModifiers {
-                     inventoryProducts: childOrderInventoryProducts {
+                     inventoryProducts: childOrderInventoryProducts(
+                        order_by: { created_at: desc }
+                     ) {
                         id
                         quantity
                         isAssembled
@@ -596,18 +571,18 @@ export const QUERIES = {
                            quantity
                            label
                         }
-                        orderSachets(
-                           where: { packingStationId: $packingStationId }
-                        ) {
+                        orderSachets(order_by: { position: desc_nulls_last }) {
                            id
                            unit
                            status
                            quantity
+                           position
                            isAssembled
                            isLabelled
                            isPortioned
                            ingredientName
                            processingName
+                           packingStationId
                            packaging {
                               id
                               name
@@ -644,7 +619,9 @@ export const QUERIES = {
                            }
                         }
                      }
-                     mealKitProducts: childOrderMealKitProducts {
+                     mealKitProducts: childOrderMealKitProducts(
+                        order_by: { created_at: desc }
+                     ) {
                         id
                         isAssembled
                         assemblyStatus
@@ -681,18 +658,18 @@ export const QUERIES = {
                               yield
                            }
                         }
-                        orderSachets(
-                           where: { packingStationId: $packingStationId }
-                        ) {
+                        orderSachets(order_by: { position: desc_nulls_last }) {
                            id
                            unit
                            status
                            quantity
+                           position
                            isAssembled
                            isLabelled
                            isPortioned
                            ingredientName
                            processingName
+                           packingStationId
                            packaging {
                               id
                               name
@@ -729,7 +706,9 @@ export const QUERIES = {
                            }
                         }
                      }
-                     readyToEatProducts: childOrderReadyToEatProducts {
+                     readyToEatProducts: childOrderReadyToEatProducts(
+                        order_by: { created_at: desc }
+                     ) {
                         id
                         quantity
                         isAssembled
@@ -767,18 +746,18 @@ export const QUERIES = {
                               yield
                            }
                         }
-                        orderSachets(
-                           where: { packingStationId: $packingStationId }
-                        ) {
+                        orderSachets(order_by: { position: desc_nulls_last }) {
                            id
                            unit
                            status
                            quantity
+                           position
                            isAssembled
                            isLabelled
                            isPortioned
                            ingredientName
                            processingName
+                           packingStationId
                            packaging {
                               id
                               name
@@ -816,17 +795,19 @@ export const QUERIES = {
                         }
                      }
                   }
-                  orderSachets(where: { packingStationId: $packingStationId }) {
+                  orderSachets(order_by: { position: desc_nulls_last }) {
                      id
                      unit
                      status
                      quantity
+                     position
                      isAssembled
                      isLabelled
                      isPortioned
                      ingredientName
                      processingName
                      orderModifierId
+                     packingStationId
                      packaging {
                         id
                         name
@@ -901,17 +882,14 @@ export const QUERIES = {
       },
       INVENTORY: {
          LIST: gql`
-            subscription inventories(
-               $orderId: Int!
-               $packingStationId: Int_comparison_exp = {}
-               $assemblyStationId: Int_comparison_exp = {}
-            ) {
+            subscription inventories($orderId: Int!) {
                inventories: orderInventoryProducts(
                   where: {
                      orderId: { _eq: $orderId }
-                     assemblyStationId: $assemblyStationId
                      orderModifierId: { _is_null: true }
                   }
+
+                  order_by: { created_at: desc }
                ) {
                   id
                   hasModifiers
@@ -948,17 +926,19 @@ export const QUERIES = {
                      quantity
                      label
                   }
-                  orderSachets(where: { packingStationId: $packingStationId }) {
+                  orderSachets(order_by: { position: desc_nulls_last }) {
                      id
                      unit
                      status
                      quantity
+                     position
                      isAssembled
                      isLabelled
                      isPortioned
                      ingredientName
                      processingName
                      orderModifierId
+                     packingStationId
                      packaging {
                         id
                         name
@@ -995,7 +975,9 @@ export const QUERIES = {
                      }
                   }
                   orderModifiers {
-                     inventoryProducts: childOrderInventoryProducts {
+                     inventoryProducts: childOrderInventoryProducts(
+                        order_by: { created_at: desc }
+                     ) {
                         id
                         quantity
                         isAssembled
@@ -1031,18 +1013,18 @@ export const QUERIES = {
                            quantity
                            label
                         }
-                        orderSachets(
-                           where: { packingStationId: $packingStationId }
-                        ) {
+                        orderSachets(order_by: { position: desc_nulls_last }) {
                            id
                            unit
                            status
                            quantity
+                           position
                            isAssembled
                            isLabelled
                            isPortioned
                            ingredientName
                            processingName
+                           packingStationId
                            packaging {
                               id
                               name
@@ -1079,7 +1061,9 @@ export const QUERIES = {
                            }
                         }
                      }
-                     mealKitProducts: childOrderMealKitProducts {
+                     mealKitProducts: childOrderMealKitProducts(
+                        order_by: { created_at: desc }
+                     ) {
                         id
                         isAssembled
                         assemblyStatus
@@ -1116,18 +1100,18 @@ export const QUERIES = {
                               yield
                            }
                         }
-                        orderSachets(
-                           where: { packingStationId: $packingStationId }
-                        ) {
+                        orderSachets(order_by: { position: desc_nulls_last }) {
                            id
                            unit
                            status
                            quantity
+                           position
                            isAssembled
                            isLabelled
                            isPortioned
                            ingredientName
                            processingName
+                           packingStationId
                            packaging {
                               id
                               name
@@ -1164,7 +1148,9 @@ export const QUERIES = {
                            }
                         }
                      }
-                     readyToEatProducts: childOrderReadyToEatProducts {
+                     readyToEatProducts: childOrderReadyToEatProducts(
+                        order_by: { created_at: desc }
+                     ) {
                         id
                         quantity
                         isAssembled
@@ -1202,18 +1188,18 @@ export const QUERIES = {
                               yield
                            }
                         }
-                        orderSachets(
-                           where: { packingStationId: $packingStationId }
-                        ) {
+                        orderSachets(order_by: { position: desc_nulls_last }) {
                            id
                            unit
                            status
                            quantity
+                           position
                            isAssembled
                            isLabelled
                            isPortioned
                            ingredientName
                            processingName
+                           packingStationId
                            packaging {
                               id
                               name

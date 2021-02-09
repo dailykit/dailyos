@@ -11,6 +11,7 @@ const initialState = {
    delivery_config: { orderId: null },
    current_view: 'SUMMARY',
    sachet: { id: null, product: { name: null } },
+   current_product: { id: null },
    orders: {
       limit: 10,
       offset: 0,
@@ -34,11 +35,16 @@ const reducers = (state, { type, payload }) => {
             current_view: 'SACHET_ITEM',
             sachet: { id: payload.id, product: payload.product },
          }
+      case 'SELECT_PRODUCT':
+         return {
+            ...state,
+            current_product: payload,
+         }
       case 'SWITCH_VIEW': {
          return {
             ...state,
             sachet: {
-               name: null,
+               product: { name: null },
                id: null,
             },
 
