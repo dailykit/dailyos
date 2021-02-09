@@ -102,21 +102,6 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
       openTunnel(1)
    }
 
-   React.useEffect(() => {
-      if (!loading && serving.counts.every(node => node.isActive === false)) {
-         upsertServing({
-            variables: {
-               object: {
-                  isActive: false,
-                  id: serving.id,
-                  subscriptionTitleId: state.title.id,
-                  servingSize: Number(serving.size),
-               },
-            },
-         })
-      }
-   }, [loading, serving, state.title.id, upsertServing])
-
    const toggleIsActive = () => {
       if (!state.serving.isActive && !serving.isValid) {
          toast.error('Can not be published without any active item counts!', {

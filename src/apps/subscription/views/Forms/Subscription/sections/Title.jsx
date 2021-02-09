@@ -85,20 +85,6 @@ const Title = () => {
       }
    )
 
-   React.useEffect(() => {
-      if (!loading && title.servings.every(node => node.isActive === false)) {
-         upsertTitle({
-            variables: {
-               object: {
-                  id: title.id,
-                  isActive: false,
-                  title: title.title,
-               },
-            },
-         })
-      }
-   }, [loading, title, upsertTitle])
-
    const handleChange = e => {
       dispatch({
          type: 'SET_TITLE',
