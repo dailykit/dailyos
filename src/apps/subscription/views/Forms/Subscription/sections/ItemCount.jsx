@@ -20,7 +20,6 @@ import {
    SectionTabList,
    SectionTabPanel,
    SectionTabPanels,
-   SectionTabsListHeader,
 } from '@dailykit/ui'
 
 import { usePlan } from '../state'
@@ -46,7 +45,7 @@ import {
    CloseIcon,
 } from '../../../../../../shared/assets/icons'
 
-const ItemCount = ({ id, openItemTunnel }) => {
+const ItemCount = ({ id, toggleItemCountTunnel }) => {
    const { state, dispatch } = usePlan()
    const [tabIndex, setTabIndex] = React.useState(0)
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
@@ -107,8 +106,9 @@ const ItemCount = ({ id, openItemTunnel }) => {
       upsertItemCount({
          variables: {
             object: {
-               isActive: !state.item.isActive,
                ...state.item,
+               isActive: !state.item.isActive,
+               subscriptionServingId: state.serving.id,
             },
          },
       })
@@ -126,22 +126,23 @@ const ItemCount = ({ id, openItemTunnel }) => {
             container
             height="48px"
             alignItems="center"
-            padding="0 8px 0 0"
             justifyContent="space-between"
          >
-            <Text as="title">Price per week: {itemCount.price}</Text>
+            <Text as="p">Price per week: {itemCount.price}</Text>
             <Flex container>
                {itemCount.isValid ? (
                   <Flex container flex="1" alignItems="center">
-                     <TickIcon size={22} color="green" />
+                     <TickIcon size={20} color="green" />
                      <Spacer size="8px" xAxis />
-                     <span>All good!</span>
+                     <Text as="subtitle">All good!</Text>
                   </Flex>
                ) : (
                   <Flex container flex="1" alignItems="center">
-                     <CloseIcon size={22} color="red" />
+                     <CloseIcon size={20} color="red" />
                      <Spacer size="8px" xAxis />
-                     <span>Must have atleast one delivery day!</span>
+                     <Text as="subtitle">
+                        Must have atleast one delivery day!
+                     </Text>
                   </Flex>
                )}
                <Spacer size="24px" xAxis />
@@ -156,27 +157,41 @@ const ItemCount = ({ id, openItemTunnel }) => {
                   <Tooltip identifier="form_subscription_sectioon_item_count_publish" />
                </Flex>
                <Spacer size="16px" xAxis />
-               <IconButton type="outline" onClick={() => openItemTunnel(1)}>
+               <IconButton
+                  size="sm"
+                  type="outline"
+                  onClick={() => toggleItemCountTunnel('EDIT_ITEM_COUNT')}
+               >
                   <EditIcon />
                </IconButton>
             </Flex>
          </Flex>
          <ItemCountSection>
+            <Flex
+               container
+               as="header"
+               height="48px"
+               alignItems="center"
+               justifyContent="space-between"
+            >
+               <Flex container alignItems="center">
+                  <Text as="title">Delivery Days</Text>
+                  <Tooltip identifier="form_subscription_section_delivery_days_heading" />
+               </Flex>
+               <IconButton
+                  size="sm"
+                  type="outline"
+                  onClick={() => openTunnel(1)}
+               >
+                  <PlusIcon />
+               </IconButton>
+            </Flex>
             {itemCount?.subscriptions.length > 0 ? (
-               <SectionTabs onChange={index => setTabIndex(index)}>
-                  <SectionTabList>
-                     <SectionTabsListHeader>
-                        <Flex container alignItems="center">
-                           <Text as="title">Delivery Days</Text>
-                           <Tooltip identifier="form_subscription_section_delivery_days_heading" />
-                        </Flex>
-                        <IconButton
-                           type="outline"
-                           onClick={() => openTunnel(1)}
-                        >
-                           <PlusIcon />
-                        </IconButton>
-                     </SectionTabsListHeader>
+               <SectionTabs
+                  id="deliveryDaysTabs"
+                  onChange={index => setTabIndex(index)}
+               >
+                  <SectionTabList id="deliveryDaysTabList">
                      {itemCount?.subscriptions.map(subscription => (
                         <SectionTab key={subscription.id}>
                            <Text as="title">
@@ -185,7 +200,7 @@ const ItemCount = ({ id, openItemTunnel }) => {
                         </SectionTab>
                      ))}
                   </SectionTabList>
-                  <SectionTabPanels>
+                  <SectionTabPanels id="deliveryDaysTabPanels">
                      {itemCount?.subscriptions.map((subscription, index) => (
                         <SectionTabPanel key={subscription.id}>
                            {index === tabIndex && (

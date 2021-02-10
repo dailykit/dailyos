@@ -22,7 +22,6 @@ import {
 
 import { usePlan } from '../state'
 import ItemCount from './ItemCount'
-import { ItemCountsSection } from '../styled'
 import { Stack } from '../../../../styled'
 import { logger } from '../../../../../../shared/utils'
 import {
@@ -48,6 +47,7 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
    const [tabIndex, setTabIndex] = React.useState(0)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [upsertServing] = useMutation(UPSERT_SUBSCRIPTION_SERVING)
+   const [itemTunnelState, setItemTunnelState] = React.useState('')
    const { error, loading, data: { serving = {} } = {} } = useSubscription(
       SERVING,
       {
@@ -93,12 +93,9 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
       })
    }
 
-   const addItemCount = () => {
-      dispatch({
-         type: 'SET_ITEM',
-         payload: { id: null, count: '', price: '' },
-      })
+   const toggleItemCountTunnel = type => {
       openTunnel(1)
+      setItemTunnelState(type)
    }
 
    const toggleIsActive = () => {
@@ -131,12 +128,12 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
       <>
          <Flex
             container
-            height="56px"
+            height="48px"
             alignItems="center"
             justifyContent="space-between"
          >
             <Stack xAxis>
-               <Text as="title">Serving: {serving.size}</Text>
+               <Text as="h2">Serving: {serving.size}</Text>
                <Spacer size="14px" xAxis />
                {serving.id === state.title.defaultServing.id && (
                   <Tag>Default</Tag>
@@ -145,15 +142,17 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
             <Stack>
                {serving.isValid ? (
                   <Flex container flex="1" alignItems="center">
-                     <TickIcon size={22} color="green" />
+                     <TickIcon size={20} color="green" />
                      <Spacer size="8px" xAxis />
-                     <span>All good!</span>
+                     <Text as="subtitle">All good!</Text>
                   </Flex>
                ) : (
                   <Flex container flex="1" alignItems="center">
-                     <CloseIcon size={22} color="red" />
+                     <CloseIcon size={20} color="red" />
                      <Spacer size="8px" xAxis />
-                     <span>Must have atleast one active item count!</span>
+                     <Text as="subtitle">
+                        Must have atleast one active item count!
+                     </Text>
                   </Flex>
                )}
                <Spacer size="24px" xAxis />
@@ -168,57 +167,74 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
                   <Tooltip identifier="form_subscription_section_serving_publish" />
                </Flex>
                <Spacer size="16px" xAxis />
-               <IconButton type="outline" onClick={() => editServing()}>
+               <IconButton
+                  size="sm"
+                  type="outline"
+                  onClick={() => editServing()}
+               >
                   <EditIcon />
                </IconButton>
             </Stack>
          </Flex>
          <hr style={{ border: '1px solid #ededed' }} />
-         <Spacer size="16px" />
+         <Spacer size="8px" />
          <Flex container alignItems="center" justifyContent="space-between">
             <Flex container alignItems="center">
-               <Text as="title">Items Counts</Text>
+               <Text as="h3">Items Counts</Text>
                <Tooltip identifier="form_subscription_section_item_count_heading" />
             </Flex>
-            <IconButton type="outline" onClick={addItemCount}>
+            <IconButton
+               size="sm"
+               type="outline"
+               onClick={() => toggleItemCountTunnel('ADD_ITEM_COUNT')}
+            >
                <PlusIcon />
             </IconButton>
          </Flex>
-         <ItemCountsSection>
-            {serving.counts.length > 0 ? (
-               <HorizontalTabs onChange={index => setTabIndex(index)}>
-                  <HorizontalTabList>
-                     {serving.counts.map(({ id: key, count }) => (
-                        <HorizontalTab key={key}>
-                           <Text as="title">{count}</Text>
-                        </HorizontalTab>
-                     ))}
-                  </HorizontalTabList>
-                  <HorizontalTabPanels>
-                     {serving.counts.map(({ id: key }, index) => (
-                        <HorizontalTabPanel key={key}>
-                           {index === tabIndex && (
-                              <ItemCount
-                                 id={key}
-                                 openItemTunnel={openTunnel}
-                                 isActive={isActive && index === tabIndex}
-                              />
-                           )}
-                        </HorizontalTabPanel>
-                     ))}
-                  </HorizontalTabPanels>
-               </HorizontalTabs>
-            ) : (
-               <Stack py="24px">
-                  <ComboButton type="outline" onClick={addItemCount}>
-                     <PlusIcon color="#555b6e" />
-                     Add Item Count
-                  </ComboButton>
-               </Stack>
-            )}
-         </ItemCountsSection>
+         <Spacer size="8px" />
+         {serving.counts.length > 0 ? (
+            <HorizontalTabs
+               id="itemCountTabs"
+               onChange={index => setTabIndex(index)}
+            >
+               <HorizontalTabList id="itemCountTabList">
+                  {serving.counts.map(({ id: key, count }) => (
+                     <HorizontalTab key={key}>
+                        <Text as="title">{count}</Text>
+                     </HorizontalTab>
+                  ))}
+               </HorizontalTabList>
+               <HorizontalTabPanels id="itemCountTabPanels">
+                  {serving.counts.map(({ id: key }, index) => (
+                     <HorizontalTabPanel key={key}>
+                        {index === tabIndex && (
+                           <ItemCount
+                              id={key}
+                              toggleItemCountTunnel={toggleItemCountTunnel}
+                              isActive={isActive && index === tabIndex}
+                           />
+                        )}
+                     </HorizontalTabPanel>
+                  ))}
+               </HorizontalTabPanels>
+            </HorizontalTabs>
+         ) : (
+            <Stack py="24px">
+               <ComboButton
+                  type="outline"
+                  onClick={() => toggleItemCountTunnel('ADD_ITEM_COUNT')}
+               >
+                  <PlusIcon color="#555b6e" />
+                  Add Item Count
+               </ComboButton>
+            </Stack>
+         )}
          <ErrorBoundary rootRoute="/subscription/subscriptions">
-            <ItemCountTunnel tunnels={tunnels} closeTunnel={closeTunnel} />
+            <ItemCountTunnel
+               tunnels={tunnels}
+               itemTunnelState={itemTunnelState}
+               closeTunnel={closeTunnel}
+            />
          </ErrorBoundary>
       </>
    )
@@ -226,7 +242,7 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
 
 export default Serving
 
-const ItemCountTunnel = ({ tunnels, closeTunnel }) => {
+const ItemCountTunnel = ({ tunnels, itemTunnelState, closeTunnel }) => {
    const { state } = usePlan()
    const [form, setForm] = React.useState({
       id: null,
@@ -247,14 +263,24 @@ const ItemCountTunnel = ({ tunnels, closeTunnel }) => {
    })
 
    React.useEffect(() => {
-      setForm({
-         id: state.item.id,
-         tax: state.item.tax,
-         count: state.item.count,
-         price: state.item.price,
-         isTaxIncluded: state.item.isTaxIncluded,
-      })
-   }, [state.item])
+      if (itemTunnelState === 'EDIT_ITEM_COUNT') {
+         setForm({
+            id: state.item.id,
+            tax: state.item.tax,
+            count: state.item.count,
+            price: state.item.price,
+            isTaxIncluded: state.item.isTaxIncluded,
+         })
+      } else {
+         setForm({
+            id: null,
+            tax: 0,
+            count: '',
+            price: '',
+            isTaxIncluded: false,
+         })
+      }
+   }, [itemTunnelState, state.item])
 
    const save = () => {
       const { tax, count, price, isTaxIncluded } = form
@@ -280,7 +306,11 @@ const ItemCountTunnel = ({ tunnels, closeTunnel }) => {
       <Tunnels tunnels={tunnels}>
          <Tunnel layer="1">
             <TunnelHeader
-               title="Add Item Count"
+               title={
+                  itemTunnelState === 'ADD_ITEM_COUNT'
+                     ? 'Add Item Count'
+                     : 'Edit Item Count'
+               }
                close={() => closeTunnel(1)}
                right={{
                   title: 'Save',
@@ -302,9 +332,7 @@ const ItemCountTunnel = ({ tunnels, closeTunnel }) => {
                   <Form.Number
                      id="count"
                      name="count"
-                     onChange={e =>
-                        handleChange(e.target.name, Number(e.target.value))
-                     }
+                     onChange={e => handleChange(e.target.name, e.target.value)}
                      value={form.count}
                      placeholder="Enter the item count"
                   />
@@ -320,9 +348,7 @@ const ItemCountTunnel = ({ tunnels, closeTunnel }) => {
                   <Form.Number
                      id="price"
                      name="price"
-                     onChange={e =>
-                        handleChange(e.target.name, Number(e.target.value))
-                     }
+                     onChange={e => handleChange(e.target.name, e.target.value)}
                      value={form.price}
                      placeholder="Enter the item price"
                   />
@@ -336,9 +362,7 @@ const ItemCountTunnel = ({ tunnels, closeTunnel }) => {
                      id="tax"
                      name="tax"
                      value={form.tax}
-                     onChange={e =>
-                        handleChange(e.target.name, Number(e.target.value))
-                     }
+                     onChange={e => handleChange(e.target.name, e.target.value)}
                      placeholder="Enter the tax"
                   />
                </Form.Group>
