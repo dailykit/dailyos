@@ -172,7 +172,7 @@ export const ITEM_COUNT = gql`
          isValid
          isActive
          isTaxIncluded
-         subscriptions {
+         subscriptions(order_by: { id: desc }) {
             id
             rrule
          }

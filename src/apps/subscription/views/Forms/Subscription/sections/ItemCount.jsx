@@ -47,7 +47,6 @@ import {
 
 const ItemCount = ({ id, toggleItemCountTunnel }) => {
    const { state, dispatch } = usePlan()
-   const [tabIndex, setTabIndex] = React.useState(0)
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
    const [upsertItemCount] = useMutation(UPSERT_ITEM_COUNT, {
       onCompleted: () => {
@@ -187,10 +186,7 @@ const ItemCount = ({ id, toggleItemCountTunnel }) => {
                </IconButton>
             </Flex>
             {itemCount?.subscriptions.length > 0 ? (
-               <SectionTabs
-                  id="deliveryDaysTabs"
-                  onChange={index => setTabIndex(index)}
-               >
+               <SectionTabs id="deliveryDaysTabs">
                   <SectionTabList id="deliveryDaysTabList">
                      {itemCount?.subscriptions.map(subscription => (
                         <SectionTab key={subscription.id}>
@@ -201,11 +197,9 @@ const ItemCount = ({ id, toggleItemCountTunnel }) => {
                      ))}
                   </SectionTabList>
                   <SectionTabPanels id="deliveryDaysTabPanels">
-                     {itemCount?.subscriptions.map((subscription, index) => (
+                     {itemCount?.subscriptions.map(subscription => (
                         <SectionTabPanel key={subscription.id}>
-                           {index === tabIndex && (
-                              <DeliveryDay id={subscription.id} />
-                           )}
+                           <DeliveryDay id={subscription.id} />
                         </SectionTabPanel>
                      ))}
                   </SectionTabPanels>

@@ -27,6 +27,9 @@ export const Wrapper = styled.div`
          height: 40px;
          text-align: left;
          padding: 0 14px;
+         > span {
+            font-size: 14px;
+         }
          &[data-selected] {
             span {
                color: #fff;
