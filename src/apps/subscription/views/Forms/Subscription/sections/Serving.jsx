@@ -42,7 +42,7 @@ import {
    UPSERT_SUBSCRIPTION_SERVING,
 } from '../../../../graphql'
 
-const Serving = ({ id, isActive, openServingTunnel }) => {
+const Serving = ({ id, isActive, toggleServingTunnel }) => {
    const { state, dispatch } = usePlan()
    const [tabIndex, setTabIndex] = React.useState(0)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -82,15 +82,7 @@ const Serving = ({ id, isActive, openServingTunnel }) => {
    }, [dispatch])
 
    const editServing = () => {
-      openServingTunnel(1)
-      dispatch({
-         type: 'SET_SERVING',
-         payload: {
-            id: serving.id,
-            size: serving.size,
-            isDefault: state.title.defaultServing.id === serving.id,
-         },
-      })
+      toggleServingTunnel('EDIT_SERVING')
    }
 
    const toggleItemCountTunnel = type => {
