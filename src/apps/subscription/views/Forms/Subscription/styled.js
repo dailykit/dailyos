@@ -23,10 +23,13 @@ export const Wrapper = styled.div`
    }
    #servingTabList,
    #deliveryDaysTabList {
+      overflow-y: auto;
+      height: 100%;
       > button {
          height: 40px;
          text-align: left;
          padding: 0 14px;
+         flex-shrink: 0;
          > span {
             font-size: 14px;
          }
