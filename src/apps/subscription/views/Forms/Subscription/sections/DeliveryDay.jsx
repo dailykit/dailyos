@@ -79,7 +79,8 @@ const DeliveryDay = ({ id }) => {
             </IconButton>
          </Flex>
          <Text as="subtitle">
-            Ends on - {moment(state.subscription.endDate).format('MMM DD')}
+            Ends on -{' '}
+            {moment(state.subscription.endDate).format('MMM DD, YYYY')}
          </Text>
          <HorizontalTabs id="subscriptionTabs">
             <HorizontalTabList>
