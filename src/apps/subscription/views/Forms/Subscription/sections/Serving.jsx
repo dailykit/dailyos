@@ -249,6 +249,7 @@ const ItemCountTunnel = ({ tunnels, itemTunnelState, closeTunnel }) => {
       tax: 0,
       count: '',
       price: '',
+      isActive: false,
       isTaxIncluded: false,
    })
    const [upsertItemCount] = useMutation(UPSERT_ITEM_COUNT, {
@@ -269,6 +270,7 @@ const ItemCountTunnel = ({ tunnels, itemTunnelState, closeTunnel }) => {
             tax: state.item.tax,
             count: state.item.count,
             price: state.item.price,
+            isActive: state.item.isActive,
             isTaxIncluded: state.item.isTaxIncluded,
          })
       } else {
@@ -277,6 +279,7 @@ const ItemCountTunnel = ({ tunnels, itemTunnelState, closeTunnel }) => {
             tax: 0,
             count: '',
             price: '',
+            isActive: false,
             isTaxIncluded: false,
          })
       }
@@ -291,6 +294,7 @@ const ItemCountTunnel = ({ tunnels, itemTunnelState, closeTunnel }) => {
                tax: Number(tax),
                count: Number(count),
                price: Number(price),
+               isActive: form.isActive,
                subscriptionServingId: state.serving.id,
                ...(form.id && { id: form.id }),
             },
