@@ -100,10 +100,11 @@ const DeliveryDay = ({ id }) => {
             </HorizontalTabPanels>
          </HorizontalTabs>
          <ErrorBoundary rootRoute="/subscription/subscriptions">
-            <EditSubscriptionTunnel
-               tunnels={tunnels}
-               closeTunnel={closeTunnel}
-            />
+            <Tunnels tunnels={tunnels}>
+               <Tunnel layer="1">
+                  <EditSubscriptionTunnel closeTunnel={closeTunnel} />
+               </Tunnel>
+            </Tunnels>
          </ErrorBoundary>
       </>
    )
@@ -111,12 +112,15 @@ const DeliveryDay = ({ id }) => {
 
 export default DeliveryDay
 
-const EditSubscriptionTunnel = ({ tunnels, closeTunnel }) => {
+const EditSubscriptionTunnel = ({ closeTunnel }) => {
    const { state } = usePlan()
    const [endDate, setEndDate] = React.useState('')
    const [updateSubscription] = useMutation(UPDATE_SUBSCRIPTION, {
       onCompleted: () => {
          closeTunnel(1)
+      },
+      onError: error => {
+         console.log(error)
       },
    })
 
@@ -135,38 +139,36 @@ const EditSubscriptionTunnel = ({ tunnels, closeTunnel }) => {
       })
    }
    return (
-      <Tunnels tunnels={tunnels}>
-         <Tunnel layer="1">
-            <TunnelHeader
-               title="Edit Subscription"
-               close={() => close()}
-               right={{
-                  title: 'Save',
-                  disabled: !endDate,
-                  action: () => save(),
-               }}
-               tooltip={
-                  <Tooltip identifier="form_subscription_tunnel_subscription_field_date" />
-               }
-            />
-            <Flex padding="16px">
-               <Form.Group>
-                  <Form.Label htmlFor="endDate" title="endDate">
-                     <Flex container alignItems="center">
-                        End Date*
-                        <Tooltip identifier="form_subscription_tunnel_edit_subscription_field_end_date" />
-                     </Flex>
-                  </Form.Label>
-                  <Form.Date
-                     id="endDate"
-                     name="endDate"
-                     value={endDate}
-                     defaultValue={state.subscription.endDate}
-                     onChange={e => setEndDate(e.target.value)}
-                  />
-               </Form.Group>
-            </Flex>
-         </Tunnel>
-      </Tunnels>
+      <>
+         <TunnelHeader
+            title="Edit Subscription"
+            close={() => close()}
+            right={{
+               title: 'Save',
+               disabled: !endDate,
+               action: () => save(),
+            }}
+            tooltip={
+               <Tooltip identifier="form_subscription_tunnel_subscription_field_date" />
+            }
+         />
+         <Flex padding="16px">
+            <Form.Group>
+               <Form.Label htmlFor="endDate" title="endDate">
+                  <Flex container alignItems="center">
+                     End Date*
+                     <Tooltip identifier="form_subscription_tunnel_edit_subscription_field_end_date" />
+                  </Flex>
+               </Form.Label>
+               <Form.Date
+                  id="endDate"
+                  name="endDate"
+                  value={endDate}
+                  defaultValue={state.subscription.endDate}
+                  onChange={e => setEndDate(e.target.value)}
+               />
+            </Form.Group>
+         </Flex>
+      </>
    )
 }

@@ -154,14 +154,18 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
             data={subscription_zipcodes}
             options={{ ...tableOptions, layout: 'fitColumns' }}
          />
-         <AreasTunnel tunnels={tunnels} closeTunnel={closeTunnel} />
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer="1">
+               <AreasTunnel closeTunnel={closeTunnel} />
+            </Tunnel>
+         </Tunnels>
       </>
    )
 }
 
 export default DeliveryAreas
 
-const AreasTunnel = ({ tunnels, closeTunnel }) => {
+const AreasTunnel = ({ closeTunnel }) => {
    const { state } = usePlan()
    const [from, setFrom] = React.useState('')
    const [to, setTo] = React.useState('')
@@ -200,89 +204,87 @@ const AreasTunnel = ({ tunnels, closeTunnel }) => {
    }
 
    return (
-      <Tunnels tunnels={tunnels}>
-         <Tunnel layer="1">
-            <TunnelHeader
-               title="Add Zipcodes"
-               close={() => closeTunnel(1)}
-               right={{
-                  title: 'Save',
-                  isLoading: loading,
-                  action: () => save(),
-                  disabled: !zipcodes || !price || !from || !to,
-               }}
-               tooltip={
-                  <Tooltip identifier="form_subscription_tunnel_zipcode_heading" />
-               }
-            />
-            <Flex padding="16px">
-               <Form.Group>
-                  <Form.Label htmlFor="zipcodes" title="zipcodes">
-                     <Flex container alignItems="center">
-                        Zipcodes*
-                        <Tooltip identifier="form_subscription_tunnel_zipcode_field_zipcode" />
-                     </Flex>
-                  </Form.Label>
-                  <Form.TextArea
-                     id="zipcodes"
-                     name="zipcodes"
-                     value={zipcodes}
-                     placeholder="Enter the zipcodes"
-                     onChange={e => setZipcodes(e.target.value)}
-                  />
-               </Form.Group>
-               <Form.Hint>Enter comma seperated zipcodes.</Form.Hint>
-               <Spacer size="24px" />
-               <Form.Group>
-                  <Form.Label htmlFor="price" title="price">
-                     <Flex container alignItems="center">
-                        Price*
-                        <Tooltip identifier="form_subscription_tunnel_zipcode_field_price" />
-                     </Flex>
-                  </Form.Label>
-                  <Form.Text
-                     id="price"
-                     name="price"
-                     value={price}
-                     placeholder="Enter the price"
-                     onChange={e => setPrice(e.target.value)}
-                  />
-               </Form.Group>
-               <Spacer size="24px" />
-               <Form.Group>
-                  <Form.Label htmlFor="from" title="from">
-                     <Flex container alignItems="center">
-                        Delivery From*
-                        <Tooltip identifier="form_subscription_tunnel_zipcode_field_delivery_from" />
-                     </Flex>
-                  </Form.Label>
-                  <Form.Time
-                     id="from"
-                     name="from"
-                     value={from}
-                     placeholder="Enter delivery from"
-                     onChange={e => setFrom(e.target.value)}
-                  />
-               </Form.Group>
-               <Spacer size="24px" />
-               <Form.Group>
-                  <Form.Label htmlFor="to" title="to">
-                     <Flex container alignItems="center">
-                        Delivery To*
-                        <Tooltip identifier="form_subscription_tunnel_zipcode_field_delivery_to" />
-                     </Flex>
-                  </Form.Label>
-                  <Form.Time
-                     id="to"
-                     name="to"
-                     value={to}
-                     placeholder="Enter delivery to"
-                     onChange={e => setTo(e.target.value)}
-                  />
-               </Form.Group>
-            </Flex>
-         </Tunnel>
-      </Tunnels>
+      <>
+         <TunnelHeader
+            title="Add Zipcodes"
+            close={() => closeTunnel(1)}
+            right={{
+               title: 'Save',
+               isLoading: loading,
+               action: () => save(),
+               disabled: !zipcodes || !price || !from || !to,
+            }}
+            tooltip={
+               <Tooltip identifier="form_subscription_tunnel_zipcode_heading" />
+            }
+         />
+         <Flex padding="16px">
+            <Form.Group>
+               <Form.Label htmlFor="zipcodes" title="zipcodes">
+                  <Flex container alignItems="center">
+                     Zipcodes*
+                     <Tooltip identifier="form_subscription_tunnel_zipcode_field_zipcode" />
+                  </Flex>
+               </Form.Label>
+               <Form.TextArea
+                  id="zipcodes"
+                  name="zipcodes"
+                  value={zipcodes}
+                  placeholder="Enter the zipcodes"
+                  onChange={e => setZipcodes(e.target.value)}
+               />
+            </Form.Group>
+            <Form.Hint>Enter comma seperated zipcodes.</Form.Hint>
+            <Spacer size="24px" />
+            <Form.Group>
+               <Form.Label htmlFor="price" title="price">
+                  <Flex container alignItems="center">
+                     Price*
+                     <Tooltip identifier="form_subscription_tunnel_zipcode_field_price" />
+                  </Flex>
+               </Form.Label>
+               <Form.Text
+                  id="price"
+                  name="price"
+                  value={price}
+                  placeholder="Enter the price"
+                  onChange={e => setPrice(e.target.value)}
+               />
+            </Form.Group>
+            <Spacer size="24px" />
+            <Form.Group>
+               <Form.Label htmlFor="from" title="from">
+                  <Flex container alignItems="center">
+                     Delivery From*
+                     <Tooltip identifier="form_subscription_tunnel_zipcode_field_delivery_from" />
+                  </Flex>
+               </Form.Label>
+               <Form.Time
+                  id="from"
+                  name="from"
+                  value={from}
+                  placeholder="Enter delivery from"
+                  onChange={e => setFrom(e.target.value)}
+               />
+            </Form.Group>
+            <Spacer size="24px" />
+            <Form.Group>
+               <Form.Label htmlFor="to" title="to">
+                  <Flex container alignItems="center">
+                     Delivery To*
+                     <Tooltip identifier="form_subscription_tunnel_zipcode_field_delivery_to" />
+                  </Flex>
+               </Form.Label>
+               <Form.Time
+                  id="to"
+                  name="to"
+                  value={to}
+                  placeholder="Enter delivery to"
+                  onChange={e => setTo(e.target.value)}
+               />
+            </Form.Group>
+         </Flex>
+      </>
    )
 }
 
