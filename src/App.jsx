@@ -82,7 +82,7 @@ const App = () => {
    if (loading) return <Loader />
    return (
       <Layout open={open}>
-         <TabBar />
+         <TabBar open={open} />
          <Sidebar open={open} toggle={toggle} links={routes} />
          <main>
             <Switch>
@@ -162,7 +162,7 @@ const Layout = styled.div`
    height: 100vh;
    overflow: hidden;
    grid-template-rows: 110px 1fr;
-   grid-gap: ${({ open }) => (open ? '28px' : '20px')};
+   grid-gap: ${({ open }) => (open ? '0 28px' : '0 20px')};
    grid-template-columns: ${({ open }) => (open ? '250px 1fr' : '48px 1fr')};
    grid-template-areas: ${({ open }) =>
       open ? "'aside head' 'aside main'" : "'aside head' 'main main'"};
@@ -176,5 +176,8 @@ const Layout = styled.div`
    > main {
       grid-area: main;
       overflow-y: auto;
+   }
+   @media only screen and (max-width: 767px) {
+      grid-template-columns: ${({ open }) => (open ? '100vw' : '48px 1fr')};
    }
 `

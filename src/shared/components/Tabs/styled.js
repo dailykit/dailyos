@@ -1,94 +1,64 @@
+import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
-export const StyledTabs = styled.ul`
-   flex: 1;
-   display: flex;
-`
+export const StyledTabs = styled.ul(
+   () => css`
+      display: flex;
+      align-items: center;
+      margin-top: 20px;
+      border-bottom: 1px solid #ebf1f4;
+   `
+)
 
 export const StyledTab = styled.li(
    ({ active }) => css`
-      width: 160px;
-      height: 40px;
-      display: grid;
-      cursor: pointer;
-      font-size: 14px;
+      width: 97px;
+      display: flex;
       align-items: center;
-      grid-template-columns: 1fr 40px;
-      background: ${active ? '#fff' : 'transparent'};
-      border-right: 1px solid #b4d5e6;
-      &.in_dropdown {
-         background: ${active ? '#d3e5ef' : 'transparent'};
-         button {
-            background: ${active ? '#d3e5ef' : 'transparent'};
-         }
-      }
+      justify-content: space-between;
+      border-radius: 4px 4px 0px 0px;
+      cursor: pointer;
+      border: ${active ? 'none' : '1px solid #ebf1f4'};
+      border-bottom: none;
+      height: ${active ? '32px' : '28px'};
+      background: ${active ? '#F6F6F6' : 'transparent'};
+      box-shadow: ${active
+         ? '1px 1px 2px rgba(255, 255, 255, 0.3), -1px -1px 2px rgba(234, 234, 234, 0.5), inset -2px 2px 4px rgba(234, 234, 234, 0.2), inset 2px -2px 4px rgba(234, 234, 234, 0.2), inset -2px -2px 4px rgba(255, 255, 255, 0.9), inset 2px 2px 5px rgba(234, 234, 234, 0.9)'
+         : 'none'};
+
       span {
-         padding-left: 12px;
-         text-overflow: ellipsis;
+         color: ${active ? '#367BF5' : '#919699'};
+         display: inline-block;
+         width: 80px;
+         font-size: 12px;
+         font-weight: 700;
+         padding-left: 6px;
          white-space: nowrap;
          overflow: hidden;
-         align-self: center;
       }
       button {
-         height: 40px;
          border: none;
          display: flex;
          cursor: pointer;
          align-items: center;
          justify-content: center;
-         background: ${active ? 'transparent' : '#d3e5ef'};
-         :hover {
-            background: #f5f5f5;
-         }
+         padding: 4px;
+         background: transparent;
       }
    `
 )
-
-export const Button = styled.button`
-   width: 40px;
-   height: 40px;
-   border: none;
+export const HomeButton = styled(Link)`
    display: flex;
-   cursor: pointer;
    align-items: center;
-   background: transparent;
    justify-content: center;
-   border-left: 1px solid #b4d5e6;
-   :hover {
-      background: #f5f5f5;
-   }
-`
-
-export const Dropdown = styled.div`
-   top: 44px;
-   right: 8px;
-   width: 240px;
-   z-index: 1000;
-   max-height: 240px;
-   position: fixed;
-   background: #fff;
-   overflow-y: auto;
-   box-shadow: 0 0 16px rgba(0, 0, 0, 0.2);
-   border-radius: 2px;
-   li {
-      width: 100%;
-      border-right: none;
-      &#close_all {
-         height: 40px;
-         display: flex;
-         cursor: pointer;
-         background: #fff;
-         padding-left: 12px;
-         align-items: center;
-         :hover {
-            background: #d3e5ef;
-         }
-      }
-   }
-   ul > span {
-      height: 40px;
-      display: flex;
-      align-items: center;
-      padding: 0 12px;
-   }
+   border: ${({ active }) => (active ? 'none' : '1px solid #ebf1f4')};
+   border-bottom: none;
+   border-radius: 4px 4px 0px 0px;
+   width: 40px;
+   height: ${({ active }) => (active ? '32px' : '28px')};
+   background: ${({ active }) => (active ? '#F6F6F6' : 'transparent')};
+   box-shadow: ${({ active }) =>
+      active
+         ? '1px 1px 2px rgba(255, 255, 255, 0.3), -1px -1px 2px rgba(234, 234, 234, 0.5), inset -2px 2px 4px rgba(234, 234, 234, 0.2), inset 2px -2px 4px rgba(234, 234, 234, 0.2), inset -2px -2px 4px rgba(255, 255, 255, 0.9), inset 2px 2px 5px rgba(234, 234, 234, 0.9)'
+         : 'none'};
 `

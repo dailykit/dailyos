@@ -17,7 +17,6 @@ const Styles = {
          inset -1px -1px 2px rgba(255, 255, 255, 0.3),
          inset 1px 1px 2px rgba(219, 219, 219, 0.5);
       overflow-y: auto;
-
       ::-webkit-scrollbar {
          width: 6px;
       }

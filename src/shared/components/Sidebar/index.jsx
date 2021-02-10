@@ -76,7 +76,7 @@ export const Sidebar = ({ links, toggle, open }) => {
                   <InlineLoader />
                ) : (
                   apps.map(app => (
-                     <Styles.AppItem key={app.id} container to={app.route}>
+                     <Styles.AppItem key={app.id} to={app.route}>
                         <Flex container alignItems="center">
                            <IconButton type="ghost" size="sm">
                               <ToggleArrow

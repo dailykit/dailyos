@@ -21,6 +21,8 @@ import PlusIcon from './Plus'
 import RectangularIcon from './Rectangular'
 import RoundedCloseIcon from './RoundedClose'
 import RoundedMenuIcon from './RoundedMenu'
+import HomeIcon from './Home'
+import DoubleArrowRightIcon from './DoubleArrowRight'
 export {
    AddIcon,
    MenuIcon,
@@ -45,6 +47,8 @@ export {
    RectangularIcon,
    RoundedCloseIcon,
    RoundedMenuIcon,
+   HomeIcon,
+   DoubleArrowRightIcon,
 }
 
 export * from './Tick'

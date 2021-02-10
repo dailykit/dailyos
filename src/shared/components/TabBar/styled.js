@@ -3,7 +3,8 @@ import styled from 'styled-components'
 const Styles = {
    Header: styled.header`
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      justify-content: center;
    `,
    Logo: styled.span`
       display: flex;
