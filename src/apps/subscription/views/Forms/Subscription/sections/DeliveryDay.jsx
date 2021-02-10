@@ -22,7 +22,6 @@ import { usePlan } from '../state'
 import Customers from './Customers'
 import Occurences from './Occurences'
 import DeliveryAreas from './DeliveryAreas'
-import { DeliveryDaySection } from '../styled'
 import { logger } from '../../../../../../shared/utils'
 import { EditIcon } from '../../../../../../shared/assets/icons'
 import { UPDATE_SUBSCRIPTION, SUBSCRIPTION } from '../../../../graphql'
@@ -63,11 +62,11 @@ const DeliveryDay = ({ id }) => {
       return <ErrorState message="Failed to fetch the list of delivery days!" />
    }
    return (
-      <DeliveryDaySection>
+      <>
          <Flex
             container
             as="header"
-            height="56px"
+            height="48px"
             alignItems="center"
             justifyContent="space-between"
          >
@@ -75,20 +74,20 @@ const DeliveryDay = ({ id }) => {
                <Text as="title">Subscription</Text>
                <Tooltip identifier="form_subscription_section_delivery_day_heading" />
             </Flex>
-            <IconButton type="outline" onClick={() => openTunnel(1)}>
+            <IconButton size="sm" type="outline" onClick={() => openTunnel(1)}>
                <EditIcon />
             </IconButton>
          </Flex>
          <Text as="subtitle">
             Ends on - {moment(state.subscription.endDate).format('MMM DD')}
          </Text>
-         <HorizontalTabs>
+         <HorizontalTabs id="subscriptionTabs">
             <HorizontalTabList>
                <HorizontalTab>Occurences ({occurencesTotal})</HorizontalTab>
                <HorizontalTab>Delivery Areas ({areasTotal})</HorizontalTab>
                <HorizontalTab>Customers ({customersTotal})</HorizontalTab>
             </HorizontalTabList>
-            <HorizontalTabPanels>
+            <HorizontalTabPanels id="subscriptionTabPanels">
                <HorizontalTabPanel>
                   <Occurences id={id} setOccurencesTotal={setOccurencesTotal} />
                </HorizontalTabPanel>
@@ -106,7 +105,7 @@ const DeliveryDay = ({ id }) => {
                closeTunnel={closeTunnel}
             />
          </ErrorBoundary>
-      </DeliveryDaySection>
+      </>
    )
 }
 

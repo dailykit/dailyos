@@ -2,12 +2,75 @@ import styled from 'styled-components'
 
 export const Wrapper = styled.div`
    width: 100%;
+   overflow: hidden;
    background: #e3e3e3;
    height: calc(100vh - 40px);
+   #servingTabs {
+      overflow-y: auto;
+      height: calc(100% - 48px);
+   }
+   #itemCountTabs {
+      overflow-y: auto;
+      height: calc(100% - 96px);
+   }
+   #deliveryDaysTabs {
+      overflow-y: auto;
+      height: calc(100% - 48px);
+   }
+   #subscriptionTabs {
+      overflow-y: auto;
+      height: calc(100% - 68px);
+   }
+   #servingTabList,
+   #deliveryDaysTabList {
+      > button {
+         height: 40px;
+         text-align: left;
+         padding: 0 14px;
+         &[data-selected] {
+            span {
+               color: #fff;
+            }
+         }
+      }
+   }
+   #itemCountTabList {
+      > button {
+         height: 40px;
+         text-align: left;
+         padding: 0 14px;
+         &[data-selected] {
+            span {
+               color: #05abe4;
+            }
+         }
+      }
+   }
+   #itemCountTabPanels {
+      height: calc(100% - 41px);
+   }
+   #itemCountTabPanels,
+   #subscriptionTabPanels {
+      /* height: calc(100% - 41px);*/
+      /* height: 100%; */
+      > [data-reach-tab-panel] {
+         padding: 0;
+         height: 100%;
+         overflow-y: auto;
+      }
+   }
+   #servingTabPanels,
+   #deliveryDaysTabPanels {
+      > [data-reach-tab-panel] {
+         height: 100%;
+         overflow-y: auto;
+         padding: 0 14px 14px 14px;
+      }
+   }
 `
 
 export const Header = styled.header`
-   padding: 24px;
+   padding: 14px;
    display: flex;
    background: #fff;
    align-items: center;
@@ -17,67 +80,8 @@ export const Header = styled.header`
    }
 `
 
-export const Section = styled.section`
-   padding: 16px;
-   height: calc(100vh - 145px);
-
-   [data-reach-tab] {
-      height: 56px;
-      flex-shrink: 0;
-      padding: 0 16px;
-      text-align: left;
-   }
-   [data-selected] {
-      span {
-         color: #fff;
-      }
-   }
-   [data-reach-tab-panel] {
-      padding: 0 16px 16px 16px;
-   }
-`
-
-export const ItemCountsSection = styled.section`
-   height: calc(100vh - 282px);
-   [data-reach-tab-panel] {
-      padding: 0;
-   }
-   [data-reach-tab-panels] {
-      height: calc(100% - 48px);
-   }
-   [data-selected] {
-      span {
-         color: #05abe4;
-      }
-   }
-`
-
 export const ItemCountSection = styled.section`
-   padding: 16px;
    background: #e3e3e3;
-   height: calc(100vh - 412px);
-   [data-reach-tab-panels] {
-      height: unset;
-   }
-   [data-selected] {
-      span {
-         color: #fff;
-      }
-   }
-`
-
-export const DeliveryDaySection = styled.section`
-   padding: 0 16px;
-   [data-reach-tab] {
-      padding: 0;
-      height: 48px;
-   }
-   [data-selected] {
-      span {
-         color: #05abe4;
-      }
-   }
-   [data-reach-tab-panel] {
-      padding-top: 16px;
-   }
+   padding: 0 14px 14px 14px;
+   height: calc(100% - 48px);
 `

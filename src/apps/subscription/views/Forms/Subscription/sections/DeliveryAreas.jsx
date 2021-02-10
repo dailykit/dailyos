@@ -133,12 +133,17 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
    }
    return (
       <>
-         <Flex container alignItems="center" justifyContent="space-between">
+         <Flex
+            height="48px"
+            container
+            alignItems="center"
+            justifyContent="space-between"
+         >
             <Flex container alignItems="center">
                <Text as="h3">Delivery Areas</Text>
                <Tooltip identifier="form_subscription_section_delivery_day_section_delivery_areas" />
             </Flex>
-            <IconButton type="outline" onClick={() => openTunnel(1)}>
+            <IconButton size="sm" type="outline" onClick={() => openTunnel(1)}>
                <PlusIcon />
             </IconButton>
          </Flex>

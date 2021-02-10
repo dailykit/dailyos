@@ -48,7 +48,7 @@ const Occurences = ({ id, setOccurencesTotal }) => {
          title: 'Cut Off Time',
          field: 'cutoffTimeStamp',
          formatter: ({ _cell: { value } }) =>
-            moment(value).format('MMM DD HH:MM A'),
+            moment(value).format('MMM DD HH:mm A'),
          headerTooltip: column => {
             const identifier = 'listing_occurences_column_cutoff'
             return (
@@ -60,7 +60,7 @@ const Occurences = ({ id, setOccurencesTotal }) => {
          title: 'Start Time',
          field: 'startTimeStamp',
          formatter: ({ _cell: { value } }) =>
-            moment(value).format('MMM DD HH:MM A'),
+            moment(value).format('MMM DD HH:mm A'),
          headerTooltip: column => {
             const identifier = 'listing_occurences_column_start'
             return (

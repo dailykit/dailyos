@@ -20,14 +20,13 @@ import {
    SectionTabList,
    SectionTabPanel,
    SectionTabPanels,
-   SectionTabsListHeader,
 } from '@dailykit/ui'
 
 import Serving from './Serving'
 import validate from '../validate'
 import { usePlan } from '../state'
+import { Header, Wrapper } from '../styled'
 import { useTabs } from '../../../../context'
-import { Header, Section, Wrapper } from '../styled'
 import { logger } from '../../../../../../shared/utils'
 import {
    Tooltip,
@@ -180,15 +179,17 @@ const Title = () => {
             <Flex container alignItems="center">
                {title.isValid ? (
                   <Flex container flex="1" alignItems="center">
-                     <TickIcon size={22} color="green" />
+                     <TickIcon size={20} color="green" />
                      <Spacer size="8px" xAxis />
-                     <span>All good!</span>
+                     <Text as="subtitle">All good!</Text>
                   </Flex>
                ) : (
                   <Flex container flex="1" alignItems="center">
-                     <CloseIcon size={22} color="red" />
+                     <CloseIcon size={20} color="red" />
                      <Spacer size="8px" xAxis />
-                     <span>Must have atleast one active servings!</span>
+                     <Text as="subtitle">
+                        Must have atleast one active servings!
+                     </Text>
                   </Flex>
                )}
                <Spacer size="16px" xAxis />
@@ -204,30 +205,44 @@ const Title = () => {
                </Flex>
             </Flex>
          </Header>
-         <Section>
-            <SectionTabs onChange={index => setTabIndex(index)}>
-               <SectionTabList>
-                  <SectionTabsListHeader>
-                     <Flex container alignItems="center">
-                        <Text as="title">Servings</Text>
-                        <Tooltip identifier="form_subscription_section_servings_heading" />
-                     </Flex>
-                     <IconButton type="outline" onClick={() => addServing()}>
-                        <PlusIcon />
-                     </IconButton>
-                  </SectionTabsListHeader>
+         <Flex
+            as="section"
+            height="calc(100% - 89px)"
+            padding="0 14px 14px 14px"
+         >
+            <Flex
+               container
+               as="header"
+               height="48px"
+               alignItems="center"
+               justifyContent="space-between"
+            >
+               <Flex container alignItems="center">
+                  <Text as="title">Servings</Text>
+                  <Tooltip identifier="form_subscription_section_servings_heading" />
+               </Flex>
+               <IconButton
+                  size="sm"
+                  type="outline"
+                  onClick={() => addServing()}
+               >
+                  <PlusIcon />
+               </IconButton>
+            </Flex>
+            <SectionTabs
+               id="servingTabs"
+               onChange={index => setTabIndex(index)}
+            >
+               <SectionTabList id="servingTabList">
                   {title?.servings.map(serving => (
                      <SectionTab key={serving.id}>
                         <Text as="title">{serving.size}</Text>
                      </SectionTab>
                   ))}
                </SectionTabList>
-               <SectionTabPanels>
+               <SectionTabPanels id="servingTabPanels">
                   {title?.servings.map((serving, index) => (
-                     <SectionTabPanel
-                        key={serving.id}
-                        style={{ overflow: 'hidden' }}
-                     >
+                     <SectionTabPanel key={serving.id}>
                         {tabIndex === index && (
                            <Serving
                               id={serving.id}
@@ -239,7 +254,7 @@ const Title = () => {
                   ))}
                </SectionTabPanels>
             </SectionTabs>
-         </Section>
+         </Flex>
          <ErrorBoundary rootRoute="/subscription/subscriptions">
             <ServingTunnel tunnels={tunnels} closeTunnel={closeTunnel} />
          </ErrorBoundary>
