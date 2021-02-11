@@ -20,7 +20,6 @@ import {
    SectionTabList,
    SectionTabPanel,
    SectionTabPanels,
-   SectionTabsListHeader,
 } from '@dailykit/ui'
 
 import { usePlan } from '../state'
@@ -46,9 +45,8 @@ import {
    CloseIcon,
 } from '../../../../../../shared/assets/icons'
 
-const ItemCount = ({ id, openItemTunnel }) => {
+const ItemCount = ({ id, toggleItemCountTunnel }) => {
    const { state, dispatch } = usePlan()
-   const [tabIndex, setTabIndex] = React.useState(0)
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
    const [upsertItemCount] = useMutation(UPSERT_ITEM_COUNT, {
       onCompleted: () => {
@@ -64,17 +62,17 @@ const ItemCount = ({ id, openItemTunnel }) => {
       {
          variables: { id },
          onSubscriptionData: ({
-            subscriptionData: { data: { itemCount = {} } = {} } = {},
+            subscriptionData: { data: { itemCount: node = {} } = {} } = {},
          }) => {
             dispatch({
                type: 'SET_ITEM',
                payload: {
-                  id: itemCount.id,
-                  tax: itemCount.tax,
-                  count: itemCount.count,
-                  price: itemCount.price,
-                  isActive: itemCount.isActive,
-                  isTaxIncluded: itemCount.isTaxIncluded,
+                  id: node.id,
+                  tax: node.tax,
+                  count: node.count,
+                  price: node.price,
+                  isActive: node.isActive,
+                  isTaxIncluded: node.isTaxIncluded,
                },
             })
          },
@@ -104,11 +102,12 @@ const ItemCount = ({ id, openItemTunnel }) => {
          })
          return
       }
-      return upsertItemCount({
+      upsertItemCount({
          variables: {
             object: {
-               isActive: !state.item.isActive,
                ...state.item,
+               isActive: !state.item.isActive,
+               subscriptionServingId: state.serving.id,
             },
          },
       })
@@ -126,22 +125,23 @@ const ItemCount = ({ id, openItemTunnel }) => {
             container
             height="48px"
             alignItems="center"
-            padding="0 8px 0 0"
             justifyContent="space-between"
          >
-            <Text as="title">Price per week: {itemCount.price}</Text>
+            <Text as="p">Price per week: {itemCount.price}</Text>
             <Flex container>
                {itemCount.isValid ? (
                   <Flex container flex="1" alignItems="center">
-                     <TickIcon size={22} color="green" />
+                     <TickIcon size={20} color="green" />
                      <Spacer size="8px" xAxis />
-                     <span>All good!</span>
+                     <Text as="subtitle">All good!</Text>
                   </Flex>
                ) : (
                   <Flex container flex="1" alignItems="center">
-                     <CloseIcon size={22} color="red" />
+                     <CloseIcon size={20} color="red" />
                      <Spacer size="8px" xAxis />
-                     <span>Must have atleast one delivery day!</span>
+                     <Text as="subtitle">
+                        Must have atleast one delivery day!
+                     </Text>
                   </Flex>
                )}
                <Spacer size="24px" xAxis />
@@ -156,27 +156,38 @@ const ItemCount = ({ id, openItemTunnel }) => {
                   <Tooltip identifier="form_subscription_sectioon_item_count_publish" />
                </Flex>
                <Spacer size="16px" xAxis />
-               <IconButton type="outline" onClick={() => openItemTunnel(1)}>
+               <IconButton
+                  size="sm"
+                  type="outline"
+                  onClick={() => toggleItemCountTunnel('EDIT_ITEM_COUNT')}
+               >
                   <EditIcon />
                </IconButton>
             </Flex>
          </Flex>
          <ItemCountSection>
+            <Flex
+               container
+               as="header"
+               height="48px"
+               alignItems="center"
+               justifyContent="space-between"
+            >
+               <Flex container alignItems="center">
+                  <Text as="title">Delivery Days</Text>
+                  <Tooltip identifier="form_subscription_section_delivery_days_heading" />
+               </Flex>
+               <IconButton
+                  size="sm"
+                  type="outline"
+                  onClick={() => openTunnel(1)}
+               >
+                  <PlusIcon />
+               </IconButton>
+            </Flex>
             {itemCount?.subscriptions.length > 0 ? (
-               <SectionTabs onChange={index => setTabIndex(index)}>
-                  <SectionTabList>
-                     <SectionTabsListHeader>
-                        <Flex container alignItems="center">
-                           <Text as="title">Delivery Days</Text>
-                           <Tooltip identifier="form_subscription_section_delivery_days_heading" />
-                        </Flex>
-                        <IconButton
-                           type="outline"
-                           onClick={() => openTunnel(1)}
-                        >
-                           <PlusIcon />
-                        </IconButton>
-                     </SectionTabsListHeader>
+               <SectionTabs id="deliveryDaysTabs">
+                  <SectionTabList id="deliveryDaysTabList">
                      {itemCount?.subscriptions.map(subscription => (
                         <SectionTab key={subscription.id}>
                            <Text as="title">
@@ -185,12 +196,10 @@ const ItemCount = ({ id, openItemTunnel }) => {
                         </SectionTab>
                      ))}
                   </SectionTabList>
-                  <SectionTabPanels>
-                     {itemCount?.subscriptions.map((subscription, index) => (
+                  <SectionTabPanels id="deliveryDaysTabPanels">
+                     {itemCount?.subscriptions.map(subscription => (
                         <SectionTabPanel key={subscription.id}>
-                           {index === tabIndex && (
-                              <DeliveryDay id={subscription.id} />
-                           )}
+                           <DeliveryDay id={subscription.id} />
                         </SectionTabPanel>
                      ))}
                   </SectionTabPanels>
@@ -218,16 +227,6 @@ export default ItemCount
 
 const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
    const { state } = usePlan()
-   const [insertSubscription] = useMutation(INSERT_SUBSCRIPTION, {
-      onCompleted: () => {
-         close()
-         toast.success('Successfully created the subscription!')
-      },
-      onError: error => {
-         logger(error)
-         toast.success('Failed to create the subscription!')
-      },
-   })
    const [days, setDays] = React.useState({
       sunday: false,
       monday: false,
@@ -244,6 +243,35 @@ const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
       startDate: '',
       endDate: '',
    })
+   const close = () => {
+      closeTunnel(1)
+      setDays({
+         sunday: false,
+         monday: false,
+         tuesday: false,
+         wednesday: false,
+         thursday: false,
+         friday: false,
+         saturday: false,
+      })
+      setForm({
+         cutOffTime: '',
+         leadTime: '',
+         startTime: '',
+         startDate: '',
+         endDate: '',
+      })
+   }
+   const [insertSubscription] = useMutation(INSERT_SUBSCRIPTION, {
+      onCompleted: () => {
+         close()
+         toast.success('Successfully created the subscription!')
+      },
+      onError: error => {
+         logger(error)
+         toast.success('Failed to create the subscription!')
+      },
+   })
 
    const save = () => {
       const bridge = {
@@ -258,15 +286,14 @@ const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
 
       const objects = []
 
-      for (let [key, value] of Object.entries(days)) {
-         if (value) {
-            let rule = new RRule({
+      Object.keys(days).forEach(day => {
+         if (days[day]) {
+            const rule = new RRule({
                freq: RRule.WEEKLY,
                interval: 1,
                wkst: RRule.MO,
-               byweekday: bridge[key],
+               byweekday: bridge[day],
             })
-
             objects.push({
                rrule: rule.toString(),
                subscriptionItemCountId: state.item.id,
@@ -275,7 +302,7 @@ const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
                startTime: { unit: 'days', value: Number(form.startTime) },
             })
          }
-      }
+      })
 
       insertSubscription({
          variables: {
@@ -298,26 +325,6 @@ const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
 
    const selectDay = day => {
       setDays({ ...days, [day]: !days[day] })
-   }
-
-   const close = () => {
-      closeTunnel(1)
-      setDays({
-         sunday: false,
-         monday: false,
-         tuesday: false,
-         wednesday: false,
-         thursday: false,
-         friday: false,
-         saturday: false,
-      })
-      setForm({
-         cutOffTime: '',
-         leadTime: '',
-         startTime: '',
-         startDate: '',
-         endDate: '',
-      })
    }
 
    const isValid = () => {

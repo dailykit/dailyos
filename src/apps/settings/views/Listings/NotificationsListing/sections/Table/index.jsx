@@ -253,7 +253,7 @@ const NotificationTable = () => {
                width: 100,
             },
             {
-               title: 'Play Audio',
+               title: 'Play',
                field: 'audioUrl',
                formatter: reactFormatter(<PlayAudio />),
                width: 100,

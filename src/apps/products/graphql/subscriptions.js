@@ -340,10 +340,7 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
             name
             image
          }
-         simpleRecipeProductOptions(
-            where: { isArchived: { _eq: false } }
-            order_by: { position: desc_nulls_last }
-         ) {
+         simpleRecipeProductOptions(order_by: { position: desc_nulls_last }) {
             id
             isActive
             price
