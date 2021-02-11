@@ -18,7 +18,7 @@ const Sidebar = ({ visible, toggleSidebar }) => {
          <StyledHeading>Listings</StyledHeading>
          <StyledList>
             <StyledListItem
-               onClick={() => addTab('Users', '/subscription/menu')}
+               onClick={() => addTab('Menu', '/subscription/menu')}
             >
                Menu
             </StyledListItem>

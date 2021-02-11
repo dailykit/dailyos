@@ -14,6 +14,7 @@ const DateSection = () => {
    )
 
    const handleDateChange = date => {
+      localStorage.removeItem('serving_size')
       dispatch({ type: 'SET_DATE', payload: date })
    }
 

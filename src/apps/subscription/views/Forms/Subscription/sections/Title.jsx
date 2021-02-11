@@ -20,14 +20,13 @@ import {
    SectionTabList,
    SectionTabPanel,
    SectionTabPanels,
-   SectionTabsListHeader,
 } from '@dailykit/ui'
 
 import Serving from './Serving'
 import validate from '../validate'
 import { usePlan } from '../state'
+import { Header, Wrapper } from '../styled'
 import { useTabs } from '../../../../context'
-import { Header, Section, Wrapper } from '../styled'
 import { logger } from '../../../../../../shared/utils'
 import {
    Tooltip,
@@ -48,6 +47,7 @@ const Title = () => {
    const { tab, addTab, setTabTitle } = useTabs()
    const [tabIndex, setTabIndex] = React.useState(0)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+   const [servingTunnelState, setServingTunnelState] = React.useState('')
    const [upsertTitle] = useMutation(UPSERT_SUBSCRIPTION_TITLE, {
       onCompleted: ({ upsertSubscriptionTitle = {} }) => {
          if (isEmpty(upsertSubscriptionTitle)) return
@@ -66,38 +66,25 @@ const Title = () => {
             id: params.id,
          },
          onSubscriptionData: ({
-            subscriptionData: { data: { title = {} } = {} },
+            subscriptionData: { data: { title: node = {} } = {} },
          }) => {
-            if (isEmpty(title)) return
+            if (isEmpty(node)) return
 
             dispatch({
                type: 'SET_TITLE',
                payload: {
-                  id: title.id,
-                  title: title.title,
-                  isActive: title.isActive,
-                  defaultServing: { id: title.defaultSubscriptionServingId },
+                  id: node.id,
+                  title: node.title,
+                  isActive: node.isActive,
+                  defaultServing: { id: node.defaultSubscriptionServingId },
                },
             })
-            !tab &&
-               addTab(title?.title, `/subscription/subscriptions/${title?.id}`)
+            if (!tab) {
+               addTab(node.title, `/subscription/subscriptions/${node.id}`)
+            }
          },
       }
    )
-
-   React.useEffect(() => {
-      if (!loading && title.servings.every(node => node.isActive === false)) {
-         upsertTitle({
-            variables: {
-               object: {
-                  id: title.id,
-                  isActive: false,
-                  title: title.title,
-               },
-            },
-         })
-      }
-   }, [loading, title, upsertTitle])
 
    const handleChange = e => {
       dispatch({
@@ -149,12 +136,9 @@ const Title = () => {
       })
    }
 
-   const addServing = () => {
+   const toggleServingTunnel = type => {
       openTunnel(1)
-      dispatch({
-         type: 'SET_SERVING',
-         payload: { id: null, size: '', isDefault: false },
-      })
+      setServingTunnelState(type)
    }
 
    if (loading) return <InlineLoader />
@@ -186,22 +170,24 @@ const Title = () => {
                />
                {state.title.meta.isTouched &&
                   !state.title.meta.isValid &&
-                  state.title.meta.errors.map((error, index) => (
-                     <Form.Error key={index}>{error}</Form.Error>
+                  state.title.meta.errors.map((node, index) => (
+                     <Form.Error key={index}>{node}</Form.Error>
                   ))}
             </Form.Group>
             <Flex container alignItems="center">
                {title.isValid ? (
                   <Flex container flex="1" alignItems="center">
-                     <TickIcon size={22} color="green" />
+                     <TickIcon size={20} color="green" />
                      <Spacer size="8px" xAxis />
-                     <span>All good!</span>
+                     <Text as="subtitle">All good!</Text>
                   </Flex>
                ) : (
                   <Flex container flex="1" alignItems="center">
-                     <CloseIcon size={22} color="red" />
+                     <CloseIcon size={20} color="red" />
                      <Spacer size="8px" xAxis />
-                     <span>Must have atleast one active servings!</span>
+                     <Text as="subtitle">
+                        Must have atleast one active servings!
+                     </Text>
                   </Flex>
                )}
                <Spacer size="16px" xAxis />
@@ -217,44 +203,65 @@ const Title = () => {
                </Flex>
             </Flex>
          </Header>
-         <Section>
-            <SectionTabs onChange={index => setTabIndex(index)}>
-               <SectionTabList>
-                  <SectionTabsListHeader>
-                     <Flex container alignItems="center">
-                        <Text as="title">Servings</Text>
-                        <Tooltip identifier="form_subscription_section_servings_heading" />
-                     </Flex>
-                     <IconButton type="outline" onClick={() => addServing()}>
-                        <PlusIcon />
-                     </IconButton>
-                  </SectionTabsListHeader>
+         <Flex
+            as="section"
+            height="calc(100% - 89px)"
+            padding="0 14px 14px 14px"
+         >
+            <Flex
+               container
+               as="header"
+               height="48px"
+               alignItems="center"
+               justifyContent="space-between"
+            >
+               <Flex container alignItems="center">
+                  <Text as="title">Servings</Text>
+                  <Tooltip identifier="form_subscription_section_servings_heading" />
+               </Flex>
+               <IconButton
+                  size="sm"
+                  type="outline"
+                  onClick={() => toggleServingTunnel('ADD_SERVING')}
+               >
+                  <PlusIcon />
+               </IconButton>
+            </Flex>
+            <SectionTabs
+               id="servingTabs"
+               onChange={index => setTabIndex(index)}
+            >
+               <SectionTabList id="servingTabList">
                   {title?.servings.map(serving => (
                      <SectionTab key={serving.id}>
                         <Text as="title">{serving.size}</Text>
                      </SectionTab>
                   ))}
                </SectionTabList>
-               <SectionTabPanels>
+               <SectionTabPanels id="servingTabPanels">
                   {title?.servings.map((serving, index) => (
-                     <SectionTabPanel
-                        key={serving.id}
-                        style={{ overflow: 'hidden' }}
-                     >
+                     <SectionTabPanel key={serving.id}>
                         {tabIndex === index && (
                            <Serving
                               id={serving.id}
                               isActive={tabIndex === index}
-                              openServingTunnel={openTunnel}
+                              toggleServingTunnel={toggleServingTunnel}
                            />
                         )}
                      </SectionTabPanel>
                   ))}
                </SectionTabPanels>
             </SectionTabs>
-         </Section>
+         </Flex>
          <ErrorBoundary rootRoute="/subscription/subscriptions">
-            <ServingTunnel tunnels={tunnels} closeTunnel={closeTunnel} />
+            <Tunnels tunnels={tunnels}>
+               <Tunnel layer={1}>
+                  <ServingTunnel
+                     closeTunnel={closeTunnel}
+                     servingTunnelState={servingTunnelState}
+                  />
+               </Tunnel>
+            </Tunnels>
          </ErrorBoundary>
       </Wrapper>
    )
@@ -262,8 +269,18 @@ const Title = () => {
 
 export default Title
 
-const ServingTunnel = ({ tunnels, closeTunnel }) => {
-   const { state, dispatch } = usePlan()
+const ServingTunnel = ({ servingTunnelState, closeTunnel }) => {
+   const { state } = usePlan()
+   const [serving, setServing] = React.useState({
+      id: null,
+      size: '',
+      isActive: false,
+      isDefault: false,
+      meta: { errors: [], isValid: false, isTouched: false },
+   })
+   const hideTunnel = () => {
+      closeTunnel(1)
+   }
    const [upsertTitle] = useMutation(UPSERT_SUBSCRIPTION_TITLE)
    const [upsertServing] = useMutation(UPSERT_SUBSCRIPTION_SERVING, {
       onCompleted: ({ upsertSubscriptionServing = {} }) => {
@@ -273,9 +290,7 @@ const ServingTunnel = ({ tunnels, closeTunnel }) => {
                object: {
                   id: state.title.id,
                   title: state.title.title,
-                  defaultSubscriptionServingId: state.serving.isDefault
-                     ? id
-                     : null,
+                  defaultSubscriptionServingId: serving.isDefault ? id : null,
                },
             },
          })
@@ -288,111 +303,124 @@ const ServingTunnel = ({ tunnels, closeTunnel }) => {
       },
    })
 
+   React.useEffect(() => {
+      if (servingTunnelState === 'EDIT_SERVING') {
+         setServing({
+            id: state.serving?.id,
+            size: state.serving.size,
+            isActive: state.serving.isActive,
+            isDefault: state.serving.isDefault,
+            meta: { errors: [], isValid: false, isTouched: false },
+         })
+      } else {
+         setServing({
+            id: null,
+            size: '',
+            isActive: false,
+            isDefault: false,
+            meta: { errors: [], isValid: false, isTouched: false },
+         })
+      }
+   }, [state.serving])
+
    const createServing = () => {
       upsertServing({
          variables: {
             object: {
                subscriptionTitleId: state.title.id,
-               servingSize: Number(state.serving.size),
-               ...(state.serving.id && {
-                  id: state.serving.id,
+               servingSize: Number(serving.size),
+               ...(serving.id && {
+                  id: serving.id,
                }),
             },
          },
       })
    }
 
-   const hideTunnel = () => {
-      closeTunnel(1)
-   }
-
    const onBlur = e => {
-      dispatch({
-         type: 'SET_SERVING',
-         payload: {
-            meta: {
-               isTouched: true,
-               errors: validate.serving(e.target.value).errors,
-               isValid: validate.serving(e.target.value).isValid,
-            },
+      setServing({
+         ...serving,
+         meta: {
+            isTouched: true,
+            errors: validate.serving(e.target.value).errors,
+            isValid: validate.serving(e.target.value).isValid,
          },
       })
    }
 
+   const makeDefault = () => {
+      setServing(node => ({
+         ...node,
+         isDefault: !node.isDefault,
+         meta: {
+            errors: [],
+            isValid: true,
+            isTouched: false,
+         },
+      }))
+   }
+
+   const handleChange = (name, value) => {
+      setServing(node => ({ ...node, [name]: value }))
+   }
+
    return (
-      <Tunnels tunnels={tunnels}>
-         <Tunnel layer={1}>
-            <TunnelHeader
-               close={() => hideTunnel()}
-               title={`${state.serving.id ? 'Edit' : 'Add'} Serving`}
-               right={{
-                  title: 'Save',
-                  action: () => createServing(),
-                  disabled: !state.serving.meta.isValid,
-               }}
-               tooltip={
-                  <Tooltip identifier="form_subscription_tunnel_serving_create" />
-               }
-            />
-            <Flex padding="16px">
-               <Form.Group>
-                  <Form.Label htmlFor="serving" title="serving">
-                     <Flex container alignItems="center">
-                        Serving Size*
-                        <Tooltip identifier="form_subscription_tunnel_serving_field_size" />
-                     </Flex>
-                  </Form.Label>
-                  <Form.Number
-                     id="serving"
-                     name="serving"
-                     onBlur={onBlur}
-                     onChange={e =>
-                        dispatch({
-                           type: 'SET_SERVING',
-                           payload: {
-                              size: Number(e.target.value) || '',
-                           },
-                        })
-                     }
-                     value={state.serving.size}
-                     disabled={state.serving.id}
-                     placeholder="Enter the serving size"
-                     hasError={
-                        state.serving.meta.isTouched &&
-                        !state.serving.meta.isValid
-                     }
-                  />
-                  {state.serving.meta.isTouched &&
-                     !state.serving.meta.isValid &&
-                     state.serving.meta.errors.map((error, index) => (
-                        <Form.Error key={index}>{error}</Form.Error>
-                     ))}
-               </Form.Group>
-               {state.serving.id && (
-                  <HelperText
-                     type="hint"
-                     message="Serving is not editable right now."
-                  />
-               )}
-               <Spacer size="16px" />
-               <Form.Toggle
-                  value={state.serving.isDefault}
-                  onChange={() =>
-                     dispatch({
-                        type: 'SET_SERVING',
-                        payload: {
-                           isDefault: !state.serving.isDefault,
-                        },
-                     })
-                  }
-               >
+      <>
+         <TunnelHeader
+            close={() => hideTunnel()}
+            title={`${
+               servingTunnelState === 'EDIT_SERVING' ? 'Edit' : 'Add'
+            } Serving`}
+            right={{
+               title: 'Save',
+               action: () => createServing(),
+            }}
+            tooltip={
+               <Tooltip identifier="form_subscription_tunnel_serving_create" />
+            }
+         />
+         <Flex padding="16px">
+            <Form.Group>
+               <Form.Label htmlFor="serving" title="serving">
                   <Flex container alignItems="center">
-                     Make Default
-                     <Tooltip identifier="form_subscription_tunnel_serving_field_make_default" />
+                     Serving Size*
+                     <Tooltip identifier="form_subscription_tunnel_serving_field_size" />
                   </Flex>
-               </Form.Toggle>
-            </Flex>
-         </Tunnel>
-      </Tunnels>
+               </Form.Label>
+               <Form.Number
+                  id="serving"
+                  name="serving"
+                  onBlur={onBlur}
+                  onChange={e => handleChange('size', e.target.value)}
+                  value={serving.size}
+                  disabled={serving.id}
+                  placeholder="Enter the serving size"
+                  hasError={serving.meta.isTouched && !serving.meta.isValid}
+               />
+               {serving.meta.isTouched &&
+                  !serving.meta.isValid &&
+                  serving.meta.errors.map((error, index) => (
+                     <Form.Error key={index}>{error}</Form.Error>
+                  ))}
+            </Form.Group>
+            {serving.id && (
+               <HelperText
+                  type="hint"
+                  message="Serving is not editable right now."
+               />
+            )}
+            <Spacer size="16px" />
+            <Form.Toggle
+               onChange={makeDefault}
+               name="makeServingDefault"
+               value={serving.isDefault}
+            >
+               <Flex container alignItems="center">
+                  Make Default
+                  <Tooltip identifier="form_subscription_tunnel_serving_field_make_default" />
+               </Flex>
+            </Form.Toggle>
+         </Flex>
+      </>
    )
 }

@@ -23,7 +23,14 @@ export const SUBSCRIPTION_OCCURENCES = gql`
             startTimeStamp
             fulfillmentDate
             cutoffTimeStamp
-            products: products_aggregate {
+            products: products_aggregate(
+               where: {
+                  _or: [
+                     { inventoryProduct: { isArchived: { _eq: false } } }
+                     { simpleRecipeProduct: { isArchived: { _eq: false } } }
+                  ]
+               }
+            ) {
                aggregate {
                   count
                }
@@ -31,7 +38,14 @@ export const SUBSCRIPTION_OCCURENCES = gql`
             subscription {
                id
                rrule
-               products: subscriptionProducts_aggregate {
+               products: subscriptionProducts_aggregate(
+                  where: {
+                     _or: [
+                        { inventoryProduct: { isArchived: { _eq: false } } }
+                        { simpleRecipeProduct: { isArchived: { _eq: false } } }
+                     ]
+                  }
+               ) {
                   aggregate {
                      count
                   }
@@ -64,7 +78,10 @@ export const SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
       productOptions: simpleRecipeProductOptionsAggregate(
          where: {
             type: $type
-            simpleRecipeProduct: { isPublished: { _eq: true } }
+            simpleRecipeProduct: {
+               isArchived: { _eq: false }
+               isPublished: { _eq: true }
+            }
          }
       ) {
          aggregate {
@@ -155,7 +172,7 @@ export const ITEM_COUNT = gql`
          isValid
          isActive
          isTaxIncluded
-         subscriptions {
+         subscriptions(order_by: { id: desc }) {
             id
             rrule
          }
@@ -176,13 +193,31 @@ export const SUBSCRIPTION_OCCURENCES_LIST = gql`
                startTimeStamp
                fulfillmentDate
                cutoffTimeStamp
-               products: products_aggregate {
+               products: products_aggregate(
+                  where: {
+                     _or: [
+                        { inventoryProduct: { isArchived: { _eq: false } } }
+                        { simpleRecipeProduct: { isArchived: { _eq: false } } }
+                     ]
+                  }
+               ) {
                   aggregate {
                      count
                   }
                }
                subscription {
-                  products: subscriptionProducts_aggregate {
+                  products: subscriptionProducts_aggregate(
+                     where: {
+                        _or: [
+                           { inventoryProduct: { isArchived: { _eq: false } } }
+                           {
+                              simpleRecipeProduct: {
+                                 isArchived: { _eq: false }
+                              }
+                           }
+                        ]
+                     }
+                  ) {
                      aggregate {
                         count
                      }
@@ -244,7 +279,12 @@ export const SUBSCRIPTION = gql`
 export const INVENTORY_PRODUCT_OPTIONS = gql`
    query inventoryProductOptions {
       inventoryProductOptions: inventoryProductOptionsAggregate(
-         where: { inventoryProduct: { isPublished: { _eq: true } } }
+         where: {
+            inventoryProduct: {
+               isArchived: { _eq: false }
+               isPublished: { _eq: true }
+            }
+         }
       ) {
          aggregate {
             count
