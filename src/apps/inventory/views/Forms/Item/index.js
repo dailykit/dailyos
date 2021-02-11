@@ -27,7 +27,7 @@ import { logger } from '../../../../../shared/utils/errorLog'
 import { ClockIcon, ItemIcon } from '../../../assets/icons'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import { BULK_ITEM_CREATED } from '../../../constants/successMessages'
-import { useTabs } from '../../../context'
+import { useTabs } from '../../../../../shared/providers'
 import {
    CREATE_BULK_ITEM,
    SUPPLIER_ITEM_SUBSCRIPTION,

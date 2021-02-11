@@ -32,8 +32,9 @@ import {
    StyledPackaging,
    StyledSOP,
 } from './styled'
+import { StyledIconButton } from '../OrderSummary/styled'
 
-export const ProcessSachet = () => {
+export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
    const {
       state: {
          current_view,
@@ -235,6 +236,14 @@ export const ProcessSachet = () => {
    }
    return (
       <Wrapper>
+         <StyledIconButton
+            style={{ marginTop: '16px' }}
+            type="outline"
+            size="sm"
+            onClick={() => closeOrderSummaryTunnel(1)}
+         >
+            <CloseIcon />
+         </StyledIconButton>
          <StyledMode>
             <Flex container alignItems="center">
                <label htmlFor="mode">Mode</label>

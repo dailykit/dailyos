@@ -21,21 +21,22 @@ import {
    HorizontalTabPanels,
 } from '@dailykit/ui'
 
-import { Styles } from './styled'
+import { ResponsiveFlex, Styles } from './styled'
 import { formatDate } from '../../utils'
 import { findAndSelectSachet } from './methods'
 import { QUERIES, MUTATIONS } from '../../graphql'
 import { PrintIcon, UserIcon } from '../../assets/icons'
-import { useAccess } from '../../../../shared/providers'
-import { useConfig, useOrder, useTabs } from '../../context'
+import { useConfig, useOrder } from '../../context'
 import { currencyFmt, logger } from '../../../../shared/utils'
 import { MealKits, Inventories, ReadyToEats } from './sections'
+import { useAccess, useTabs } from '../../../../shared/providers'
 import {
    Tooltip,
    ErrorState,
    InlineLoader,
    DropdownButton,
 } from '../../../../shared/components'
+import styled from 'styled-components'
 
 const isPickup = value => ['ONDEMAND_PICKUP', 'PREORDER_PICKUP'].includes(value)
 
@@ -211,7 +212,7 @@ const Order = () => {
 
    React.useEffect(() => {
       if (!loading && order?.id && !tab) {
-         addTab(`ORD${order?.id}`, `/apps/order/orders/${order?.id}`)
+         addTab(`ORD${order?.id}`, `/order/orders/${order?.id}`)
       }
    }, [loading, order, tab, addTab])
 
@@ -328,7 +329,7 @@ const Order = () => {
    return (
       <Flex>
          <Spacer size="16px" />
-         <Flex
+         <ResponsiveFlex
             container
             as="header"
             padding="0 16px"
@@ -452,9 +453,9 @@ const Order = () => {
                   </>
                )}
             </Flex>
-         </Flex>
+         </ResponsiveFlex>
          <Spacer size="16px" />
-         <Flex
+         <ResponsiveFlex
             container
             padding="0 16px"
             alignItems="center"
@@ -479,7 +480,7 @@ const Order = () => {
                <span />
             )}
 
-            <Flex container>
+            <ResponsiveFlex container>
                {!isThirdParty && (
                   <>
                      <Flex width="240px">
@@ -497,41 +498,43 @@ const Order = () => {
                      <Spacer size="24px" xAxis />
                   </>
                )}
-               <TextButton
-                  type="solid"
-                  disabled={order.isAccepted}
-                  onClick={() =>
-                     updateOrder({
-                        variables: {
-                           id: order.id,
-                           _set: {
-                              isAccepted: true,
-                              ...(order.isRejected && { isRejected: false }),
+               <Flex container>
+                  <TextButton
+                     type="solid"
+                     disabled={order.isAccepted}
+                     onClick={() =>
+                        updateOrder({
+                           variables: {
+                              id: order.id,
+                              _set: {
+                                 isAccepted: true,
+                                 ...(order.isRejected && { isRejected: false }),
+                              },
                            },
-                        },
-                     })
-                  }
-               >
-                  {order.isAccepted ? 'Accepted' : 'Accept'}
-               </TextButton>
-               <Spacer size="14px" xAxis />
-               <TextButton
-                  type="ghost"
-                  onClick={() =>
-                     updateOrder({
-                        variables: {
-                           id: order.id,
-                           _set: {
-                              isRejected: !order.isRejected,
+                        })
+                     }
+                  >
+                     {order.isAccepted ? 'Accepted' : 'Accept'}
+                  </TextButton>
+                  <Spacer size="14px" xAxis />
+                  <TextButton
+                     type="ghost"
+                     onClick={() =>
+                        updateOrder({
+                           variables: {
+                              id: order.id,
+                              _set: {
+                                 isRejected: !order.isRejected,
+                              },
                            },
-                        },
-                     })
-                  }
-               >
-                  {order.isRejected ? 'Un Reject' : 'Reject'}
-               </TextButton>
-            </Flex>
-         </Flex>
+                        })
+                     }
+                  >
+                     {order.isRejected ? 'Un Reject' : 'Reject'}
+                  </TextButton>
+               </Flex>
+            </ResponsiveFlex>
+         </ResponsiveFlex>
          <Spacer size="8px" />
          {isThirdParty ? (
             <HorizontalTabs>

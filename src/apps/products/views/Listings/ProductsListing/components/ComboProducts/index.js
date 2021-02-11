@@ -9,9 +9,8 @@ import {
    ErrorState,
    InlineLoader,
 } from '../../../../../../../shared/components'
-import { useTooltip } from '../../../../../../../shared/providers'
+import { useTooltip, useTabs } from '../../../../../../../shared/providers'
 import { logger } from '../../../../../../../shared/utils'
-import { useTabs } from '../../../../../context/tabs'
 import { DELETE_COMBO_PRODUCTS, S_COMBO_PRODUCTS } from '../../../../../graphql'
 import tableOptions from '../../../tableOption'
 

@@ -8,7 +8,7 @@ import {
 } from '@dailykit/ui'
 
 import { Wrapper } from './styled'
-import { useTabs } from '../../context'
+import { useTabs } from '../../../../shared/providers'
 import {
    InventorySection,
    ReadyToEatSection,
@@ -25,7 +25,7 @@ const Planned = () => {
 
    React.useEffect(() => {
       if (!tab) {
-         addTab('Planned', '/apps/order/planned')
+         addTab('Planned', '/order/planned')
       }
    }, [tab, addTab])
 

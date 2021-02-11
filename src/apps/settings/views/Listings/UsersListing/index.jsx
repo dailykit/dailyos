@@ -5,18 +5,16 @@ import { ReactTabulator } from '@dailykit/react-tabulator'
 import { Avatar, Text, Flex, ComboButton } from '@dailykit/ui'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 
-import { useTabs } from '../../../context'
+import { USERS } from '../../../graphql'
 import tableOptions from '../tableOption'
 import { logger } from '../../../../../shared/utils'
-import { USERS } from '../../../graphql'
 import { AddIcon } from '../../../../../shared/assets/icons'
-import { useTooltip } from '../../../../../shared/providers'
+import { useTooltip, useTabs } from '../../../../../shared/providers'
 import {
    ErrorState,
    InlineLoader,
    Tooltip,
 } from '../../../../../shared/components'
-import { ResponsiveFlex } from '../styled'
 
 const UsersListing = () => {
    const tableRef = React.useRef()
@@ -112,7 +110,7 @@ const UsersListing = () => {
    }, [tab, addTab])
 
    return (
-      <ResponsiveFlex margin="0 auto" maxWidth="1280px">
+      <Flex margin="0 auto" width="calc(100% - 32px)" maxWidth="1280px">
          <Flex
             container
             as="header"
@@ -153,7 +151,7 @@ const UsersListing = () => {
                )}
             </>
          )}
-      </ResponsiveFlex>
+      </Flex>
    )
 }
 

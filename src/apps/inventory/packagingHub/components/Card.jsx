@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { useTabs } from '../../context'
+import { useTabs } from '../../../../shared/providers'
 
 export default function Card({ category }) {
    const { addTab } = useTabs()

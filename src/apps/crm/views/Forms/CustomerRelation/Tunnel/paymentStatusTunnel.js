@@ -1,11 +1,11 @@
 import React, { useContext } from 'react'
 import { Tunnels, Tunnel, TunnelHeader, Text } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
-import { useTabs } from '../../../../context'
 import { STATUS } from '../../../../graphql'
 import { TunnelHeaderContainer, StyledDiv } from './styled'
 import { logger } from '../../../../../../shared/utils'
 import { Tooltip, InlineLoader } from '../../../../../../shared/components'
+import { useTabs } from '../../../../../../shared/providers'
 import { toast } from 'react-toastify'
 import BrandContext from '../../../../context/Brand'
 

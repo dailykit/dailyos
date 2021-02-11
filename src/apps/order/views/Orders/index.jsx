@@ -8,9 +8,9 @@ import { useSubscription } from '@apollo/react-hooks'
 import { paginate } from '../../utils'
 import { QUERIES } from '../../graphql'
 import { useOrder } from '../../context'
-import { useTabs } from '../../context/tabs'
 import { OrderListItem } from '../../components'
 import { logger } from '../../../../shared/utils'
+import { useTabs } from '../../../../shared/providers'
 import { ErrorState, InlineLoader } from '../../../../shared/components'
 
 const Orders = () => {
@@ -53,7 +53,7 @@ const Orders = () => {
 
    React.useEffect(() => {
       if (!tab) {
-         addTab('Orders', '/apps/order/orders')
+         addTab('Orders', '/order/orders')
       }
    }, [tab, addTab])
 

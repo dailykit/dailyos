@@ -1,5 +1,5 @@
 import React from 'react'
-import { isEmpty, set } from 'lodash'
+import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
@@ -16,9 +16,9 @@ import {
 } from '@dailykit/ui'
 import validator from '../../validator'
 import { BRANDS } from '../../../graphql'
-import { useTabs } from '../../../context'
 import { Wrapper, Label } from './styled'
 import { logger } from '../../../../../shared/utils'
+import { useTabs } from '../../../../../shared/providers'
 import { InlineLoader, Tooltip } from '../../../../../shared/components'
 import {
    OnDemandSettings,
