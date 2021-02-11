@@ -1,6 +1,7 @@
 import React from 'react'
-import { Menu, MenuOptions, MenuOption } from './style'
+import { toast } from 'react-toastify'
 import { Spacer } from '@dailykit/ui'
+import { Menu, MenuOptions, MenuOption } from './style'
 import {
    CreateFile,
    CreateFolder,
@@ -9,7 +10,6 @@ import {
    CopyIcon,
 } from '../../assets/Icons'
 import { useGlobalContext } from '../../context'
-import { toast } from 'react-toastify'
 
 const ContextMenu = ({ style, node }) => {
    const { setContextMenuInfo } = useGlobalContext()

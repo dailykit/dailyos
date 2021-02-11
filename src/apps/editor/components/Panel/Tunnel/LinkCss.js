@@ -17,6 +17,8 @@ export default function LinkCss({
    // const { state, dispatch } = React.useContext(Context)
    const [cssOptions, setCssOptions] = React.useState([])
    const [linkCssFiles, setLinkCssFiles] = React.useState([])
+   const [searchOption, setSearchOption] = React.useState('')
+   const [searchResult, setSearchResult] = React.useState([])
    const files = linkCssIds.map(file => {
       return file.cssFileId
    })
@@ -41,6 +43,7 @@ export default function LinkCss({
             }
          })
          setCssOptions(cssResult)
+         setSearchResult(cssResult)
       },
       //   skip: files.length === 0,
    })
@@ -76,6 +79,13 @@ export default function LinkCss({
       setLinkCssFiles(result)
    }
 
+   React.useEffect(() => {
+      const result = cssOptions.filter(option =>
+         option.title.toLowerCase().includes(searchOption)
+      )
+      setSearchResult(result)
+   }, [searchOption])
+
    return (
       <div>
          <Tunnels tunnels={tunnels}>
@@ -91,8 +101,8 @@ export default function LinkCss({
                <TunnelBody>
                   <Dropdown
                      type="multi"
-                     options={cssOptions}
-                     //  searchedOption={searchedOption}
+                     options={searchResult}
+                     searchedOption={option => setSearchOption(option)}
                      selectedOption={option => selectedOptionHandler(option)}
                      placeholder="type what you're looking for..."
                   />
