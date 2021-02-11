@@ -9,6 +9,7 @@ import {
    AvatarGroup,
    Avatar,
    TagGroup,
+   ButtonGroup,
    Tag,
    Flex,
    Text,
@@ -21,10 +22,11 @@ import {
    useTunnel,
    TextButton,
    TunnelHeader,
+   IconButton,
+   PlusIcon,
    Form,
 } from '@dailykit/ui'
 import { InlineLoader } from '../../../../../../../shared/components/InlineLoader'
-
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../shared/utils'
 
@@ -41,13 +43,17 @@ import PlayButton from '../../../../../../../../src/shared/assets/icons/PlayButt
 import AddEmailAdresses from '../../../../Forms/Notification/AddEmail/index'
 const PlayAudio = ({ cell }) => {
    const rowData = cell._cell.row.data
-   const audio = new Audio(rowData.audioUrl)
+
+   const audioTune = new Audio(rowData.audioUrl)
+
    const start = () => {
-      audio.play()
+      audioTune.play()
    }
    return (
       <>
-         <PlayButton onClick={start} />
+         <ButtonGroup onClick={start}>
+            <PlayButton />
+         </ButtonGroup>
       </>
    )
 }
@@ -65,13 +71,9 @@ const ToggleButton = ({ cell, toggleType, toggleHandler }) => {
    } else if (toggleType === 'isActive') {
       toggleValue = rowData.isActive
    } else if (toggleType === 'playAudio') {
-      toggleValue = rowData.PlayAudio
+      toggleValue = rowData.playAudio
    }
 
-   const audio = new Audio(rowData.audioUrl)
-   const start = () => {
-      audio.play()
-   }
    return (
       <Form.Group>
          <Form.Toggle
@@ -119,6 +121,7 @@ const NotificationTable = () => {
                   active: notificationType.isActive,
                   isGlobal: notificationType.isGlobal,
                   isLocal: notificationType.isLocal,
+                  playAudio: notificationType.playAudio,
                }
             }
          )
@@ -182,15 +185,15 @@ const NotificationTable = () => {
       const cellValue = cell._cell.getValue()
       return (
          <>
-            {console.log('Cell Value ' + cellValue)}
             {emailConfigs.length > 0 ? (
-               emailConfigs
-                  .slice(0, 1)
-                  .map(emailConfig => (
-                     <Tag onClick={() => openTunnel(1)}>
-                        {emailConfig.email} <span>+</span>
+               emailConfigs.slice(0, 1).map(emailConfig => (
+                  <ButtonGroup onClick={() => openTunnel(1)}>
+                     <Tag>
+                        {emailConfig.email}
+                        <PlusIcon />
                      </Tag>
-                  ))
+                  </ButtonGroup>
+               ))
             ) : (
                <TextButton type="ghost" onClick={() => openTunnel(1)}>
                   Configure Emails
@@ -251,7 +254,7 @@ const NotificationTable = () => {
             },
             {
                title: 'Play Audio',
-               field: 'AudioPlayer',
+               field: 'audioUrl',
                formatter: reactFormatter(<PlayAudio />),
                width: 100,
             },
@@ -265,8 +268,7 @@ const NotificationTable = () => {
             <ConfigureEmailTunnel openTunnel={openTunnel} />
          ),
          editor: true,
-         cellClick: (e, cell) => rowClick(e, cell)
-            
+         cellClick: (e, cell) => rowClick(e, cell),
       },
 
       {
@@ -282,7 +284,6 @@ const NotificationTable = () => {
    if (loading) return <InlineLoader />
    return (
       <>
-
          <ReactTabulator
             columns={editableColumns}
             data={notificationTypes}
@@ -294,7 +295,7 @@ const NotificationTable = () => {
 
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="md">
-               <AddEmailAdresses typeid={typeid}  closeTunnel={closeTunnel} />
+               <AddEmailAdresses typeid={typeid} closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
       </>

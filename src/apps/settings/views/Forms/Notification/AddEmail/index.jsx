@@ -21,7 +21,7 @@ import {
    Tooltip,
 } from '../../../../../../shared/components'
 
-const AddEmailAdresses = ({ typeid,closeTunnel }) => {
+const AddEmailAdresses = ({ typeid, closeTunnel }) => {
    const [
       createNotificationEmailConfigs,
       { data, loading: loadingNotificationEmailConfigs },
@@ -32,17 +32,28 @@ const AddEmailAdresses = ({ typeid,closeTunnel }) => {
       onError: error => {
          toast.error('Failed to add Email!')
          logger(error)
-         console.log(error)
       },
    })
 
    const [emails, setEmails] = React.useState([{ email: null, typeId: typeid }])
 
+   const [emailValidationErrors, setEmailValidationErrors] = React.useState([])
+   const [isValid, setIsValid] = React.useState(true)
    const handleChange = (i, event) => {
       const values = [...emails]
       values[i].email = event.target.value
+
+      if (values[i].email < 2) {
+         setIsValid(false)
+         setEmailValidationErrors(['Must have atleast two letters.'])
+      }
+      const regex = new RegExp(/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/)
+      if (!regex.test(values[i].email)) {
+         setIsValid(false)
+         setEmailValidationErrors(['Must be a valid email.'])
+      }
+
       setEmails(values)
-      console.log(emails)
    }
 
    const handleMultipleMails = () => {
@@ -60,15 +71,22 @@ const AddEmailAdresses = ({ typeid,closeTunnel }) => {
    }
 
    const add = () => {
-
       let inputVariables = {
-         "objects": emails
-       }
+         objects: emails,
+      }
 
-      try {
-         createNotificationEmailConfigs({variables: inputVariables})
-      } catch (error) {
-         toast.error(error.message)
+      if (!isValid) {
+         emailValidationErrors.map(error => toast.error(error))
+      }
+
+      if (isValid) {
+         try {
+            createNotificationEmailConfigs({ variables: inputVariables }).then(
+               closeTunnel(1)
+            )
+         } catch (error) {
+            toast.error(error.message)
+         }
       }
    }
 
@@ -82,7 +100,6 @@ const AddEmailAdresses = ({ typeid,closeTunnel }) => {
                disabled: emails.filter(Boolean).length === 0,
             }}
             close={() => closeTunnel(1)}
-            
          />
 
          <Flex padding="50px">
