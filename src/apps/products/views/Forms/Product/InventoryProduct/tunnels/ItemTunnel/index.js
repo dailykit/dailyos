@@ -145,7 +145,10 @@ export default function ItemTunnel({ state, close }) {
                            />
                         )}
                         <ListHeader type="SSL1" label="Items" />
-                        <ListOptions>
+                        <ListOptions
+                           search={search}
+                           handleOnCreate={() => console.log('HHH')}
+                        >
                            {list
                               .filter(option =>
                                  option.title.toLowerCase().includes(search)

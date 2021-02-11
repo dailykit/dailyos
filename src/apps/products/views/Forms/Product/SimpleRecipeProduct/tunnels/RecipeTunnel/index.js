@@ -134,6 +134,10 @@ export default function RecipeTunnel({ state, close }) {
       updateProduct()
    }
 
+   const quickCreateRecipe = () => {
+      console.log(search)
+   }
+
    React.useEffect(() => {
       if (current.id && !busy) {
          add()
@@ -167,7 +171,10 @@ export default function RecipeTunnel({ state, close }) {
                            />
                         )}
                         <ListHeader type="SSL1" label="Recipes" />
-                        <ListOptions>
+                        <ListOptions
+                           search={search}
+                           handleOnCreate={quickCreateRecipe}
+                        >
                            {list
                               .filter(option =>
                                  option.title.toLowerCase().includes(search)
