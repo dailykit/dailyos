@@ -113,7 +113,11 @@ export default function RecipeTunnel({ state, close }) {
    const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
       onCompleted: () => {
          toast.success('Recipe added! Creating options...')
-         createOptions()
+         if (current.simpleRecipeYields?.length) {
+            createOptions()
+         } else {
+            close(1)
+         }
       },
       onError: error => {
          toast.error('Something went wrong!')
@@ -125,9 +129,11 @@ export default function RecipeTunnel({ state, close }) {
    const [createRecipe] = useMutation(CREATE_SIMPLE_RECIPE, {
       onCompleted: data => {
          updateProduct({
-            id: state.id,
-            set: {
-               simpleRecipeId: data.createSimpleRecipe.returning[0].id,
+            variables: {
+               id: state.id,
+               set: {
+                  simpleRecipeId: data.createSimpleRecipe.returning[0].id,
+               },
             },
          })
       },
