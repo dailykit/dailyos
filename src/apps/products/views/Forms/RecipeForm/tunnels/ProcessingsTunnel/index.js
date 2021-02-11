@@ -1,7 +1,6 @@
 import React from 'react'
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import {
-   Filler,
    List,
    ListHeader,
    ListItem,
@@ -14,7 +13,11 @@ import { toast } from 'react-toastify'
 import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { RecipeContext } from '../../../../../context/recipe'
-import { PROCESSINGS, UPDATE_RECIPE } from '../../../../../graphql'
+import {
+   CREATE_PROCESSINGS,
+   PROCESSINGS,
+   UPDATE_RECIPE,
+} from '../../../../../graphql'
 import { TunnelBody } from '../styled'
 
 const ProcessingsTunnel = ({ state, closeTunnel }) => {
@@ -57,15 +60,30 @@ const ProcessingsTunnel = ({ state, closeTunnel }) => {
       },
    })
 
-   const add = () => {
+   const [createProcessing] = useMutation(CREATE_PROCESSINGS, {
+      onCompleted: data => {
+         console.log(data)
+         const processing = {
+            id: data.createIngredientProcessing.returning[0].id,
+            title: data.createIngredientProcessing.returning[0].processingName,
+         }
+         add(processing)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
+   const add = processing => {
       const ingredients = state.ingredients || []
       ingredients.push({
          id: recipeState.newIngredient.id,
          name: recipeState.newIngredient.name,
          image: recipeState.newIngredient.image,
          ingredientProcessing: {
-            id: current.id,
-            processingName: current.title,
+            id: processing.id,
+            processingName: processing.title,
          },
       })
       updateRecipe({
@@ -78,9 +96,23 @@ const ProcessingsTunnel = ({ state, closeTunnel }) => {
       })
    }
 
+   const quickCreateProcessing = () => {
+      const processingName = search.slice(0, 1).toUpperCase() + search.slice(1)
+      createProcessing({
+         variables: {
+            procs: [
+               {
+                  ingredientId: recipeState.newIngredient.id,
+                  processingName,
+               },
+            ],
+         },
+      })
+   }
+
    React.useEffect(() => {
       if (current.id) {
-         add()
+         add(current)
       }
    }, [current])
 
@@ -96,38 +128,35 @@ const ProcessingsTunnel = ({ state, closeTunnel }) => {
                <InlineLoader />
             ) : (
                <>
-                  {ingredientProcessings.length ? (
-                     <List>
-                        {Object.keys(current).length > 0 ? (
-                           <ListItem type="SSL1" title={current.title} />
-                        ) : (
-                           <ListSearch
-                              onChange={value => setSearch(value)}
-                              placeholder="type what you’re looking for..."
-                           />
-                        )}
-                        <ListHeader type="SSL1" label="Processings" />
-                        <ListOptions>
-                           {list
-                              .filter(option =>
-                                 option.title.toLowerCase().includes(search)
-                              )
-                              .map(option => (
-                                 <ListItem
-                                    type="SSL1"
-                                    key={option.id}
-                                    title={option.title}
-                                    isActive={option.id === current.id}
-                                    onClick={() =>
-                                       selectOption('id', option.id)
-                                    }
-                                 />
-                              ))}
-                        </ListOptions>
-                     </List>
-                  ) : (
-                     <Filler message="No processings found in ingredient! To start, add some." />
-                  )}
+                  <List>
+                     {Object.keys(current).length > 0 ? (
+                        <ListItem type="SSL1" title={current.title} />
+                     ) : (
+                        <ListSearch
+                           onChange={value => setSearch(value)}
+                           placeholder="type what you’re looking for..."
+                        />
+                     )}
+                     <ListHeader type="SSL1" label="Processings" />
+                     <ListOptions
+                        search={search}
+                        handleOnCreate={quickCreateProcessing}
+                     >
+                        {list
+                           .filter(option =>
+                              option.title.toLowerCase().includes(search)
+                           )
+                           .map(option => (
+                              <ListItem
+                                 type="SSL1"
+                                 key={option.id}
+                                 title={option.title}
+                                 isActive={option.id === current.id}
+                                 onClick={() => selectOption('id', option.id)}
+                              />
+                           ))}
+                     </ListOptions>
+                  </List>
                </>
             )}
          </TunnelBody>
