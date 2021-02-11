@@ -80,6 +80,9 @@ export const CREATE_SACHET = gql`
       createIngredientSachet(objects: $objects) {
          returning {
             id
+            ingredient {
+               name
+            }
          }
       }
    }
