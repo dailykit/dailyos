@@ -1,5 +1,5 @@
 import React from 'react'
-import { useMutation, useLazyQuery } from '@apollo/react-hooks'
+import { useMutation, useLazyQuery, useSubscription } from '@apollo/react-hooks'
 import {
    List,
    ListItem,
@@ -24,6 +24,10 @@ import {
    InlineLoader,
    Tooltip,
 } from '../../../../../../../../shared/components'
+import {
+   CREATE_ITEM,
+   CREATE_SACHET_ITEM,
+} from '../../../../../../../inventory/graphql/mutations/item'
 
 const address =
    'apps.menu.views.forms.product.inventoryproduct.tunnels.itemtunnel.'
@@ -37,45 +41,33 @@ export default function ItemTunnel({ state, close }) {
    const [items, setItems] = React.useState([])
    const [list, current, selectOption] = useSingleList(items)
 
-   // Queries for fetching items
-   const [fetchSupplierItems, { loading: supplierItemsLoading }] = useLazyQuery(
-      SUPPLIER_ITEMS,
-      {
-         onCompleted: data => {
-            const updatedItems = data.supplierItems.map(item => {
-               return {
-                  id: item.id,
-                  title: `${item.name} - ${item.unitSize} ${item.unit}`,
-               }
-            })
-            setItems([...updatedItems])
-         },
-         onError: error => {
-            toast.error('Something went wrong!')
-            logger(error)
-         },
-         fetchPolicy: 'cache-and-network',
-      }
-   )
-   const [fetchSachetItems, { loading: sachetItemsLoading }] = useLazyQuery(
-      SACHET_ITEMS,
-      {
-         onCompleted: data => {
-            const updatedItems = data.sachetItems.map(item => {
-               return {
-                  id: item.id,
-                  title: `${item.bulkItem.supplierItem.name} ${item.bulkItem.processingName} - ${item.unitSize} ${item.unit}`,
-               }
-            })
-            setItems([...updatedItems])
-         },
-         onError: error => {
-            toast.error('Something went wrong!')
-            logger(error)
-         },
-         fetchPolicy: 'cache-and-network',
-      }
-   )
+   // Subscription for fetching items
+   const { loading: supplierItemsLoading } = useSubscription(SUPPLIER_ITEMS, {
+      skip: productState.meta.itemType !== 'inventory',
+      onSubscriptionData: data => {
+         const { supplierItems } = data.subscriptionData.data
+         const updatedItems = supplierItems.map(item => {
+            return {
+               id: item.id,
+               title: `${item.name} - ${item.unitSize} ${item.unit}`,
+            }
+         })
+         setItems([...updatedItems])
+      },
+   })
+   const { loading: sachetItemsLoading } = useSubscription(SACHET_ITEMS, {
+      skip: productState.meta.itemType !== 'sachet',
+      onSubscriptionData: data => {
+         const { sachetItems } = data.subscriptionData.data
+         const updatedItems = sachetItems.map(item => {
+            return {
+               id: item.id,
+               title: `${item.bulkItem.supplierItem.name} ${item.bulkItem.processingName} - ${item.unitSize} ${item.unit}`,
+            }
+         })
+         setItems([...updatedItems])
+      },
+   })
 
    const [updateProduct] = useMutation(UPDATE_INVENTORY_PRODUCT, {
       variables: {
@@ -99,6 +91,19 @@ export default function ItemTunnel({ state, close }) {
       },
    })
 
+   const [createSupplierItem] = useMutation(CREATE_ITEM, {
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+   const [createSachetItem] = useMutation(CREATE_SACHET_ITEM, {
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
    // Handlers
    const add = () => {
       if (busy) return
@@ -106,13 +111,30 @@ export default function ItemTunnel({ state, close }) {
       updateProduct()
    }
 
-   React.useEffect(() => {
-      if (productState.meta.itemType === 'inventory') {
-         fetchSupplierItems()
-      } else {
-         fetchSachetItems()
+   const quickCreateItem = () => {
+      const itemName = search.slice(0, 1).toUpperCase() + search.slice(1)
+      switch (productState.meta.itemType) {
+         case 'inventory':
+            return createSupplierItem({
+               variables: {
+                  object: {
+                     name: itemName,
+                  },
+               },
+            })
+         // TODO: handle sachet item quick create in inventory products
+         // case 'sachet':
+         //    return createSachetItem({
+         //       variables: {
+         //          object: {
+         //             name: itemName,
+         //          },
+         //       },
+         //    })
+         default:
+            console.error('No item type matched!')
       }
-   }, [])
+   }
 
    React.useEffect(() => {
       if (current.id) {
@@ -131,45 +153,41 @@ export default function ItemTunnel({ state, close }) {
             {sachetItemsLoading || supplierItemsLoading ? (
                <InlineLoader />
             ) : (
-               <>
-                  {list.length ? (
-                     <List>
-                        {Object.keys(current).length > 0 ? (
-                           <ListItem type="SSL1" title={current.title} />
-                        ) : (
-                           <ListSearch
-                              onChange={value => setSearch(value)}
-                              placeholder={t(
-                                 address.concat("type what you're looking for")
-                              )}
-                           />
-                        )}
-                        <ListHeader type="SSL1" label="Items" />
-                        <ListOptions
-                           search={search}
-                           handleOnCreate={() => console.log('HHH')}
-                        >
-                           {list
-                              .filter(option =>
-                                 option.title.toLowerCase().includes(search)
-                              )
-                              .map(option => (
-                                 <ListItem
-                                    type="SSL1"
-                                    key={option.id}
-                                    title={option.title}
-                                    isActive={option.id === current.id}
-                                    onClick={() =>
-                                       selectOption('id', option.id)
-                                    }
-                                 />
-                              ))}
-                        </ListOptions>
-                     </List>
+               <List>
+                  {Object.keys(current).length > 0 ? (
+                     <ListItem type="SSL1" title={current.title} />
                   ) : (
-                     <Filler message="No items found!" height="500px" />
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder={t(
+                           address.concat("type what you're looking for")
+                        )}
+                     />
                   )}
-               </>
+                  <ListHeader type="SSL1" label="Items" />
+                  <ListOptions
+                     search={search}
+                     handleOnCreate={
+                        productState.meta.itemType === 'inventory'
+                           ? quickCreateItem
+                           : null
+                     }
+                  >
+                     {list
+                        .filter(option =>
+                           option.title.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="SSL1"
+                              key={option.id}
+                              title={option.title}
+                              isActive={option.id === current.id}
+                              onClick={() => selectOption('id', option.id)}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
             )}
          </TunnelBody>
       </>
