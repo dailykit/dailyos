@@ -1,6 +1,16 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Flex, Form, Spacer, Text } from '@dailykit/ui'
+import {
+   Flex,
+   Form,
+   Spacer,
+   Text,
+   HorizontalTab,
+   HorizontalTabList,
+   HorizontalTabPanels,
+   HorizontalTabPanel,
+   HorizontalTabs,
+} from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -190,29 +200,33 @@ const RecipeForm = () => {
                   </Form.Toggle>
                </Flex>
             </ResponsiveFlex>
-            <Flex
-               maxWidth="1280px"
-               width="calc(100vw - 64px)"
-               margin="0 auto"
-               padding="32px 0"
-            >
-               {recipeState.stage === 0 ? (
-                  <>
-                     <StyledFlex container alignItems="center">
-                        <Information state={state} />
-                        <Spacer xAxis size="32px" />
-                        <Photo state={state} />
-                     </StyledFlex>
-                     <Spacer size="32px" />
-                     <Servings state={state} />
-                     <Spacer size="32px" />
-                     <Ingredients state={state} />
-                     <Spacer size="32px" />
-                     <Procedures state={state} />
-                  </>
-               ) : (
-                  <RecipeCard state={state} />
-               )}
+            <Flex width="calc(100vw - 64px)" margin="0 auto" padding="32px 0">
+               <HorizontalTabs>
+                  <HorizontalTabList>
+                     <HorizontalTab>Basic Details</HorizontalTab>
+                     <HorizontalTab>Ingredients</HorizontalTab>
+                     <HorizontalTab>Cooking Steps</HorizontalTab>
+                  </HorizontalTabList>
+                  <HorizontalTabPanels>
+                     <HorizontalTabPanel>
+                        <Flex maxWidth="1280px" margin="0 auto">
+                           <StyledFlex container alignItems="center">
+                              <Information state={state} />
+                              <Spacer xAxis size="32px" />
+                              <Photo state={state} />
+                           </StyledFlex>
+                           <Spacer size="32px" />
+                           <Servings state={state} />
+                        </Flex>
+                     </HorizontalTabPanel>
+                     <HorizontalTabPanel>
+                        <Ingredients state={state} />
+                     </HorizontalTabPanel>
+                     <HorizontalTabPanel>
+                        <Procedures state={state} />
+                     </HorizontalTabPanel>
+                  </HorizontalTabPanels>
+               </HorizontalTabs>
             </Flex>
          </>
       </RecipeContext.Provider>
