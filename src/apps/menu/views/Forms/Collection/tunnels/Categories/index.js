@@ -21,6 +21,7 @@ import {
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../shared/utils'
 import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
+import { MASTER } from '../../../../../../settings/graphql'
 
 const CategoriesTunnel = ({ closeTunnel, state }) => {
    const {
@@ -57,6 +58,13 @@ const CategoriesTunnel = ({ closeTunnel, state }) => {
       }
    )
 
+   const [createCategory] = useMutation(MASTER.PRODUCT_CATEGORY.CREATE, {
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
    const save = () => {
       if (inFlight || !selected.length) return
       const objects = selected.map(category => ({
@@ -66,6 +74,17 @@ const CategoriesTunnel = ({ closeTunnel, state }) => {
       createCategoriesInCollection({
          variables: {
             objects,
+         },
+      })
+   }
+
+   const quickCreateCategory = () => {
+      const categoryName = search.slice(0, 1).toUpperCase() + search.slice(1)
+      createCategory({
+         variables: {
+            object: {
+               name: categoryName,
+            },
          },
       })
    }
@@ -108,7 +127,10 @@ const CategoriesTunnel = ({ closeTunnel, state }) => {
                            type="MSL1"
                            label="Master Product Categories"
                         />
-                        <ListOptions>
+                        <ListOptions
+                           search={search}
+                           handleOnCreate={quickCreateCategory}
+                        >
                            {list
                               .filter(option =>
                                  option.title.toLowerCase().includes(search)
