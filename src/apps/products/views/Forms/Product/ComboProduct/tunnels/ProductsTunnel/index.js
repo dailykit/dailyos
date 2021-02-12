@@ -1,7 +1,6 @@
 import React from 'react'
-import { useLazyQuery, useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
-   Filler,
    List,
    ListHeader,
    ListItem,
@@ -18,10 +17,13 @@ import {
 } from '../../../../../../../../shared/components'
 import { ComboProductContext } from '../../../../../../context/product/comboProduct'
 import {
-   CUSTOMIZABLE_PRODUCTS,
-   INVENTORY_PRODUCTS,
-   SIMPLE_RECIPE_PRODUCTS,
+   CREATE_CUSTOMIZABLE_PRODUCT,
+   CREATE_INVENTORY_PRODUCT,
+   CREATE_SIMPLE_RECIPE_PRODUCT,
    UPDATE_COMBO_PRODUCT_COMPONENT,
+   S_CUSTOMIZABLE_PRODUCTS,
+   S_INVENTORY_PRODUCTS,
+   S_SIMPLE_RECIPE_PRODUCTS,
 } from '../../../../../../graphql'
 import { TunnelBody } from '../styled'
 import { logger } from '../../../../../../../../shared/utils'
@@ -39,91 +41,49 @@ const ProductsTunnel = ({ close, open }) => {
    const [products, setProducts] = React.useState([])
    const [list, current, selectOption] = useSingleList(products)
 
-   // Queries for fetching products
-   const [
-      fetchSimpleRecipeProducts,
-      { loading: simpleRecipeProductsLoading },
-   ] = useLazyQuery(SIMPLE_RECIPE_PRODUCTS, {
-      variables: {
-         where: {
-            _and: [
-               {
-                  isPublished: { _eq: true },
-               },
-               {
-                  isArchived: { _eq: false },
-               },
-            ],
+   console.log(productState.meta.productType)
+
+   // Subscription for fetching products
+   const { loading: simpleRecipeProductsLoading } = useSubscription(
+      S_SIMPLE_RECIPE_PRODUCTS,
+      {
+         skip: productState.meta.productType !== 'simple',
+         onSubscriptionData: data => {
+            const { simpleRecipeProducts } = data.subscriptionData.data
+            // const updatedProducts = products.filter(
+            //    pdct => pdct.isValid.status
+            // )
+            setProducts([...simpleRecipeProducts])
          },
-      },
-      onCompleted: data => {
-         const updatedProducts = data.simpleRecipeProducts.filter(
-            pdct => pdct.isValid.status
-         )
-         setProducts([...updatedProducts])
-      },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-      fetchPolicy: 'cache-and-network',
-   })
-   const [
-      fetchInventoryProducts,
-      { loading: inventoryProductsLoading },
-   ] = useLazyQuery(INVENTORY_PRODUCTS, {
-      variables: {
-         where: {
-            _and: [
-               {
-                  isPublished: { _eq: true },
-               },
-               {
-                  isArchived: { _eq: false },
-               },
-            ],
+      }
+   )
+   const { loading: inventoryProductsLoading, error } = useSubscription(
+      S_INVENTORY_PRODUCTS,
+      {
+         skip: productState.meta.productType !== 'inventory',
+         onSubscriptionData: data => {
+            const { inventoryProducts } = data.subscriptionData.data
+            // const updatedProducts = products.filter(
+            //    pdct => pdct.isValid.status
+            // )
+            setProducts([...inventoryProducts])
          },
-      },
-      onCompleted: data => {
-         const updatedProducts = data.inventoryProducts.filter(
-            pdct => pdct.isValid.status
-         )
-         setProducts([...updatedProducts])
-      },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-      fetchPolicy: 'cache-and-network',
-   })
-   const [
-      fetchCustomizableProducts,
-      { loading: customizableProductsLoading },
-   ] = useLazyQuery(CUSTOMIZABLE_PRODUCTS, {
-      variables: {
-         where: {
-            _and: [
-               {
-                  isPublished: { _eq: true },
-               },
-               {
-                  isArchived: { _eq: false },
-               },
-            ],
+      }
+   )
+   console.log({ error })
+   const { loading: customizableProductsLoading } = useSubscription(
+      S_CUSTOMIZABLE_PRODUCTS,
+      {
+         skip: productState.meta.productType !== 'customizable',
+         onSubscriptionData: data => {
+            const products = data.subscriptionData.data.customizableProducts
+            // const updatedProducts = products.filter(
+            //    pdct => pdct.isValid.status
+            // )
+            setProducts([...products])
          },
-      },
-      onCompleted: data => {
-         const updatedProducts = data.customizableProducts.filter(
-            pdct => pdct.isValid.status
-         )
-         setProducts([...updatedProducts])
-      },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-      fetchPolicy: 'cache-and-network',
-   })
+      }
+   )
 
    // Mutation
    const [updateComboProductComponent, { loading: saving }] = useMutation(
@@ -140,6 +100,25 @@ const ProductsTunnel = ({ close, open }) => {
          },
       }
    )
+
+   const [createIP] = useMutation(CREATE_INVENTORY_PRODUCT, {
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+   const [createSRP] = useMutation(CREATE_SIMPLE_RECIPE_PRODUCT, {
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+   const [createCUSP] = useMutation(CREATE_CUSTOMIZABLE_PRODUCT, {
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
 
    const select = product => {
       selectOption('id', product.id)
@@ -168,15 +147,43 @@ const ProductsTunnel = ({ close, open }) => {
       }
    }
 
-   React.useEffect(() => {
-      if (productState.meta.productType === 'inventory') {
-         fetchInventoryProducts()
-      } else if (productState.meta.productType === 'simple') {
-         fetchSimpleRecipeProducts()
-      } else {
-         fetchCustomizableProducts()
+   const quickCreateProduct = () => {
+      const productName = search.slice(0, 1).toUpperCase() + search.slice(1)
+      switch (productState.meta.productType) {
+         case 'inventory':
+            return createIP({
+               variables: {
+                  objects: [
+                     {
+                        name: productName,
+                     },
+                  ],
+               },
+            })
+         case 'simple':
+            return createSRP({
+               variables: {
+                  objects: [
+                     {
+                        name: productName,
+                     },
+                  ],
+               },
+            })
+         case 'customizable':
+            return createCUSP({
+               variables: {
+                  objects: [
+                     {
+                        name: productName,
+                     },
+                  ],
+               },
+            })
+         default:
+            console.error('No product type matched!')
       }
-   }, [])
+   }
 
    return (
       <>
@@ -191,43 +198,37 @@ const ProductsTunnel = ({ close, open }) => {
             customizableProductsLoading ? (
                <InlineLoader />
             ) : (
-               <>
-                  {list.length ? (
-                     <List>
-                        {Object.keys(current).length > 0 ? (
-                           <ListItem type="SSL1" title={current.title} />
-                        ) : (
-                           <ListSearch
-                              onChange={value => setSearch(value)}
-                              placeholder={t(
-                                 address.concat("type what you're looking for")
-                              )}
-                           />
-                        )}
-                        <ListHeader type="MSL1" label="Products" />
-                        <ListOptions>
-                           {list
-                              .filter(option =>
-                                 option.title.toLowerCase().includes(search)
-                              )
-                              .map(option => (
-                                 <ListItem
-                                    type="SSL1"
-                                    key={option.id}
-                                    title={option.title}
-                                    isActive={option.id === current.id}
-                                    onClick={() => select(option)}
-                                 />
-                              ))}
-                        </ListOptions>
-                     </List>
+               <List>
+                  {Object.keys(current).length > 0 ? (
+                     <ListItem type="SSL1" title={current.title} />
                   ) : (
-                     <Filler
-                        message="No products found! To start, please add some."
-                        height="500px"
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder={t(
+                           address.concat("type what you're looking for")
+                        )}
                      />
                   )}
-               </>
+                  <ListHeader type="MSL1" label="Products" />
+                  <ListOptions
+                     search={search}
+                     handleOnCreate={quickCreateProduct}
+                  >
+                     {list
+                        .filter(option =>
+                           option.title.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="SSL1"
+                              key={option.id}
+                              title={option.title}
+                              isActive={option.id === current.id}
+                              onClick={() => select(option)}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
             )}
          </TunnelBody>
       </>
