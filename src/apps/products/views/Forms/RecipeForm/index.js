@@ -10,8 +10,9 @@ import {
    HorizontalTabPanels,
    HorizontalTabPanel,
    HorizontalTabs,
+   ComboButton,
 } from '@dailykit/ui'
-import { isEmpty } from 'lodash'
+import { isEmpty, stubTrue } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import {
@@ -19,7 +20,7 @@ import {
    InlineLoader,
    Tooltip,
 } from '../../../../../shared/components'
-import { logger } from '../../../../../shared/utils'
+import { logger, randomSuffix } from '../../../../../shared/utils'
 import { CloseIcon, TickIcon } from '../../../assets/icons'
 import { useTabs } from '../../../context'
 import {
@@ -27,7 +28,7 @@ import {
    reducers,
    state as initialState,
 } from '../../../context/recipe'
-import { S_RECIPE, UPDATE_RECIPE } from '../../../graphql'
+import { CREATE_SIMPLE_RECIPE, S_RECIPE, UPDATE_RECIPE } from '../../../graphql'
 import {
    Information,
    Ingredients,
@@ -38,6 +39,7 @@ import {
 } from './components'
 import validator from './validators'
 import { ResponsiveFlex, StyledFlex } from '../Product/styled'
+import { CloneIcon } from '../../../../../shared/assets/icons'
 
 const RecipeForm = () => {
    // Context
@@ -75,6 +77,22 @@ const RecipeForm = () => {
    })
 
    // Mutation
+   const [createRecipe, { loading: cloning }] = useMutation(
+      CREATE_SIMPLE_RECIPE,
+      {
+         onCompleted: input => {
+            addTab(
+               input.createSimpleRecipe.returning[0].name,
+               `/products/recipes/${input.createSimpleRecipe.returning[0].id}`
+            )
+            toast.success('Recipe added!')
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
    const [updateRecipe] = useMutation(UPDATE_RECIPE, {
       onCompleted: () => {
          toast.success('Updated!')
@@ -132,6 +150,49 @@ const RecipeForm = () => {
       }
    }
 
+   const clone = () => {
+      if (cloning) return
+      const clonedRecipe = {
+         name: `${state.name}-${randomSuffix()}`,
+         assets: state.assets,
+         isPublished: state.isPublished,
+         author: state.author,
+         type: state.type,
+         description: state.description,
+         cookingTime: state.cookingTime,
+         notIncluded: state.notIncluded,
+         cuisine: state.cuisine,
+         utensils: state.utensils,
+         procedures: state.procedures,
+         ingredients: state.ingredients,
+         showIngredients: state.showIngredients,
+         showIngredientsQuantity: state.showIngredientsQuantity,
+         showProcedures: state.showProcedures,
+      }
+      const clonedRecipeYields = state.simpleRecipeYields.map(ry => {
+         const clonedSachets = ry.ingredientSachets.map(sachet => ({
+            isVisible: sachet.isVisible,
+            slipName: sachet.slipName,
+            ingredientSachetId: sachet.ingredientSachet.id,
+         }))
+
+         return {
+            yield: ry.yield,
+            ingredientSachets: {
+               data: clonedSachets,
+            },
+         }
+      })
+      clonedRecipe.simpleRecipeYields = {
+         data: clonedRecipeYields,
+      }
+      createRecipe({
+         variables: {
+            objects: clonedRecipe,
+         },
+      })
+   }
+
    if (loading) return <InlineLoader />
    if (!loading && error) {
       toast.error('Failed to fetch Recipe!')
@@ -186,6 +247,11 @@ const RecipeForm = () => {
                         <Text as="p">{state.isValid?.error}</Text>
                      </>
                   )}
+                  <Spacer xAxis size="16px" />
+                  <ComboButton type="ghost" size="sm" onClick={clone}>
+                     <CloneIcon color="#00A7E1" />
+                     {cloning ? 'Cloning...' : 'Clone Recipe'}
+                  </ComboButton>
                   <Spacer xAxis size="16px" />
                   <Form.Toggle
                      name="published"

@@ -16,6 +16,7 @@ import UserIcon from './User'
 import CalendarIcon from './Calendar'
 import NewInfoIcon from './NewInfoIcon'
 import ViewIcon from './view'
+import CloneIcon from './Clone'
 
 export {
    AddIcon,
@@ -36,6 +37,7 @@ export {
    CalendarIcon,
    NewInfoIcon,
    ViewIcon,
+   CloneIcon,
 }
 
 export * from './Tick'
