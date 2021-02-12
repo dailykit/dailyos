@@ -41,8 +41,6 @@ const ProductsTunnel = ({ close, open }) => {
    const [products, setProducts] = React.useState([])
    const [list, current, selectOption] = useSingleList(products)
 
-   console.log(productState.meta.productType)
-
    // Subscription for fetching products
    const { loading: simpleRecipeProductsLoading } = useSubscription(
       S_SIMPLE_RECIPE_PRODUCTS,
@@ -57,7 +55,7 @@ const ProductsTunnel = ({ close, open }) => {
          },
       }
    )
-   const { loading: inventoryProductsLoading, error } = useSubscription(
+   const { loading: inventoryProductsLoading } = useSubscription(
       S_INVENTORY_PRODUCTS,
       {
          skip: productState.meta.productType !== 'inventory',
@@ -70,7 +68,6 @@ const ProductsTunnel = ({ close, open }) => {
          },
       }
    )
-   console.log({ error })
    const { loading: customizableProductsLoading } = useSubscription(
       S_CUSTOMIZABLE_PRODUCTS,
       {
