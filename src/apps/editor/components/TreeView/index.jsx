@@ -8,6 +8,9 @@ import {
    Css,
    Javascript,
    Pug,
+   Ejs,
+   Json,
+   Liquid,
    FileIcon,
 } from '../../assets/Icons'
 
@@ -31,6 +34,12 @@ const TreeView = ({ data, onSelection, onToggle, showContextMenu }) => {
             return <Css size="24" color="#555b6e" />
          case 'pug':
             return <Pug size="24" color="#555b6e" />
+         case 'ejs':
+            return <Ejs size="24" color="#555b6e" />
+         case 'json':
+            return <Json size="24" color="#555b6e" />
+         case 'liquid':
+            return <Liquid size="24" color="#555b6e" />
          default:
             return <FileIcon size="24" color="#555b6e" />
       }

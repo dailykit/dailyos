@@ -6,6 +6,9 @@ import {
    Html,
    Css,
    Pug,
+   Ejs,
+   Json,
+   Liquid,
    FileIcon,
    CloseIcon,
 } from '../../assets/Icons'
@@ -37,15 +40,15 @@ export default function FileType({ show, closePopup, setFileType }) {
                <p>Pug</p>
             </Card>
             <Card onClick={() => setFileType('json')}>
-               <FileIcon size="64" />
+               <Json size="64" />
                <p>Json</p>
             </Card>
             <Card onClick={() => setFileType('ejs')}>
-               <FileIcon size="64" />
+               <Ejs size="64" />
                <p>Ejs</p>
             </Card>
             <Card onClick={() => setFileType('liquid')}>
-               <FileIcon size="64" />
+               <Liquid size="64" />
                <p>Liquid</p>
             </Card>
          </FileTypeWrapper>
