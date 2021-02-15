@@ -560,3 +560,39 @@ export const UPDATE_MODIFIER = gql`
       }
    }
 `
+
+export const UPSERT_MASTER_PROCESSING = gql`
+   mutation UpsertMasterProcessing($name: String!) {
+      createMasterProcessing(
+         objects: { name: $name }
+         on_conflict: {
+            constraint: processing_name_key
+            update_columns: name
+            where: { name: { _eq: $name } }
+         }
+      ) {
+         returning {
+            id
+            name
+         }
+      }
+   }
+`
+
+export const UPSERT_MASTER_UNIT = gql`
+   mutation UpsertMasterUnit($name: String!) {
+      createUnit(
+         objects: { name: $name }
+         on_conflict: {
+            constraint: unit_name_key
+            update_columns: name
+            where: { name: { _eq: $name } }
+         }
+      ) {
+         returning {
+            id
+            name
+         }
+      }
+   }
+`

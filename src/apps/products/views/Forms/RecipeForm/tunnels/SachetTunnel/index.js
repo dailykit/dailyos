@@ -19,6 +19,7 @@ import {
    CREATE_SIMPLE_RECIPE_YIELD_SACHET,
    SACHETS,
    UPDATE_SIMPLE_RECIPE_YIELD_SACHET,
+   UPSERT_MASTER_UNIT,
 } from '../../../../../graphql'
 import { TunnelBody } from '../styled'
 
@@ -83,6 +84,12 @@ const SachetTunnel = ({ closeTunnel }) => {
          logger(error)
       },
    })
+   const [upsertMasterUnit] = useMutation(UPSERT_MASTER_UNIT, {
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
    const [createSachet] = useMutation(CREATE_SACHET, {
       onCompleted: data => {
          const sachet = {
@@ -132,9 +139,14 @@ const SachetTunnel = ({ closeTunnel }) => {
       }
    }
 
-   const quickCreateSachet = () => {
+   const quickCreateSachet = async () => {
       const [quantity, unit] = search.trim().split(' ')
       if (quantity && unit) {
+         await upsertMasterUnit({
+            variables: {
+               name: unit,
+            },
+         })
          createSachet({
             variables: {
                objects: [

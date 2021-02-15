@@ -17,6 +17,7 @@ import {
    CREATE_PROCESSINGS,
    PROCESSINGS,
    UPDATE_RECIPE,
+   UPSERT_MASTER_PROCESSING,
 } from '../../../../../graphql'
 import { TunnelBody } from '../styled'
 
@@ -53,6 +54,26 @@ const ProcessingsTunnel = ({ state, closeTunnel }) => {
          toast.success('Ingredient added!')
          closeTunnel(2)
          closeTunnel(1)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
+   const [upsertMasterProcessing] = useMutation(UPSERT_MASTER_PROCESSING, {
+      onCompleted: data => {
+         createProcessing({
+            variables: {
+               procs: [
+                  {
+                     ingredientId: recipeState.newIngredient.id,
+                     processingName:
+                        data.createMasterProcessing.returning[0].name,
+                  },
+               ],
+            },
+         })
       },
       onError: error => {
          toast.error('Something went wrong!')
@@ -98,14 +119,9 @@ const ProcessingsTunnel = ({ state, closeTunnel }) => {
 
    const quickCreateProcessing = () => {
       const processingName = search.slice(0, 1).toUpperCase() + search.slice(1)
-      createProcessing({
+      upsertMasterProcessing({
          variables: {
-            procs: [
-               {
-                  ingredientId: recipeState.newIngredient.id,
-                  processingName,
-               },
-            ],
+            name: processingName,
          },
       })
    }
