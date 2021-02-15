@@ -79,7 +79,6 @@ const NotificationTable = () => {
       }
       if (audioUrl) {
          setplayAudioUrl(audioUrl)
-         console.log(playaudioUrl)
       }
    }
 
