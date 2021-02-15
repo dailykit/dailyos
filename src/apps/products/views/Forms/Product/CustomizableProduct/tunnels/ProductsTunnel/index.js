@@ -19,6 +19,7 @@ import {
 import { logger } from '../../../../../../../../shared/utils'
 import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
 import {
+   CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
    CREATE_INVENTORY_PRODUCT,
    CREATE_SIMPLE_RECIPE_PRODUCT,
    S_INVENTORY_PRODUCTS,
@@ -26,7 +27,7 @@ import {
 } from '../../../../../../graphql'
 import { TunnelBody } from '../styled'
 
-const ProductsTunnel = ({ close, open }) => {
+const ProductsTunnel = ({ close, state }) => {
    const { productState, productDispatch } = React.useContext(
       CustomizableProductContext
    )
@@ -63,6 +64,21 @@ const ProductsTunnel = ({ close, open }) => {
       }
    )
 
+   const [createCustomizableProductOption, { loading: saving }] = useMutation(
+      CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
+      {
+         onCompleted: () => {
+            toast.success('Product added!')
+            close(2)
+            close(1)
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
+
    const [createIP] = useMutation(CREATE_INVENTORY_PRODUCT, {
       onError: error => {
          toast.error('Something went wrong!')
@@ -78,21 +94,23 @@ const ProductsTunnel = ({ close, open }) => {
 
    const select = option => {
       selectOption('id', option.id)
-      productDispatch({
-         type: 'OPTIONS_MODE',
-         payload: {
-            type: 'add',
-            optionId: undefined,
-            selectedOptions: [],
+      createCustomizableProductOption({
+         variables: {
+            objects: [
+               {
+                  customizableProductId: state.id,
+                  inventoryProductId:
+                     productState.meta.productType === 'inventory'
+                        ? option.id
+                        : null,
+                  simpleRecipeProductId:
+                     productState.meta.productType === 'simple'
+                        ? option.id
+                        : null,
+               },
+            ],
          },
       })
-      productDispatch({
-         type: 'PRODUCT',
-         payload: {
-            value: option,
-         },
-      })
-      open(3)
    }
 
    const quickCreateProduct = () => {
