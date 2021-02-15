@@ -302,24 +302,12 @@ const Items = ({ state }) => {
                                                 <th>
                                                    {component.simpleRecipeProduct
                                                       ? ''
-                                                      : t(
-                                                           address.concat(
-                                                              'labels'
-                                                           )
-                                                        )}
+                                                      : 'Label'}
                                                 </th>
                                                 <th>
                                                    {component.simpleRecipeProduct
-                                                      ? t(
-                                                           address.concat(
-                                                              'servings'
-                                                           )
-                                                        )
-                                                      : t(
-                                                           address.concat(
-                                                              'options'
-                                                           )
-                                                        )}
+                                                      ? 'Serving'
+                                                      : 'Quantity'}
                                                 </th>
                                                 <th>
                                                    {t(address.concat('price'))}

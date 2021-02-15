@@ -245,12 +245,12 @@ const Products = ({ state }) => {
                                        <th>
                                           {option.simpleRecipeProduct
                                              ? ''
-                                             : t(address.concat('labels'))}
+                                             : 'Label'}
                                        </th>
                                        <th>
                                           {option.simpleRecipeProduct
-                                             ? t(address.concat('servings'))
-                                             : t(address.concat('options'))}
+                                             ? 'Serving'
+                                             : 'Quantity'}
                                        </th>
                                        <th>{t(address.concat('price'))}</th>
                                        <th>{t(address.concat('discount'))}</th>
