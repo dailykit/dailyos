@@ -33,7 +33,12 @@ import {
    Tooltip,
 } from '../../../../../../../../shared/components'
 import { currencyFmt, logger } from '../../../../../../../../shared/utils'
-import { DeleteIcon, EditIcon, EyeIcon } from '../../../../../../assets/icons'
+import {
+   DeleteIcon,
+   EditIcon,
+   EyeIcon,
+   LinkIcon,
+} from '../../../../../../assets/icons'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
 import { SimpleProductContext } from '../../../../../../context/product/simpleProduct'
 import {
@@ -54,12 +59,14 @@ import {
 } from '../../tunnels'
 import { ItemInfo, Modifier, StyledProductOption } from './styled'
 import { TickIcon } from '../../../../../../../../shared/assets/icons'
+import { useTabs } from '../../../../../../context'
 
 const address =
    'apps.menu.views.forms.product.simplerecipeproduct.components.recipe.'
 
 export default function Recipe({ state }) {
    const { t } = useTranslation()
+   const { addTab } = useTabs()
    const { productState, productDispatch } = React.useContext(
       SimpleProductContext
    )
@@ -287,7 +294,20 @@ export default function Recipe({ state }) {
                </SectionTabList>
                <SectionTabPanels>
                   <SectionTabPanel>
-                     <Text as="h1">{state.simpleRecipe.name}</Text>
+                     <Flex container alignItems="center">
+                        <Text as="h1">{state.simpleRecipe.name}</Text>
+                        <IconButton
+                           type="ghost"
+                           onClick={() =>
+                              addTab(
+                                 state.simpleRecipe.name,
+                                 `/products/recipes/${state.simpleRecipe.id}`
+                              )
+                           }
+                        >
+                           <LinkIcon color="#00A7E1" stroke={1.5} />
+                        </IconButton>
+                     </Flex>
                      <HorizontalTabs>
                         <HorizontalTabList>
                            <HorizontalTab>
