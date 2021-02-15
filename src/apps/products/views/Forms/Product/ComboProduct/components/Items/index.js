@@ -109,6 +109,7 @@ const Items = ({ state }) => {
                   customizableProductId: null,
                   inventoryProductId: null,
                   simpleRecipeProductId: null,
+                  options: null,
                },
             },
          })
