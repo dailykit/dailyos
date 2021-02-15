@@ -907,25 +907,24 @@ export const NOTIFICATIONS = {
    `,
    LIST: gql`
       subscription listNotificationTypes {
-         notificationTypes(order_by: { app: asc }) {
-            id
-            name
-            app
-            audioUrl
-            description
-            isActive
-            isGlobal 
-            isLocal
-            playAudio
-            emailConfigs{
-               email
-             }
-         }
-      }
+            notificationTypes(order_by: {name: asc}) {
+              id
+              name
+              app
+              audioUrl
+              description
+              isActive
+              isGlobal
+              isLocal
+              playAudio
+              emailConfigs {
+                email
+              }
+            }
+          }
    `,
    LIST_SIDEBAR:gql`subscription listNotificationTypes {
-      notificationTypes(order_by: {app: asc}, distinct_on: app) {
-       
+      notificationTypes(order_by: {name: asc}, distinct_on: name) {
          app
         name
       }

@@ -37,22 +37,57 @@ import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import DateEditor from 'react-tabulator/lib/editors/DateEditor'
 import MultiValueFormatter from 'react-tabulator/lib/formatters/MultiValueFormatter'
 import options from './tableOptions'
-import { NOTIFICATIONS } from '../../../../../graphql'
+import { NOTIFICATIONS, USERS } from '../../../../../graphql'
 import NotificationForm from '../../../../Forms/Notification/index'
 import PlayButton from '../../../../../../../../src/shared/assets/icons/PlayButton'
+import PauseButton from '../../../../../../../../src/shared/assets/icons/PauseButton'
+
 import AddEmailAdresses from '../../../../Forms/Notification/AddEmail/index'
 const PlayAudio = ({ cell }) => {
    const rowData = cell._cell.row.data
 
+   const [audioPlaying, setAudioPlaying] = React.useState(false)
+   const [previousPlayed, setPreviousPlayed] = React.useState(null)
    const audioTune = new Audio(rowData.audioUrl)
 
+   React.useEffect(() => {
+      if (audioTune.ended) {
+         setAudioPlaying(false)
+      }
+   }, [audioPlaying])
+
+   const multiAudioHandler = async () => {
+      previousPlayed.pause()
+      await setAudioPlaying(false)
+   }
+
    const start = () => {
-      audioTune.play()
+      setPreviousPlayed(audioTune)
+
+      if (audioTune.error) {
+         toast.error('Wrong Audio Url')
+      }
+
+      if (!audioTune.error) {
+         if (audioTune.paused) {
+            if (previousPlayed) {
+               multiAudioHandler()
+            }
+
+            audioTune.play()
+            setAudioPlaying(true)
+         }
+
+         if (audioPlaying) {
+            audioTune.pause()
+            setAudioPlaying(false)
+         }
+      }
    }
    return (
       <>
          <ButtonGroup onClick={start}>
-            <PlayButton />
+            {audioPlaying ? <PauseButton /> : <PlayButton />}
          </ButtonGroup>
       </>
    )
@@ -186,14 +221,16 @@ const NotificationTable = () => {
       return (
          <>
             {emailConfigs.length > 0 ? (
-               emailConfigs.slice(0, 1).map(emailConfig => (
-                  <ButtonGroup onClick={() => openTunnel(1)}>
-                     <Tag>
-                        {emailConfig.email}
-                        <PlusIcon />
-                     </Tag>
-                  </ButtonGroup>
-               ))
+               <ButtonGroup onClick={() => openTunnel(1)}>
+                  <AvatarGroup>
+                     <Avatar title="Mary" />
+                     <Avatar title="James Arthur" />
+                  </AvatarGroup>
+                  <Tag>
+                     {emailConfigs.length}
+                     <PlusIcon />
+                  </Tag>
+               </ButtonGroup>
             ) : (
                <TextButton type="ghost" onClick={() => openTunnel(1)}>
                   Configure Emails
