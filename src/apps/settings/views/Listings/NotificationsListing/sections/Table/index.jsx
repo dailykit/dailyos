@@ -1,24 +1,14 @@
 import React from 'react'
 
 import {
-   Table,
-   TableHead,
-   TableBody,
-   TableRow,
-   TableCell,
    AvatarGroup,
    Avatar,
    TagGroup,
    ButtonGroup,
    Tag,
    Flex,
-   Text,
-   Toggle,
-   checked,
-   setChecked,
    Tunnels,
    Tunnel,
-   InfoIcon,
    useTunnel,
    TextButton,
    TunnelHeader,
@@ -41,57 +31,7 @@ import { NOTIFICATIONS, USERS } from '../../../../../graphql'
 import NotificationForm from '../../../../Forms/Notification/index'
 import PlayButton from '../../../../../../../../src/shared/assets/icons/PlayButton'
 import PauseButton from '../../../../../../../../src/shared/assets/icons/PauseButton'
-
 import AddEmailAdresses from '../../../../Forms/Notification/AddEmail/index'
-const PlayAudio = ({ cell }) => {
-   const rowData = cell._cell.row.data
-
-   const [audioPlaying, setAudioPlaying] = React.useState(false)
-   const [previousPlayed, setPreviousPlayed] = React.useState(null)
-   const audioTune = new Audio(rowData.audioUrl)
-
-   React.useEffect(() => {
-      if (audioTune.ended) {
-         setAudioPlaying(false)
-      }
-   }, [audioPlaying])
-
-   const multiAudioHandler = async () => {
-      previousPlayed.pause()
-      await setAudioPlaying(false)
-   }
-
-   const start = () => {
-      setPreviousPlayed(audioTune)
-
-      if (audioTune.error) {
-         toast.error('Wrong Audio Url')
-      }
-
-      if (!audioTune.error) {
-         if (audioTune.paused) {
-            if (previousPlayed) {
-               multiAudioHandler()
-            }
-
-            audioTune.play()
-            setAudioPlaying(true)
-         }
-
-         if (audioPlaying) {
-            audioTune.pause()
-            setAudioPlaying(false)
-         }
-      }
-   }
-   return (
-      <>
-         <ButtonGroup onClick={start}>
-            {audioPlaying ? <PauseButton /> : <PlayButton />}
-         </ButtonGroup>
-      </>
-   )
-}
 
 const ToggleButton = ({ cell, toggleType, toggleHandler }) => {
    const rowData = cell._cell.row.data
@@ -124,24 +64,70 @@ const ToggleButton = ({ cell, toggleType, toggleHandler }) => {
 
 const NotificationTable = () => {
    const tableRef = React.useRef()
+
    const { tab, addTab } = useTabs()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [state, setState] = React.useState({})
-
+   const [isPlaying, setIsPlaying] = React.useState(false)
    const [typeid, SetTypeid] = React.useState(null)
+   const [playaudioUrl, setplayAudioUrl] = React.useState('')
 
    const rowClick = (e, cell) => {
-      const { id = null } = cell.getData() || {}
+      const { id = null, audioUrl = null } = cell.getData() || {}
       if (id) {
          SetTypeid(id)
       }
+      if (audioUrl) {
+         setplayAudioUrl(audioUrl)
+         console.log(playaudioUrl)
+      }
    }
+
+   const audioTune = new Audio(playaudioUrl)
+   const audioRef = React.useRef(audioTune)
+
+   const handleEndedAudio = React.useCallback(() => {
+      setIsPlaying(false)
+   }, [])
 
    React.useEffect(() => {
       if (!tab) {
          addTab('Notifications', '/settings/notifications')
       }
    }, [tab, addTab])
+
+   const togglePlayback = () => {
+      if (audioTune.error) {
+         toast.error('Wrong Audio Url')
+      } else {
+         setIsPlaying(!isPlaying)
+      }
+   }
+   const playAudio = () => {
+      if (audioTune.error) {
+         toast.error('Wrong Audio Url')
+      } else {
+         audioRef.current.play()
+      }
+   }
+   const pauseAudio = () => {
+      audioRef.current.pause()
+   }
+
+   React.useEffect(() => {
+      if (isPlaying) {
+         playAudio()
+      } else {
+         pauseAudio()
+      }
+   }, [isPlaying])
+
+   React.useEffect(() => {
+      audioRef.current.addEventListener('ended', handleEndedAudio)
+      return () => {
+         audioRef.current.removeEventListener('ended', handleEndedAudio)
+      }
+   }, [handleEndedAudio, isPlaying])
 
    const {
       loading,
@@ -157,6 +143,7 @@ const NotificationTable = () => {
                   isGlobal: notificationType.isGlobal,
                   isLocal: notificationType.isLocal,
                   playAudio: notificationType.playAudio,
+                  audioUrl: notificationType.audioUrl,
                }
             }
          )
@@ -292,8 +279,16 @@ const NotificationTable = () => {
             {
                title: 'Play',
                field: 'audioUrl',
-               formatter: reactFormatter(<PlayAudio />),
+               formatter: reactFormatter(
+                  <>
+                     <ButtonGroup onClick={togglePlayback}>
+                        {isPlaying ? <PauseButton /> : <PlayButton />}
+                     </ButtonGroup>
+                  </>
+               ),
                width: 100,
+               editor: true,
+               cellClick: (e, cell) => rowClick(e, cell),
             },
          ],
       },
@@ -329,7 +324,7 @@ const NotificationTable = () => {
                groupBy: 'app',
             }}
          />
-
+         <audio ref={audioRef} src={playaudioUrl}></audio>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="md">
                <AddEmailAdresses typeid={typeid} closeTunnel={closeTunnel} />

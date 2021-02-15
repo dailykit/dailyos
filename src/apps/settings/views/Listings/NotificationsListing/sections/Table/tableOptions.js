@@ -1,7 +1,7 @@
 const options = {
     cellVertAlign: 'middle',
     layout: 'fitColumns',
-    maxWidth:'1280px',
+    maxWidth:'1600px',
     autoResize: true,
     resizableColumns: false,
     virtualDomBuffer: 80,
@@ -10,7 +10,8 @@ const options = {
     persistenceMode: 'cookie',
     pagination: 'local',
     paginationSize: 10,
-    padding:'16px'
+    padding: '50px',
+    responsiveLayout:"collapse",
  }
  
  export default options
