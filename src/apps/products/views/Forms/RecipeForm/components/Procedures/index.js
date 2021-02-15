@@ -10,6 +10,7 @@ import {
    Tunnels,
    useTunnel,
    Form,
+   ComboButton,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { Tooltip } from '../../../../../../../shared/components'
@@ -48,39 +49,45 @@ const Procedures = ({ state }) => {
                <StepPhotoTunnel closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
-         <Flex container alignItems="center" justifyContent="space-between">
-            <Flex container alignItems="center">
+         <Flex container alignItems="center" justifyContent="flex-end">
+            {/* <Flex container alignItems="center">
                <Text as="subtitle">Cooking Steps</Text>
                <Tooltip identifier="recipe_cooking_steps" />
-            </Flex>
-            <Form.Checkbox
-               name="showProcedures"
-               value={state.showProcedures}
-               onChange={() =>
-                  updateRecipe({
-                     variables: {
-                        id: state.id,
-                        set: {
-                           showProcedures: !state.showProcedures,
+            </Flex> */}
+            <Flex container alignItems="center">
+               <ComboButton
+                  type="ghost"
+                  size="sm"
+                  onClick={() => openTunnel(1)}
+               >
+                  Edit Cooking Steps
+                  <EditIcon color="#10B1EA" />
+               </ComboButton>
+               <Spacer xAxis size="16px" />
+               <Form.Checkbox
+                  name="showProcedures"
+                  value={state.showProcedures}
+                  onChange={() =>
+                     updateRecipe({
+                        variables: {
+                           id: state.id,
+                           set: {
+                              showProcedures: !state.showProcedures,
+                           },
                         },
-                     },
-                  })
-               }
-            >
-               <Flex container alignItems="center">
-                  Show Cooking Steps
-                  <Tooltip identifier="recipe_show_procedures" />
-               </Flex>
-            </Form.Checkbox>
+                     })
+                  }
+               >
+                  <Flex container alignItems="center">
+                     Show Cooking Steps on Store
+                     <Tooltip identifier="recipe_show_procedures" />
+                  </Flex>
+               </Form.Checkbox>
+            </Flex>
          </Flex>
          <Spacer size="8px" />
          {state.procedures?.length ? (
             <Container>
-               <ContainerAction>
-                  <IconButton type="ghost" onClick={() => openTunnel(1)}>
-                     <EditIcon color="#00A7E1" />
-                  </IconButton>
-               </ContainerAction>
                {state.procedures.map(procedure => (
                   <Procedure key={procedure.title} procedure={procedure} />
                ))}

@@ -311,6 +311,7 @@ export const S_SIMPLE_RECIPE_PRODUCTS = gql`
       ) {
          id
          name
+         title: name
          isValid
          isPublished
          simpleRecipe {
@@ -340,7 +341,10 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
             name
             image
          }
-         simpleRecipeProductOptions(order_by: { position: desc_nulls_last }) {
+         simpleRecipeProductOptions(
+            where: { isArchived: { _eq: false } }
+            order_by: { position: desc_nulls_last }
+         ) {
             id
             isActive
             price
@@ -377,6 +381,7 @@ export const S_INVENTORY_PRODUCTS = gql`
       inventoryProducts(where: { isArchived: { _eq: false } }) {
          id
          name
+         title: name
          isValid
          isPublished
       }
@@ -459,6 +464,7 @@ export const S_CUSTOMIZABLE_PRODUCTS = gql`
       ) {
          id
          name
+         title: name
          isValid
          isPublished
       }
@@ -531,6 +537,7 @@ export const S_COMBO_PRODUCTS = gql`
       ) {
          id
          name
+         title: name
          isValid
          isPublished
          comboProductComponents {

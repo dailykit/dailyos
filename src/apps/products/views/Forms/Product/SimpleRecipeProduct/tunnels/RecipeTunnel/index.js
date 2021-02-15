@@ -16,6 +16,7 @@ import {
    CREATE_SIMPLE_RECIPE_PRODUCT_OPTIONS,
    UPDATE_SIMPLE_RECIPE_PRODUCT,
    SIMPLE_RECIPES,
+   CREATE_SIMPLE_RECIPE,
 } from '../../../../../../graphql'
 import { TunnelBody } from '../styled'
 import { logger } from '../../../../../../../../shared/utils'
@@ -110,15 +111,13 @@ export default function RecipeTunnel({ state, close }) {
 
    // Mutation
    const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
-      variables: {
-         id: state.id,
-         set: {
-            simpleRecipeId: current.id,
-         },
-      },
       onCompleted: () => {
          toast.success('Recipe added! Creating options...')
-         createOptions()
+         if (current.simpleRecipeYields?.length) {
+            createOptions()
+         } else {
+            close(1)
+         }
       },
       onError: error => {
          toast.error('Something went wrong!')
@@ -127,11 +126,40 @@ export default function RecipeTunnel({ state, close }) {
       },
    })
 
+   const [createRecipe] = useMutation(CREATE_SIMPLE_RECIPE, {
+      onCompleted: data => {
+         updateProduct({
+            variables: {
+               id: state.id,
+               set: {
+                  simpleRecipeId: data.createSimpleRecipe.returning[0].id,
+               },
+            },
+         })
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
    // Handlers
    const add = () => {
       if (busy) return
       setBusy(true)
-      updateProduct()
+      updateProduct({
+         variables: {
+            id: state.id,
+            set: {
+               simpleRecipeId: current.id,
+            },
+         },
+      })
+   }
+
+   const quickCreateRecipe = () => {
+      const recipeName = search.slice(0, 1).toUpperCase() + search.slice(1)
+      createRecipe({ variables: { objects: { name: recipeName } } })
    }
 
    React.useEffect(() => {
@@ -167,7 +195,10 @@ export default function RecipeTunnel({ state, close }) {
                            />
                         )}
                         <ListHeader type="SSL1" label="Recipes" />
-                        <ListOptions>
+                        <ListOptions
+                           search={search}
+                           handleOnCreate={quickCreateRecipe}
+                        >
                            {list
                               .filter(option =>
                                  option.title.toLowerCase().includes(search)

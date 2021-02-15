@@ -173,15 +173,11 @@ const Ingredients = ({ state }) => {
                <YieldInfoTunnel close={closeYieldInfoTunnel} />
             </Tunnel>
          </Tunnels>
-         <StyledFlex
-            container
-            alignItems="center"
-            justifyContent="space-between"
-         >
-            <Flex container alignItems="center" justifyContent="flex-start">
+         <StyledFlex container alignItems="center" justifyContent="flex-end">
+            {/* <Flex container alignItems="center" justifyContent="flex-start">
                <Text as="subtitle">Ingredients</Text>
                <Tooltip identifier="recipe_ingredients" />
-            </Flex>
+            </Flex> */}
             <Flex container alignItems="center">
                <Form.Checkbox
                   name="showIngredients"
@@ -198,11 +194,11 @@ const Ingredients = ({ state }) => {
                   }
                >
                   <Flex container alignItems="center">
-                     Show Ingredients
+                     Show Ingredients on Store
                      <Tooltip identifier="recipe_show_ingredients" />
                   </Flex>
                </Form.Checkbox>
-               <Spacer xAxis size="8px" />
+               <Spacer xAxis size="16px" />
                <Form.Checkbox
                   name="showIngredientsQuantity"
                   value={state.showIngredientsQuantity}
@@ -218,7 +214,7 @@ const Ingredients = ({ state }) => {
                   }
                >
                   <Flex container alignItems="center">
-                     Show Ingredient's Quantity
+                     Show Ingredient Quantity on Store
                      <Tooltip identifier="recipe_show_ingredients_quantity" />
                   </Flex>
                </Form.Checkbox>

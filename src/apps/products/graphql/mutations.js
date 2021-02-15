@@ -80,6 +80,9 @@ export const CREATE_SACHET = gql`
       createIngredientSachet(objects: $objects) {
          returning {
             id
+            ingredient {
+               name
+            }
          }
       }
    }
@@ -123,8 +126,8 @@ export const DELETE_SACHET = gql`
 `
 
 export const CREATE_SIMPLE_RECIPE = gql`
-   mutation CreateRecipe($name: jsonb) {
-      createSimpleRecipe(objects: { name: $name }) {
+   mutation CreateRecipe($objects: [simpleRecipe_simpleRecipe_insert_input!]!) {
+      createSimpleRecipe(objects: $objects) {
          returning {
             id
             name
@@ -554,6 +557,42 @@ export const UPDATE_MODIFIER = gql`
    mutation UpdateModifier($id: Int!, $set: onDemand_modifier_set_input) {
       updateModifier(pk_columns: { id: $id }, _set: $set) {
          id
+      }
+   }
+`
+
+export const UPSERT_MASTER_PROCESSING = gql`
+   mutation UpsertMasterProcessing($name: String!) {
+      createMasterProcessing(
+         objects: { name: $name }
+         on_conflict: {
+            constraint: processing_name_key
+            update_columns: name
+            where: { name: { _eq: $name } }
+         }
+      ) {
+         returning {
+            id
+            name
+         }
+      }
+   }
+`
+
+export const UPSERT_MASTER_UNIT = gql`
+   mutation UpsertMasterUnit($name: String!) {
+      createUnit(
+         objects: { name: $name }
+         on_conflict: {
+            constraint: unit_name_key
+            update_columns: name
+            where: { name: { _eq: $name } }
+         }
+      ) {
+         returning {
+            id
+            name
+         }
       }
    }
 `
