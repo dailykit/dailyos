@@ -89,8 +89,6 @@ const ProductOptionsTunnel = ({ close }) => {
                   : 'Product added!'
             )
             close(4)
-            close(3)
-            close(2)
          },
          onError: error => {
             toast.error('Something went wrong!')

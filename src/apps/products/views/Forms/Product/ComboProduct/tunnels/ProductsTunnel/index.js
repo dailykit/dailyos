@@ -119,29 +119,28 @@ const ProductsTunnel = ({ close, open }) => {
 
    const select = product => {
       selectOption('id', product.id)
-      if (product.__typename.includes('customizableProduct')) {
-         updateComboProductComponent({
-            variables: {
-               id: productState.meta.componentId,
-               set: {
-                  customizableProductId: product.id,
-                  inventoryProductId: null,
-                  simpleRecipeProductId: null,
-               },
+      updateComboProductComponent({
+         variables: {
+            id: productState.meta.componentId,
+            set: {
+               customizableProductId: product.__typename.includes(
+                  'customizableProduct'
+               )
+                  ? product.id
+                  : null,
+               inventoryProductId: product.__typename.includes(
+                  'inventoryProduct'
+               )
+                  ? product.id
+                  : null,
+               simpleRecipeProductId: product.__typename.includes(
+                  'simpleRecipeProduct'
+               )
+                  ? product.id
+                  : null,
             },
-         })
-      } else {
-         productDispatch({ type: 'PRODUCT', payload: { value: product } })
-         productDispatch({
-            type: 'OPTIONS_MODE',
-            payload: {
-               type: 'add',
-               componentId: undefined,
-               selectedOptions: [],
-            },
-         })
-         open(4)
-      }
+         },
+      })
    }
 
    const quickCreateProduct = () => {
