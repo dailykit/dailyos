@@ -159,11 +159,7 @@ export default function RecipeTunnel({ state, close }) {
 
    const quickCreateRecipe = () => {
       const recipeName = search.slice(0, 1).toUpperCase() + search.slice(1)
-      createRecipe({
-         variables: {
-            name: recipeName,
-         },
-      })
+      createRecipe({ variables: { objects: { name: recipeName } } })
    }
 
    React.useEffect(() => {
