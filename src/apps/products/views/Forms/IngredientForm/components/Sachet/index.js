@@ -142,6 +142,7 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
    }
 
    const renderItemName = mode => {
+      if (!mode.sachetItem && !mode.bulkItem) return 'No item linked!'
       switch (mode.type) {
          case 'realTime':
             return `${mode.bulkItem.supplierItem.name} ${mode.bulkItem.processingName}`
