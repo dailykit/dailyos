@@ -15,6 +15,7 @@ import { logger } from '../../../../../../../shared/utils'
 import { RecipeContext } from '../../../../../context/recipe'
 import {
    CREATE_PROCESSINGS,
+   CREATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING,
    PROCESSINGS,
    UPDATE_RECIPE,
    UPSERT_MASTER_PROCESSING,
@@ -49,17 +50,20 @@ const ProcessingsTunnel = ({ state, closeTunnel }) => {
    const [list, current, selectOption] = useSingleList(ingredientProcessings)
 
    // Mutation
-   const [updateRecipe] = useMutation(UPDATE_RECIPE, {
-      onCompleted: () => {
-         toast.success('Ingredient added!')
-         closeTunnel(2)
-         closeTunnel(1)
-      },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-   })
+   const [createSimpleRecipeIngredientProcessing] = useMutation(
+      CREATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING,
+      {
+         onCompleted: () => {
+            toast.success('Ingredient added!')
+            closeTunnel(2)
+            closeTunnel(1)
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
 
    const [upsertMasterProcessing] = useMutation(UPSERT_MASTER_PROCESSING, {
       onCompleted: data => {
@@ -97,21 +101,12 @@ const ProcessingsTunnel = ({ state, closeTunnel }) => {
    })
 
    const add = processing => {
-      const ingredients = state.ingredients || []
-      ingredients.push({
-         id: recipeState.newIngredient.id,
-         name: recipeState.newIngredient.name,
-         image: recipeState.newIngredient.image,
-         ingredientProcessing: {
-            id: processing.id,
-            processingName: processing.title,
-         },
-      })
-      updateRecipe({
+      createSimpleRecipeIngredientProcessing({
          variables: {
-            id: state.id,
-            set: {
-               ingredients,
+            object: {
+               ingredientId: recipeState.newIngredient.id,
+               processingId: processing.id,
+               simpleRecipeId: state.id,
             },
          },
       })

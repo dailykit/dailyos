@@ -596,3 +596,13 @@ export const UPSERT_MASTER_UNIT = gql`
       }
    }
 `
+
+export const CREATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING = gql`
+   mutation CreateSimpleRecipeIngredientProcessing(
+      $object: simpleRecipe_simpleRecipe_ingredient_processing_insert_input!
+   ) {
+      createSimpleRecipeIngredientProcessing(object: $object) {
+         id
+      }
+   }
+`

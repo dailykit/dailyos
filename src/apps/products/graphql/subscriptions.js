@@ -181,6 +181,29 @@ export const S_RECIPE = gql`
          showIngredients
          showIngredientsQuantity
          showProcedures
+         simpleRecipeIngredients {
+            id
+            position
+            ingredient {
+               id
+               name
+            }
+            ingredientProcessing {
+               id
+               processingName
+            }
+            simpleRecipeYield_ingredientSachets {
+               ingredientSachet {
+                  id
+                  unit
+                  quantity
+               }
+               simpleRecipeYield {
+                  id
+                  yield
+               }
+            }
+         }
          simpleRecipeYields(
             where: { isArchived: { _eq: false } }
             order_by: { yield: asc }
@@ -189,21 +212,6 @@ export const S_RECIPE = gql`
             yield
             cost
             nutritionalInfo
-            ingredientSachets(where: { isArchived: { _eq: false } }) {
-               isVisible
-               slipName
-               ingredientSachet {
-                  id
-                  quantity
-                  unit
-                  ingredient {
-                     id
-                  }
-                  ingredientProcessing {
-                     id
-                  }
-               }
-            }
          }
       }
    }
