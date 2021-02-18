@@ -19,7 +19,7 @@ import {
    useTunnel,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { Tooltip } from '../../../../../../../shared/components'
+import { DragNDrop, Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import {
    DeleteIcon,
@@ -193,38 +193,45 @@ const Ingredients = ({ state }) => {
             </Text>
          ) : (
             <>
-               {state.simpleRecipeIngredients.map(
-                  ({ id, ingredient, processing, linkedSachets }) => (
-                     <Collapsible
-                        isDraggable
-                        key={id}
-                        head={
-                           <CollapsibleHead
-                              ingredient={ingredient}
-                              processing={processing}
-                              deleteIngredient={() =>
-                                 deleteIngredientProcessing(id)
-                              }
-                           />
-                        }
-                        body={
-                           <CollapsibleBody
-                              ingredientProcessingRecordId={id}
-                              linkedSachets={linkedSachets}
-                              simpleRecipeYields={state.simpleRecipeYields}
-                              upsertSachet={yieldId =>
-                                 upsertSachet(
-                                    yieldId,
-                                    id,
-                                    ingredient.id,
-                                    processing.id
-                                 )
-                              }
-                           />
-                        }
-                     />
-                  )
-               )}
+               <DragNDrop
+                  list={state.simpleRecipeIngredients}
+                  droppableId="simpleRecipeIngredientsDroppableId"
+                  tablename="simpleRecipe_ingredient_processing"
+                  schemaname="simpleRecipe"
+               >
+                  {state.simpleRecipeIngredients.map(
+                     ({ id, ingredient, processing, linkedSachets }) => (
+                        <Collapsible
+                           isDraggable
+                           key={id}
+                           head={
+                              <CollapsibleHead
+                                 ingredient={ingredient}
+                                 processing={processing}
+                                 deleteIngredient={() =>
+                                    deleteIngredientProcessing(id)
+                                 }
+                              />
+                           }
+                           body={
+                              <CollapsibleBody
+                                 ingredientProcessingRecordId={id}
+                                 linkedSachets={linkedSachets}
+                                 simpleRecipeYields={state.simpleRecipeYields}
+                                 upsertSachet={yieldId =>
+                                    upsertSachet(
+                                       yieldId,
+                                       id,
+                                       ingredient.id,
+                                       processing.id
+                                    )
+                                 }
+                              />
+                           }
+                        />
+                     )
+                  )}
+               </DragNDrop>
                <Spacer size="16px" />
                <ButtonTile
                   type="secondary"

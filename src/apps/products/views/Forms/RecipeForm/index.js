@@ -40,10 +40,12 @@ import {
 import validator from './validators'
 import { ResponsiveFlex, StyledFlex } from '../Product/styled'
 import { CloneIcon } from '../../../../../shared/assets/icons'
+import { useDnd } from '../../../../../shared/components/DragNDrop/useDnd'
 
 const RecipeForm = () => {
    // Context
    const { setTabTitle, tab, addTab } = useTabs()
+   const { initiatePriority } = useDnd()
    const { id: recipeId } = useParams()
    const [recipeState, recipeDispatch] = React.useReducer(
       reducers,
@@ -68,12 +70,19 @@ const RecipeForm = () => {
          id: recipeId,
       },
       onSubscriptionData: data => {
-         console.log(data.subscriptionData.data.simpleRecipe)
-         setState(data.subscriptionData.data.simpleRecipe)
+         const recipe = data.subscriptionData.data.simpleRecipe
+         setState(recipe)
          setTitle({
             ...title,
-            value: data.subscriptionData.data.simpleRecipe.name,
+            value: recipe.name,
          })
+         if (recipe.simpleRecipeIngredients) {
+            initiatePriority({
+               tablename: 'simpleRecipe_ingredient_processing',
+               schemaname: 'simpleRecipe',
+               data: recipe.simpleRecipeIngredients,
+            })
+         }
       },
    })
 
