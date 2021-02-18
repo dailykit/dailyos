@@ -68,6 +68,7 @@ const RecipeForm = () => {
          id: recipeId,
       },
       onSubscriptionData: data => {
+         console.log(data.subscriptionData.data.simpleRecipe)
          setState(data.subscriptionData.data.simpleRecipe)
          setTitle({
             ...title,

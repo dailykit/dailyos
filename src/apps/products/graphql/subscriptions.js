@@ -181,18 +181,24 @@ export const S_RECIPE = gql`
          showIngredients
          showIngredientsQuantity
          showProcedures
-         simpleRecipeIngredients {
+         simpleRecipeIngredients(
+            where: { isArchived: { _eq: false } }
+            order_by: { position: desc_nulls_last }
+         ) {
             id
             position
             ingredient {
                id
                name
             }
-            ingredientProcessing {
+            processing: ingredientProcessing {
                id
-               processingName
+               name: processingName
             }
-            simpleRecipeYield_ingredientSachets {
+            linkedSachets: simpleRecipeYield_ingredientSachets(
+               where: { isArchived: { _eq: false } }
+               order_by: { simpleRecipeYield: { yield: asc_nulls_last } }
+            ) {
                ingredientSachet {
                   id
                   unit
@@ -202,6 +208,8 @@ export const S_RECIPE = gql`
                   id
                   yield
                }
+               slipName
+               isVisible
             }
          }
          simpleRecipeYields(

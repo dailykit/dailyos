@@ -13,10 +13,22 @@ export const state = {
    procedureIndex: 0,
    stepIndex: 0,
    procedures: [],
+   sachetAddMeta: {
+      yieldId: null,
+      ingredientProcessingRecordId: null,
+      ingredientId: null,
+      processingId: null,
+   },
 }
 
 export const reducers = (state, { type, payload }) => {
    switch (type) {
+      case 'UPSERT_SACHET': {
+         return {
+            ...state,
+            sachetAddMeta: payload,
+         }
+      }
       case 'ADD_INGREDIENT': {
          return {
             ...state,

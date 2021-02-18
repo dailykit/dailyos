@@ -173,6 +173,53 @@ export const DELETE_SIMPLE_RECIPE_YIELD = gql`
    }
 `
 
+export const DELETE_SIMPLE_RECIPE_INGREDIENT_PROCESSINGS = gql`
+   mutation DeleteSimpleRecipeIngredientProcessings($ids: [Int!]!) {
+      updateSimpleRecipeIngredientProcessings(
+         where: { id: { _in: $ids } }
+         _set: { isArchived: true }
+      ) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
+export const UPSERT_SIMPLE_RECIPE_YIELD_SACHET = gql`
+   mutation UpsertSimpleRecipeSachet(
+      $yieldId: Int!
+      $ingredientProcessingRecordId: Int!
+      $ingredientSachetId: Int!
+      $slipName: String!
+   ) {
+      createSimpleRecipeSachet(
+         objects: [
+            {
+               recipeYieldId: $yieldId
+               simpleRecipeIngredientProcessingId: $ingredientProcessingRecordId
+               ingredientSachetId: $ingredientSachetId
+               slipName: $slipName
+            }
+         ]
+         on_conflict: {
+            constraint: simpleRecipeYield_ingredientSachet_pkey
+            update_columns: [ingredientSachetId, slipName]
+            where: {
+               recipeYieldId: { _eq: $yieldId }
+               simpleRecipeIngredientProcessingId: {
+                  _eq: $ingredientProcessingRecordId
+               }
+            }
+         }
+      ) {
+         returning {
+            ingredientSachetId
+         }
+      }
+   }
+`
+
 export const CREATE_SIMPLE_RECIPE_YIELD_SACHET = gql`
    mutation CreateSimpleRecipeSachet(
       $objects: [simpleRecipe_simpleRecipeYield_ingredientSachet_insert_input!]!
@@ -187,13 +234,15 @@ export const CREATE_SIMPLE_RECIPE_YIELD_SACHET = gql`
 
 export const UPDATE_SIMPLE_RECIPE_YIELD_SACHET = gql`
    mutation UpdateSimpleRecipeSachet(
-      $sachetId: Int!
+      $ingredientProcessingRecordId: Int!
       $yieldId: Int!
       $set: simpleRecipe_simpleRecipeYield_ingredientSachet_set_input
    ) {
       updateSimpleRecipeSachet(
          where: {
-            ingredientSachetId: { _eq: $sachetId }
+            simpleRecipeIngredientProcessingId: {
+               _eq: $ingredientProcessingRecordId
+            }
             recipeYieldId: { _eq: $yieldId }
          }
          _set: $set
