@@ -13,7 +13,7 @@ import {
    ComboButton,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { Tooltip } from '../../../../../../../shared/components'
+import { DragNDrop, Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { EditIcon } from '../../../../../assets/icons'
 import {
@@ -25,8 +25,30 @@ import { ProceduresTunnel, StepPhotoTunnel } from '../../tunnels'
 import { Container, ContainerAction } from '../styled'
 import { Image, InstructionSetContainer, ImageWrapper } from './styled'
 import { DeleteIcon } from '../../../../../../../shared/assets/icons'
+import { useDnd } from '../../../../../../../shared/components/DragNDrop/useDnd'
 
 const Procedures = ({ state }) => {
+   const { initiatePriority } = useDnd()
+
+   React.useEffect(() => {
+      if (state.instructionSets?.length) {
+         initiatePriority({
+            tablename: 'instructionSet',
+            schemaname: 'instructions',
+            data: state.instructionSets,
+         })
+         state.instructionSets.forEach(set => {
+            if (set.instructionSteps.length) {
+               initiatePriority({
+                  tablename: 'instructionStep',
+                  schemaname: 'instructions',
+                  data: set.instructionSteps,
+               })
+            }
+         })
+      }
+   }, [state.instructionSets])
+
    // Mutation
    const [updateRecipe] = useMutation(UPDATE_RECIPE, {
       onCompleted: () => {
@@ -81,14 +103,23 @@ const Procedures = ({ state }) => {
             </Form.Checkbox>
          </Flex>
          <Spacer size="16px" />
-         {state.instructionSets?.map(({ id, title, instructionSteps }) => (
-            <InstructionSet
-               key={id}
-               id={id}
-               title={title}
-               steps={instructionSteps}
-            />
-         ))}
+         {state.instructionSets?.length && (
+            <DragNDrop
+               list={state.instructionSets}
+               droppableId="simpleRecipeInstructionSetsDroppableId"
+               tablename="instructionSet"
+               schemaname="instructions"
+            >
+               {state.instructionSets.map(({ id, title, instructionSteps }) => (
+                  <InstructionSet
+                     key={id}
+                     id={id}
+                     title={title}
+                     steps={instructionSteps}
+                  />
+               ))}
+            </DragNDrop>
+         )}
          <ButtonTile
             type="secondary"
             text="Add Procedure"
@@ -188,16 +219,23 @@ const InstructionSet = ({ id, title, steps }) => {
          </Flex>
          <Spacer size="16px" />
          <Flex padding="0 16px">
-            {steps.map(({ id, title, description, assets, isVisible }) => (
-               <InstructionStep
-                  key={id}
-                  id={id}
-                  title={title}
-                  description={description}
-                  assets={assets}
-                  isVisible={isVisible}
-               />
-            ))}
+            <DragNDrop
+               list={steps}
+               droppableId="simpleRecipeInstructionSetStepsDroppableId"
+               tablename="instructionStep"
+               schemaname="instructions"
+            >
+               {steps.map(({ id, title, description, assets, isVisible }) => (
+                  <InstructionStep
+                     key={id}
+                     id={id}
+                     title={title}
+                     description={description}
+                     assets={assets}
+                     isVisible={isVisible}
+                  />
+               ))}
+            </DragNDrop>
             <ButtonTile
                type="secondary"
                text="Add Procedure Step"

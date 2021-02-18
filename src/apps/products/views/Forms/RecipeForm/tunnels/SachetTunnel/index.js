@@ -79,16 +79,7 @@ const SachetTunnel = ({ closeTunnel }) => {
          },
       }
    )
-   // const [updateRecipeSachet] = useMutation(UPDATE_SIMPLE_RECIPE_YIELD_SACHET, {
-   //    onCompleted: () => {
-   //       toast.success('Sachet updated!')
-   //       closeTunnel(3)
-   //    },
-   //    onError: error => {
-   //       toast.error('Something went wrong!')
-   //       logger(error)
-   //    },
-   // })
+
    const [upsertMasterUnit] = useMutation(UPSERT_MASTER_UNIT, {
       onError: error => {
          toast.error('Something went wrong!')

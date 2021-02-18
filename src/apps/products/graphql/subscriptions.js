@@ -182,9 +182,11 @@ export const S_RECIPE = gql`
          instructionSets(order_by: { position: desc_nulls_last }) {
             id
             title
+            position
             instructionSteps(order_by: { position: desc_nulls_last }) {
                id
                title
+               position
                description
                assets
                isVisible
