@@ -655,3 +655,61 @@ export const CREATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING = gql`
       }
    }
 `
+
+export const INSTRUCTION_SET = {
+   CREATE: gql`
+      mutation CreateInstructionSet(
+         $object: instructions_instructionSet_insert_input!
+      ) {
+         createInstructionSet(object: $object) {
+            id
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation UpdateInstructionSet(
+         $id: Int!
+         $set: instructions_instructionSet_set_input
+      ) {
+         updateInstructionSet(pk_columns: { id: $id }, _set: $set) {
+            id
+         }
+      }
+   `,
+   DELETE: gql`
+      mutation DeleteInstructionSet($id: Int!) {
+         deleteInstructionSet(id: $id) {
+            id
+         }
+      }
+   `,
+}
+
+export const INSTRUCTION_STEP = {
+   CREATE: gql`
+      mutation CreateInstructionStep(
+         $object: instructions_instructionStep_insert_input!
+      ) {
+         createInstructionStep(object: $object) {
+            id
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation UpdateInstructionStep(
+         $id: Int!
+         $set: instructions_instructionStep_set_input
+      ) {
+         updateInstructionStep(pk_columns: { id: $id }, _set: $set) {
+            id
+         }
+      }
+   `,
+   DELETE: gql`
+      mutation DeleteInstructionStep($id: Int!) {
+         deleteInstructionStep(id: $id) {
+            id
+         }
+      }
+   `,
+}

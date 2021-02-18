@@ -71,6 +71,10 @@ const RecipeForm = () => {
       },
       onSubscriptionData: data => {
          const recipe = data.subscriptionData.data.simpleRecipe
+         console.log(
+            '🚀 ~ file: index.js ~ line 74 ~ RecipeForm ~ recipe',
+            recipe
+         )
          setState(recipe)
          setTitle({
             ...title,

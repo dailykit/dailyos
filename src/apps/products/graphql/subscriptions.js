@@ -176,11 +176,20 @@ export const S_RECIPE = gql`
          notIncluded
          cuisine
          utensils
-         procedures
-         ingredients
          showIngredients
          showIngredientsQuantity
          showProcedures
+         instructionSets(order_by: { position: desc_nulls_last }) {
+            id
+            title
+            instructionSteps(order_by: { position: desc_nulls_last }) {
+               id
+               title
+               description
+               assets
+               isVisible
+            }
+         }
          simpleRecipeIngredients(
             where: { isArchived: { _eq: false } }
             order_by: { position: desc_nulls_last }
