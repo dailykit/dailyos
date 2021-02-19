@@ -1,32 +1,44 @@
 import React from 'react'
 import { TunnelHeader } from '@dailykit/ui'
 import { AssetUploader, Tooltip } from '../../../../../../../shared/components'
-import { RecipeContext } from '../../../../../context/recipe'
 import { TunnelBody } from '../styled'
+import { useMutation } from '@apollo/react-hooks'
+import { INSTRUCTION_STEP } from '../../../../../graphql'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../shared/utils'
 
-const StepPhotoTunnel = ({ closeTunnel }) => {
-   const { recipeState, recipeDispatch } = React.useContext(RecipeContext)
+const StepPhotoTunnel = ({ stepId, closeTunnel }) => {
+   // Mutation
+   const [updateInstructionStep] = useMutation(INSTRUCTION_STEP.UPDATE, {
+      onCompleted: () => {
+         toast.success('Updated!')
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
 
    const addImage = image => {
-      recipeDispatch({
-         type: 'ADD_STEP_PHOTO',
-         payload: {
-            assets: {
-               images: [image],
-               videos: [],
+      updateInstructionStep({
+         variables: {
+            id: stepId,
+            set: {
+               assets: {
+                  images: [image],
+                  videos: [],
+               },
             },
-            index: recipeState.procedureIndex,
-            stepIndex: recipeState.stepIndex,
          },
       })
-      closeTunnel(2)
+      closeTunnel(1)
    }
 
    return (
       <>
          <TunnelHeader
             title="Select Photo"
-            close={() => closeTunnel(2)}
+            close={() => closeTunnel(1)}
             tooltip={<Tooltip identifier="cooking_step_photo_tunnel" />}
          />
          <TunnelBody>

@@ -16,7 +16,7 @@ import { logger } from '../../../../../../../shared/utils'
 import { RecipeContext } from '../../../../../context/recipe'
 import {
    CREATE_SACHET,
-   CREATE_SIMPLE_RECIPE_YIELD_SACHET,
+   UPSERT_SIMPLE_RECIPE_YIELD_SACHET,
    SACHETS,
    UPDATE_SIMPLE_RECIPE_YIELD_SACHET,
    UPSERT_MASTER_UNIT,
@@ -33,10 +33,12 @@ const SachetTunnel = ({ closeTunnel }) => {
       variables: {
          where: {
             _and: [
-               { ingredientId: { _eq: recipeState.edit?.id } },
+               {
+                  ingredientId: { _eq: recipeState.sachetAddMeta.ingredientId },
+               },
                {
                   ingredientProcessingId: {
-                     _eq: recipeState.edit?.ingredientProcessing?.id,
+                     _eq: recipeState.sachetAddMeta.processingId,
                   },
                },
                {
@@ -64,26 +66,20 @@ const SachetTunnel = ({ closeTunnel }) => {
    const [list, current, selectOption] = useSingleList(sachets)
 
    // Mutation
-   const [createRecipeSachet] = useMutation(CREATE_SIMPLE_RECIPE_YIELD_SACHET, {
-      onCompleted: () => {
-         toast.success('Sachet added!')
-         closeTunnel(3)
-      },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-   })
-   const [updateRecipeSachet] = useMutation(UPDATE_SIMPLE_RECIPE_YIELD_SACHET, {
-      onCompleted: () => {
-         toast.success('Sachet updated!')
-         closeTunnel(3)
-      },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-   })
+   const [upsertRecipeYieldSachet] = useMutation(
+      UPSERT_SIMPLE_RECIPE_YIELD_SACHET,
+      {
+         onCompleted: () => {
+            toast.success('Sachet added!')
+            closeTunnel(3)
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
+
    const [upsertMasterUnit] = useMutation(UPSERT_MASTER_UNIT, {
       onError: error => {
          toast.error('Something went wrong!')
@@ -109,37 +105,20 @@ const SachetTunnel = ({ closeTunnel }) => {
    })
 
    const save = curr => {
-      if (recipeState.updating) {
-         updateRecipeSachet({
-            variables: {
-               objects: [
-                  {
-                     sachetId: recipeState.sachet?.id,
-                     yieldId: recipeState.serving.id,
-                     set: {
-                        ingredientSachetId: curr.id,
-                     },
-                  },
-               ],
-            },
-         })
-      } else {
-         createRecipeSachet({
-            variables: {
-               objects: [
-                  {
-                     ingredientSachetId: curr.id,
-                     recipeYieldId: recipeState.serving.id,
-                     isVisible: true,
-                     slipName: curr.ingredient?.name,
-                  },
-               ],
-            },
-         })
-      }
+      upsertRecipeYieldSachet({
+         variables: {
+            yieldId: recipeState.sachetAddMeta.yieldId,
+            ingredientProcessingRecordId:
+               recipeState.sachetAddMeta.ingredientProcessingRecordId,
+            ingredientSachetId: curr.id,
+            slipName: curr.ingredient.name,
+         },
+      })
    }
 
    const quickCreateSachet = async () => {
+      if (!search.includes(' '))
+         return toast.error('Quantity and Unit should be space separated!')
       const [quantity, unit] = search.trim().split(' ')
       if (quantity && unit) {
          await upsertMasterUnit({

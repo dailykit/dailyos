@@ -173,6 +173,53 @@ export const DELETE_SIMPLE_RECIPE_YIELD = gql`
    }
 `
 
+export const DELETE_SIMPLE_RECIPE_INGREDIENT_PROCESSINGS = gql`
+   mutation DeleteSimpleRecipeIngredientProcessings($ids: [Int!]!) {
+      updateSimpleRecipeIngredientProcessings(
+         where: { id: { _in: $ids } }
+         _set: { isArchived: true }
+      ) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
+export const UPSERT_SIMPLE_RECIPE_YIELD_SACHET = gql`
+   mutation UpsertSimpleRecipeSachet(
+      $yieldId: Int!
+      $ingredientProcessingRecordId: Int!
+      $ingredientSachetId: Int!
+      $slipName: String!
+   ) {
+      createSimpleRecipeSachet(
+         objects: [
+            {
+               recipeYieldId: $yieldId
+               simpleRecipeIngredientProcessingId: $ingredientProcessingRecordId
+               ingredientSachetId: $ingredientSachetId
+               slipName: $slipName
+            }
+         ]
+         on_conflict: {
+            constraint: simpleRecipeYield_ingredientSachet_pkey
+            update_columns: [ingredientSachetId, slipName]
+            where: {
+               recipeYieldId: { _eq: $yieldId }
+               simpleRecipeIngredientProcessingId: {
+                  _eq: $ingredientProcessingRecordId
+               }
+            }
+         }
+      ) {
+         returning {
+            ingredientSachetId
+         }
+      }
+   }
+`
+
 export const CREATE_SIMPLE_RECIPE_YIELD_SACHET = gql`
    mutation CreateSimpleRecipeSachet(
       $objects: [simpleRecipe_simpleRecipeYield_ingredientSachet_insert_input!]!
@@ -187,13 +234,15 @@ export const CREATE_SIMPLE_RECIPE_YIELD_SACHET = gql`
 
 export const UPDATE_SIMPLE_RECIPE_YIELD_SACHET = gql`
    mutation UpdateSimpleRecipeSachet(
-      $sachetId: Int!
+      $ingredientProcessingRecordId: Int!
       $yieldId: Int!
       $set: simpleRecipe_simpleRecipeYield_ingredientSachet_set_input
    ) {
       updateSimpleRecipeSachet(
          where: {
-            ingredientSachetId: { _eq: $sachetId }
+            simpleRecipeIngredientProcessingId: {
+               _eq: $ingredientProcessingRecordId
+            }
             recipeYieldId: { _eq: $yieldId }
          }
          _set: $set
@@ -596,3 +645,71 @@ export const UPSERT_MASTER_UNIT = gql`
       }
    }
 `
+
+export const CREATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING = gql`
+   mutation CreateSimpleRecipeIngredientProcessing(
+      $object: simpleRecipe_simpleRecipe_ingredient_processing_insert_input!
+   ) {
+      createSimpleRecipeIngredientProcessing(object: $object) {
+         id
+      }
+   }
+`
+
+export const INSTRUCTION_SET = {
+   CREATE: gql`
+      mutation CreateInstructionSet(
+         $object: instructions_instructionSet_insert_input!
+      ) {
+         createInstructionSet(object: $object) {
+            id
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation UpdateInstructionSet(
+         $id: Int!
+         $set: instructions_instructionSet_set_input
+      ) {
+         updateInstructionSet(pk_columns: { id: $id }, _set: $set) {
+            id
+         }
+      }
+   `,
+   DELETE: gql`
+      mutation DeleteInstructionSet($id: Int!) {
+         deleteInstructionSet(id: $id) {
+            id
+         }
+      }
+   `,
+}
+
+export const INSTRUCTION_STEP = {
+   CREATE: gql`
+      mutation CreateInstructionStep(
+         $object: instructions_instructionStep_insert_input!
+      ) {
+         createInstructionStep(object: $object) {
+            id
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation UpdateInstructionStep(
+         $id: Int!
+         $set: instructions_instructionStep_set_input
+      ) {
+         updateInstructionStep(pk_columns: { id: $id }, _set: $set) {
+            id
+         }
+      }
+   `,
+   DELETE: gql`
+      mutation DeleteInstructionStep($id: Int!) {
+         deleteInstructionStep(id: $id) {
+            id
+         }
+      }
+   `,
+}
