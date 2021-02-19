@@ -203,6 +203,7 @@ const Ingredients = ({ state }) => {
                      ({ id, ingredient, processing, linkedSachets }) => (
                         <Collapsible
                            isDraggable
+                           isHeadClickable
                            key={id}
                            head={
                               <CollapsibleHead
