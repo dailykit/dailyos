@@ -38,6 +38,7 @@ const PricingTunnel = ({ state, close }) => {
                   },
                ],
                inventoryProductId: state.id,
+               productOption: { data: { productId: state.product.id } },
             },
          ],
       },

@@ -81,6 +81,7 @@ export default function RecipeTunnel({ state, close }) {
                         discount: '0',
                      },
                   ],
+                  productOption: { data: { productId: state.product.id } },
                },
                {
                   simpleRecipeProductId: state.id,
@@ -94,6 +95,7 @@ export default function RecipeTunnel({ state, close }) {
                         discount: '0',
                      },
                   ],
+                  productOption: { data: { productId: state.product.id } },
                },
             ]
          }),

@@ -353,6 +353,9 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
    subscription SimpleRecipeProduct($id: Int!) {
       simpleRecipeProduct(id: $id) {
          id
+         product {
+            id
+         }
          name
          additionalText
          assets
@@ -373,6 +376,9 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
             order_by: { position: desc_nulls_last }
          ) {
             id
+            productOption {
+               id
+            }
             isActive
             price
             type
@@ -419,6 +425,9 @@ export const S_INVENTORY_PRODUCT = gql`
    subscription($id: Int!) {
       inventoryProduct(id: $id) {
          id
+         product {
+            id
+         }
          name
          additionalText
          assets
@@ -458,6 +467,9 @@ export const S_INVENTORY_PRODUCT = gql`
             order_by: { position: desc_nulls_last }
          ) {
             id
+            productOption {
+               id
+            }
             label
             price
             quantity
