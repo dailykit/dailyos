@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
    Flex,
    HorizontalTab,
@@ -6,52 +6,32 @@ import {
    HorizontalTabList,
    HorizontalTabPanel,
    HorizontalTabPanels,
-   Form,
-   Spacer,
    ComboButton,
    IconButton,
    PlusIcon,
    Text,
    Filler,
-   ButtonTile,
+   useTunnel,
 } from '@dailykit/ui'
-import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { useTabs } from '../../../../context'
 import { DeleteIcon } from '../../../../../../shared/assets/icons'
-import { DragNDrop } from '../../../../../../shared/components'
+import { DragNDrop, InlineLoader } from '../../../../../../shared/components'
 import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
+import { StyledWrapper, WrapDiv, Child } from './styled'
 import {
-   StyledWrapper,
-   StyledComp,
-   InputWrapper,
-   StyledDiv,
-   StyledInsight,
-   Highlight,
-   WrapDiv,
-   Child,
-} from './styled'
-import {
-   GET_FILES,
-   GET_TEMPLATES,
-   UPDATE_WEBPAGE,
    LINKED_COMPONENT,
    LINK_COMPONENT,
    DELETE_LINKED_COMPONENT,
 } from '../../../../graphql'
 import { logger } from '../../../../../../shared/utils'
+import { ConfigTunnel } from '../Tunnel'
 import File from './File'
-import {
-   Tooltip,
-   InlineLoader,
-   InsightDashboard,
-} from '../../../../../../shared/components'
-import moment from 'moment'
 import Template from './Template'
-// import { CloseIcon, TickIcon } from '../../../../../../shared/assets/icons'
 
 const ContentSelection = () => {
+   const [configTunnels, openConfigTunnel, closeConfigTunnel] = useTunnel()
    const { initiatePriority } = useDnd()
    const { pageId, pageName } = useParams()
    const [linkedFiles, setLinkedFiles] = useState([])
@@ -86,6 +66,7 @@ const ContentSelection = () => {
       onCompleted: () => {
          toast.success(`Added to the "${pageName}" page successfully!!`)
          setSelectedFileOptions([])
+         closeConfigTunnel(1)
       },
       onError: error => {
          toast.error('Something went wrong')
@@ -202,7 +183,11 @@ const ContentSelection = () => {
          </WrapDiv>
          <StyledWrapper>
             <Flex container justifyContent="flex-end">
-               <ComboButton type="solid" size="md" onClick={saveHandler}>
+               <ComboButton
+                  type="solid"
+                  size="md"
+                  onClick={() => openConfigTunnel(1)}
+               >
                   <PlusIcon color="#fff" /> Add
                </ComboButton>
             </Flex>
@@ -232,6 +217,13 @@ const ContentSelection = () => {
                   <HorizontalTabPanel>Internal Module</HorizontalTabPanel>
                </HorizontalTabPanels>
             </HorizontalTabs>
+            <ConfigTunnel
+               tunnels={configTunnels}
+               openTunnel={openConfigTunnel}
+               closeTunnel={closeConfigTunnel}
+               onSave={() => saveHandler()}
+               selectedOption={selectedFileOptions}
+            />
          </StyledWrapper>
       </Flex>
    )

@@ -9,6 +9,7 @@ import {
    TextButton,
    TagGroup,
    Tag,
+   Loader,
 } from '@dailykit/ui'
 import { GET_FILES } from '../../../../../graphql'
 import { useSubscription } from '@apollo/react-hooks'
@@ -21,7 +22,7 @@ const File = ({ linkedFiles, selectedOption, emptyOptions }) => {
    const linkedIds = linkedFiles.map(file => {
       return file.fileId
    })
-   //subscription query for loading the files
+   // subscription query for loading the files
    const { loading, error } = useSubscription(GET_FILES, {
       variables: {
          linkedFile: linkedIds,
@@ -53,6 +54,13 @@ const File = ({ linkedFiles, selectedOption, emptyOptions }) => {
          selected.splice(0, selected.length)
       }
    }, [emptyOptions])
+
+   if (loading) {
+      return <Loader />
+   }
+   if (error) {
+      console.error(error)
+   }
    return (
       <Wrapper>
          <List>

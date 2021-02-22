@@ -1,17 +1,9 @@
 import React from 'react'
-import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
-import { toast } from 'react-toastify'
-import { TunnelHeader, Tunnel, Tunnels, Dropdown } from '@dailykit/ui'
-// import { GET_FILES, LINK_CSS_FILES } from '../../../graphql'
+import { TunnelHeader, Tunnel, Tunnels } from '@dailykit/ui'
 import { TunnelBody } from './style'
 import BrandContext from '../../../../../context/Brand'
 
-export default function PagePreviewTunnel({
-   tunnels,
-   openTunnel,
-   closeTunnel,
-   pageRoute,
-}) {
+export default function PagePreviewTunnel({ tunnels, closeTunnel, pageRoute }) {
    const [context, setContext] = React.useContext(BrandContext)
 
    return (
@@ -24,6 +16,7 @@ export default function PagePreviewTunnel({
                />
                <TunnelBody>
                   <iframe
+                     title="page-preview"
                      src={`https://${context.brandDomain}${pageRoute.value}`}
                      style={{ width: '100%', height: '100%' }}
                   />
