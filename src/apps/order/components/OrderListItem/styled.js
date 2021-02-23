@@ -30,7 +30,6 @@ export const Styles = {
    Order: styled.div(
       ({ status }) => css`
          padding: 16px;
-         height: 240px;
          display: grid;
          grid-gap: 14px;
          position: relative;
@@ -53,7 +52,38 @@ export const Styles = {
          }
          > section {
             grid-area: section;
-            height: calc(240px - 83px);
+         }
+         @media only screen and (max-width: 1023px) {
+            height: auto;
+            grid-template-columns: auto;
+            grid-template-rows: auto;
+            overflow-y: auto;
+            grid-template-areas:
+               'header'
+               'right'
+               'left'
+               'section';
+            > header {
+               margin-top: 16px;
+            }
+         }
+         @media only screen and (max-width: 1439px) and (min-width: 1024px) {
+            grid-template-areas:
+               'left header right'
+               'left section section';
+            > aside:nth-of-type(2) {
+               margin-top: 16px;
+            }
+         }
+         @media only screen and (min-width: 768px) and (orientation: portrait) {
+            grid-template-columns: auto auto;
+            grid-template-areas:
+               'header right'
+               'left left'
+               'section section';
+            > header {
+               margin-top: 0px;
+            }
          }
       `
    ),

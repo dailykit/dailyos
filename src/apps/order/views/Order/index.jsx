@@ -21,7 +21,7 @@ import {
    HorizontalTabPanels,
 } from '@dailykit/ui'
 
-import { Styles } from './styled'
+import { ResponsiveFlex, Styles } from './styled'
 import { formatDate } from '../../utils'
 import { findAndSelectSachet } from './methods'
 import { QUERIES, MUTATIONS } from '../../graphql'
@@ -36,6 +36,7 @@ import {
    InlineLoader,
    DropdownButton,
 } from '../../../../shared/components'
+import styled from 'styled-components'
 
 const isPickup = value => ['ONDEMAND_PICKUP', 'PREORDER_PICKUP'].includes(value)
 
@@ -328,7 +329,7 @@ const Order = () => {
    return (
       <Flex>
          <Spacer size="16px" />
-         <Flex
+         <ResponsiveFlex
             container
             as="header"
             padding="0 16px"
@@ -452,9 +453,9 @@ const Order = () => {
                   </>
                )}
             </Flex>
-         </Flex>
+         </ResponsiveFlex>
          <Spacer size="16px" />
-         <Flex
+         <ResponsiveFlex
             container
             padding="0 16px"
             alignItems="center"
@@ -479,7 +480,7 @@ const Order = () => {
                <span />
             )}
 
-            <Flex container>
+            <ResponsiveFlex container>
                {!isThirdParty && (
                   <>
                      <Flex width="240px">
@@ -497,41 +498,43 @@ const Order = () => {
                      <Spacer size="24px" xAxis />
                   </>
                )}
-               <TextButton
-                  type="solid"
-                  disabled={order.isAccepted}
-                  onClick={() =>
-                     updateOrder({
-                        variables: {
-                           id: order.id,
-                           _set: {
-                              isAccepted: true,
-                              ...(order.isRejected && { isRejected: false }),
+               <Flex container>
+                  <TextButton
+                     type="solid"
+                     disabled={order.isAccepted}
+                     onClick={() =>
+                        updateOrder({
+                           variables: {
+                              id: order.id,
+                              _set: {
+                                 isAccepted: true,
+                                 ...(order.isRejected && { isRejected: false }),
+                              },
                            },
-                        },
-                     })
-                  }
-               >
-                  {order.isAccepted ? 'Accepted' : 'Accept'}
-               </TextButton>
-               <Spacer size="14px" xAxis />
-               <TextButton
-                  type="ghost"
-                  onClick={() =>
-                     updateOrder({
-                        variables: {
-                           id: order.id,
-                           _set: {
-                              isRejected: !order.isRejected,
+                        })
+                     }
+                  >
+                     {order.isAccepted ? 'Accepted' : 'Accept'}
+                  </TextButton>
+                  <Spacer size="14px" xAxis />
+                  <TextButton
+                     type="ghost"
+                     onClick={() =>
+                        updateOrder({
+                           variables: {
+                              id: order.id,
+                              _set: {
+                                 isRejected: !order.isRejected,
+                              },
                            },
-                        },
-                     })
-                  }
-               >
-                  {order.isRejected ? 'Un Reject' : 'Reject'}
-               </TextButton>
-            </Flex>
-         </Flex>
+                        })
+                     }
+                  >
+                     {order.isRejected ? 'Un Reject' : 'Reject'}
+                  </TextButton>
+               </Flex>
+            </ResponsiveFlex>
+         </ResponsiveFlex>
          <Spacer size="8px" />
          {isThirdParty ? (
             <HorizontalTabs>

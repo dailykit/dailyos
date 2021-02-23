@@ -176,11 +176,53 @@ export const S_RECIPE = gql`
          notIncluded
          cuisine
          utensils
-         procedures
-         ingredients
          showIngredients
          showIngredientsQuantity
          showProcedures
+         instructionSets(order_by: { position: desc_nulls_last }) {
+            id
+            title
+            position
+            instructionSteps(order_by: { position: desc_nulls_last }) {
+               id
+               title
+               position
+               description
+               assets
+               isVisible
+            }
+         }
+         simpleRecipeIngredients(
+            where: { isArchived: { _eq: false } }
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            position
+            ingredient {
+               id
+               name
+            }
+            processing: ingredientProcessing {
+               id
+               name: processingName
+            }
+            linkedSachets: simpleRecipeYield_ingredientSachets(
+               where: { isArchived: { _eq: false } }
+               order_by: { simpleRecipeYield: { yield: asc_nulls_last } }
+            ) {
+               ingredientSachet {
+                  id
+                  unit
+                  quantity
+               }
+               simpleRecipeYield {
+                  id
+                  yield
+               }
+               slipName
+               isVisible
+            }
+         }
          simpleRecipeYields(
             where: { isArchived: { _eq: false } }
             order_by: { yield: asc }
@@ -189,21 +231,6 @@ export const S_RECIPE = gql`
             yield
             cost
             nutritionalInfo
-            ingredientSachets(where: { isArchived: { _eq: false } }) {
-               isVisible
-               slipName
-               ingredientSachet {
-                  id
-                  quantity
-                  unit
-                  ingredient {
-                     id
-                  }
-                  ingredientProcessing {
-                     id
-                  }
-               }
-            }
          }
       }
    }
@@ -311,6 +338,7 @@ export const S_SIMPLE_RECIPE_PRODUCTS = gql`
       ) {
          id
          name
+         title: name
          isValid
          isPublished
          simpleRecipe {
@@ -325,6 +353,9 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
    subscription SimpleRecipeProduct($id: Int!) {
       simpleRecipeProduct(id: $id) {
          id
+         product {
+            id
+         }
          name
          additionalText
          assets
@@ -345,6 +376,9 @@ export const S_SIMPLE_RECIPE_PRODUCT = gql`
             order_by: { position: desc_nulls_last }
          ) {
             id
+            productOption {
+               id
+            }
             isActive
             price
             type
@@ -380,6 +414,7 @@ export const S_INVENTORY_PRODUCTS = gql`
       inventoryProducts(where: { isArchived: { _eq: false } }) {
          id
          name
+         title: name
          isValid
          isPublished
       }
@@ -390,6 +425,9 @@ export const S_INVENTORY_PRODUCT = gql`
    subscription($id: Int!) {
       inventoryProduct(id: $id) {
          id
+         product {
+            id
+         }
          name
          additionalText
          assets
@@ -429,6 +467,9 @@ export const S_INVENTORY_PRODUCT = gql`
             order_by: { position: desc_nulls_last }
          ) {
             id
+            productOption {
+               id
+            }
             label
             price
             quantity
@@ -462,6 +503,7 @@ export const S_CUSTOMIZABLE_PRODUCTS = gql`
       ) {
          id
          name
+         title: name
          isValid
          isPublished
       }
@@ -534,6 +576,7 @@ export const S_COMBO_PRODUCTS = gql`
       ) {
          id
          name
+         title: name
          isValid
          isPublished
          comboProductComponents {

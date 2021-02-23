@@ -22,7 +22,6 @@ import { usePlan } from '../state'
 import Customers from './Customers'
 import Occurences from './Occurences'
 import DeliveryAreas from './DeliveryAreas'
-import { DeliveryDaySection } from '../styled'
 import { logger } from '../../../../../../shared/utils'
 import { EditIcon } from '../../../../../../shared/assets/icons'
 import { UPDATE_SUBSCRIPTION, SUBSCRIPTION } from '../../../../graphql'
@@ -63,11 +62,11 @@ const DeliveryDay = ({ id }) => {
       return <ErrorState message="Failed to fetch the list of delivery days!" />
    }
    return (
-      <DeliveryDaySection>
+      <>
          <Flex
             container
             as="header"
-            height="56px"
+            height="48px"
             alignItems="center"
             justifyContent="space-between"
          >
@@ -75,20 +74,21 @@ const DeliveryDay = ({ id }) => {
                <Text as="title">Subscription</Text>
                <Tooltip identifier="form_subscription_section_delivery_day_heading" />
             </Flex>
-            <IconButton type="outline" onClick={() => openTunnel(1)}>
+            <IconButton size="sm" type="outline" onClick={() => openTunnel(1)}>
                <EditIcon />
             </IconButton>
          </Flex>
          <Text as="subtitle">
-            Ends on - {moment(state.subscription.endDate).format('MMM DD')}
+            Ends on -{' '}
+            {moment(state.subscription.endDate).format('MMM DD, YYYY')}
          </Text>
-         <HorizontalTabs>
+         <HorizontalTabs id="subscriptionTabs">
             <HorizontalTabList>
                <HorizontalTab>Occurences ({occurencesTotal})</HorizontalTab>
                <HorizontalTab>Delivery Areas ({areasTotal})</HorizontalTab>
                <HorizontalTab>Customers ({customersTotal})</HorizontalTab>
             </HorizontalTabList>
-            <HorizontalTabPanels>
+            <HorizontalTabPanels id="subscriptionTabPanels">
                <HorizontalTabPanel>
                   <Occurences id={id} setOccurencesTotal={setOccurencesTotal} />
                </HorizontalTabPanel>
@@ -101,23 +101,27 @@ const DeliveryDay = ({ id }) => {
             </HorizontalTabPanels>
          </HorizontalTabs>
          <ErrorBoundary rootRoute="/subscription/subscriptions">
-            <EditSubscriptionTunnel
-               tunnels={tunnels}
-               closeTunnel={closeTunnel}
-            />
+            <Tunnels tunnels={tunnels}>
+               <Tunnel layer="1">
+                  <EditSubscriptionTunnel closeTunnel={closeTunnel} />
+               </Tunnel>
+            </Tunnels>
          </ErrorBoundary>
-      </DeliveryDaySection>
+      </>
    )
 }
 
 export default DeliveryDay
 
-const EditSubscriptionTunnel = ({ tunnels, closeTunnel }) => {
+const EditSubscriptionTunnel = ({ closeTunnel }) => {
    const { state } = usePlan()
    const [endDate, setEndDate] = React.useState('')
    const [updateSubscription] = useMutation(UPDATE_SUBSCRIPTION, {
       onCompleted: () => {
          closeTunnel(1)
+      },
+      onError: error => {
+         console.log(error)
       },
    })
 
@@ -136,38 +140,36 @@ const EditSubscriptionTunnel = ({ tunnels, closeTunnel }) => {
       })
    }
    return (
-      <Tunnels tunnels={tunnels}>
-         <Tunnel layer="1">
-            <TunnelHeader
-               title="Edit Subscription"
-               close={() => close()}
-               right={{
-                  title: 'Save',
-                  disabled: !endDate,
-                  action: () => save(),
-               }}
-               tooltip={
-                  <Tooltip identifier="form_subscription_tunnel_subscription_field_date" />
-               }
-            />
-            <Flex padding="16px">
-               <Form.Group>
-                  <Form.Label htmlFor="endDate" title="endDate">
-                     <Flex container alignItems="center">
-                        End Date*
-                        <Tooltip identifier="form_subscription_tunnel_edit_subscription_field_end_date" />
-                     </Flex>
-                  </Form.Label>
-                  <Form.Date
-                     id="endDate"
-                     name="endDate"
-                     value={endDate}
-                     defaultValue={state.subscription.endDate}
-                     onChange={e => setEndDate(e.target.value)}
-                  />
-               </Form.Group>
-            </Flex>
-         </Tunnel>
-      </Tunnels>
+      <>
+         <TunnelHeader
+            title="Edit Subscription"
+            close={() => close()}
+            right={{
+               title: 'Save',
+               disabled: !endDate,
+               action: () => save(),
+            }}
+            tooltip={
+               <Tooltip identifier="form_subscription_tunnel_subscription_field_date" />
+            }
+         />
+         <Flex padding="16px">
+            <Form.Group>
+               <Form.Label htmlFor="endDate" title="endDate">
+                  <Flex container alignItems="center">
+                     End Date*
+                     <Tooltip identifier="form_subscription_tunnel_edit_subscription_field_end_date" />
+                  </Flex>
+               </Form.Label>
+               <Form.Date
+                  id="endDate"
+                  name="endDate"
+                  value={endDate}
+                  defaultValue={state.subscription.endDate}
+                  onChange={e => setEndDate(e.target.value)}
+               />
+            </Form.Group>
+         </Flex>
+      </>
    )
 }

@@ -62,8 +62,11 @@ export default function ProductTypeTunnel({ close }) {
    )
 
    const createProduct = type => {
-      const object = {
+      let object = {
          name: `${type}-${randomSuffix()}`,
+         // product: {
+         //    data: {},
+         // },
       }
       switch (type) {
          case 'combo': {
@@ -75,6 +78,7 @@ export default function ProductTypeTunnel({ close }) {
             break
          }
          case 'inventory': {
+            object = { ...object, product: { data: {} } }
             createInventoryProduct({
                variables: {
                   objects: [object],
@@ -83,6 +87,7 @@ export default function ProductTypeTunnel({ close }) {
             break
          }
          case 'recipe': {
+            object = { ...object, product: { data: {} } }
             createRecipeProduct({
                variables: {
                   objects: [object],

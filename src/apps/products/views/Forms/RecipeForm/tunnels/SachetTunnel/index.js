@@ -15,9 +15,11 @@ import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { RecipeContext } from '../../../../../context/recipe'
 import {
-   CREATE_SIMPLE_RECIPE_YIELD_SACHET,
+   CREATE_SACHET,
+   UPSERT_SIMPLE_RECIPE_YIELD_SACHET,
    SACHETS,
    UPDATE_SIMPLE_RECIPE_YIELD_SACHET,
+   UPSERT_MASTER_UNIT,
 } from '../../../../../graphql'
 import { TunnelBody } from '../styled'
 
@@ -31,10 +33,12 @@ const SachetTunnel = ({ closeTunnel }) => {
       variables: {
          where: {
             _and: [
-               { ingredientId: { _eq: recipeState.edit?.id } },
+               {
+                  ingredientId: { _eq: recipeState.sachetAddMeta.ingredientId },
+               },
                {
                   ingredientProcessingId: {
-                     _eq: recipeState.edit?.ingredientProcessing?.id,
+                     _eq: recipeState.sachetAddMeta.processingId,
                   },
                },
                {
@@ -62,37 +66,37 @@ const SachetTunnel = ({ closeTunnel }) => {
    const [list, current, selectOption] = useSingleList(sachets)
 
    // Mutation
-   const [createSachet] = useMutation(CREATE_SIMPLE_RECIPE_YIELD_SACHET, {
-      variables: {
-         objects: [
-            {
-               ingredientSachetId: current.id,
-               recipeYieldId: recipeState.serving.id,
-               isVisible: true,
-               slipName: current.ingredient?.name,
-            },
-         ],
-      },
-      onCompleted: () => {
-         toast.success('Sachet added!')
-         closeTunnel(3)
-      },
+   const [upsertRecipeYieldSachet] = useMutation(
+      UPSERT_SIMPLE_RECIPE_YIELD_SACHET,
+      {
+         onCompleted: () => {
+            toast.success('Sachet added!')
+            closeTunnel(3)
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
+
+   const [upsertMasterUnit] = useMutation(UPSERT_MASTER_UNIT, {
       onError: error => {
          toast.error('Something went wrong!')
          logger(error)
       },
    })
-   const [updateSachet] = useMutation(UPDATE_SIMPLE_RECIPE_YIELD_SACHET, {
-      variables: {
-         sachetId: recipeState.sachet?.id,
-         yieldId: recipeState.serving.id,
-         set: {
-            ingredientSachetId: current.id,
-         },
-      },
-      onCompleted: () => {
-         toast.success('Sachet updated!')
-         closeTunnel(3)
+   const [createSachet] = useMutation(CREATE_SACHET, {
+      onCompleted: data => {
+         const sachet = {
+            id: data.createIngredientSachet.returning[0].id,
+            ingredient: {
+               name:
+                  data.createIngredientSachet.returning[0]?.ingredient?.name ||
+                  '',
+            },
+         }
+         save(sachet)
       },
       onError: error => {
          toast.error('Something went wrong!')
@@ -100,14 +104,50 @@ const SachetTunnel = ({ closeTunnel }) => {
       },
    })
 
-   const save = () => {
-      if (recipeState.updating) updateSachet()
-      else createSachet()
+   const save = curr => {
+      upsertRecipeYieldSachet({
+         variables: {
+            yieldId: recipeState.sachetAddMeta.yieldId,
+            ingredientProcessingRecordId:
+               recipeState.sachetAddMeta.ingredientProcessingRecordId,
+            ingredientSachetId: curr.id,
+            slipName: curr.ingredient.name,
+         },
+      })
+   }
+
+   const quickCreateSachet = async () => {
+      if (!search.includes(' '))
+         return toast.error('Quantity and Unit should be space separated!')
+      const [quantity, unit] = search.trim().split(' ')
+      if (quantity && unit) {
+         await upsertMasterUnit({
+            variables: {
+               name: unit,
+            },
+         })
+         createSachet({
+            variables: {
+               objects: [
+                  {
+                     ingredientId: recipeState.edit?.id,
+                     ingredientProcessingId:
+                        recipeState.edit?.ingredientProcessing?.id,
+                     quantity: +quantity,
+                     unit,
+                     tracking: false,
+                  },
+               ],
+            },
+         })
+      } else {
+         toast.error('Enter a valid quantity and unit!')
+      }
    }
 
    React.useEffect(() => {
       if (current.id) {
-         save()
+         save(current)
       }
    }, [current])
 
@@ -122,40 +162,35 @@ const SachetTunnel = ({ closeTunnel }) => {
             {loading ? (
                <InlineLoader />
             ) : (
-               <>
-                  {sachets.length ? (
-                     <List>
-                        {Object.keys(current).length > 0 ? (
-                           <ListItem type="SSL1" title={current.title} />
-                        ) : (
-                           <ListSearch
-                              onChange={value => setSearch(value)}
-                              placeholder="type what you’re looking for..."
-                           />
-                        )}
-                        <ListHeader type="SSL1" label="Sachets" />
-                        <ListOptions>
-                           {list
-                              .filter(option =>
-                                 option.title.toLowerCase().includes(search)
-                              )
-                              .map(option => (
-                                 <ListItem
-                                    type="SSL1"
-                                    key={option.id}
-                                    title={option.title}
-                                    isActive={option.id === current.id}
-                                    onClick={() =>
-                                       selectOption('id', option.id)
-                                    }
-                                 />
-                              ))}
-                        </ListOptions>
-                     </List>
+               <List>
+                  {Object.keys(current).length > 0 ? (
+                     <ListItem type="SSL1" title={current.title} />
                   ) : (
-                     <Filler message="No sachets found in processing! To start, add some." />
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder="type what you’re looking for..."
+                     />
                   )}
-               </>
+                  <ListHeader type="SSL1" label="Sachets" />
+                  <ListOptions
+                     search={search}
+                     handleOnCreate={quickCreateSachet}
+                  >
+                     {list
+                        .filter(option =>
+                           option.title.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="SSL1"
+                              key={option.id}
+                              title={option.title}
+                              isActive={option.id === current.id}
+                              onClick={() => selectOption('id', option.id)}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
             )}
          </TunnelBody>
       </>

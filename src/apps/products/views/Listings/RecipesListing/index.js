@@ -74,7 +74,7 @@ const RecipesListing = () => {
    // Handlers
    const createRecipeHandler = () => {
       const name = `recipe-${randomSuffix()}`
-      createRecipe({ variables: { name } })
+      createRecipe({ variables: { objects: { name } } })
    }
 
    const deleteRecipeHandler = recipe => {

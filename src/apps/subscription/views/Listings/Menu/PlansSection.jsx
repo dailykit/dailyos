@@ -1,7 +1,7 @@
 import React from 'react'
 import moment from 'moment'
 import styled from 'styled-components'
-import { Text, Form, Flex } from '@dailykit/ui'
+import { Text, Form, Flex, TextButton } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 
@@ -25,96 +25,106 @@ const PlansSection = () => {
          },
       },
    })
-   const columns = [
-      {
-         title: 'Servings',
-         headerFilter: true,
-         headerFilterPlaceholder: 'Search servings...',
-         field: 'subscription.itemCount.serving.size',
-         hozAlign: 'right',
-         headerHozAlign: 'right',
-         headerTooltip: column => {
-            const identifier = 'plan_listing_column_servings'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+   const columns = React.useMemo(
+      () => [
+         {
+            title: 'Servings',
+            headerFilter: true,
+            headerFilterPlaceholder: 'Search servings...',
+            field: 'subscription.itemCount.serving.size',
+            hozAlign: 'right',
+            headerHozAlign: 'right',
+            headerTooltip: column => {
+               const identifier = 'plan_listing_column_servings'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
-      },
-      {
-         title: 'Title',
-         headerFilter: true,
-         headerFilterPlaceholder: 'Search titles...',
-         field: 'subscription.itemCount.serving.subscriptionTitle.title',
-         headerTooltip: column => {
-            const identifier = 'plan_listing_column_title'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+         {
+            title: 'Title',
+            headerFilter: true,
+            headerFilterPlaceholder: 'Search titles...',
+            field: 'subscription.itemCount.serving.subscriptionTitle.title',
+            headerTooltip: column => {
+               const identifier = 'plan_listing_column_title'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
-      },
-      {
-         title: 'Item Count',
-         headerFilter: true,
-         headerFilterPlaceholder: 'Search item counts...',
-         field: 'subscription.itemCount.count',
-         hozAlign: 'right',
-         headerHozAlign: 'right',
-         headerTooltip: column => {
-            const identifier = 'plan_listing_column_item_count'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+         {
+            title: 'Item Count',
+            headerFilter: true,
+            headerFilterPlaceholder: 'Search item counts...',
+            field: 'subscription.itemCount.count',
+            hozAlign: 'right',
+            headerHozAlign: 'right',
+            headerTooltip: column => {
+               const identifier = 'plan_listing_column_item_count'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
-      },
-      {
-         title: 'Cut Off',
-         field: 'cutoffTimeStamp',
-         formatter: ({ _cell: { value } }) =>
-            moment(value).format('MMM DD HH:MM A'),
-         headerTooltip: column => {
-            const identifier = 'plan_listing_column_cut_off'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+         {
+            title: 'Cut Off',
+            field: 'cutoffTimeStamp',
+            formatter: ({ _cell: { value } }) =>
+               moment(value).format('MMM DD HH:MM A'),
+            headerTooltip: column => {
+               const identifier = 'plan_listing_column_cut_off'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
-      },
-      {
-         title: 'Start Time',
-         field: 'startTimeStamp',
-         formatter: ({ _cell: { value } }) =>
-            moment(value).format('MMM DD HH:MM A'),
-         headerTooltip: column => {
-            const identifier = 'plan_listing_column_state_time'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+         {
+            title: 'Start Time',
+            field: 'startTimeStamp',
+            formatter: ({ _cell: { value } }) =>
+               moment(value).format('MMM DD HH:MM A'),
+            headerTooltip: column => {
+               const identifier = 'plan_listing_column_state_time'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
-      },
-      {
-         hozAlign: 'right',
-         title: 'Menu Products',
-         formatter: reactFormatter(<ProductsCount />),
-         headerHozAlign: 'right',
-         headerTooltip: column => {
-            const identifier = 'plan_listing_column_products'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+         {
+            hozAlign: 'right',
+            title: 'Menu Products',
+            formatter: reactFormatter(<ProductsCount />),
+            headerHozAlign: 'right',
+            headerTooltip: column => {
+               const identifier = 'plan_listing_column_products'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
-      },
-      {
-         title: 'Customers',
-         field: 'subscription.customers.aggregate.count',
-         hozAlign: 'right',
-         headerHozAlign: 'right',
-         headerTooltip: column => {
-            const identifier = 'plan_listing_column_customers'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+         {
+            title: 'Customers',
+            field: 'subscription.customers.aggregate.count',
+            hozAlign: 'right',
+            headerHozAlign: 'right',
+            headerTooltip: column => {
+               const identifier = 'plan_listing_column_customers'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
-      },
-   ]
+      ],
+      []
+   )
    const handleRowSelection = row => {
       const data = row.getData()
       if (row.isSelected()) {
@@ -150,8 +160,22 @@ const PlansSection = () => {
             justifyContent="space-between"
          >
             <Flex container alignItems="center">
-               <Text as="h2">Plans</Text>
-               <Tooltip identifier="listing_menu_section_plans_heading" />
+               <Flex container alignItems="center">
+                  <Text as="h2">Plans</Text>
+                  <Tooltip identifier="listing_menu_section_plans_heading" />
+               </Flex>
+               {state.date && (
+                  <TextButton
+                     size="sm"
+                     type="outline"
+                     onClick={() => {
+                        dispatch({ type: 'SET_DATE', payload: null })
+                        localStorage.removeItem('serving_size')
+                     }}
+                  >
+                     Clear Selections
+                  </TextButton>
+               )}
             </Flex>
             <Flex container alignItems="center">
                <Form.Toggle

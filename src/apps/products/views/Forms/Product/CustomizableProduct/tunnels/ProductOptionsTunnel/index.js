@@ -12,7 +12,6 @@ import {
 } from '../../../../../../../../shared/utils'
 import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
 import {
-   CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
    INVENTORY_PRODUCT_OPTIONS,
    SIMPLE_RECIPE_PRODUCT_OPTIONS,
    UPDATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
@@ -80,21 +79,6 @@ const ProductOptionsTunnel = ({ state, close }) => {
    })
 
    // Mutation
-   const [createCustomizableProductOption, { loading: saving }] = useMutation(
-      CREATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
-      {
-         onCompleted: () => {
-            toast.success('Product added!')
-            close(3)
-            close(2)
-            close(1)
-         },
-         onError: error => {
-            toast.error('Something went wrong!')
-            logger(error)
-         },
-      }
-   )
    const [updateCustomizableProductOption, { loading: updating }] = useMutation(
       UPDATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
       {
@@ -206,36 +190,14 @@ const ProductOptionsTunnel = ({ state, close }) => {
                   discount: +discount.value,
                })
             )
-            if (productState.optionsMode === 'edit') {
-               updateCustomizableProductOption({
-                  variables: {
-                     id: productState.optionId,
-                     set: {
-                        options: finalOptions,
-                     },
+            updateCustomizableProductOption({
+               variables: {
+                  id: productState.optionId,
+                  set: {
+                     options: finalOptions,
                   },
-               })
-            }
-            if (productState.optionsMode === 'add') {
-               createCustomizableProductOption({
-                  variables: {
-                     objects: [
-                        {
-                           customizableProductId: state.id,
-                           inventoryProductId:
-                              productState.meta.productType === 'inventory'
-                                 ? productState.product.id
-                                 : null,
-                           simpleRecipeProductId:
-                              productState.meta.productType === 'simple'
-                                 ? productState.product.id
-                                 : null,
-                           options: finalOptions,
-                        },
-                     ],
-                  },
-               })
-            }
+               },
+            })
          } else {
             throw Error('Selected options must be valid!')
          }
@@ -257,15 +219,8 @@ const ProductOptionsTunnel = ({ state, close }) => {
                <Tooltip identifier="customizable_product_product_options_tunnel" />
             }
             right={{
-               title:
-                  productState.optionsMode === 'edit'
-                     ? updating
-                        ? 'Updating...'
-                        : 'Update'
-                     : saving
-                     ? 'Adding...'
-                     : 'Add',
-               action: () => !saving && !updating && save(),
+               title: updating ? 'Updating...' : 'Update',
+               action: () => !updating && save(),
             }}
          />
          <TunnelBody>

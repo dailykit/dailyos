@@ -9,11 +9,11 @@ import {
    Filler,
    ListHeader,
 } from '@dailykit/ui'
-import { useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { RecipeContext } from '../../../../../context/recipe'
 import { TunnelBody } from '../styled'
-import { INGREDIENTS } from '../../../../../graphql'
+import { CREATE_INGREDIENT, INGREDIENTS } from '../../../../../graphql'
 import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 
@@ -46,13 +46,37 @@ const IngredientsTunnel = ({ closeTunnel, openTunnel }) => {
       fetchPolicy: 'cache-and-network',
    })
 
+   const [createIngredient] = useMutation(CREATE_INGREDIENT, {
+      onCompleted: data => {
+         recipeDispatch({
+            type: 'ADD_INGREDIENT',
+            payload: data.createIngredient.returning[0],
+         })
+         openTunnel(2)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
    const select = option => {
+      console.log(option)
       selectOption('id', option.id)
       recipeDispatch({
          type: 'ADD_INGREDIENT',
          payload: option,
       })
       openTunnel(2)
+   }
+
+   const quickCreateIngredient = () => {
+      const ingredientName = search.slice(0, 1).toUpperCase() + search.slice(1)
+      createIngredient({
+         variables: {
+            name: ingredientName,
+         },
+      })
    }
 
    return (
@@ -78,7 +102,10 @@ const IngredientsTunnel = ({ closeTunnel, openTunnel }) => {
                            />
                         )}
                         <ListHeader type="SSL1" label="Ingredients" />
-                        <ListOptions>
+                        <ListOptions
+                           search={search}
+                           handleOnCreate={quickCreateIngredient}
+                        >
                            {list
                               .filter(option =>
                                  option.title.toLowerCase().includes(search)

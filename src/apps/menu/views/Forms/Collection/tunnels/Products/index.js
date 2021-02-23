@@ -11,7 +11,7 @@ import {
    Filler,
    ListHeader,
 } from '@dailykit/ui'
-import { useLazyQuery, useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { useTranslation } from 'react-i18next'
 import { CollectionContext } from '../../../../../context/collection'
 import { TunnelBody } from '../styled'
@@ -25,6 +25,12 @@ import {
 import { toast } from 'react-toastify'
 import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
+import {
+   CREATE_COMBO_PRODUCT,
+   CREATE_CUSTOMIZABLE_PRODUCT,
+   CREATE_INVENTORY_PRODUCT,
+   CREATE_SIMPLE_RECIPE_PRODUCT,
+} from '../../../../../../products/graphql'
 
 const address = 'apps.menu.views.forms.collection.tunnels.products.'
 
@@ -36,119 +42,68 @@ const ProductsTunnel = ({ closeTunnel }) => {
    const [products, setProducts] = React.useState([])
    const [list, selected, selectOption] = useMultiList(products)
 
-   // Queries for fetching products
-   const [
-      fetchSimpleRecipeProducts,
-      { loading: simpleRecipeProductsLoading },
-   ] = useLazyQuery(SIMPLE_RECIPE_PRODUCTS, {
-      variables: {
-         where: {
-            _and: [
-               {
-                  isPublished: { _eq: true },
-               },
-               {
-                  isArchived: { _eq: false },
-               },
-            ],
-         },
-      },
-      onCompleted: data => {
-         const updatedProducts = data.simpleRecipeProducts.filter(
-            pdct => pdct.isValid.status
-         )
-         setProducts([...updatedProducts])
-      },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-      fetchPolicy: 'cache-and-network',
-   })
-   const [
-      fetchInventoryProducts,
-      { loading: inventoryProductsLoading },
-   ] = useLazyQuery(INVENTORY_PRODUCTS, {
-      variables: {
-         where: {
-            _and: [
-               {
-                  isPublished: { _eq: true },
-               },
-               {
-                  isArchived: { _eq: false },
-               },
-            ],
-         },
-      },
-      onCompleted: data => {
-         const updatedProducts = data.inventoryProducts.filter(
-            pdct => pdct.isValid.status
-         )
-         setProducts([...updatedProducts])
-      },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-      fetchPolicy: 'cache-and-network',
-   })
-   const [
-      fetchCustomizableProducts,
-      { loading: customizableProductsLoading },
-   ] = useLazyQuery(CUSTOMIZABLE_PRODUCTS, {
-      variables: {
-         where: {
-            _and: [
-               {
-                  isPublished: { _eq: true },
-               },
-               {
-                  isArchived: { _eq: false },
-               },
-            ],
-         },
-      },
-      onCompleted: data => {
-         const updatedProducts = data.customizableProducts.filter(
-            pdct => pdct.isValid.status
-         )
-         setProducts([...updatedProducts])
-      },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-      fetchPolicy: 'cache-and-network',
-   })
-   const [fetchComboProducts, { loading: comboProductsLoading }] = useLazyQuery(
-      COMBO_PRODUCTS,
+   // Subscription for fetching products
+   const { loading: simpleRecipeProductsLoading } = useSubscription(
+      SIMPLE_RECIPE_PRODUCTS,
       {
+         skip: collectionState.productType !== 'simple',
          variables: {
             where: {
-               _and: [
-                  {
-                     isPublished: { _eq: true },
-                  },
-                  {
-                     isArchived: { _eq: false },
-                  },
-               ],
+               isArchived: { _eq: false },
             },
          },
-         onCompleted: data => {
-            const updatedProducts = data.comboProducts.filter(
-               pdct => pdct.isValid.status
-            )
-            setProducts([...updatedProducts])
+         onSubscriptionData: data => {
+            const products = data.subscriptionData.data.simpleRecipeProducts
+            // const updatedProducts = products.filter(pdct => pdct.isValid.status)
+            setProducts([...products])
          },
-         onError: error => {
-            toast.error('Something went wrong!')
-            logger(error)
-         },
-         fetchPolicy: 'cache-and-network',
       }
    )
+   const { loading: inventoryProductsLoading } = useSubscription(
+      INVENTORY_PRODUCTS,
+      {
+         skip: collectionState.productType !== 'inventory',
+         variables: {
+            where: {
+               isArchived: { _eq: false },
+            },
+         },
+         onSubscriptionData: data => {
+            const products = data.subscriptionData.data.inventoryProducts
+            // const updatedProducts = products.filter(pdct => pdct.isValid.status)
+            setProducts([...products])
+         },
+      }
+   )
+   const { loading: customizableProductsLoading } = useSubscription(
+      CUSTOMIZABLE_PRODUCTS,
+      {
+         skip: collectionState.productType !== 'customizable',
+         variables: {
+            where: {
+               isArchived: { _eq: false },
+            },
+         },
+         onSubscriptionData: data => {
+            const products = data.subscriptionData.data.customizableProducts
+            // const updatedProducts = products.filter(pdct => pdct.isValid.status)
+            setProducts([...products])
+         },
+      }
+   )
+   const { loading: comboProductsLoading } = useSubscription(COMBO_PRODUCTS, {
+      skip: collectionState.productType !== 'combo',
+      variables: {
+         where: {
+            isArchived: { _eq: false },
+         },
+      },
+      onSubscriptionData: data => {
+         const products = data.subscriptionData.data.comboProducts
+         // const updatedProducts = products.filter(pdct => pdct.isValid.status)
+         setProducts([...products])
+      },
+   })
 
    const [createRecord, { loading: inFlight }] = useMutation(
       CREATE_COLLECTION_PRODUCT_CATEGORY_PRODUCTS,
@@ -198,19 +153,91 @@ const ProductsTunnel = ({ closeTunnel }) => {
       })
    }
 
-   React.useEffect(() => {
-      if (collectionState.productType === 'inventory') {
-         fetchInventoryProducts()
-      } else if (collectionState.productType === 'simple') {
-         fetchSimpleRecipeProducts()
-      } else if (collectionState.productType === 'combo') {
-         fetchComboProducts()
-      } else if (collectionState.productType === 'customizable') {
-         fetchCustomizableProducts()
-      } else {
-         toast.error('Could not resolve product type!')
+   const [createIP] = useMutation(CREATE_INVENTORY_PRODUCT, {
+      onCompleted: data => {
+         console.log(data)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+   const [createSRP] = useMutation(CREATE_SIMPLE_RECIPE_PRODUCT, {
+      onCompleted: data => {
+         console.log(data)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+   const [createCUSP] = useMutation(CREATE_CUSTOMIZABLE_PRODUCT, {
+      onCompleted: data => {
+         console.log(data)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+   const [createCOMP] = useMutation(CREATE_COMBO_PRODUCT, {
+      onCompleted: data => {
+         console.log(data)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
+   const quickCreateProduct = () => {
+      const productName = search.slice(0, 1).toUpperCase() + search.slice(1)
+      console.log(productName)
+      switch (collectionState.productType) {
+         case 'inventory':
+            return createIP({
+               variables: {
+                  objects: [
+                     {
+                        name: productName,
+                     },
+                  ],
+               },
+            })
+         case 'simple':
+            return createSRP({
+               variables: {
+                  objects: [
+                     {
+                        name: productName,
+                     },
+                  ],
+               },
+            })
+         case 'customizable':
+            return createCUSP({
+               variables: {
+                  objects: [
+                     {
+                        name: productName,
+                     },
+                  ],
+               },
+            })
+         case 'combo':
+            return createCOMP({
+               variables: {
+                  objects: [
+                     {
+                        name: productName,
+                     },
+                  ],
+               },
+            })
+         default:
+            console.error('No product type matched!')
       }
-   }, [])
+   }
 
    return (
       <>
@@ -254,7 +281,10 @@ const ProductsTunnel = ({ closeTunnel }) => {
                            </TagGroup>
                         )}
                         <ListHeader type="MSL1" label="Products" />
-                        <ListOptions>
+                        <ListOptions
+                           search={search}
+                           handleOnCreate={quickCreateProduct}
+                        >
                            {list
                               .filter(option =>
                                  option.title.toLowerCase().includes(search)
