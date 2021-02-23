@@ -1,7 +1,16 @@
 import React from 'react'
+import _ from 'lodash'
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import { TunnelHeader, Tunnel, Tunnels, Dropdown, Form } from '@dailykit/ui'
+import {
+   TunnelHeader,
+   Tunnel,
+   Tunnels,
+   Dropdown,
+   Form,
+   Flex,
+   Spacer,
+} from '@dailykit/ui'
 // import { GET_FILES, LINK_CSS_FILES } from '../../../graphql'
 import { TunnelBody } from './style'
 import BrandContext from '../../../../../context/Brand'
@@ -16,20 +25,74 @@ export default function PagePreviewTunnel({
 }) {
    const [context, setContext] = React.useContext(BrandContext)
    const [configJson, setConfigJson] = React.useState({})
-
+   const uiArray = []
+   console.log(configJson)
    const onConfigChange = e => {
-      console.log(e.target.value)
+      console.log(`${e.target.name}.value = `, e.target.value)
+      const updatedValue = _.update(
+         configJson,
+         `${e.target.name}.value`,
+         () => {
+            return e.target.value
+         }
+      )
+      setConfigJson(updatedValue)
    }
 
-   const getConfigUi = () => {
-      console.log('after setting config', configJson)
-      // const parsedConfig = JSON.parse(configJson)
-      // const configArray = Object.keys(parsedConfig).map(key => {
-      //    return {
-      //       key: parsedConfig[key],
-      //    }
-      // })
-      // console.log(configArray)
+   const getHeaderUi = title => {
+      return <h1 style={{ marginLeft: '4px' }}>{title.toUpperCase()}</h1>
+   }
+
+   const getConfigUi = key => {
+      const field = _.get(configJson, key)
+      let configUi
+      if (field.dataType === 'boolean' && field.userInsertType === 'toggle') {
+         configUi = (
+            <Toggle
+               fieldDetail={field}
+               path={key}
+               onConfigChange={onConfigChange}
+            />
+         )
+      } else if (
+         field.dataType === 'color' &&
+         field.userInsertType === 'colorPicker'
+      ) {
+         configUi = (
+            <ColorPicker
+               fieldDetail={field}
+               path={key}
+               onConfigChange={onConfigChange}
+            />
+         )
+      } else if (
+         field.dataType === 'string' &&
+         field.userInsertType === 'string'
+      ) {
+         configUi = (
+            <Text
+               fieldDetail={field}
+               path={key}
+               onConfigChange={onConfigChange}
+            />
+         )
+      }
+      return configUi
+   }
+
+   const showConfigUi = (configData, rootKey) => {
+      _.forOwn(configData, (value, key) => {
+         const isFieldObject = _.has(value, 'value')
+         if (isFieldObject) {
+            const updatedRootkey = rootKey ? `${rootKey}.${key}` : key
+            uiArray.push(getConfigUi(updatedRootkey))
+         } else {
+            uiArray.push(getHeaderUi(key))
+            const updatedRootkey = rootKey ? `${rootKey}.${key}` : key
+            showConfigUi(value, updatedRootkey)
+         }
+      })
+      return uiArray
    }
 
    React.useEffect(() => {
@@ -40,9 +103,8 @@ export default function PagePreviewTunnel({
                .replace('ejs', 'json')
             const response = await getFile(filePath)
             if (response.status === 200) {
-               const configData = JSON.stringify(response.data)
-               console.log(configData)
-               setConfigJson('before setting', configData)
+               const configData = response.data
+               setConfigJson(configData)
             }
          })
       }
@@ -56,7 +118,7 @@ export default function PagePreviewTunnel({
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="full">
                <TunnelHeader
-                  title="Preview Page"
+                  title="Config Details"
                   close={() => closeTunnel(1)}
                   right={{
                      title: 'Save',
@@ -64,8 +126,17 @@ export default function PagePreviewTunnel({
                   }}
                />
                <TunnelBody>
-                  <h1>hello</h1>
-                  {getConfigUi()}
+                  <div>
+                     {Object.keys(configJson).length > 0 &&
+                        showConfigUi(configJson, '')?.map(config => {
+                           return (
+                              <>
+                                 {config}
+                                 <Spacer size="16px" />
+                              </>
+                           )
+                        })}
+                  </div>
                </TunnelBody>
             </Tunnel>
          </Tunnels>
@@ -73,43 +144,54 @@ export default function PagePreviewTunnel({
    )
 }
 
-const ColorPicker = ({ label, defaultValue, onConfigChange }) => {
-   return (
-      <Form.Group>
-         <Form.Label htmlfor="color">{label.toUpperCase()}</Form.Label>
-         <input
-            type="color"
-            id="favcolor"
-            name="favcolor"
-            value={defaultValue || '#555b63'}
-            onChange={onConfigChange}
-         />
-      </Form.Group>
-   )
-}
+const ColorPicker = ({ fieldDetail, onConfigChange }) => (
+   <Flex
+      container
+      justifyContent="space-between"
+      alignItems="center"
+      margin="0 0 0 4px"
+   >
+      <Form.Label htmlfor="color">{fieldDetail.label.toUpperCase()}</Form.Label>
+      <input
+         type="color"
+         id="favcolor"
+         name="favcolor"
+         value={fieldDetail.default || '#555b63'}
+         onChange={onConfigChange}
+      />
+   </Flex>
+)
 
-const Toggle = ({ label, defaultValue, onConfigChange }) => {
-   return (
-      <Form.Group>
-         <Form.Label htmlfor="toggle">{label.toUpperCase()}</Form.Label>
-         <Form.Toggle
-            name="toggle"
-            onChange={onConfigChange}
-            value={defaultValue || false}
-         />
-      </Form.Group>
-   )
-}
+const Toggle = ({ fieldDetail, onConfigChange }) => (
+   <Flex
+      container
+      justifyContent="space-between"
+      alignItems="center"
+      margin="0 0 0 4px"
+   >
+      <Form.Label htmlfor="toggle">
+         {fieldDetail.label.toUpperCase()}
+      </Form.Label>
+      <Form.Toggle
+         name="toggle"
+         onChange={onConfigChange}
+         value={fieldDetail.default || false}
+      />
+   </Flex>
+)
 
-const Text = ({ label, defaultValue, onConfigChange }) => {
-   return (
-      <Form.Group>
-         <Form.Label htmlfor="text">{label.toUpperCase()}</Form.Label>
-         <Form.Text
-            name="toggle"
-            onChange={onConfigChange}
-            value={defaultValue || false}
-         />
-      </Form.Group>
-   )
-}
+const Text = ({ fieldDetail, onConfigChange }) => (
+   <Flex
+      container
+      justifyContent="space-between"
+      alignItems="center"
+      margin="0 0 0 4px"
+   >
+      <Form.Label htmlfor="text">{fieldDetail.label.toUpperCase()}</Form.Label>
+      <Form.Text
+         name="toggle"
+         onChange={onConfigChange}
+         value={fieldDetail.default || false}
+      />
+   </Flex>
+)
