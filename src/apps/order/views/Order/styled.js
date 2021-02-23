@@ -1,3 +1,4 @@
+import { Flex } from '@dailykit/ui'
 import styled, { css } from 'styled-components'
 
 const selectBg = (isPacked, isAssembled) => {
@@ -186,5 +187,11 @@ export const Legend = styled.div`
             background: #79df54;
          }
       }
+   }
+`
+export const ResponsiveFlex = styled(Flex)`
+   @media only screen and (max-width: 767px) {
+      flex-direction: column;
+      align-items: flex-start;
    }
 `

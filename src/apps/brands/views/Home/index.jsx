@@ -2,9 +2,9 @@ import React from 'react'
 import { DashboardTile } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { useTabs } from '../../context'
 import { BRANDS } from '../../graphql'
 import { StyledCardList, StyledHome } from './styled'
+import { useTabs } from '../../../../shared/providers'
 
 export const Home = () => {
    const { addTab } = useTabs()

@@ -1,12 +1,12 @@
 import React, { useContext } from 'react'
 import { Tunnels, Tunnel, TunnelHeader, Text } from '@dailykit/ui'
 import { useQuery } from '@apollo/react-hooks'
-import { useTabs } from '../../../../context'
+import { toast } from 'react-toastify'
 import { STATUS } from '../../../../graphql'
 import { TunnelHeaderContainer, StyledDiv } from './styled'
 import { logger } from '../../../../../../shared/utils'
 import { Tooltip, InlineLoader } from '../../../../../../shared/components'
-import { toast } from 'react-toastify'
+import { useTabs } from '../../../../../../shared/providers'
 import BrandContext from '../../../../context/Brand'
 
 const OrderStatus = ({ tunnels, closeTunnel }) => {

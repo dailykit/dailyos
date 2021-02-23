@@ -1,6 +1,7 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import {
    Text,
    Form,
@@ -13,16 +14,14 @@ import {
    useTunnel,
    TunnelHeader,
 } from '@dailykit/ui'
-import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import validator from '../../validator'
 import { BRANDS } from '../../../graphql'
-import { useTabs } from '../../../context'
 import tableOptions from '../../../tableOption'
+import { logger } from '../../../../../shared/utils'
 import { StyledWrapper, StyledHeader } from '../styled'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { InlineLoader, Flex, Tooltip } from '../../../../../shared/components'
-import { useTooltip } from '../../../../../shared/providers'
-import { logger } from '../../../../../shared/utils'
+import { useTooltip, useTabs } from '../../../../../shared/providers'
 
 export const Brands = () => {
    const { tooltip } = useTooltip()

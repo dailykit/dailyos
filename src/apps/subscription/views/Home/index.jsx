@@ -1,9 +1,9 @@
 import React from 'react'
 import { DashboardTile, Text, Flex } from '@dailykit/ui'
 
-import { useTabs } from '../../context'
 import { StyledHome, StyledCardList } from './styled'
 import { Tooltip } from '../../../../shared/components'
+import { useTabs } from '../../../../shared/providers'
 
 export const Home = () => {
    const { addTab } = useTabs()

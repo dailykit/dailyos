@@ -7,7 +7,7 @@ import { v4 as uuid } from 'uuid'
 import { logger } from '../../../../../shared/utils'
 import { TunnelContainer } from '../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
-import { useTabs } from '../../../context'
+import { useTabs } from '../../../../../shared/providers'
 import {
    CREATE_BULK_WORK_ORDER,
    CREATE_SACHET_WORK_ORDER,

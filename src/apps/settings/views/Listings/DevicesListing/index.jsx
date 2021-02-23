@@ -20,7 +20,6 @@ import {
    useTunnel,
    TunnelHeader,
    Spacer,
-   Input,
    List,
    useSingleList,
    ListItem,
@@ -30,12 +29,11 @@ import {
    Filler,
 } from '@dailykit/ui'
 
-import { useTabs } from '../../../context'
 import { logger } from '../../../../../shared/utils'
 import { DEVICES, PRINT_JOB } from '../../../graphql'
+import { useTabs } from '../../../../../shared/providers'
 import { PrinterIcon } from '../../../../../shared/assets/icons'
 import { InlineLoader, Tooltip } from '../../../../../shared/components'
-import { ResponsiveFlex } from '../styled'
 
 const DevicesListing = () => {
    const { tab, addTab } = useTabs()
@@ -69,7 +67,7 @@ const DevicesListing = () => {
    }, [tab, addTab])
 
    return (
-      <ResponsiveFlex maxWidth="1280px" margin="0 auto">
+      <Flex margin="0 auto" width="calc(100% - 32px)" maxWidth="1280px">
          <Flex
             container
             as="header"
@@ -250,7 +248,7 @@ const DevicesListing = () => {
                <PrintTunnel closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
-      </ResponsiveFlex>
+      </Flex>
    )
 }
 

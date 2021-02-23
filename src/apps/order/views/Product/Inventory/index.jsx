@@ -6,7 +6,7 @@ import { Filler, Flex, Spacer } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 
 import { QUERIES } from '../../../graphql'
-import { useOrder, useTabs } from '../../../context'
+import { useOrder } from '../../../context'
 import { logger } from '../../../../../shared/utils'
 import {
    Tooltip,
@@ -15,6 +15,7 @@ import {
 } from '../../../../../shared/components'
 import { SachetItem } from '../../Order/sections'
 import { List, Label, Labels, Wrapper } from './styled'
+import { useTabs } from '../../../../../shared/providers'
 
 export const InventoryProduct = () => {
    const params = useParams()
@@ -41,10 +42,7 @@ export const InventoryProduct = () => {
 
    React.useEffect(() => {
       if (!loading && !tab) {
-         addTab(
-            inventoryProduct?.name,
-            `/apps/order/planned/inventory/${params.id}`
-         )
+         addTab(inventoryProduct?.name, `/order/planned/inventory/${params.id}`)
       }
    }, [tab, loading, addTab, inventoryProduct, params.id])
 

@@ -13,7 +13,6 @@ import {
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { useTabs } from '../../../context'
 import {
    StyledWrapper,
    StyledComp,
@@ -36,10 +35,11 @@ import {
 } from '../../../../../shared/components'
 import moment from 'moment'
 import { CloseIcon, TickIcon } from '../../../../../shared/assets/icons'
+import { useTabs } from '../../../../../shared/providers'
 import CouponContext from '../../../context/Coupon/CouponForm'
 
 const CouponForm = () => {
-   const { addTab, tab, setTitle: setTabTitle } = useTabs()
+   const { addTab, tab, setTabTitle } = useTabs()
    const { id: couponId } = useParams()
    const [codeTitle, setCodeTitle] = useState({
       value: '',

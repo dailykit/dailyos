@@ -20,7 +20,7 @@ import {
    useTunnel,
 } from '@dailykit/ui'
 import { ItemInfo, StyledTable } from './styled'
-import { useTabs } from '../../../../../../context'
+import { useTabs } from '../../../../../../../../shared/providers'
 import { DragNDrop, Tooltip } from '../../../../../../../../shared/components'
 import { DeleteIcon, LinkIcon } from '../../../../../../assets/icons'
 import {

@@ -1,5 +1,4 @@
 import React from 'react'
-import _ from 'lodash'
 import { toast } from 'react-toastify'
 import { Text, Flex } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
@@ -7,11 +6,9 @@ import { ReactTabulator } from '@dailykit/react-tabulator'
 
 import { ROLES } from '../../../graphql'
 import tableOptions from '../tableOption'
-import { useTabs } from '../../../context'
 import { logger } from '../../../../../shared/utils'
-import { useTooltip } from '../../../../../shared/providers'
+import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { InlineLoader, Tooltip } from '../../../../../shared/components'
-import { ResponsiveFlex } from '../styled'
 
 const RolesListing = () => {
    const tableRef = React.useRef()
@@ -66,7 +63,7 @@ const RolesListing = () => {
    ]
 
    return (
-      <ResponsiveFlex margin="0 auto" maxWidth="1280px">
+      <Flex margin="0 auto" width="calc(100% - 32px)" maxWidth="1280px">
          <Flex
             container
             as="header"
@@ -92,7 +89,7 @@ const RolesListing = () => {
                }}
             />
          )}
-      </ResponsiveFlex>
+      </Flex>
    )
 }
 

@@ -7,7 +7,7 @@ import { MenuProvider } from './state'
 import DateSection from './DateSection'
 import PlansSection from './PlansSection'
 import ProductsSection from './ProductsSection'
-import { useTabs } from '../../../context'
+import { useTabs } from '../../../../../shared/providers'
 
 export const Menu = () => {
    const { tab, addTab } = useTabs()

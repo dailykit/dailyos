@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components'
 import { Tab, Tabs, TabList, TabPanel, TabPanels } from '@reach/tabs'
+import { Flex } from '@dailykit/ui'
 
 export const Styles = {
    Accordian: styled.div(
@@ -40,13 +41,16 @@ export const Styles = {
       () => css`
          display: grid;
          grid-row-gap: 14px;
-         grid-template-rows: auto 1fr;
+         grid-template-rows: auto;
       `
    ),
    Tabs: styled(Tabs)(
       () => css`
          display: grid;
          grid-template-columns: 180px 1fr;
+         @media only screen and (max-width: 1439px) {
+            grid-template-columns: auto;
+         }
       `
    ),
    TabList: styled(TabList)(
@@ -56,6 +60,9 @@ export const Styles = {
          align-items: flex-start;
          [data-selected] {
             background: #ebebeb;
+         }
+         @media only screen and (max-width: 1439px) {
+            flex-direction: row;
          }
       `
    ),
@@ -91,7 +98,6 @@ export const StyledCount = styled.span`
 `
 
 export const StyledProductItem = styled.div`
-   height: 40px;
    display: grid;
    grid-gap: 24px;
    padding: 0 12px;
@@ -102,6 +108,23 @@ export const StyledProductItem = styled.div`
    > div {
       display: flex;
       align-items: center;
+   }
+   @media only screen and (max-width: 1439px) {
+      grid-template-areas:
+         'title title'
+         'left right';
+      grid-template-columns: auto;
+      grid-template-rows: 30px 30px;
+      grid-gap: 0px;
+      > div:nth-of-type(1) {
+         grid-area: title;
+      }
+      > div:nth-of-type(2) {
+         grid-area: left;
+      }
+      > span {
+         grid-area: right;
+      }
    }
 `
 
@@ -178,4 +201,21 @@ export const StyledProductTypeTitle = styled.h4`
    font-weight: 400;
    margin: 12px 0 6px 12px;
    text-transform: uppercase;
+`
+export const StyledText = styled(Text)`
+   @media only screen and (max-width: 1439px) {
+      display: none;
+   }
+`
+export const ResponsiveFlex = styled(Flex)`
+   @media only screen and (min-width: 1024px) {
+      flex-direction: column;
+      align-items: flex-start;
+   }
+`
+export const HeaderFlex = styled(Flex)`
+   @media only screen and (max-width: 1439px) {
+      flex-direction: column;
+      align-items: flex-start;
+   }
 `

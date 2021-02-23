@@ -2,17 +2,11 @@ import React from 'react'
 import { toast } from 'react-toastify'
 import usePortal from 'react-useportal'
 import { useMutation } from '@apollo/react-hooks'
-import {
-   Flex,
-   Text,
-   Spacer,
-   TextButton,
-   Popup,
-   ButtonGroup,
-} from '@dailykit/ui'
+import { Flex, TextButton, Popup, ButtonGroup } from '@dailykit/ui'
 
 import { MUTATIONS } from '../../../graphql'
 import { logger } from '../../../../../shared/utils'
+import { ResponsiveFlex, StyledText } from './styled'
 
 export const Actions = ({ order }) => {
    const { openPortal, closePortal, isOpen, Portal } = usePortal({
@@ -35,12 +29,12 @@ export const Actions = ({ order }) => {
             borderLeft: '1px solid #ececec',
          }}
       >
-         <Text as="h3">Actions</Text>
-         <Spacer size="16px" />
-         <Flex>
+         <StyledText as="h3">Actions</StyledText>
+         <ResponsiveFlex container>
             <TextButton
                type="solid"
                disabled={order.isAccepted}
+               size="sm"
                onClick={() =>
                   updateOrder({
                      variables: {
@@ -55,11 +49,11 @@ export const Actions = ({ order }) => {
             >
                {order.isAccepted ? 'Accepted' : 'Accept'}
             </TextButton>
-            <Spacer size="14px" />
-            <TextButton type="ghost" onClick={openPortal}>
+            <TextButton type="ghost" onClick={openPortal} size="sm">
                {order.isRejected ? 'Un Reject' : 'Reject'}
             </TextButton>
-         </Flex>
+         </ResponsiveFlex>
+
          <Portal>
             <Popup show={isOpen}>
                <Popup.Text type="danger">

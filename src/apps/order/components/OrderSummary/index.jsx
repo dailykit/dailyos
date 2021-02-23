@@ -10,20 +10,22 @@ import {
    ClearIcon,
    IconButton,
    TextButton,
+   CloseIcon,
 } from '@dailykit/ui'
 
 import { useOrder } from '../../context'
 import { MetricItem } from '../MetricItem'
 import { QUERIES } from '../../graphql'
-import { Wrapper, FilterSection } from './styled'
+import { Wrapper, FilterSection, StyledIconButton } from './styled'
 import { logger, currencyFmt } from '../../../../shared/utils'
 import { InlineLoader, ErrorState } from '../../../../shared/components'
 
 const address = 'apps.order.components.ordersummary.'
 
-export const OrderSummary = () => {
+export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
    const { t } = useTranslation()
    const { state, dispatch } = useOrder()
+
    const { data: { orders = {} } = {} } = useSubscription(
       QUERIES.ORDERS.AGGREGATE.TOTAL
    )
@@ -35,6 +37,7 @@ export const OrderSummary = () => {
       error,
       data: { orderByStatus = [] } = {},
    } = useSubscription(QUERIES.ORDERS.AGGREGATE.BY_STATUS)
+
    const { data: { station = {} } = {} } = useQuery(QUERIES.STATIONS.ONE, {
       variables: {
          id:
@@ -43,7 +46,6 @@ export const OrderSummary = () => {
                ?.assemblyStationId?._eq,
       },
    })
-
    const clearFilters = () => {
       dispatch({ type: 'CLEAR_READY_BY_FILTER' })
       dispatch({ type: 'CLEAR_FULFILLMENT_FILTER' })
@@ -61,7 +63,16 @@ export const OrderSummary = () => {
    return (
       <Wrapper>
          <Spacer size="8px" />
-         <Text as="h4">{t(address.concat('quick info'))}</Text>
+         <Flex container alignItems="center" justifyContent="space-between">
+            <Text as="h4">{t(address.concat('quick info'))}</Text>
+            <StyledIconButton
+               type="outline"
+               size="sm"
+               onClick={() => closeOrderSummaryTunnel(1)}
+            >
+               <CloseIcon />
+            </StyledIconButton>
+         </Flex>
          <Spacer size="8px" />
          <MetricItem
             title="ALL"
@@ -69,6 +80,7 @@ export const OrderSummary = () => {
             count={orders?.aggregate?.count}
             amount={orders?.aggregate?.sum?.amountPaid}
             average={orders?.aggregate?.avg?.amountPaid}
+            closeOrderSummaryTunnel={closeOrderSummaryTunnel}
          />
          <ul>
             {orderByStatus.map(({ value, orders }) => (
@@ -79,6 +91,7 @@ export const OrderSummary = () => {
                   title={value.split('_').join(' ')}
                   amount={orders.aggregate.sum.amount || 0}
                   average={orders.aggregate.avg.amountPaid || 0}
+                  closeOrderSummaryTunnel={closeOrderSummaryTunnel}
                />
             ))}
          </ul>
@@ -88,6 +101,7 @@ export const OrderSummary = () => {
             count={cancelledOrders?.aggregate?.count}
             amount={cancelledOrders?.aggregate?.sum?.amountPaid}
             average={cancelledOrders?.aggregate?.avg?.amountPaid}
+            closeOrderSummaryTunnel={closeOrderSummaryTunnel}
          />
          <Flex container alignItems="center" justifyContent="space-between">
             <Text as="h4">Advanced Filters</Text>

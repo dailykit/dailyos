@@ -1,5 +1,4 @@
 import React from 'react'
-import { isEmpty } from 'lodash'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { IconButton, Loader } from '@dailykit/ui'
@@ -8,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
-import { useTabs } from '../../../context'
+import { useTabs } from '../../../../../shared/providers'
 import {
    CREATE_SAFETY_CHECK,
    DELETE_SAFETY_CHECK,

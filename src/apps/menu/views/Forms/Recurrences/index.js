@@ -2,7 +2,7 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 
 import Main from './Main'
-import { useTabs } from '../../../context'
+import { useTabs } from '../../../../../shared/providers'
 
 const RecurrencesForm = () => {
    const params = useParams()
