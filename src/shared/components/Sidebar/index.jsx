@@ -1,12 +1,14 @@
 import React from 'react'
 import gql from 'graphql-tag'
-import { isEmpty } from 'lodash'
-import { Flex, Avatar } from '@dailykit/ui'
+import { Flex, IconButton } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
-
 import Styles from './styled'
-import { useAuth } from '../../providers/auth'
 import { InlineLoader } from '../InlineLoader'
+import { RoundedMenuIcon, ToggleArrow } from '../../assets/icons'
+import { PlusIcon } from '../../assets/icons'
+import { RoundedCloseIcon, RectangularIcon } from '../../assets/icons'
+import { useLocation } from 'react-router-dom'
+import CreateNewItemPanel from './CreateNewItemPanel'
 
 const APPS = gql`
    subscription apps {
@@ -19,95 +21,96 @@ const APPS = gql`
    }
 `
 
-const USERS = gql`
-   subscription users($where: settings_user_bool_exp!) {
-      users: settings_user(where: $where) {
-         id
-         email
-         firstName
-         lastName
-      }
-   }
-`
-
-const fullName = (f, l) => {
-   let name = ''
-   if (f) {
-      name += f
-   }
-   if (l) {
-      name += ` ${l}`
-   }
-   return name
-}
-
-export const Sidebar = ({ links }) => {
-   const { user, logout } = useAuth()
-   const [tab, setTab] = React.useState('PAGES')
+export const Sidebar = ({ links, toggle, open }) => {
+   const { pathname } = useLocation()
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
-   const { data: { users = [] } = {} } = useSubscription(USERS, {
-      skip: !user?.email,
-      variables: {
-         where: {
-            email: { _eq: user?.email },
-         },
-      },
-   })
+   const [isCreateNewOpen, setIsCreateNewOpen] = React.useState(false)
 
    return (
-      <Styles.Sidebar>
-         {!isEmpty(users) && (
-            <Flex as="header" padding="12px">
-               {users[0]?.firstName && (
-                  <Avatar
-                     url=""
-                     withName
-                     title={fullName(users[0]?.firstName, users[0]?.lastName)}
-                  />
-               )}
-            </Flex>
-         )}
-         <Styles.Tabs>
-            <Styles.Tab
-               onClick={() => setTab('APPS')}
-               className={tab === 'APPS' ? 'active' : ''}
-            >
-               Apps
-            </Styles.Tab>
-            <Styles.Tab
-               onClick={() => setTab('PAGES')}
-               className={tab === 'PAGES' ? 'active' : ''}
-            >
-               Pages
-            </Styles.Tab>
-         </Styles.Tabs>
-         {tab === 'PAGES' ? (
-            <Styles.Pages>
-               {links.map(({ id, title, onClick }) => (
-                  <Styles.PageItem key={id} onClick={onClick}>
-                     {title}
-                  </Styles.PageItem>
-               ))}
-            </Styles.Pages>
-         ) : (
-            <Styles.Apps>
+      <>
+         {open ? (
+            <Styles.Sidebar>
+               <Flex
+                  flexDirection="column"
+                  style={{ borderBottom: '1px solid #EBF1F4' }}
+               >
+                  <Flex
+                     container
+                     alignItems="center"
+                     justifyContent="space-between"
+                     padding={
+                        isCreateNewOpen
+                           ? '18px 12px 0px 12px'
+                           : '18px 12px 16px 12px'
+                     }
+                  >
+                     <Flex
+                        container
+                        alignItems="center"
+                        onClick={() => setIsCreateNewOpen(!isCreateNewOpen)}
+                     >
+                        <IconButton type="ghost" size="sm">
+                           <ToggleArrow
+                              size="8px"
+                              color="#367BF5"
+                              down={isCreateNewOpen}
+                           />
+                        </IconButton>
+                        <IconButton type="ghost" size="sm">
+                           <PlusIcon />
+                        </IconButton>
+                        <Styles.Heading>Create new</Styles.Heading>
+                     </Flex>
+                     <IconButton
+                        type="ghost"
+                        size="sm"
+                        onClick={() => toggle(false)}
+                     >
+                        <RoundedCloseIcon />
+                     </IconButton>
+                  </Flex>
+                  {isCreateNewOpen && <CreateNewItemPanel />}
+               </Flex>
+
                {loading ? (
                   <InlineLoader />
                ) : (
                   apps.map(app => (
                      <Styles.AppItem key={app.id} to={app.route}>
-                        {app.icon && <img src={app.icon} alt={app.title} />}
-                        {app.title}
+                        <Flex container alignItems="center">
+                           <IconButton type="ghost" size="sm">
+                              <ToggleArrow
+                                 down={pathname === app.route && links.length}
+                              />
+                           </IconButton>
+                           <RectangularIcon />
+                           <Styles.AppTitle>{app.title}</Styles.AppTitle>
+                        </Flex>
+                        <Styles.Pages>
+                           {pathname === app.route &&
+                              links?.map(({ id, title, onClick }) => (
+                                 <Styles.PageItem onClick={onClick} key={id}>
+                                    <RectangularIcon
+                                       size="10px"
+                                       color="#202020"
+                                    />
+                                    <span>{title}</span>
+                                 </Styles.PageItem>
+                              ))}
+                        </Styles.Pages>
                      </Styles.AppItem>
                   ))
                )}
-            </Styles.Apps>
+            </Styles.Sidebar>
+         ) : (
+            <Styles.Menu
+               title="Menu"
+               type="button"
+               onClick={() => toggle(open => !open)}
+            >
+               <RoundedMenuIcon />
+            </Styles.Menu>
          )}
-         <Styles.Footer>
-            <button type="button" onClick={logout}>
-               Sign Out
-            </button>
-         </Styles.Footer>
-      </Styles.Sidebar>
+      </>
    )
 }

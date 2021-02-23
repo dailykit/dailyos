@@ -3,85 +3,93 @@ import { Link } from 'react-router-dom'
 
 const Styles = {
    Sidebar: styled.aside`
-      color: #fff;
+      color: #202020;
       display: flex;
       flex-direction: column;
-      background: rgb(0, 60, 73);
+      margin-top: 4px;
+      height: calc(100vh - 4px);
+      border-radius: 0px 13px 13px 0px;
+      background: #fff;
+      box-shadow: 5px -5px 10px rgba(219, 219, 219, 0.2),
+         -5px 5px 10px rgba(219, 219, 219, 0.2),
+         5px 5px 10px rgba(255, 255, 255, 0.9),
+         -5px -5px 13px rgba(219, 219, 219, 0.9),
+         inset -1px -1px 2px rgba(255, 255, 255, 0.3),
+         inset 1px 1px 2px rgba(219, 219, 219, 0.5);
+      overflow-y: auto;
+      ::-webkit-scrollbar {
+         width: 6px;
+      }
+      ::-webkit-scrollbar-thumb {
+         background-color: rgba(196, 196, 196, 0.5);
+      }
+      ::-webkit-scrollbar-button {
+         height: 50px;
+      }
+   `,
+   AppTitle: styled.h4`
+      font-style: normal;
+      font-weight: 500;
+      font-size: 16px;
+      color: #202020;
+      letter-spacing: 0.44px;
+      line-height: 24px;
+      margin-left: 16px;
    `,
    Heading: styled.h3`
-      color: #76acc7;
       font-size: 16px;
-      font-weight: 500;
-      padding: 18px 12px 8px 12px;
-      letter-spacing: 0.4px;
+      font-weight: 700;
       text-transform: uppercase;
+      color: #367bf5;
    `,
-   Pages: styled.ul``,
+   Pages: styled.ul`
+      > :first-child {
+         margin: 0px 0px 10px 68px;
+      }
+   `,
    PageItem: styled.li`
-      height: 40px;
       display: flex;
-      cursor: pointer;
-      padding: 0 12px;
       align-items: center;
-      :hover {
-         background-color: rgb(1, 67, 82);
+      margin: 10px 0px 0px 68px;
+      color: #202020;
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 14px;
+      cursor: pointer;
+      > span {
+         display: block;
+         margin-left: 6px;
       }
    `,
    Apps: styled.ul``,
+
    AppItem: styled(Link)`
-      height: 40px;
-      display: flex;
-      cursor: pointer;
-      padding: 0 12px;
-      align-items: center;
-      color: #ffffff;
+      margin: 10px 0px 10px 12px;
       text-decoration: none;
-      :hover {
-         background-color: rgb(1, 67, 82);
-      }
-      img {
-         width: 28px;
-         margin-right: 14px;
-      }
    `,
-   Tabs: styled.ul`
-      height: 40px;
+   CreateNewItems: styled.div`
       display: flex;
-      align-items: center;
-      justify-content: space-around;
+      flex-direction: column;
+      padding-bottom: 18px;
    `,
-   Tab: styled.li`
-      width: 100%;
-      height: 100%;
-      display: flex;
+   Menu: styled.button`
+      margin-top: 4px;
+      width: 48px;
+      height: 48px;
+      border: none;
       cursor: pointer;
-      font-size: 14px;
-      list-style: none;
-      font-weight: 400;
-      align-items: center;
-      letter-spacing: 0.5px;
-      justify-content: center;
-      color: rgb(123, 153, 167);
-      text-transform: uppercase;
-      border-bottom: 2px solid transparent;
-      &.active {
-         color: #fff;
-         border-bottom: 2px solid #fff;
+      background-color: #fff;
+      :hover,
+      :focus {
+         background: #fff;
       }
-   `,
-   Footer: styled.footer`
-      padding: 12px;
-      margin-top: auto;
-      button {
-         color: #fff;
-         width: 100%;
-         height: 40px;
-         border: none;
-         font-size: 16px;
-         margin-top: 14px;
-         border-radius: 2px;
-         background-color: rgb(245, 101, 101);
-      }
+      border-radius: 0px 24px 24px 0px;
+      box-shadow: 5px -5px 10px rgba(219, 219, 219, 0.2),
+         -5px 5px 10px rgba(219, 219, 219, 0.2),
+         5px 5px 10px rgba(255, 255, 255, 0.9),
+         -5px -5px 13px rgba(219, 219, 219, 0.9),
+         inset -1px -1px 2px rgba(255, 255, 255, 0.3),
+         inset 1px 1px 2px rgba(219, 219, 219, 0.5);
    `,
 }
 

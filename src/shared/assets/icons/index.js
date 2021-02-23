@@ -16,8 +16,14 @@ import UserIcon from './User'
 import CalendarIcon from './Calendar'
 import NewInfoIcon from './NewInfoIcon'
 import ViewIcon from './view'
+import ToggleArrow from './ToggleArrow'
+import PlusIcon from './Plus'
+import RectangularIcon from './Rectangular'
+import RoundedCloseIcon from './RoundedClose'
+import RoundedMenuIcon from './RoundedMenu'
+import HomeIcon from './Home'
+import DoubleArrowRightIcon from './DoubleArrowRight'
 import CloneIcon from './Clone'
-
 export {
    AddIcon,
    MenuIcon,
@@ -37,6 +43,13 @@ export {
    CalendarIcon,
    NewInfoIcon,
    ViewIcon,
+   ToggleArrow,
+   PlusIcon,
+   RectangularIcon,
+   RoundedCloseIcon,
+   RoundedMenuIcon,
+   HomeIcon,
+   DoubleArrowRightIcon,
    CloneIcon,
 }
 

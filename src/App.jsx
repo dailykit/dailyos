@@ -82,12 +82,12 @@ const App = () => {
    if (loading) return <Loader />
    return (
       <Layout open={open}>
-         <TabBar toggle={toggle} />
-         <Sidebar links={routes} />
+         <TabBar open={open} />
+         <Sidebar open={open} toggle={toggle} links={routes} />
          <main>
             <Switch>
                <Route path="/" exact>
-                  <AppList>
+                  <AppList open={open}>
                      {apps.map(app => (
                         <AppItem key={app.id}>
                            <Link to={app.route}>
@@ -126,7 +126,8 @@ const AppList = styled.ul`
    grid-gap: 16px;
    max-width: 1180px;
    padding-top: 16px;
-   width: calc(100vw - 40px);
+   width: ${({ open }) =>
+      open ? `calc(100vw - 300px)` : `calc(100vw - 40px)`};
    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
 `
 
@@ -160,10 +161,11 @@ const Layout = styled.div`
    display: grid;
    height: 100vh;
    overflow: hidden;
-   grid-template-rows: 40px 1fr;
-   grid-template-columns: ${({ open }) => (open ? '280px 1fr' : '1fr')};
+   grid-template-rows: 110px 1fr;
+   grid-gap: ${({ open }) => (open ? '0 28px' : '0 20px')};
+   grid-template-columns: ${({ open }) => (open ? '250px 1fr' : '48px 1fr')};
    grid-template-areas: ${({ open }) =>
-      open ? "'aside head' 'aside main'" : "'head head' 'main main'"};
+      open ? "'aside head' 'aside main'" : "'aside head' 'main main'"};
    > header {
       grid-area: head;
    }
@@ -174,5 +176,8 @@ const Layout = styled.div`
    > main {
       grid-area: main;
       overflow-y: auto;
+   }
+   @media only screen and (max-width: 767px) {
+      grid-template-columns: ${({ open }) => (open ? '100vw' : '48px 1fr')};
    }
 `
