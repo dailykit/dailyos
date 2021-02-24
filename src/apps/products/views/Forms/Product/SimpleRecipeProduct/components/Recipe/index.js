@@ -59,7 +59,7 @@ import {
 } from '../../tunnels'
 import { ItemInfo, Modifier, StyledProductOption } from './styled'
 import { TickIcon } from '../../../../../../../../shared/assets/icons'
-import { useTabs } from '../../../../../../context'
+import { useTabs } from '../../../../../../../../shared/providers'
 
 const address =
    'apps.menu.views.forms.product.simplerecipeproduct.components.recipe.'
