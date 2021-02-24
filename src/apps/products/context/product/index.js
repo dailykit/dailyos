@@ -4,6 +4,7 @@ export const ProductContext = React.createContext()
 
 export const initialState = {
    productOptionType: '',
+   optionId: null,
 }
 
 export const reducer = (state = initialState, { type, payload }) => {
@@ -12,6 +13,12 @@ export const reducer = (state = initialState, { type, payload }) => {
          return {
             ...state,
             productOptionType: payload,
+         }
+      }
+      case 'OPTION': {
+         return {
+            ...state,
+            optionId: payload,
          }
       }
       default:

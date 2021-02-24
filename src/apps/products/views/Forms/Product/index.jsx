@@ -144,7 +144,12 @@ const Product = () => {
 
       switch (type) {
          case 'products': {
-            return <ProductOptions productId={state.id} />
+            return (
+               <ProductOptions
+                  productId={state.id}
+                  options={state.productOptions || []}
+               />
+            )
          }
          default:
             return null

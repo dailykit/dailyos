@@ -40,6 +40,12 @@ export const PRODUCT = {
             basePrice
             isPopupAllowed
             isPublished
+            productOptions {
+               id
+               label
+               price
+               discount
+            }
          }
       }
    `,
@@ -51,6 +57,16 @@ export const PRODUCT_OPTION = {
          $object: products_productOption_insert_input!
       ) {
          createProductOption(object: $object) {
+            id
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation UpdateProductOption(
+         $id: Int!
+         $_set: products_productOption_set_input
+      ) {
+         updateProductOption(pk_columns: { id: $id }, _set: $_set) {
             id
          }
       }

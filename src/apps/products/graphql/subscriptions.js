@@ -669,3 +669,47 @@ export const STORE_SETTINGS = gql`
       }
    }
 `
+
+export const S_SUPPLIER_ITEMS = gql`
+   subscription SupplierItems {
+      supplierItems(where: { isArchived: { _eq: false } }) {
+         id
+         name
+         title: name
+         unitSize
+         unit
+         prices
+      }
+   }
+`
+
+export const S_SACHET_ITEMS = gql`
+   subscription {
+      sachetItems(where: { isArchived: { _eq: false } }) {
+         id
+         unitSize
+         unit
+         bulkItem {
+            id
+            processingName
+            supplierItem {
+               id
+               name
+               prices
+            }
+         }
+      }
+   }
+`
+
+export const S_SIMPLE_RECIPE_YIELDS = gql`
+   subscription {
+      simpleRecipeYields(where: { isArchived: { _eq: false } }) {
+         id
+         yield
+         simpleRecipe {
+            name
+         }
+      }
+   }
+`
