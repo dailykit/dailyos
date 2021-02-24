@@ -21,6 +21,13 @@ export const PRODUCTS = {
 }
 
 export const PRODUCT = {
+   UPDATE: gql`
+      mutation UpdateProduct($id: Int!, $_set: products_product_set_input) {
+         updateProduct(pk_columns: { id: $id }, _set: $_set) {
+            id
+         }
+      }
+   `,
    VIEW: gql`
       subscription Product($id: Int!) {
          product(id: $id) {

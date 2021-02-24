@@ -6,12 +6,12 @@ import {
    AssetUploader,
    Tooltip,
 } from '../../../../../../../../shared/components'
-import { UPDATE_SIMPLE_RECIPE_PRODUCT } from '../../../../../../graphql'
+import { PRODUCT } from '../../../../../../graphql'
 import { logger } from '../../../../../../../../shared/utils'
 import { TunnelBody } from '../styled'
 
 const AssetsTunnel = ({ state, closeTunnel }) => {
-   const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
+   const [updateProduct] = useMutation(PRODUCT.UPDATE, {
       onCompleted: () => {
          toast.success('Image added!')
          closeTunnel(1)
@@ -26,9 +26,9 @@ const AssetsTunnel = ({ state, closeTunnel }) => {
       updateProduct({
          variables: {
             id: state.id,
-            set: {
+            _set: {
                assets: {
-                  images: [image.url],
+                  images: [image],
                   videos: [],
                },
             },

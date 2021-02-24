@@ -24,6 +24,7 @@ import {
    state as initialState,
 } from '../../../../context/product/simpleProduct'
 import {
+   PRODUCT,
    S_SIMPLE_RECIPE_PRODUCT,
    UPDATE_SIMPLE_RECIPE_PRODUCT,
 } from '../../../../graphql'
@@ -61,42 +62,42 @@ export default function SimpleRecipeProduct() {
    const [state, setState] = React.useState({})
 
    // Subscription
-   const { loading, error } = useSubscription(S_SIMPLE_RECIPE_PRODUCT, {
+   const { loading, error } = useSubscription(PRODUCT.VIEW, {
       variables: {
          id: productId,
       },
       onSubscriptionData: data => {
          console.log(data.subscriptionData.data)
-         setState(data.subscriptionData.data.simpleRecipeProduct)
+         setState(data.subscriptionData.data.product)
          setTitle({
             ...title,
-            value: data.subscriptionData.data.simpleRecipeProduct.name,
+            value: data.subscriptionData.data.product.name,
          })
-         const mealKitOptions = data.subscriptionData.data.simpleRecipeProduct.simpleRecipeProductOptions.filter(
-            ({ type }) => type === 'mealKit'
-         )
-         const readyToEatOptions = data.subscriptionData.data.simpleRecipeProduct.simpleRecipeProductOptions.filter(
-            ({ type }) => type === 'readyToEat'
-         )
-         if (mealKitOptions.length) {
-            initiatePriority({
-               tablename: 'simpleRecipeProductOption',
-               schemaname: 'products',
-               data: mealKitOptions,
-            })
-         }
-         if (readyToEatOptions.length) {
-            initiatePriority({
-               tablename: 'simpleRecipeProductOption',
-               schemaname: 'products',
-               data: readyToEatOptions,
-            })
-         }
+         // const mealKitOptions = data.subscriptionData.data.simpleRecipeProduct.simpleRecipeProductOptions.filter(
+         //    ({ type }) => type === 'mealKit'
+         // )
+         // const readyToEatOptions = data.subscriptionData.data.simpleRecipeProduct.simpleRecipeProductOptions.filter(
+         //    ({ type }) => type === 'readyToEat'
+         // )
+         // if (mealKitOptions.length) {
+         //    initiatePriority({
+         //       tablename: 'simpleRecipeProductOption',
+         //       schemaname: 'products',
+         //       data: mealKitOptions,
+         //    })
+         // }
+         // if (readyToEatOptions.length) {
+         //    initiatePriority({
+         //       tablename: 'simpleRecipeProductOption',
+         //       schemaname: 'products',
+         //       data: readyToEatOptions,
+         //    })
+         // }
       },
    })
 
    // Mutation
-   const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
+   const [updateProduct] = useMutation(PRODUCT.UPDATE, {
       onCompleted: () => {
          toast.success('Updated!')
       },
@@ -119,7 +120,7 @@ export default function SimpleRecipeProduct() {
          const { data } = await updateProduct({
             variables: {
                id: state.id,
-               set: {
+               _set: {
                   name: title.value,
                },
             },
@@ -145,7 +146,7 @@ export default function SimpleRecipeProduct() {
       return updateProduct({
          variables: {
             id: state.id,
-            set: {
+            _set: {
                isPublished: val,
             },
          },
@@ -156,7 +157,7 @@ export default function SimpleRecipeProduct() {
       return updateProduct({
          variables: {
             id: state.id,
-            set: {
+            _set: {
                isPopupAllowed: val,
             },
          },
@@ -254,7 +255,7 @@ export default function SimpleRecipeProduct() {
                <Spacer size="16px" />
                <StyledRule />
                <Spacer size="16px" />
-               <Recipe state={state} />
+               {/* <Recipe state={state} /> */}
             </Flex>
          </ModifiersContext.Provider>
       </SimpleProductContext.Provider>

@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/react-hooks'
 import { Form, TunnelHeader, HelperText, Spacer } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { UPDATE_SIMPLE_RECIPE_PRODUCT } from '../../../../../../graphql'
+import { PRODUCT } from '../../../../../../graphql'
 import { TunnelBody } from '../styled'
 import { logger } from '../../../../../../../../shared/utils'
 import validator from '../../../validators'
@@ -41,29 +41,26 @@ const DescriptionTunnel = ({ state, close }) => {
    })
 
    // Mutations
-   const [updateProduct, { loading: inFlight }] = useMutation(
-      UPDATE_SIMPLE_RECIPE_PRODUCT,
-      {
-         variables: {
-            id: state.id,
-            set: {
-               tags: tags.value.trim().length
-                  ? tags.value.split(',').map(tag => tag.trim())
-                  : [],
-               description: description.value,
-               additionalText: additionalText.value,
-            },
+   const [updateProduct, { loading: inFlight }] = useMutation(PRODUCT.UPDATE, {
+      variables: {
+         id: state.id,
+         _set: {
+            tags: tags.value.trim().length
+               ? tags.value.split(',').map(tag => tag.trim())
+               : [],
+            description: description.value,
+            additionalText: additionalText.value,
          },
-         onCompleted: () => {
-            toast.success('Updated!')
-            close(1)
-         },
-         onError: error => {
-            toast.error('Something went wrong!')
-            logger(error)
-         },
-      }
-   )
+      },
+      onCompleted: () => {
+         toast.success('Updated!')
+         close(1)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
 
    // Handlers
    const save = () => {

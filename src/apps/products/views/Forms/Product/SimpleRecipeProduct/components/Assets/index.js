@@ -3,13 +3,11 @@ import { useMutation } from '@apollo/react-hooks'
 import { useTunnel, Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../../shared/utils'
-import { UPDATE_SIMPLE_RECIPE_PRODUCT } from '../../../../../../graphql'
+import { PRODUCT } from '../../../../../../graphql'
 import { Gallery } from '../../../../../../../../shared/components'
 
 const Assets = ({ state }) => {
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-
-   const [updateProduct] = useMutation(UPDATE_SIMPLE_RECIPE_PRODUCT, {
+   const [updateProduct] = useMutation(PRODUCT.UPDATE, {
       onCompleted: () => {
          toast.success('Image updated!')
       },
@@ -23,7 +21,7 @@ const Assets = ({ state }) => {
       updateProduct({
          variables: {
             id: state.id,
-            set: {
+            _set: {
                assets: {
                   images: image,
                   videos: [],
