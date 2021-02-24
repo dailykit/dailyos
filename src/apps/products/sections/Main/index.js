@@ -14,6 +14,7 @@ import {
    CustomizableProductForm,
    ComboProductForm,
    ProductsListing,
+   ProductForm,
 } from '../../views'
 import { ErrorBoundary, Flex } from '../../../../shared/components'
 import { useAccess } from '../../../../shared/providers'
@@ -72,6 +73,15 @@ const Main = () => {
                message="You do not have sufficient permission to access products listing."
             >
                <ProductsListing />
+            </AccessCheck>
+         </Route>
+
+         <Route exact path="/products/products/:id" component>
+            <AccessCheck
+               title="products"
+               message="You do not have sufficient permission to access products listing."
+            >
+               <ProductForm />
             </AccessCheck>
          </Route>
 

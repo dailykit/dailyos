@@ -2,9 +2,9 @@ import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import { useTunnel, Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { logger } from '../../../../../../../../shared/utils'
-import { PRODUCT } from '../../../../../../graphql'
-import { Gallery } from '../../../../../../../../shared/components'
+import { logger } from '../../../../../../../shared/utils'
+import { PRODUCT } from '../../../../../graphql'
+import { Gallery } from '../../../../../../../shared/components'
 
 const Assets = ({ state }) => {
    const [updateProduct] = useMutation(PRODUCT.UPDATE, {

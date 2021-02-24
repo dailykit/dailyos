@@ -44,3 +44,15 @@ export const PRODUCT = {
       }
    `,
 }
+
+export const PRODUCT_OPTION = {
+   CREATE: gql`
+      mutation CreateProductOption(
+         $object: products_productOption_insert_input!
+      ) {
+         createProductOption(object: $object) {
+            id
+         }
+      }
+   `,
+}

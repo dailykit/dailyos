@@ -66,11 +66,11 @@ const UncategorisedProducts = () => {
          headerFilter: true,
          cellClick: (e, cell) => {
             const { name, id } = cell._cell.row.data
-            addTab(name, `/products/simple-recipe-products/${id}`)
+            addTab(name, `/products/products/${id}`)
          },
          cssClass: 'colHover',
          headerTooltip: function (column) {
-            const identifier = 'simple_recipe_products_listing_name_column'
+            const identifier = 'products_listing_name_column'
             return (
                tooltip(identifier)?.description || column.getDefinition().title
             )

@@ -12,10 +12,10 @@ import {
    Text,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
-import { EditIcon } from '../../../../../../assets/icons'
+import { EditIcon } from '../../../../../assets/icons'
 import { StyledAction, StyledContainer, StyledRow } from './styled'
-import { DescriptionTunnel } from '../../../SimpleRecipeProduct/tunnels'
-import { Tooltip } from '../../../../../../../../shared/components'
+import { DescriptionTunnel } from '../../tunnels'
+import { Tooltip } from '../../../../../../../shared/components'
 
 const address =
    'apps.menu.views.forms.product.simplerecipeproduct.components.description.'

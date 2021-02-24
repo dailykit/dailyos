@@ -1,51 +1,46 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Flex, Form, Spacer, Text, Toggle } from '@dailykit/ui'
+import {
+   Flex,
+   Form,
+   HorizontalTab,
+   HorizontalTabList,
+   HorizontalTabPanel,
+   HorizontalTabPanels,
+   HorizontalTabs,
+   Spacer,
+   Text,
+} from '@dailykit/ui'
 import { isEmpty } from 'lodash'
-import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import {
    ErrorState,
    InlineLoader,
    Tooltip,
-} from '../../../../../../shared/components'
-import { logger } from '../../../../../../shared/utils'
-import { CloseIcon, TickIcon } from '../../../../assets/icons'
-import { useTabs } from '../../../../../../shared/providers'
+} from '../../../../../shared/components'
+import { useTabs } from '../../../../../shared/providers'
+import { logger } from '../../../../../shared/utils'
+import { CloseIcon, TickIcon } from '../../../assets/icons'
 import {
    ModifiersContext,
    reducers as modifiersReducers,
    state as initialModifiersState,
-} from '../../../../context/product/modifiers'
-import {
-   reducers,
-   SimpleProductContext,
-   state as initialState,
-} from '../../../../context/product/simpleProduct'
-import {
-   PRODUCT,
-   S_SIMPLE_RECIPE_PRODUCT,
-   UPDATE_SIMPLE_RECIPE_PRODUCT,
-} from '../../../../graphql'
-import { ResponsiveFlex, StyledFlex, StyledRule } from '../styled'
-import validator from '../validators'
-// import { Assets, Description, Recipe } from './components'
-import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
+} from '../../../context/product/modifiers'
 
-const address = 'apps.menu.views.forms.product.simplerecipeproduct.'
+import { PRODUCT } from '../../../graphql'
+import { Assets, Description } from './components'
+import { ResponsiveFlex, StyledFlex, StyledRule } from './styled'
+import validator from './validators'
 
-export default function SimpleRecipeProduct() {
-   const { t } = useTranslation()
-   const { initiatePriority } = useDnd()
+import ProductOptions from './ProductOptions'
+import { ProductProvider } from '../../../context/product'
 
+const Product = () => {
    const { id: productId } = useParams()
+   const { pathname } = useLocation()
 
    const { setTabTitle, tab, addTab } = useTabs()
-   const [productState, productDispatch] = React.useReducer(
-      reducers,
-      initialState
-   )
    const [modifiersState, modifiersDispatch] = React.useReducer(
       modifiersReducers,
       initialModifiersState
@@ -73,26 +68,6 @@ export default function SimpleRecipeProduct() {
             ...title,
             value: data.subscriptionData.data.product.name,
          })
-         // const mealKitOptions = data.subscriptionData.data.simpleRecipeProduct.simpleRecipeProductOptions.filter(
-         //    ({ type }) => type === 'mealKit'
-         // )
-         // const readyToEatOptions = data.subscriptionData.data.simpleRecipeProduct.simpleRecipeProductOptions.filter(
-         //    ({ type }) => type === 'readyToEat'
-         // )
-         // if (mealKitOptions.length) {
-         //    initiatePriority({
-         //       tablename: 'simpleRecipeProductOption',
-         //       schemaname: 'products',
-         //       data: mealKitOptions,
-         //    })
-         // }
-         // if (readyToEatOptions.length) {
-         //    initiatePriority({
-         //       tablename: 'simpleRecipeProductOption',
-         //       schemaname: 'products',
-         //       data: readyToEatOptions,
-         //    })
-         // }
       },
    })
 
@@ -109,7 +84,7 @@ export default function SimpleRecipeProduct() {
 
    React.useEffect(() => {
       if (!tab && !loading && !isEmpty(title.value)) {
-         addTab(title.value, `/products/simple-recipe-products/${productId}`)
+         addTab(title.value, `/products/products/${productId}`)
       }
    }, [tab, addTab, loading, title.value])
 
@@ -164,15 +139,27 @@ export default function SimpleRecipeProduct() {
       })
    }
 
+   const renderOptions = () => {
+      const [, type] = pathname.split('/')
+
+      switch (type) {
+         case 'products': {
+            return <ProductOptions productId={state.id} />
+         }
+         default:
+            return null
+      }
+   }
+
    if (loading) return <InlineLoader />
    if (!loading && error) {
-      toast.error('Failed to fetch Simple Recipe Product!')
+      toast.error('Failed to fetch Product!')
       logger(error)
       return <ErrorState />
    }
 
    return (
-      <SimpleProductContext.Provider value={{ productState, productDispatch }}>
+      <ProductProvider>
          <ModifiersContext.Provider
             value={{ modifiersState, modifiersDispatch }}
          >
@@ -241,23 +228,27 @@ export default function SimpleRecipeProduct() {
                   </Form.Toggle>
                </Flex>
             </ResponsiveFlex>
-            <Flex
-               as="main"
-               padding="32px"
-               minHeight="calc(100vh - 130px)"
-               style={{ background: '#f3f3f3' }}
-            >
-               <StyledFlex as="section" container>
-                  {/* <Description state={state} />
-                  <Spacer xAxis size="16px" />
-                  <Assets state={state} /> */}
-               </StyledFlex>
-               <Spacer size="16px" />
-               <StyledRule />
-               <Spacer size="16px" />
-               {/* <Recipe state={state} /> */}
+            <Flex as="main" padding="8px 32px" minHeight="calc(100vh - 130px)">
+               <HorizontalTabs>
+                  <HorizontalTabList>
+                     <HorizontalTab>Basic Details</HorizontalTab>
+                     <HorizontalTab>Options</HorizontalTab>
+                  </HorizontalTabList>
+                  <HorizontalTabPanels>
+                     <HorizontalTabPanel>
+                        <StyledFlex as="section" container>
+                           <Description state={state} />
+                           <Spacer xAxis size="16px" />
+                           <Assets state={state} />
+                        </StyledFlex>
+                     </HorizontalTabPanel>
+                     <HorizontalTabPanel>{renderOptions()}</HorizontalTabPanel>
+                  </HorizontalTabPanels>
+               </HorizontalTabs>
             </Flex>
          </ModifiersContext.Provider>
-      </SimpleProductContext.Provider>
+      </ProductProvider>
    )
 }
+
+export default Product

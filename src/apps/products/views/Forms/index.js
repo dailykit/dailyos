@@ -1,4 +1,5 @@
 import IngredientForm from './IngredientForm'
+import ProductForm from './Product'
 import RecipeForm from './RecipeForm'
 import InventoryProductForm from './Product/InventoryProduct'
 import SimpleRecipeProductForm from './Product/SimpleRecipeProduct'
@@ -12,4 +13,5 @@ export {
    SimpleRecipeProductForm,
    CustomizableProductForm,
    ComboProductForm,
+   ProductForm,
 }

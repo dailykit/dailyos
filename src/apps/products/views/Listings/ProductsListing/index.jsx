@@ -54,7 +54,7 @@ const ProductsListing = () => {
          toast.success('Product created!')
          addTab(
             data.createProduct.name,
-            `/products/simple-recipe-products/${data.createProduct.id}`
+            `/products/products/${data.createProduct.id}`
          )
       },
       onError: error => {
