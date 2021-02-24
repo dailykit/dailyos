@@ -172,6 +172,7 @@ export const LINKED_COMPONENT = gql`
       ) {
          fileId
          id
+         config
          internalModuleIdentifier
          moduleType
          position

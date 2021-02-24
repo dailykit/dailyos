@@ -11,6 +11,7 @@ import Sidebar from './sections/Sidebar'
 import Main from './sections/Main'
 import ErrorBoundary from '../../shared/components/ErrorBoundary'
 import BrandContext from './context/Brand'
+import ConfigContext from './context/Config'
 
 // Styled
 import { StyledWrapper } from '../../styled'
@@ -23,20 +24,23 @@ const App = () => {
       websiteId: 0,
       brandDomain: '',
    })
+   const [configContext, setConfigContext] = React.useState({})
    return (
       <StyledWrapper>
-         <BrandContext.Provider value={[context, setContext]}>
-            <Router basename={process.env.PUBLIC_URL}>
-               <Header toggleSidebar={toggleSidebar} />
-               <Sidebar
-                  visible={isSidebarVisible}
-                  toggleSidebar={toggleSidebar}
-               />
-               <ErrorBoundary rootRoute="/apps/content">
-                  <Main />
-               </ErrorBoundary>
-            </Router>
-         </BrandContext.Provider>
+         <ConfigContext.Provider value={[configContext, setConfigContext]}>
+            <BrandContext.Provider value={[context, setContext]}>
+               <Router basename={process.env.PUBLIC_URL}>
+                  <Header toggleSidebar={toggleSidebar} />
+                  <Sidebar
+                     visible={isSidebarVisible}
+                     toggleSidebar={toggleSidebar}
+                  />
+                  <ErrorBoundary rootRoute="/apps/content">
+                     <Main />
+                  </ErrorBoundary>
+               </Router>
+            </BrandContext.Provider>
+         </ConfigContext.Provider>
       </StyledWrapper>
    )
 }

@@ -13,71 +13,54 @@ import {
 } from '@dailykit/ui'
 // import { GET_FILES, LINK_CSS_FILES } from '../../../graphql'
 import { TunnelBody } from './style'
-import BrandContext from '../../../../../context/Brand'
+import ConfigContext from '../../../../../context/Config'
 import { getFile } from '../../../../../utils'
-
-export default function PagePreviewTunnel({
+import { getConfigUi } from '../component'
+export default function ConfigTunnel({
    tunnels,
    openTunnel,
    closeTunnel,
    onSave,
    selectedOption,
 }) {
-   const [context, setContext] = React.useContext(BrandContext)
+   const [configContext, setConfigContext] = React.useContext(ConfigContext)
    const [configJson, setConfigJson] = React.useState({})
-   const uiArray = []
-   console.log(configJson)
-   const onConfigChange = e => {
-      console.log(`${e.target.name}.value = `, e.target.value)
-      const updatedValue = _.update(
-         configJson,
-         `${e.target.name}.value`,
-         () => {
-            return e.target.value
+   const [fields, setFields] = React.useState([])
+   let elements = []
+   console.log('oldConfig', configContext)
+
+   const onConfigChange = (e, value) => {
+      let updatedConfig
+      const type = _.get(configJson, `${e.target.name}.dataType`)
+      if (type === 'boolean') {
+         updatedConfig = _.set(configJson, `${e.target.name}.value`, value)
+      } else {
+         updatedConfig = _.set(
+            configJson,
+            `${e.target.name}.value`,
+            e.target.value
+         )
+      }
+
+      // console.log("updateObj", updateObj, e.target.name);
+      setConfigJson(prev => {
+         return {
+            ...prev,
+            ...updatedConfig,
          }
-      )
-      setConfigJson(updatedValue)
+      })
    }
 
    const getHeaderUi = title => {
       return <h1 style={{ marginLeft: '4px' }}>{title.toUpperCase()}</h1>
    }
 
-   const getConfigUi = key => {
-      const field = _.get(configJson, key)
-      let configUi
-      if (field.dataType === 'boolean' && field.userInsertType === 'toggle') {
-         configUi = (
-            <Toggle
-               fieldDetail={field}
-               path={key}
-               onConfigChange={onConfigChange}
-            />
-         )
-      } else if (
-         field.dataType === 'color' &&
-         field.userInsertType === 'colorPicker'
-      ) {
-         configUi = (
-            <ColorPicker
-               fieldDetail={field}
-               path={key}
-               onConfigChange={onConfigChange}
-            />
-         )
-      } else if (
-         field.dataType === 'string' &&
-         field.userInsertType === 'string'
-      ) {
-         configUi = (
-            <Text
-               fieldDetail={field}
-               path={key}
-               onConfigChange={onConfigChange}
-            />
-         )
-      }
-      return configUi
+   const renderAllFields = (data, rootKey) => {
+      showConfigUi(data, rootKey)
+
+      console.log('elements', elements)
+
+      setFields([...elements])
    }
 
    const showConfigUi = (configData, rootKey) => {
@@ -85,14 +68,19 @@ export default function PagePreviewTunnel({
          const isFieldObject = _.has(value, 'value')
          if (isFieldObject) {
             const updatedRootkey = rootKey ? `${rootKey}.${key}` : key
-            uiArray.push(getConfigUi(updatedRootkey))
+            elements.push(
+               getConfigUi({
+                  key: updatedRootkey,
+                  configJson,
+                  onConfigChange,
+               })
+            )
          } else {
-            uiArray.push(getHeaderUi(key))
+            elements.push(getHeaderUi(key))
             const updatedRootkey = rootKey ? `${rootKey}.${key}` : key
             showConfigUi(value, updatedRootkey)
          }
       })
-      return uiArray
    }
 
    React.useEffect(() => {
@@ -110,8 +98,17 @@ export default function PagePreviewTunnel({
       }
       if (selectedOption.length) {
          fetchFile()
+      } else {
+         setConfigJson(configContext)
       }
-   }, [selectedOption])
+   }, [selectedOption, configContext])
+
+   React.useEffect(() => {
+      console.log('re-run...')
+      if (Object.keys(configJson).length) {
+         renderAllFields(configJson, '')
+      }
+   }, [configJson])
 
    return (
       <div>
@@ -122,20 +119,19 @@ export default function PagePreviewTunnel({
                   close={() => closeTunnel(1)}
                   right={{
                      title: 'Save',
-                     action: () => onSave(),
+                     action: () => onSave(configJson),
                   }}
                />
                <TunnelBody>
                   <div>
-                     {Object.keys(configJson).length > 0 &&
-                        showConfigUi(configJson, '')?.map(config => {
-                           return (
-                              <>
-                                 {config}
-                                 <Spacer size="16px" />
-                              </>
-                           )
-                        })}
+                     {fields.map((config, index) => {
+                        return (
+                           <div key={index}>
+                              {config}
+                              <Spacer size="16px" />
+                           </div>
+                        )
+                     })}
                   </div>
                </TunnelBody>
             </Tunnel>

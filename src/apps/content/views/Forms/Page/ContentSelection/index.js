@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useContext } from 'react'
 import {
    Flex,
    HorizontalTab,
@@ -16,7 +16,7 @@ import {
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { DeleteIcon } from '../../../../../../shared/assets/icons'
+import { DeleteIcon, EditIcon } from '../../../../../../shared/assets/icons'
 import { DragNDrop, InlineLoader } from '../../../../../../shared/components'
 import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
 import { StyledWrapper, WrapDiv, Child } from './styled'
@@ -29,6 +29,7 @@ import { logger } from '../../../../../../shared/utils'
 import { ConfigTunnel } from '../Tunnel'
 import File from './File'
 import Template from './Template'
+import ConfigContext from '../../../../context/Config'
 
 const ContentSelection = () => {
    const [configTunnels, openConfigTunnel, closeConfigTunnel] = useTunnel()
@@ -36,6 +37,8 @@ const ContentSelection = () => {
    const { pageId, pageName } = useParams()
    const [linkedFiles, setLinkedFiles] = useState([])
    const [selectedFileOptions, setSelectedFileOptions] = useState([])
+   const [configContext, setConfigContext] = useContext(ConfigContext)
+   // const oldConfig = useRef({})
    // Subscription
    const { loading, error } = useSubscription(LINKED_COMPONENT, {
       variables: {
@@ -103,13 +106,15 @@ const ContentSelection = () => {
    //    // }
    // }
 
-   const saveHandler = () => {
+   const saveHandler = dataConfig => {
+      console.log(dataConfig)
       if (selectedFileOptions.length) {
          const result = selectedFileOptions.map(option => {
             return {
                websitePageId: +pageId,
                moduleType: 'file',
                fileId: option.id,
+               config: dataConfig,
             }
          })
 
@@ -130,6 +135,10 @@ const ContentSelection = () => {
             },
          },
       })
+   }
+   const openConfig = data => {
+      setConfigContext(data)
+      openConfigTunnel(1)
    }
 
    if (loading) {
@@ -163,11 +172,19 @@ const ContentSelection = () => {
                            <div className="name">
                               {file?.file?.fileName || ''}
                            </div>
+                           {file.config && (
+                              <IconButton
+                                 type="ghost"
+                                 onClick={() => openConfig(file?.config)}
+                              >
+                                 <EditIcon color="#555b6e" size="20" />
+                              </IconButton>
+                           )}
                            <IconButton
                               type="ghost"
                               onClick={() => deleteHandler(file.fileId)}
                            >
-                              <DeleteIcon color="#FF5A52" size="20" />
+                              <DeleteIcon color="#555b6e" size="20" />
                            </IconButton>
                         </Child>
                      )
@@ -217,11 +234,12 @@ const ContentSelection = () => {
                   <HorizontalTabPanel>Internal Module</HorizontalTabPanel>
                </HorizontalTabPanels>
             </HorizontalTabs>
+
             <ConfigTunnel
                tunnels={configTunnels}
                openTunnel={openConfigTunnel}
                closeTunnel={closeConfigTunnel}
-               onSave={() => saveHandler()}
+               onSave={dataConfig => saveHandler(dataConfig)}
                selectedOption={selectedFileOptions}
             />
          </StyledWrapper>
