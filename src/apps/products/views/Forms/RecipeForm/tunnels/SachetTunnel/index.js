@@ -1,5 +1,5 @@
 import React from 'react'
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Filler,
    List,
@@ -20,6 +20,7 @@ import {
    SACHETS,
    UPDATE_SIMPLE_RECIPE_YIELD_SACHET,
    UPSERT_MASTER_UNIT,
+   S_SACHETS,
 } from '../../../../../graphql'
 import { TunnelBody } from '../styled'
 
@@ -29,7 +30,7 @@ const SachetTunnel = ({ closeTunnel }) => {
    const [sachets, setSachets] = React.useState([])
 
    // Query
-   const { loading } = useQuery(SACHETS, {
+   const { loading } = useSubscription(S_SACHETS, {
       variables: {
          where: {
             _and: [
@@ -47,18 +48,16 @@ const SachetTunnel = ({ closeTunnel }) => {
             ],
          },
       },
-      onCompleted: data => {
-         const updatedSachets = data.ingredientSachets.map(sachet => ({
-            ...sachet,
-            title: `${sachet.quantity}  ${sachet.unit}`,
-         }))
-         setSachets(updatedSachets)
+      onSubscriptionData: data => {
+         const updatedSachets = data.subscriptionData.data.ingredientSachets.map(
+            sachet => ({
+               ...sachet,
+               title: `${sachet.quantity}  ${sachet.unit}`,
+            })
+         )
+         console.log(updatedSachets)
+         setSachets([...updatedSachets])
       },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-      fetchPolicy: 'cache-and-network',
    })
 
    // State for search input
@@ -87,17 +86,6 @@ const SachetTunnel = ({ closeTunnel }) => {
       },
    })
    const [createSachet] = useMutation(CREATE_SACHET, {
-      onCompleted: data => {
-         const sachet = {
-            id: data.createIngredientSachet.returning[0].id,
-            ingredient: {
-               name:
-                  data.createIngredientSachet.returning[0]?.ingredient?.name ||
-                  '',
-            },
-         }
-         save(sachet)
-      },
       onError: error => {
          toast.error('Something went wrong!')
          logger(error)
@@ -130,9 +118,9 @@ const SachetTunnel = ({ closeTunnel }) => {
             variables: {
                objects: [
                   {
-                     ingredientId: recipeState.edit?.id,
+                     ingredientId: recipeState.sachetAddMeta?.ingredientId,
                      ingredientProcessingId:
-                        recipeState.edit?.ingredientProcessing?.id,
+                        recipeState.sachetAddMeta?.processingId,
                      quantity: +quantity,
                      unit,
                      tracking: false,

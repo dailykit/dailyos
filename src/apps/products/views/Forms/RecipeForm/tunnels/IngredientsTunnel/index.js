@@ -1,21 +1,20 @@
 import React from 'react'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    List,
+   ListHeader,
    ListItem,
    ListOptions,
    ListSearch,
-   useSingleList,
    TunnelHeader,
-   Filler,
-   ListHeader,
+   useSingleList,
 } from '@dailykit/ui'
-import { useMutation, useQuery } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import { RecipeContext } from '../../../../../context/recipe'
-import { TunnelBody } from '../styled'
-import { CREATE_INGREDIENT, INGREDIENTS } from '../../../../../graphql'
 import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
+import { RecipeContext } from '../../../../../context/recipe'
+import { CREATE_INGREDIENT, S_INGREDIENTS } from '../../../../../graphql'
+import { TunnelBody } from '../styled'
 
 const IngredientsTunnel = ({ closeTunnel, openTunnel }) => {
    const { recipeDispatch } = React.useContext(RecipeContext)
@@ -26,34 +25,16 @@ const IngredientsTunnel = ({ closeTunnel, openTunnel }) => {
    const [list, current, selectOption] = useSingleList(ingredients)
 
    // Query
-   const { loading } = useQuery(INGREDIENTS, {
-      variables: {
-         where: {
-            isPublished: { _eq: true },
-            isArchived: { _eq: false },
-         },
-      },
-      onCompleted: data => {
-         const updatedIngredients = data.ingredients.filter(
-            ing => ing.isValid.status
+   const { loading } = useSubscription(S_INGREDIENTS, {
+      onSubscriptionData: data => {
+         const updatedIngredients = data.subscriptionData.data.ingredients.map(
+            ({ id, name }) => ({ id, title: name })
          )
          setIngredients(updatedIngredients)
       },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-      fetchPolicy: 'cache-and-network',
    })
 
    const [createIngredient] = useMutation(CREATE_INGREDIENT, {
-      onCompleted: data => {
-         recipeDispatch({
-            type: 'ADD_INGREDIENT',
-            payload: data.createIngredient.returning[0],
-         })
-         openTunnel(2)
-      },
       onError: error => {
          toast.error('Something went wrong!')
          logger(error)
@@ -91,39 +72,35 @@ const IngredientsTunnel = ({ closeTunnel, openTunnel }) => {
                <InlineLoader />
             ) : (
                <>
-                  {ingredients.length ? (
-                     <List>
-                        {Object.keys(current).length > 0 ? (
-                           <ListItem type="SSL1" title={current.title} />
-                        ) : (
-                           <ListSearch
-                              onChange={value => setSearch(value)}
-                              placeholder="type what you’re looking for..."
-                           />
-                        )}
-                        <ListHeader type="SSL1" label="Ingredients" />
-                        <ListOptions
-                           search={search}
-                           handleOnCreate={quickCreateIngredient}
-                        >
-                           {list
-                              .filter(option =>
-                                 option.title.toLowerCase().includes(search)
-                              )
-                              .map(option => (
-                                 <ListItem
-                                    type="SSL1"
-                                    key={option.id}
-                                    title={option.title}
-                                    isActive={option.id === current.id}
-                                    onClick={() => select(option)}
-                                 />
-                              ))}
-                        </ListOptions>
-                     </List>
-                  ) : (
-                     <Filler message="No ingredients found! To start, add some." />
-                  )}
+                  <List>
+                     {Object.keys(current).length > 0 ? (
+                        <ListItem type="SSL1" title={current.title} />
+                     ) : (
+                        <ListSearch
+                           onChange={value => setSearch(value)}
+                           placeholder="type what you’re looking for..."
+                        />
+                     )}
+                     <ListHeader type="SSL1" label="Ingredients" />
+                     <ListOptions
+                        search={search}
+                        handleOnCreate={quickCreateIngredient}
+                     >
+                        {list
+                           .filter(option =>
+                              option.title.toLowerCase().includes(search)
+                           )
+                           .map(option => (
+                              <ListItem
+                                 type="SSL1"
+                                 key={option.id}
+                                 title={option.title}
+                                 isActive={option.id === current.id}
+                                 onClick={() => select(option)}
+                              />
+                           ))}
+                     </ListOptions>
+                  </List>
                </>
             )}
          </TunnelBody>
