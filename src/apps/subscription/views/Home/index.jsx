@@ -29,6 +29,12 @@ export const Home = () => {
                   addTab('Subscriptions', '/subscription/subscriptions')
                }
             />
+            <DashboardTile
+               title="Add On Menu"
+               count="0"
+               conf=""
+               onClick={() => addTab('Add On Menu', '/subscription/addon-menu')}
+            />
          </StyledCardList>
       </StyledHome>
    )

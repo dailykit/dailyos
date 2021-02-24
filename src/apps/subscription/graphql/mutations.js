@@ -12,6 +12,18 @@ export const INSERT_OCCURENCE_PRODUCTS = gql`
    }
 `
 
+export const INSERT_OCCURENCE_ADDON_PRODUCTS = gql`
+   mutation insertOccurenceAddOnProducts(
+      $objects: [subscription_subscriptionOccurence_addOn_insert_input!]!
+   ) {
+      insertOccurenceAddOnProducts: insert_subscription_subscriptionOccurence_addOn(
+         objects: $objects
+      ) {
+         affected_rows
+      }
+   }
+`
+
 export const UPSERT_SUBSCRIPTION_TITLE = gql`
    mutation upsertSubscriptionTitle(
       $object: subscription_subscriptionTitle_insert_input!

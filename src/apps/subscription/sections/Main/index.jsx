@@ -5,7 +5,7 @@ import { Route } from 'react-router-dom'
 // Views
 import { useAccess } from '../../../../shared/providers'
 import { ErrorBoundary, Flex } from '../../../../shared/components'
-import { Home, Menu, Subscriptions, Subscription } from '../../views'
+import { Home, AddOnMenu, Menu, Subscriptions, Subscription } from '../../views'
 
 const Main = () => {
    return (
@@ -25,6 +25,9 @@ const Main = () => {
             >
                <Menu />
             </AccessCheck>
+         </Route>
+         <Route path="/subscription/addon-menu" exact>
+            <AddOnMenu />
          </Route>
          <Route path="/subscription/subscriptions" exact>
             <AccessCheck

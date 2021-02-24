@@ -146,8 +146,6 @@ const PlansSection = () => {
             payload: {
                occurence: { id: data.id },
                subscription: { id: data.subscription.id },
-               item: { count: data.subscription.itemCount.count },
-               serving: { size: data.subscription.itemCount.serving.size },
             },
          })
       } else {
@@ -156,13 +154,6 @@ const PlansSection = () => {
             payload: data.id,
          })
       }
-   }
-   const handleRowValidation = row => {
-      if (!localStorage.getItem('serving_size')) return true
-      return (
-         row.getData().subscription.itemCount.serving.size ===
-         Number(localStorage.getItem('serving_size'))
-      )
    }
    return (
       <Wrapper>
@@ -210,7 +201,7 @@ const PlansSection = () => {
                rowSelected={handleRowSelection}
                rowDeselected={handleRowSelection}
                data={subscriptionOccurences.nodes}
-               selectableCheck={handleRowValidation}
+               selectableCheck={() => true}
                options={{
                   ...tableOptions,
                   selectable: true,

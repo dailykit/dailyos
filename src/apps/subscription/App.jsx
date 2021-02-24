@@ -21,6 +21,11 @@ const App = () => {
          },
          {
             id: 3,
+            title: 'Add On Menu',
+            onClick: () => addTab('Add On Menu', '/subscription/addon-menu'),
+         },
+         {
+            id: 4,
             title: 'Subscriptions',
             onClick: () =>
                addTab('Subscriptions', '/subscription/subscriptions'),
