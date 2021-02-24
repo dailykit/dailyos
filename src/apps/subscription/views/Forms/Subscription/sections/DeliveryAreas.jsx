@@ -356,7 +356,7 @@ const AreasTunnel = ({
    return (
       <>
          <TunnelHeader
-            title="Add Zipcodes"
+            title={mode === 'ADD' ? 'Add Zipcodes' : 'Edit Zipcode'}
             close={() => closeTunnel(1)}
             right={{
                title: 'Save',
@@ -371,7 +371,7 @@ const AreasTunnel = ({
             <Form.Group>
                <Form.Label htmlFor="zipcodes" title="zipcodes">
                   <Flex container alignItems="center">
-                     Zipcodes*
+                     {mode === 'ADD' ? 'Zipcodes*' : 'Zipcode'}
                      <Tooltip identifier="form_subscription_tunnel_zipcode_field_zipcode" />
                   </Flex>
                </Form.Label>
@@ -380,7 +380,7 @@ const AreasTunnel = ({
                      id="zipcodes"
                      name="zipcodes"
                      value={zipcodes}
-                     placeholder="Enter the comma separated zipcodes"
+                     placeholder="Enter the zipcodes"
                      onChange={e => setZipcodes(e.target.value)}
                   />
                ) : (
@@ -393,7 +393,9 @@ const AreasTunnel = ({
                   />
                )}
             </Form.Group>
-            <Form.Hint>Enter comma seperated zipcodes.</Form.Hint>
+            {mode === 'ADD' && (
+               <Form.Hint>Enter comma seperated zipcodes.</Form.Hint>
+            )}
             <Spacer size="24px" />
             <Text as="h3">Delivery</Text>
             <Spacer size="18px" />
