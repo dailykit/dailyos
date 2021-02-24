@@ -45,10 +45,34 @@ export const SUBSCRIPTION_OCCURENCES = gql`
                   count
                }
             }
+            addOnProducts: addOnProducts_aggregate(
+               where: {
+                  _or: [
+                     { inventoryProduct: { isArchived: { _eq: false } } }
+                     { simpleRecipeProduct: { isArchived: { _eq: false } } }
+                  ]
+               }
+            ) {
+               aggregate {
+                  count
+               }
+            }
             subscription {
                id
                rrule
                products: subscriptionProducts_aggregate(
+                  where: {
+                     _or: [
+                        { inventoryProduct: { isArchived: { _eq: false } } }
+                        { simpleRecipeProduct: { isArchived: { _eq: false } } }
+                     ]
+                  }
+               ) {
+                  aggregate {
+                     count
+                  }
+               }
+               addOnProducts: subscriptionAddOnProducts_aggregate(
                   where: {
                      _or: [
                         { inventoryProduct: { isArchived: { _eq: false } } }
@@ -191,52 +215,45 @@ export const ITEM_COUNT = gql`
 `
 
 export const SUBSCRIPTION_OCCURENCES_LIST = gql`
-   subscription subscription_occurences($id: Int!) {
-      subscription_occurences: subscription_subscription_by_pk(id: $id) {
-         id
-         occurences_aggregate: subscriptionOccurences_aggregate {
-            aggregate {
-               count
-            }
-            nodes {
-               id
-               startTimeStamp
-               fulfillmentDate
-               cutoffTimeStamp
-               products: products_aggregate(
-                  where: {
-                     _or: [
-                        { inventoryProduct: { isArchived: { _eq: false } } }
-                        { simpleRecipeProduct: { isArchived: { _eq: false } } }
-                     ]
-                  }
-               ) {
-                  aggregate {
-                     count
-                  }
-               }
-               subscription {
-                  products: subscriptionProducts_aggregate(
-                     where: {
-                        _or: [
-                           { inventoryProduct: { isArchived: { _eq: false } } }
-                           {
-                              simpleRecipeProduct: {
-                                 isArchived: { _eq: false }
-                              }
-                           }
-                        ]
-                     }
-                  ) {
-                     aggregate {
-                        count
-                     }
-                  }
-               }
-            }
-         }
+subscription subscription_occurences($id: Int!) {
+  subscription_occurences: subscription_subscription_by_pk(id: $id) {
+    id
+    occurences_aggregate: subscriptionOccurences_aggregate {
+      aggregate {
+        count
       }
-   }
+      nodes {
+        id
+        startTimeStamp
+        fulfillmentDate
+        cutoffTimeStamp
+        products: products_aggregate(where: {_or: [{inventoryProduct: {isArchived: {_eq: false}}}, {simpleRecipeProduct: {isArchived: {_eq: false}}}]}) {
+          aggregate {
+            count
+          }
+        }
+        addOnProducts: addOnProducts_aggregate(where: {_or: [{inventoryProduct: {isArchived: {_eq: false}}}, {simpleRecipeProduct: {isArchived: {_eq: false}}}]}) {
+          aggregate {
+            count
+          }
+        }
+        subscription {
+          products: subscriptionProducts_aggregate(where: {_or: [{inventoryProduct: {isArchived: {_eq: false}}}, {simpleRecipeProduct: {isArchived: {_eq: false}}}]}) {
+            aggregate {
+              count
+            }
+          }
+          addOnProducts: subscriptionAddOnProducts_aggregate(where: {_or: [{inventoryProduct: {isArchived: {_eq: false}}}, {simpleRecipeProduct: {isArchived: {_eq: false}}}]}) {
+            aggregate {
+              count
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 `
 
 export const SUBSCRIPTION_ZIPCODES = gql`

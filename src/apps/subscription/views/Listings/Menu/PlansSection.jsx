@@ -99,6 +99,19 @@ const PlansSection = () => {
          {
             hozAlign: 'right',
             title: 'Menu Products',
+            formatter: reactFormatter(<AddOnProductsCount />),
+            headerHozAlign: 'right',
+            headerTooltip: column => {
+               const identifier = 'plan_listing_column_addon_products'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+         },
+         {
+            hozAlign: 'right',
+            title: 'Menu Products',
             formatter: reactFormatter(<ProductsCount />),
             headerHozAlign: 'right',
             headerTooltip: column => {
@@ -211,6 +224,7 @@ const PlansSection = () => {
    )
 }
 export default PlansSection
+
 const ProductsCount = ({ cell: { _cell } }) => {
    const data = _cell.row.getData()
    return (
@@ -221,6 +235,21 @@ const ProductsCount = ({ cell: { _cell } }) => {
          /
          <span title="Added to the subscription">
             {data.subscription.products.aggregate.count}
+         </span>
+      </div>
+   )
+}
+
+const AddOnProductsCount = ({ cell: { _cell } }) => {
+   const data = _cell.row.getData()
+   return (
+      <div>
+         <span title="Added to this occurence">
+            {data.addOnProducts.aggregate.count}
+         </span>
+         /
+         <span title="Added to the subscription">
+            {data.subscription.addOnProducts.aggregate.count}
          </span>
       </div>
    )
