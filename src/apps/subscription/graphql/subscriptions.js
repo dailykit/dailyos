@@ -240,6 +240,14 @@ export const SUBSCRIPTION_ZIPCODES = gql`
          deliveryTime
          deliveryPrice
          subscriptionId
+         isDeliveryActive
+         isPickupActive
+         subscriptionPickupOptionId
+         subscriptionPickupOption {
+            id
+            time
+            address
+         }
       }
    }
 `

@@ -47,81 +47,127 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
    const {
       error,
       loading,
-      data: { subscription_zipcodes = [] } = {},
+      data: { subscription_zipcodes: subscriptionZipcodes = [] } = {},
    } = useSubscription(SUBSCRIPTION_ZIPCODES, {
       variables: { id },
       onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
+         console.log(
+            '🚀 ~ file: DeliveryAreas.jsx ~ line 54 ~ DeliveryAreas ~ data',
+            data
+         )
          setAreasTotal(data.subscription_zipcodes.length)
       },
    })
-   const columns = [
-      {
-         title: 'Zipcode',
-         field: 'zipcode',
-         headerFilter: true,
-         headerFilterPlaceholder: 'Search zipcodes...',
-         headerTooltip: column => {
-            const identifier = 'listing_delivery_areas_column_fulfillment'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+   const columns = React.useMemo(
+      () => [
+         {
+            title: 'Zipcode',
+            field: 'zipcode',
+            headerFilter: true,
+            cssClass: 'cell',
+            headerFilterPlaceholder: 'Search zipcodes...',
+            headerTooltip: column => {
+               const identifier = 'listing_delivery_areas_column_fulfillment'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
-      },
-      {
-         field: 'deliveryPrice',
-         title: 'Delivery Price',
-         headerFilter: true,
-         headerFilterPlaceholder: 'Search prices...',
-         headerTooltip: column => {
-            const identifier = 'listing_delivery_areas_column_zipcode'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+         {
+            field: 'deliveryPrice',
+            title: 'Delivery Price',
+            headerFilter: true,
+            headerFilterPlaceholder: 'Search prices...',
+            headerTooltip: column => {
+               const identifier = 'listing_delivery_areas_column_zipcode'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
-      },
-      {
-         title: 'Delivery From',
-         headerFilter: true,
-         headerTooltip: column => {
-            const identifier = 'listing_delivery_from_column_zipcode'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+         {
+            field: 'isDeliveryActive',
+            title: 'Delivery',
+            formatter: 'tickCross',
+            headerTooltip: column => {
+               const identifier =
+                  'listing_delivery_areas_column_delivery_active'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
-         formatter: cell => cell.getData().deliveryTime.from,
-      },
-      {
-         title: 'Delivery To',
-         headerFilter: true,
-         headerTooltip: column => {
-            const identifier = 'listing_delivery_from_column_zipcode'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+         {
+            title: 'Delivery Time',
+            headerFilter: true,
+            headerTooltip: column => {
+               const identifier = 'listing_delivery_time_column_delivery_time'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            formatter: cell =>
+               `${cell.getData().deliveryTime.from} - ${
+                  cell.getData().deliveryTime.to
+               }`,
          },
-         formatter: cell => cell.getData().deliveryTime.to,
-      },
-      {
-         field: 'isActive',
-         title: 'Active',
-         formatter: 'tick',
-         headerTooltip: column => {
-            const identifier = 'listing_delivery_areas_column_active'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+         {
+            field: 'isPickupActive',
+            title: 'Pick Up',
+            formatter: 'tickCross',
+            headerTooltip: column => {
+               const identifier = 'listing_delivery_areas_column_pickup_active'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
-      },
-      {
-         width: 150,
-         title: 'Actions',
-         headerFilter: false,
-         headerSort: false,
-         hozAlign: 'center',
-         cssClass: 'center-text',
-         formatter: reactFormatter(<Delete remove={remove} />),
-      },
-   ]
+         {
+            title: 'Pick Up Time',
+            headerFilter: true,
+            headerTooltip: column => {
+               const identifier = 'listing_delivery_time_column_pickup_time'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            formatter: cell =>
+               cell.getData().subscriptionPickupOptionId
+                  ? `${cell.getData().subscriptionPickupOption?.time?.from} - ${
+                       cell.getData().subscriptionPickupOption?.time?.to
+                    }`
+                  : 'N/A',
+         },
+         {
+            field: 'isActive',
+            title: 'Active',
+            formatter: 'tickCross',
+            headerTooltip: column => {
+               const identifier = 'listing_delivery_areas_column_active'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+         },
+         {
+            width: 150,
+            title: 'Actions',
+            headerFilter: false,
+            headerSort: false,
+            hozAlign: 'center',
+            cssClass: 'center-text',
+            formatter: reactFormatter(<Delete remove={remove} />),
+         },
+      ],
+      []
+   )
 
    if (loading) return <InlineLoader />
    if (error) {
@@ -151,7 +197,7 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
          <ReactTabulator
             ref={tableRef}
             columns={columns}
-            data={subscription_zipcodes}
+            data={subscriptionZipcodes}
             options={{ ...tableOptions, layout: 'fitColumns' }}
          />
          <Tunnels tunnels={tunnels}>
@@ -166,10 +212,12 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
 export default DeliveryAreas
 
 const AreasTunnel = ({ id, closeTunnel }) => {
-   const { state } = usePlan()
-   const [from, setFrom] = React.useState('')
-   const [to, setTo] = React.useState('')
-   const [price, setPrice] = React.useState('')
+   const [delivery, setDelivery] = React.useState({
+      price: '',
+      from: '',
+      to: '',
+      active: true,
+   })
    const [zipcodes, setZipcodes] = React.useState('')
    const [insertSubscriptionZipcodes, { loading }] = useMutation(
       INSERT_SUBSCRIPTION_ZIPCODES,
@@ -185,14 +233,21 @@ const AreasTunnel = ({ id, closeTunnel }) => {
       }
    )
 
+   const onDeliveryChange = (key, value) => {
+      setDelivery(existing => ({
+         ...existing,
+         [key]: value,
+      }))
+   }
+
    const save = () => {
       const zips = zipcodes.split(',').map(node => node.trim())
       const objects = zips.map(zip => ({
          zipcode: zip,
-         deliveryPrice: Number(price),
+         deliveryPrice: Number(delivery.price),
          deliveryTime: {
-            from,
-            to,
+            from: delivery.from,
+            to: delivery.to,
          },
          subscriptionId: id,
       }))
@@ -212,7 +267,6 @@ const AreasTunnel = ({ id, closeTunnel }) => {
                title: 'Save',
                isLoading: loading,
                action: () => save(),
-               disabled: !zipcodes || !price || !from || !to,
             }}
             tooltip={
                <Tooltip identifier="form_subscription_tunnel_zipcode_heading" />
@@ -246,9 +300,11 @@ const AreasTunnel = ({ id, closeTunnel }) => {
                <Form.Text
                   id="price"
                   name="price"
-                  value={price}
+                  value={delivery.price}
                   placeholder="Enter the price"
-                  onChange={e => setPrice(e.target.value)}
+                  onChange={e =>
+                     onDeliveryChange(e.target.name, e.target.value)
+                  }
                />
             </Form.Group>
             <Spacer size="24px" />
@@ -262,9 +318,11 @@ const AreasTunnel = ({ id, closeTunnel }) => {
                <Form.Time
                   id="from"
                   name="from"
-                  value={from}
+                  value={delivery.from}
                   placeholder="Enter delivery from"
-                  onChange={e => setFrom(e.target.value)}
+                  onChange={e =>
+                     onDeliveryChange(e.target.name, e.target.value)
+                  }
                />
             </Form.Group>
             <Spacer size="24px" />
@@ -278,9 +336,11 @@ const AreasTunnel = ({ id, closeTunnel }) => {
                <Form.Time
                   id="to"
                   name="to"
-                  value={to}
+                  value={delivery.to}
                   placeholder="Enter delivery to"
-                  onChange={e => setTo(e.target.value)}
+                  onChange={e =>
+                     onDeliveryChange(e.target.name, e.target.value)
+                  }
                />
             </Form.Group>
          </Flex>
