@@ -156,7 +156,7 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
          />
          <Tunnels tunnels={tunnels}>
             <Tunnel layer="1">
-               <AreasTunnel closeTunnel={closeTunnel} />
+               <AreasTunnel id={id} closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
       </>
@@ -165,7 +165,7 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
 
 export default DeliveryAreas
 
-const AreasTunnel = ({ closeTunnel }) => {
+const AreasTunnel = ({ id, closeTunnel }) => {
    const { state } = usePlan()
    const [from, setFrom] = React.useState('')
    const [to, setTo] = React.useState('')
@@ -194,7 +194,7 @@ const AreasTunnel = ({ closeTunnel }) => {
             from,
             to,
          },
-         subscriptionId: state.subscription.id,
+         subscriptionId: id,
       }))
       insertSubscriptionZipcodes({
          variables: {

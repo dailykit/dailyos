@@ -24,7 +24,6 @@ const initialState = {
       isActive: false,
       isTaxIncluded: false,
    },
-   subscription: { id: null },
 }
 
 const reducers = (state, { type, payload }) => {
@@ -44,12 +43,6 @@ const reducers = (state, { type, payload }) => {
             ...state,
             item: { ...state.item, ...payload },
          }
-      case 'SET_SUBSCRIPTION': {
-         return {
-            ...state,
-            subscription: payload,
-         }
-      }
       default:
          return state
    }
