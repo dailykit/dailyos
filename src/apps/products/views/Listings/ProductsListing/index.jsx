@@ -24,9 +24,14 @@ import {
    CustomizableProducts,
    InventoryProducts,
    SimpleRecipeProducts,
+   UncategorisedProducts,
 } from './components'
 import { ProductTypeTunnel } from './tunnels'
 import { ResponsiveFlex } from '../styled'
+import { useMutation } from '@apollo/react-hooks'
+import { PRODUCTS } from '../../../graphql'
+import { toast } from 'react-toastify'
+import { randomSuffix } from '../../../../../shared/utils'
 
 const address = 'apps.menu.views.listings.productslisting.'
 
@@ -41,7 +46,22 @@ const ProductsListing = () => {
       { id: 'simple', title: t(address.concat('simple recipe')) },
       { id: 'customizable', title: t(address.concat('customizable')) },
       { id: 'combo', title: t(address.concat('combo')) },
+      { id: 'uncategorised', title: 'Uncategorised' },
    ]
+
+   const [createProduct] = useMutation(PRODUCTS.CREATE, {
+      onCompleted: data => {
+         toast.success('Product created!')
+         addTab(
+            data.createProduct.name,
+            `/products/simple-recipe-products/${data.createProduct.id}`
+         )
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         console.log(error)
+      },
+   })
 
    React.useEffect(() => {
       if (!tab) {
@@ -60,7 +80,7 @@ const ProductsListing = () => {
          case 'combo':
             return <ComboProducts />
          default:
-            return <InventoryProducts />
+            return <UncategorisedProducts />
       }
    }
 
@@ -82,7 +102,18 @@ const ProductsListing = () => {
                   <Text as="h2">{t(address.concat('products'))}</Text>
                   <Tooltip identifier="products_list_heading" />
                </Flex>
-               <ComboButton type="solid" onClick={() => openTunnel(1)}>
+               <ComboButton
+                  type="solid"
+                  onClick={() =>
+                     createProduct({
+                        variables: {
+                           object: {
+                              name: 'new-product-' + randomSuffix(),
+                           },
+                        },
+                     })
+                  }
+               >
                   <AddIcon color="#fff" size={24} /> Add Product
                </ComboButton>
             </Flex>
