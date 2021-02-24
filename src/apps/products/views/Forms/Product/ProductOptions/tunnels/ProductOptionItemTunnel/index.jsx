@@ -23,9 +23,6 @@ import {
 import { ProductContext } from '../../../../../../context/product'
 import {
    PRODUCT_OPTION,
-   SACHET_ITEMS,
-   SIMPLE_RECIPES,
-   SUPPLIER_ITEMS,
    S_SACHET_ITEMS,
    S_SIMPLE_RECIPE_YIELDS,
    S_SUPPLIER_ITEMS,

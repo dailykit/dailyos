@@ -94,6 +94,34 @@ const Option = ({ option, handleAddOptionItem }) => {
    const [price, setPrice] = React.useState(option.price)
    const [discount, setDiscount] = React.useState(option.discount)
 
+   const renderLinkedItem = () => {
+      const renderItemName = () => {
+         if (option.simpleRecipeYield) {
+            return `${option.simpleRecipeYield.yield.serving} serving - ${option.simpleRecipeYield.simpleRecipe.name}`
+         }
+         if (option.supplierItem) {
+            return `${option.supplierItem.name} - ${option.supplierItem.unitSize} ${option.supplierItem.unit}`
+         }
+         if (option.sachetItem) {
+            return `${option.sachetItem.bulkItem.supplierItem.name} ${option.sachetItem.bulkItem.processingName} - ${option.sachetItem.unitSize} ${option.sachetItem.unit}`
+         }
+      }
+
+      return (
+         <>
+            {option.simpleRecipeYield ||
+            option.supplierItem ||
+            option.sachetItem ? (
+               renderItemName()
+            ) : (
+               <IconButton type="ghost" onClick={handleAddOptionItem}>
+                  <PlusIcon />
+               </IconButton>
+            )}
+         </>
+      )
+   }
+
    const renderHead = () => {
       return (
          <Flex container alignItems="center" width="100%">
@@ -165,9 +193,7 @@ const Option = ({ option, handleAddOptionItem }) => {
                />
             </Flex>
             <Spacer xAxis size="64px" />
-            <IconButton type="ghost" onClick={handleAddOptionItem}>
-               <PlusIcon />
-            </IconButton>
+            {renderLinkedItem()}
          </Flex>
       )
    }

@@ -45,6 +45,31 @@ export const PRODUCT = {
                label
                price
                discount
+               simpleRecipeYield {
+                  id
+                  yield
+                  simpleRecipe {
+                     id
+                     name
+                  }
+               }
+               supplierItem {
+                  id
+                  name
+                  unit
+                  unitSize
+               }
+               sachetItem {
+                  id
+                  bulkItem {
+                     processingName
+                     supplierItem {
+                        name
+                     }
+                  }
+                  unit
+                  unitSize
+               }
             }
          }
       }
