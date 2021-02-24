@@ -1,7 +1,9 @@
 import React from 'react'
+import { isEmpty } from 'lodash'
+import styled from 'styled-components'
 import { toast } from 'react-toastify'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
 import {
    Form,
    Flex,
@@ -11,15 +13,20 @@ import {
    Spacer,
    PlusIcon,
    useTunnel,
+   ButtonTile,
    IconButton,
    TunnelHeader,
+   Table,
+   TableHead,
+   TableBody,
+   TableRow,
+   TableCell,
 } from '@dailykit/ui'
 
-import { usePlan } from '../state'
 import tableOptions from '../../../../tableOption'
-import { logger } from '../../../../../../shared/utils'
 import { useTooltip } from '../../../../../../shared/providers'
 import { DeleteIcon } from '../../../../../../shared/assets/icons'
+import { logger, parseAddress } from '../../../../../../shared/utils'
 import {
    Tooltip,
    ErrorState,
@@ -29,11 +36,15 @@ import {
    ZIPCODE,
    SUBSCRIPTION_ZIPCODES,
    INSERT_SUBSCRIPTION_ZIPCODES,
+   PICKUP_OPTIONS,
+   UPDATE_SUBSCRIPTION_ZIPCODE,
 } from '../../../../graphql'
 
 const DeliveryAreas = ({ id, setAreasTotal }) => {
    const tableRef = React.useRef()
    const { tooltip } = useTooltip()
+   const [mode, setMode] = React.useState('ADD')
+   const [selectedZipcode, setSelectedZipcode] = React.useState({})
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
    const [remove] = useMutation(ZIPCODE.DELETE, {
       onCompleted: () => {
@@ -51,13 +62,16 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
    } = useSubscription(SUBSCRIPTION_ZIPCODES, {
       variables: { id },
       onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
-         console.log(
-            '🚀 ~ file: DeliveryAreas.jsx ~ line 54 ~ DeliveryAreas ~ data',
-            data
-         )
          setAreasTotal(data.subscription_zipcodes.length)
       },
    })
+
+   const rowClick = (e, cell) => {
+      setMode('EDIT')
+      setSelectedZipcode(cell?.getData())
+      openTunnel(1)
+   }
+
    const columns = React.useMemo(
       () => [
          {
@@ -65,6 +79,7 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
             field: 'zipcode',
             headerFilter: true,
             cssClass: 'cell',
+            cellClick: (e, cell) => rowClick(e, cell),
             headerFilterPlaceholder: 'Search zipcodes...',
             headerTooltip: column => {
                const identifier = 'listing_delivery_areas_column_fulfillment'
@@ -169,6 +184,11 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
       []
    )
 
+   const resetEditMode = () => {
+      setMode('ADD')
+      setSelectedZipcode({})
+   }
+
    if (loading) return <InlineLoader />
    if (error) {
       toast.error('Failed to fetch the list of delivery areas!')
@@ -189,7 +209,14 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
                <Text as="h3">Delivery Areas</Text>
                <Tooltip identifier="form_subscription_section_delivery_day_section_delivery_areas" />
             </Flex>
-            <IconButton size="sm" type="outline" onClick={() => openTunnel(1)}>
+            <IconButton
+               size="sm"
+               type="outline"
+               onClick={() => {
+                  resetEditMode()
+                  openTunnel(1)
+               }}
+            >
                <PlusIcon />
             </IconButton>
          </Flex>
@@ -202,7 +229,14 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
          />
          <Tunnels tunnels={tunnels}>
             <Tunnel layer="1">
-               <AreasTunnel id={id} closeTunnel={closeTunnel} />
+               <AreasTunnel
+                  id={id}
+                  mode={mode}
+                  resetEditMode={resetEditMode}
+                  closeTunnel={closeTunnel}
+                  data={selectedZipcode}
+                  setData={setSelectedZipcode}
+               />
             </Tunnel>
          </Tunnels>
       </>
@@ -211,18 +245,28 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
 
 export default DeliveryAreas
 
-const AreasTunnel = ({ id, closeTunnel }) => {
+const AreasTunnel = ({
+   id,
+   mode = 'ADD',
+   resetEditMode,
+   data,
+   closeTunnel,
+}) => {
+   const [pickupOption, setPickupOption] = React.useState(null)
+   const [isPickupActive, setIsPickupActive] = React.useState(false)
    const [delivery, setDelivery] = React.useState({
       price: '',
       from: '',
       to: '',
-      active: true,
+      isActive: true,
    })
    const [zipcodes, setZipcodes] = React.useState('')
-   const [insertSubscriptionZipcodes, { loading }] = useMutation(
+   const [tunnels, openOptionTunnel, closeOptionTunnel] = useTunnel(1)
+   const [insertSubscriptionZipcodes, { loading: creating }] = useMutation(
       INSERT_SUBSCRIPTION_ZIPCODES,
       {
          onCompleted: () => {
+            resetEditMode()
             closeTunnel(1)
             toast.success('Successfully created the delivery areas!')
          },
@@ -232,6 +276,34 @@ const AreasTunnel = ({ id, closeTunnel }) => {
          },
       }
    )
+   const [updateSubscriptionZipcode, { loading: updating }] = useMutation(
+      UPDATE_SUBSCRIPTION_ZIPCODE,
+      {
+         onCompleted: () => {
+            resetEditMode()
+            closeTunnel(1)
+            toast.success('Successfully updated the delivery area!')
+         },
+         onError: error => {
+            logger(error)
+            toast.success('Failed to update the delivery area!')
+         },
+      }
+   )
+
+   React.useEffect(() => {
+      if (mode === 'EDIT' && !isEmpty(data)) {
+         setZipcodes(data?.zipcode)
+         setDelivery({
+            price: data?.deliveryPrice,
+            from: data?.deliveryTime?.from,
+            to: data?.deliveryTime?.to,
+            isActive: data?.isDeliveryActive,
+         })
+         setPickupOption(data?.subscriptionPickupOption)
+         setIsPickupActive(data?.isPickupActive)
+      }
+   }, [mode, data])
 
    const onDeliveryChange = (key, value) => {
       setDelivery(existing => ({
@@ -241,21 +313,44 @@ const AreasTunnel = ({ id, closeTunnel }) => {
    }
 
    const save = () => {
-      const zips = zipcodes.split(',').map(node => node.trim())
-      const objects = zips.map(zip => ({
-         zipcode: zip,
-         deliveryPrice: Number(delivery.price),
-         deliveryTime: {
-            from: delivery.from,
-            to: delivery.to,
-         },
-         subscriptionId: id,
-      }))
-      insertSubscriptionZipcodes({
-         variables: {
-            objects,
-         },
-      })
+      if (mode === 'ADD') {
+         const zips = zipcodes.split(',').map(node => node.trim())
+         const objects = zips.map(zip => ({
+            zipcode: zip,
+            subscriptionId: id,
+            isDeliveryActive: delivery.isActive,
+            deliveryPrice: Number(delivery.price),
+            deliveryTime: { from: delivery.from, to: delivery.to },
+            ...(pickupOption.id && {
+               isPickupActive: pickupOption.id ? isPickupActive : false,
+               subscriptionPickupOptionId: pickupOption.id || null,
+            }),
+         }))
+         insertSubscriptionZipcodes({
+            variables: {
+               objects,
+            },
+         })
+      } else {
+         updateSubscriptionZipcode({
+            variables: {
+               pk_columns: {
+                  zipcode: data.zipcode,
+                  subscriptionId: id,
+               },
+               _set: {
+                  zipcode: zipcodes,
+                  isDeliveryActive: delivery.isActive,
+                  deliveryPrice: Number(delivery.price),
+                  deliveryTime: { from: delivery.from, to: delivery.to },
+                  ...(pickupOption.id && {
+                     isPickupActive: pickupOption.id ? isPickupActive : false,
+                     subscriptionPickupOptionId: pickupOption.id || null,
+                  }),
+               },
+            },
+         })
+      }
    }
 
    return (
@@ -265,7 +360,7 @@ const AreasTunnel = ({ id, closeTunnel }) => {
             close={() => closeTunnel(1)}
             right={{
                title: 'Save',
-               isLoading: loading,
+               isLoading: creating || updating,
                action: () => save(),
             }}
             tooltip={
@@ -280,15 +375,39 @@ const AreasTunnel = ({ id, closeTunnel }) => {
                      <Tooltip identifier="form_subscription_tunnel_zipcode_field_zipcode" />
                   </Flex>
                </Form.Label>
-               <Form.TextArea
-                  id="zipcodes"
-                  name="zipcodes"
-                  value={zipcodes}
-                  placeholder="Enter the zipcodes"
-                  onChange={e => setZipcodes(e.target.value)}
-               />
+               {mode === 'ADD' ? (
+                  <Form.TextArea
+                     id="zipcodes"
+                     name="zipcodes"
+                     value={zipcodes}
+                     placeholder="Enter the comma separated zipcodes"
+                     onChange={e => setZipcodes(e.target.value)}
+                  />
+               ) : (
+                  <Form.Text
+                     id="zipcode"
+                     name="zipcode"
+                     value={zipcodes}
+                     placeholder="Enter the zipcode"
+                     onChange={e => setZipcodes(e.target.value)}
+                  />
+               )}
             </Form.Group>
             <Form.Hint>Enter comma seperated zipcodes.</Form.Hint>
+            <Spacer size="24px" />
+            <Text as="h3">Delivery</Text>
+            <Spacer size="18px" />
+            <Form.Group>
+               <Form.Toggle
+                  name="isDeliveryActive"
+                  value={delivery.isActive}
+                  onChange={() =>
+                     onDeliveryChange('isActive', !delivery.isActive)
+                  }
+               >
+                  Is Active?
+               </Form.Toggle>
+            </Form.Group>
             <Spacer size="24px" />
             <Form.Group>
                <Form.Label htmlFor="price" title="price">
@@ -308,43 +427,140 @@ const AreasTunnel = ({ id, closeTunnel }) => {
                />
             </Form.Group>
             <Spacer size="24px" />
-            <Form.Group>
-               <Form.Label htmlFor="from" title="from">
-                  <Flex container alignItems="center">
-                     Delivery From*
-                     <Tooltip identifier="form_subscription_tunnel_zipcode_field_delivery_from" />
-                  </Flex>
-               </Form.Label>
-               <Form.Time
-                  id="from"
-                  name="from"
-                  value={delivery.from}
-                  placeholder="Enter delivery from"
-                  onChange={e =>
-                     onDeliveryChange(e.target.name, e.target.value)
-                  }
-               />
-            </Form.Group>
+            <Styles.Row>
+               <Form.Group>
+                  <Form.Label htmlFor="from" title="from">
+                     <Flex container alignItems="center">
+                        From
+                        <Tooltip identifier="form_subscription_tunnel_zipcode_field_delivery_from" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Time
+                     id="from"
+                     name="from"
+                     value={delivery.from}
+                     placeholder="Enter delivery from"
+                     onChange={e =>
+                        onDeliveryChange(e.target.name, e.target.value)
+                     }
+                  />
+               </Form.Group>
+               <Spacer size="16px" xAxis />
+               <Form.Group>
+                  <Form.Label htmlFor="to" title="to">
+                     <Flex container alignItems="center">
+                        To
+                        <Tooltip identifier="form_subscription_tunnel_zipcode_field_delivery_to" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Time
+                     id="to"
+                     name="to"
+                     value={delivery.to}
+                     placeholder="Enter delivery to"
+                     onChange={e =>
+                        onDeliveryChange(e.target.name, e.target.value)
+                     }
+                  />
+               </Form.Group>
+            </Styles.Row>
             <Spacer size="24px" />
-            <Form.Group>
-               <Form.Label htmlFor="to" title="to">
-                  <Flex container alignItems="center">
-                     Delivery To*
-                     <Tooltip identifier="form_subscription_tunnel_zipcode_field_delivery_to" />
+            <Text as="h3">Pick Up</Text>
+            <Spacer size="14px" />
+            {!isEmpty(pickupOption) && (
+               <>
+                  <Form.Group>
+                     <Form.Toggle
+                        name="isPickupActive"
+                        value={isPickupActive}
+                        onChange={() => setIsPickupActive(!isPickupActive)}
+                     >
+                        Is Active?
+                     </Form.Toggle>
+                  </Form.Group>
+                  <Spacer size="24px" />
+                  <SelectedOption option={pickupOption} />
+                  <Spacer size="24px" />
+               </>
+            )}
+            <ButtonTile
+               noIcon
+               type="secondary"
+               text="Select Pickup Option"
+               onClick={() => openOptionTunnel(1)}
+            />
+            <Tunnels tunnels={tunnels}>
+               <Tunnel layer={1} size="sm">
+                  <TunnelHeader
+                     title="Select Pickup Option"
+                     close={() => closeOptionTunnel(1)}
+                  />
+                  <Flex
+                     padding="16px"
+                     overflowY="auto"
+                     height="calc(100% - 105px)"
+                  >
+                     <PickupOptions
+                        setPickupOption={setPickupOption}
+                        closeTunnel={closeOptionTunnel}
+                     />
                   </Flex>
-               </Form.Label>
-               <Form.Time
-                  id="to"
-                  name="to"
-                  value={delivery.to}
-                  placeholder="Enter delivery to"
-                  onChange={e =>
-                     onDeliveryChange(e.target.name, e.target.value)
-                  }
-               />
-            </Form.Group>
+               </Tunnel>
+            </Tunnels>
          </Flex>
       </>
+   )
+}
+
+const SelectedOption = ({ option }) => {
+   return (
+      <Styles.SelectedOption container alignItems="center">
+         <section>
+            <span>Pickup time</span>
+            <p as="subtitle">
+               {option?.time?.from} - {option?.time?.to}
+            </p>
+         </section>
+         <Spacer size="16px" xAxis />
+         <section>
+            <span>Address</span>
+            <p as="subtitle">{parseAddress(option.address)}</p>
+         </section>
+         <Spacer size="16px" />
+      </Styles.SelectedOption>
+   )
+}
+
+const PickupOptions = ({ setPickupOption, closeTunnel }) => {
+   const { loading, data: { options = [] } = {} } = useQuery(PICKUP_OPTIONS)
+
+   if (loading) return <InlineLoader />
+   return (
+      <Table>
+         <TableHead>
+            <TableRow>
+               <TableCell>Time</TableCell>
+               <TableCell>Address</TableCell>
+            </TableRow>
+         </TableHead>
+         <TableBody>
+            {options.map(option => (
+               <TableRow
+                  key={option.id}
+                  onClick={() => setPickupOption(option) || closeTunnel(1)}
+               >
+                  <TableCell>
+                     <Text as="p">
+                        {option.time?.from} - {option.time?.to}
+                     </Text>
+                  </TableCell>
+                  <TableCell>
+                     <Text as="p">{parseAddress(option.address)}</Text>
+                  </TableCell>
+               </TableRow>
+            ))}
+         </TableBody>
+      </Table>
    )
 }
 
@@ -363,4 +579,32 @@ const Delete = ({ cell, remove }) => {
          <DeleteIcon color="#FF5A52" />
       </IconButton>
    )
+}
+
+const Styles = {
+   Row: styled.div`
+      display: flex;
+      align-items: center;
+      > section {
+         flex: 1;
+      }
+   `,
+   Options: styled.ul``,
+   Option: styled.li`
+      list-style: none;
+   `,
+   SelectedOption: styled.div`
+      display: flex;
+      > section {
+         > span {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: #433e46;
+            letter-spacing: 0.4px;
+         }
+         > p {
+            color: #555b6e;
+         }
+      }
+   `,
 }

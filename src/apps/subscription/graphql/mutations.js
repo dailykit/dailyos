@@ -87,6 +87,20 @@ export const INSERT_SUBSCRIPTION_ZIPCODES = gql`
    }
 `
 
+export const UPDATE_SUBSCRIPTION_ZIPCODE = gql`
+   mutation updateSubscriptionZipcode(
+      $pk_columns: subscription_subscription_zipcode_pk_columns_input!
+      $_set: subscription_subscription_zipcode_set_input!
+   ) {
+      update_subscription_subscription_zipcode_by_pk(
+         pk_columns: $pk_columns
+         _set: $_set
+      ) {
+         zipcode
+      }
+   }
+`
+
 export const UPDATE_SUBSCRIPTION = gql`
    mutation updateSubscription(
       $id: Int!

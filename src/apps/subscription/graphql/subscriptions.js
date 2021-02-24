@@ -1,5 +1,15 @@
 import gql from 'graphql-tag'
 
+export const PICKUP_OPTIONS = gql`
+   query options {
+      options: subscription_subscriptionPickupOption {
+         id
+         time
+         address
+      }
+   }
+`
+
 export const OCCURRENCES_DATES = gql`
    subscription occurrences_dates {
       occurrences_dates: subscriptionOccurences(distinct_on: fulfillmentDate) {
