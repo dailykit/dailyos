@@ -22,11 +22,7 @@ import {
 import { useTabs } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import { CloseIcon, TickIcon } from '../../../assets/icons'
-import {
-   ModifiersContext,
-   reducers as modifiersReducers,
-   state as initialModifiersState,
-} from '../../../context/product/modifiers'
+import { ModifiersProvider } from '../../../context/product/modifiers'
 
 import { PRODUCT } from '../../../graphql'
 import { Assets, Description } from './components'
@@ -41,10 +37,6 @@ const Product = () => {
    const { pathname } = useLocation()
 
    const { setTabTitle, tab, addTab } = useTabs()
-   const [modifiersState, modifiersDispatch] = React.useReducer(
-      modifiersReducers,
-      initialModifiersState
-   )
 
    const [title, setTitle] = React.useState({
       value: '',
@@ -165,9 +157,7 @@ const Product = () => {
 
    return (
       <ProductProvider>
-         <ModifiersContext.Provider
-            value={{ modifiersState, modifiersDispatch }}
-         >
+         <ModifiersProvider>
             <ResponsiveFlex>
                <Form.Group>
                   <Form.Label htmlFor="title" title="title">
@@ -251,7 +241,7 @@ const Product = () => {
                   </HorizontalTabPanels>
                </HorizontalTabs>
             </Flex>
-         </ModifiersContext.Provider>
+         </ModifiersProvider>
       </ProductProvider>
    )
 }

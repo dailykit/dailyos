@@ -71,6 +71,22 @@ export const PRODUCT = {
                   unit
                   unitSize
                }
+               modifier {
+                  id
+                  name
+                  data
+               }
+               operationConfig {
+                  id
+                  station {
+                     id
+                     name
+                  }
+                  labelTemplate {
+                     id
+                     name
+                  }
+               }
             }
          }
       }

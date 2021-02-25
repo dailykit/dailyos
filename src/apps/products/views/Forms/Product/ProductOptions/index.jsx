@@ -4,6 +4,7 @@ import { useMutation } from '@apollo/react-hooks'
 import {
    ButtonTile,
    Collapsible,
+   ComboButton,
    Flex,
    Form,
    IconButton,
@@ -22,14 +23,38 @@ import {
    EditIcon,
    PlusIcon,
 } from '../../../../../../shared/assets/icons'
+import { ModifiersContext } from '../../../../context/product/modifiers'
 import { ProductContext } from '../../../../context/product'
 import validator from '../validators'
-import { ProductOptionTypeTunnel, ProductOptionItemTunnel } from './tunnels'
+import {
+   ProductOptionTypeTunnel,
+   ProductOptionItemTunnel,
+   ModifierFormTunnel,
+   ModifierModeTunnel,
+   ModifierOptionsTunnel,
+   ModifierPhotoTunnel,
+   ModifierTemplatesTunnel,
+   ModifierTypeTunnel,
+} from './tunnels'
 
 const ProductOptions = ({ productId, options }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
+   const [
+      modifiersTunnel,
+      openModifiersTunnel,
+      closeModifiersTunnel,
+   ] = useTunnel(6)
+   const [
+      operationConfigTunnels,
+      openOperationConfigTunnel,
+      closeOperationConfigTunnel,
+   ] = useTunnel(4)
 
    const { productDispatch } = React.useContext(ProductContext)
+   const { modifiersDispatch } = React.useContext(ModifiersContext)
+
+   const opConfigInvokedBy = React.useRef('')
+   const modifierOpConfig = React.useRef(undefined)
 
    const [createProductOption] = useMutation(PRODUCT_OPTION.CREATE, {
       onCompleted: () => {
@@ -59,6 +84,25 @@ const ProductOptions = ({ productId, options }) => {
       openTunnel(1)
    }
 
+   const handleAddModifier = optionId => {
+      modifiersDispatch({
+         type: 'META',
+         payload: {
+            name: 'optionId',
+            value: optionId,
+         },
+      })
+      openModifiersTunnel(1)
+   }
+
+   const handleEditModifier = modifier => {
+      modifiersDispatch({
+         type: 'POPULATE',
+         payload: { modifier },
+      })
+      openModifiersTunnel(2)
+   }
+
    return (
       <>
          <Tunnels tunnels={tunnels}>
@@ -72,6 +116,40 @@ const ProductOptions = ({ productId, options }) => {
                <ProductOptionItemTunnel closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
+         <Tunnels tunnels={modifiersTunnel}>
+            <Tunnel layer={1}>
+               <ModifierModeTunnel
+                  open={openModifiersTunnel}
+                  close={closeModifiersTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={2}>
+               <ModifierFormTunnel
+                  open={openModifiersTunnel}
+                  close={closeModifiersTunnel}
+                  openOperationConfigTunnel={value => {
+                     opConfigInvokedBy.current = 'modifier'
+                     openOperationConfigTunnel(value)
+                  }}
+                  modifierOpConfig={modifierOpConfig.current}
+               />
+            </Tunnel>
+            <Tunnel layer={3}>
+               <ModifierTypeTunnel
+                  open={openModifiersTunnel}
+                  close={closeModifiersTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={4}>
+               <ModifierOptionsTunnel close={closeModifiersTunnel} />
+            </Tunnel>
+            <Tunnel layer={5}>
+               <ModifierPhotoTunnel close={closeModifiersTunnel} />
+            </Tunnel>
+            <Tunnel layer={6}>
+               <ModifierTemplatesTunnel close={closeModifiersTunnel} />
+            </Tunnel>
+         </Tunnels>
          {options.length && (
             <Flex margin="0 0 32px 0">
                {options.map(option => (
@@ -79,6 +157,10 @@ const ProductOptions = ({ productId, options }) => {
                      key={option.id}
                      option={option}
                      handleAddOptionItem={() => handleAddOptionItem(option.id)}
+                     handleAddModifier={() => handleAddModifier(option.id)}
+                     handleEditModifier={() =>
+                        handleEditModifier(option.modifier)
+                     }
                   />
                ))}
             </Flex>
@@ -94,7 +176,12 @@ const ProductOptions = ({ productId, options }) => {
 
 export default ProductOptions
 
-const Option = ({ option, handleAddOptionItem }) => {
+const Option = ({
+   option,
+   handleAddOptionItem,
+   handleAddModifier,
+   handleEditModifier,
+}) => {
    const [history, setHistory] = React.useState({
       ...option,
    })
@@ -375,8 +462,46 @@ const Option = ({ option, handleAddOptionItem }) => {
       )
    }
 
+   const handleDeleteModifier = () => {
+      updateProductOption({
+         variables: {
+            id: option.id,
+            _set: {
+               modifierId: null,
+            },
+         },
+      })
+   }
+
    const renderBody = () => {
-      return <p>Body</p>
+      return (
+         <Flex container padding="8px 0 0 0">
+            <Flex>
+               {option.modifier ? (
+                  <Flex container alignItems="center">
+                     <Flex>
+                        <Text as="subtitle">Modifier Template</Text>
+                        <Text as="p">{option.modifier.name}</Text>
+                     </Flex>
+                     <Spacer xAxis size="16px" />
+                     <IconButton type="ghost" onClick={handleEditModifier}>
+                        <EditIcon color="#00A7E1" />
+                     </IconButton>
+                     <Spacer xAxis size="8px" />
+                     <IconButton type="ghost" onClick={handleDeleteModifier}>
+                        <DeleteIcon color="#FF5A52" />
+                     </IconButton>
+                  </Flex>
+               ) : (
+                  <ComboButton type="ghost" onClick={handleAddModifier}>
+                     <PlusIcon /> Add Modifiers
+                  </ComboButton>
+               )}
+            </Flex>
+            <Spacer xAxis size="32px" />
+            {/* {renderOpConfig()} */}
+         </Flex>
+      )
    }
 
    return <Collapsible isDraggable head={renderHead()} body={renderBody()} />

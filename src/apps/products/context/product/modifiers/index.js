@@ -1,4 +1,5 @@
 import React from 'react'
+import { initialState } from '..'
 
 export const ModifiersContext = React.createContext()
 
@@ -389,4 +390,17 @@ export const reducers = (state, { type, payload }) => {
       default:
          return state
    }
+}
+
+export const ModifiersProvider = ({ children }) => {
+   const [modifiersState, modifiersDispatch] = React.useReducer(
+      reducers,
+      initialState
+   )
+
+   return (
+      <ModifiersContext.Provider value={{ modifiersState, modifiersDispatch }}>
+         {children}
+      </ModifiersContext.Provider>
+   )
 }
