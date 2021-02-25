@@ -157,7 +157,7 @@ const ToggleStatus = ({ update, cell }) => {
 
    return (
       <Form.Toggle
-         name="brandSubscription"
+         name={`brandSubscription-${cell.getData().id}`}
          onChange={() => setChecked(!checked)}
          value={checked}
       />

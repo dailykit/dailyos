@@ -12,6 +12,18 @@ export const INSERT_OCCURENCE_PRODUCTS = gql`
    }
 `
 
+export const INSERT_OCCURENCE_ADDON_PRODUCTS = gql`
+   mutation insertOccurenceAddOnProducts(
+      $objects: [subscription_subscriptionOccurence_addOn_insert_input!]!
+   ) {
+      insertOccurenceAddOnProducts: insert_subscription_subscriptionOccurence_addOn(
+         objects: $objects
+      ) {
+         affected_rows
+      }
+   }
+`
+
 export const UPSERT_SUBSCRIPTION_TITLE = gql`
    mutation upsertSubscriptionTitle(
       $object: subscription_subscriptionTitle_insert_input!
@@ -83,6 +95,20 @@ export const INSERT_SUBSCRIPTION_ZIPCODES = gql`
          objects: $objects
       ) {
          affected_rows
+      }
+   }
+`
+
+export const UPDATE_SUBSCRIPTION_ZIPCODE = gql`
+   mutation updateSubscriptionZipcode(
+      $pk_columns: subscription_subscription_zipcode_pk_columns_input!
+      $_set: subscription_subscription_zipcode_set_input!
+   ) {
+      update_subscription_subscription_zipcode_by_pk(
+         pk_columns: $pk_columns
+         _set: $_set
+      ) {
+         zipcode
       }
    }
 `

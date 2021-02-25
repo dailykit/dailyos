@@ -71,6 +71,17 @@ const Occurences = ({ id, setOccurencesTotal }) => {
       },
       {
          hozAlign: 'right',
+         title: 'Add On Products',
+         formatter: reactFormatter(<AddOnProductsCount />),
+         headerTooltip: column => {
+            const identifier = 'listing_occurences_column_products'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+      {
+         hozAlign: 'right',
          title: 'Menu Products',
          formatter: reactFormatter(<ProductsCount />),
          headerTooltip: column => {
@@ -117,6 +128,21 @@ const ProductsCount = ({ cell: { _cell } }) => {
          /
          <span title="Added to the subscription">
             {data.subscription.products.aggregate.count}
+         </span>
+      </div>
+   )
+}
+
+const AddOnProductsCount = ({ cell: { _cell } }) => {
+   const data = _cell.row.getData()
+   return (
+      <div>
+         <span title="Added to this occurence">
+            {data.addOnProducts.aggregate.count}
+         </span>
+         /
+         <span title="Added to the subscription">
+            {data.subscription.addOnProducts.aggregate.count}
          </span>
       </div>
    )
