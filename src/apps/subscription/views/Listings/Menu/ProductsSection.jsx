@@ -357,8 +357,8 @@ const SaveTunnel = ({
    const { state, dispatch } = useMenu()
    const [checked, setChecked] = React.useState(false)
    const [form, setForm] = React.useState({
-      addonLabel: '',
-      addonPrice: '',
+      addOnLabel: '',
+      addOnPrice: '',
       productCategory: '',
    })
    const { data: { productCategories = [] } = {} } = useQuery(
@@ -367,8 +367,8 @@ const SaveTunnel = ({
    const [insertOccurenceProducts] = useMutation(INSERT_OCCURENCE_PRODUCTS, {
       onCompleted: () => {
          setForm({
-            addonLabel: '',
-            addonPrice: '',
+            addOnLabel: '',
+            addOnPrice: '',
             productCategory: '',
          })
          closeTunnel(1)
@@ -399,8 +399,8 @@ const SaveTunnel = ({
          plans.map(plan => {
             const result = products.map(product => ({
                isSingleSelect: !checked,
-               addonLabel: form.addonLabel,
-               addonPrice: Number(form.addonPrice),
+               addOnLabel: form.addOnLabel,
+               addOnPrice: Number(form.addOnPrice),
                productCategory: form.productCategory,
                ...(state.plans.isPermanent
                   ? { subscriptionId: plan.subscription.id }
@@ -451,32 +451,32 @@ const SaveTunnel = ({
                <Spacer size="24px" />
                <Form.Group>
                   <Flex container alignItems="center">
-                     <Form.Label htmlFor="addonLabel" title="addonLabel">
+                     <Form.Label htmlFor="addOnLabel" title="addOnLabel">
                         Add On Label*
                      </Form.Label>
                      <Tooltip identifier="listing_menu_tunnel_field_addonlabel" />
                   </Flex>
                   <Form.Text
-                     id="addonLabel"
-                     name="addonLabel"
+                     id="addOnLabel"
+                     name="addOnLabel"
                      onChange={handleChange}
-                     value={form.addonLabel}
+                     value={form.addOnLabel}
                      placeholder="Enter the add on label"
                   />
                </Form.Group>
                <Spacer size="24px" />
                <Form.Group>
                   <Flex container alignItems="center">
-                     <Form.Label htmlFor="addonPrice" title="addonPrice">
+                     <Form.Label htmlFor="addOnPrice" title="addOnPrice">
                         Add On Price*
                      </Form.Label>
-                     <Tooltip identifier="listing_menu_tunnel_field_addonprice" />
+                     <Tooltip identifier="listing_menu_tunnel_field_addOnPrice" />
                   </Flex>
                   <Form.Text
-                     id="addonPrice"
-                     name="addonPrice"
+                     id="addOnPrice"
+                     name="addOnPrice"
                      onChange={handleChange}
-                     value={form.addonPrice}
+                     value={form.addOnPrice}
                      placeholder="Enter the add on price"
                   />
                </Form.Group>
