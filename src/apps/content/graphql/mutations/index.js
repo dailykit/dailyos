@@ -120,6 +120,22 @@ export const LINK_COMPONENT = gql`
       }
    }
 `
+export const UPDATE_LINK_COMPONENT = gql`
+   mutation UPDATED_LINK_COMPONENT(
+      $websitePageModuleId: Int!
+      $_set: website_websitePageModule_set_input!
+   ) {
+      update_website_websitePageModule(
+         where: { id: { _eq: $websitePageModuleId } }
+         _set: $_set
+      ) {
+         returning {
+            config
+            id
+         }
+      }
+   }
+`
 export const DELETE_LINKED_COMPONENT = gql`
    mutation DELETE_LINKED_COMPONENT(
       $where: website_websitePageModule_bool_exp!

@@ -1,4 +1,3 @@
-import axios from 'axios'
 export const getFullPath = path => {
    const host =
       process.env.NODE_ENV === 'development'
@@ -6,17 +5,32 @@ export const getFullPath = path => {
          : window.location.origin
 
    const url = `${host}/template/files${path}`
-   console.log('from Fetch util', path, url)
    return url
 }
 
 export const getFile = async path => {
    try {
       const url = getFullPath(path)
-      const data = await axios(url)
+      const response = await fetch(url)
 
-      return data
+      return response
    } catch (error) {
       console.log(error)
+   }
+}
+
+export const isConfigFileExist = async path => {
+   try {
+      const filePath = path
+         .replace('components', 'components/config')
+         .replace('ejs', 'json')
+      const response = await getFile(filePath)
+      if (response.status === 200) {
+         return true
+      }
+      return false
+   } catch (error) {
+      console.log(error)
+      return false
    }
 }

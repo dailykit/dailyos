@@ -22,6 +22,7 @@ import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
 import { StyledWrapper, WrapDiv, Child } from './styled'
 import {
    LINKED_COMPONENT,
+   UPDATE_LINK_COMPONENT,
    LINK_COMPONENT,
    DELETE_LINKED_COMPONENT,
 } from '../../../../graphql'
@@ -30,6 +31,7 @@ import { ConfigTunnel } from '../Tunnel'
 import File from './File'
 import Template from './Template'
 import ConfigContext from '../../../../context/Config'
+import { isConfigFileExist } from '../../../../utils'
 
 const ContentSelection = () => {
    const [configTunnels, openConfigTunnel, closeConfigTunnel] = useTunnel()
@@ -38,38 +40,39 @@ const ContentSelection = () => {
    const [linkedFiles, setLinkedFiles] = useState([])
    const [selectedFileOptions, setSelectedFileOptions] = useState([])
    const [configContext, setConfigContext] = useContext(ConfigContext)
-   // const oldConfig = useRef({})
-   // Subscription
-   const { loading, error } = useSubscription(LINKED_COMPONENT, {
-      variables: {
-         pageId,
-      },
-      onSubscriptionData: ({
-         subscriptionData: {
-            data: { website_websitePageModule: pageModules = [] } = {},
-         } = {},
-      }) => {
-         const files = pageModules.filter(page => page.moduleType === 'file')
-         const templates = pageModules.filter(
-            page => page.moduleType === 'template'
-         )
-         setLinkedFiles(files)
-         if (files.length) {
-            initiatePriority({
-               tablename: 'websitePageModule',
-               schemaname: 'website',
-               data: files,
-            })
-         }
-      },
-   })
+   const { loading, error: subscriptionError } = useSubscription(
+      LINKED_COMPONENT,
+      {
+         variables: {
+            pageId,
+         },
+         onSubscriptionData: ({
+            subscriptionData: {
+               data: { website_websitePageModule: pageModules = [] } = {},
+            } = {},
+         }) => {
+            const files = pageModules.filter(page => page.moduleType === 'file')
+            const templates = pageModules.filter(
+               page => page.moduleType === 'template'
+            )
 
-   // Mutation
+            setLinkedFiles(files)
+            if (files.length) {
+               initiatePriority({
+                  tablename: 'websitePageModule',
+                  schemaname: 'website',
+                  data: files,
+               })
+            }
+         },
+      }
+   )
+
+   // Create mutation
    const [linkComponent] = useMutation(LINK_COMPONENT, {
       onCompleted: () => {
          toast.success(`Added to the "${pageName}" page successfully!!`)
          setSelectedFileOptions([])
-         closeConfigTunnel(1)
       },
       onError: error => {
          toast.error('Something went wrong')
@@ -77,6 +80,20 @@ const ContentSelection = () => {
          setSelectedFileOptions([])
       },
    })
+
+   // Update mutation
+   const [updateLinkComponent] = useMutation(UPDATE_LINK_COMPONENT, {
+      onCompleted: () => {
+         toast.success(`Updated "${pageName}" page successfully!!`)
+         closeConfigTunnel(1)
+      },
+      onError: error => {
+         toast.error('Something went wrong')
+         logger(error)
+         closeConfigTunnel(1)
+      },
+   })
+
    // Mutation
    const [deleteLinkComponent] = useMutation(DELETE_LINKED_COMPONENT, {
       onCompleted: () => {
@@ -106,15 +123,13 @@ const ContentSelection = () => {
    //    // }
    // }
 
-   const saveHandler = dataConfig => {
-      console.log(dataConfig)
+   const saveHandler = () => {
       if (selectedFileOptions.length) {
          const result = selectedFileOptions.map(option => {
             return {
                websitePageId: +pageId,
                moduleType: 'file',
                fileId: option.id,
-               config: dataConfig,
             }
          })
 
@@ -124,6 +139,17 @@ const ContentSelection = () => {
             },
          })
       }
+   }
+
+   const updateHandler = (websitePageModuleId, updatedConfig) => {
+      updateLinkComponent({
+         variables: {
+            websitePageModuleId,
+            _set: {
+               config: updatedConfig,
+            },
+         },
+      })
    }
 
    const deleteHandler = fileId => {
@@ -144,9 +170,9 @@ const ContentSelection = () => {
    if (loading) {
       return <InlineLoader />
    }
-   if (error) {
+   if (subscriptionError) {
       toast.error('Something went wrong')
-      logger(error)
+      logger(subscriptionError)
    }
    return (
       <Flex container justifyContent="space-between">
@@ -161,25 +187,18 @@ const ContentSelection = () => {
                >
                   {linkedFiles.map(file => {
                      return (
-                        <Child>
-                           {/* <ButtonTile
-                           noIcon
-                           size="sm"
-                           type="secondary"
-                           text={file?.file?.fileName || ''}
-                        /> */}
-
+                        <Child key={file.fileId}>
                            <div className="name">
                               {file?.file?.fileName || ''}
                            </div>
-                           {file.config && (
-                              <IconButton
-                                 type="ghost"
-                                 onClick={() => openConfig(file?.config)}
-                              >
-                                 <EditIcon color="#555b6e" size="20" />
-                              </IconButton>
-                           )}
+
+                           <IconButton
+                              type="ghost"
+                              onClick={() => openConfig(file)}
+                           >
+                              <EditIcon color="#555b6e" size="20" />
+                           </IconButton>
+
                            <IconButton
                               type="ghost"
                               onClick={() => deleteHandler(file.fileId)}
@@ -200,11 +219,7 @@ const ContentSelection = () => {
          </WrapDiv>
          <StyledWrapper>
             <Flex container justifyContent="flex-end">
-               <ComboButton
-                  type="solid"
-                  size="md"
-                  onClick={() => openConfigTunnel(1)}
-               >
+               <ComboButton type="solid" size="md" onClick={saveHandler}>
                   <PlusIcon color="#fff" /> Add
                </ComboButton>
             </Flex>
@@ -239,7 +254,9 @@ const ContentSelection = () => {
                tunnels={configTunnels}
                openTunnel={openConfigTunnel}
                closeTunnel={closeConfigTunnel}
-               onSave={dataConfig => saveHandler(dataConfig)}
+               onSave={(websitePageModuleId, updatedConfig) =>
+                  updateHandler(websitePageModuleId, updatedConfig)
+               }
                selectedOption={selectedFileOptions}
             />
          </StyledWrapper>

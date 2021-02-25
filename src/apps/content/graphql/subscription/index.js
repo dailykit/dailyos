@@ -180,6 +180,7 @@ export const LINKED_COMPONENT = gql`
          visibilityConditionId
          file {
             fileName
+            path
          }
       }
    }

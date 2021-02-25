@@ -14,8 +14,8 @@ import {
 // import { GET_FILES, LINK_CSS_FILES } from '../../../graphql'
 import { TunnelBody } from './style'
 import ConfigContext from '../../../../../context/Config'
-import { getFile } from '../../../../../utils'
-import { getConfigUi } from '../component'
+import { isConfigFileExist, getFile } from '../../../../../utils'
+import { getFieldUi } from '../component'
 export default function ConfigTunnel({
    tunnels,
    openTunnel,
@@ -27,7 +27,7 @@ export default function ConfigTunnel({
    const [configJson, setConfigJson] = React.useState({})
    const [fields, setFields] = React.useState([])
    let elements = []
-   console.log('oldConfig', configContext)
+   console.log(configContext)
 
    const onConfigChange = (e, value) => {
       let updatedConfig
@@ -51,8 +51,25 @@ export default function ConfigTunnel({
       })
    }
 
-   const getHeaderUi = title => {
-      return <h1 style={{ marginLeft: '4px' }}>{title.toUpperCase()}</h1>
+   const getHeaderUi = ({ title, fieldData, key }) => {
+      const indentation = `${key.split('.').length * 8}px`
+      return (
+         <div
+            id={key}
+            style={{
+               marginLeft: indentation,
+            }}
+         >
+            <h1 style={{ borderBottom: '1px solid #888D9D' }}>
+               {title.toUpperCase()}
+            </h1>
+            {fieldData.description && (
+               <p style={{ color: '#888D9D', fontSize: '14px' }}>
+                  {fieldData.description}
+               </p>
+            )}
+         </div>
+      )
    }
 
    const renderAllFields = (data, rootKey) => {
@@ -69,39 +86,45 @@ export default function ConfigTunnel({
          if (isFieldObject) {
             const updatedRootkey = rootKey ? `${rootKey}.${key}` : key
             elements.push(
-               getConfigUi({
+               getFieldUi({
                   key: updatedRootkey,
                   configJson,
                   onConfigChange,
                })
             )
          } else {
-            elements.push(getHeaderUi(key))
             const updatedRootkey = rootKey ? `${rootKey}.${key}` : key
-            showConfigUi(value, updatedRootkey)
+            if (typeof value === 'object' && value !== null) {
+               elements.push(
+                  getHeaderUi({
+                     title: key,
+                     fieldData: value,
+                     key: updatedRootkey,
+                  })
+               )
+               showConfigUi(value, updatedRootkey)
+            }
          }
       })
    }
 
    React.useEffect(() => {
       const fetchFile = async () => {
-         selectedOption.forEach(async file => {
-            const filePath = file.value
-               .replace('components', 'components/config')
-               .replace('ejs', 'json')
-            const response = await getFile(filePath)
-            if (response.status === 200) {
-               const configData = response.data
-               setConfigJson(configData)
-            }
-         })
+         const filePath = configContext?.file?.path
+            .replace('components', 'components/config')
+            .replace('ejs', 'json')
+         const response = await getFile(filePath)
+         if (response.status === 200) {
+            const configData = await response.json()
+            setConfigJson(configData)
+         }
       }
-      if (selectedOption.length) {
-         fetchFile()
+      if (configContext.config) {
+         setConfigJson(configContext.config)
       } else {
-         setConfigJson(configContext)
+         fetchFile()
       }
-   }, [selectedOption, configContext])
+   }, [configContext])
 
    React.useEffect(() => {
       console.log('re-run...')
@@ -119,7 +142,7 @@ export default function ConfigTunnel({
                   close={() => closeTunnel(1)}
                   right={{
                      title: 'Save',
-                     action: () => onSave(configJson),
+                     action: () => onSave(configContext.id, configJson),
                   }}
                />
                <TunnelBody>
@@ -139,55 +162,3 @@ export default function ConfigTunnel({
       </div>
    )
 }
-
-const ColorPicker = ({ fieldDetail, onConfigChange }) => (
-   <Flex
-      container
-      justifyContent="space-between"
-      alignItems="center"
-      margin="0 0 0 4px"
-   >
-      <Form.Label htmlfor="color">{fieldDetail.label.toUpperCase()}</Form.Label>
-      <input
-         type="color"
-         id="favcolor"
-         name="favcolor"
-         value={fieldDetail.default || '#555b63'}
-         onChange={onConfigChange}
-      />
-   </Flex>
-)
-
-const Toggle = ({ fieldDetail, onConfigChange }) => (
-   <Flex
-      container
-      justifyContent="space-between"
-      alignItems="center"
-      margin="0 0 0 4px"
-   >
-      <Form.Label htmlfor="toggle">
-         {fieldDetail.label.toUpperCase()}
-      </Form.Label>
-      <Form.Toggle
-         name="toggle"
-         onChange={onConfigChange}
-         value={fieldDetail.default || false}
-      />
-   </Flex>
-)
-
-const Text = ({ fieldDetail, onConfigChange }) => (
-   <Flex
-      container
-      justifyContent="space-between"
-      alignItems="center"
-      margin="0 0 0 4px"
-   >
-      <Form.Label htmlfor="text">{fieldDetail.label.toUpperCase()}</Form.Label>
-      <Form.Text
-         name="toggle"
-         onChange={onConfigChange}
-         value={fieldDetail.default || false}
-      />
-   </Flex>
-)
