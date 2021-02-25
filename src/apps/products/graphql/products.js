@@ -45,6 +45,7 @@ export const PRODUCT = {
                label
                price
                discount
+               quantity
                simpleRecipeYield {
                   id
                   yield

@@ -8,17 +8,23 @@ import {
    Form,
    IconButton,
    Spacer,
+   Text,
    TextButton,
    Tunnel,
    Tunnels,
    useTunnel,
 } from '@dailykit/ui'
 
-import { ProductOptionTypeTunnel, ProductOptionItemTunnel } from './tunnels'
 import { PRODUCT_OPTION } from '../../../../graphql'
 import { logger } from '../../../../../../shared/utils'
-import { PlusIcon } from '../../../../../../shared/assets/icons'
+import {
+   DeleteIcon,
+   EditIcon,
+   PlusIcon,
+} from '../../../../../../shared/assets/icons'
 import { ProductContext } from '../../../../context/product'
+import validator from '../validators'
+import { ProductOptionTypeTunnel, ProductOptionItemTunnel } from './tunnels'
 
 const ProductOptions = ({ productId, options }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
@@ -89,15 +95,180 @@ const ProductOptions = ({ productId, options }) => {
 export default ProductOptions
 
 const Option = ({ option, handleAddOptionItem }) => {
-   const [label, setLabel] = React.useState(option.label || '')
-   const [quantity, setQuantity] = React.useState(option.quantity)
-   const [price, setPrice] = React.useState(option.price)
-   const [discount, setDiscount] = React.useState(option.discount)
+   const [history, setHistory] = React.useState({
+      ...option,
+   })
+
+   React.useEffect(() => {
+      setHistory({ ...option })
+   }, [option.label, option.price, option.discount, option.quantity])
+
+   const [label, setLabel] = React.useState({
+      value: option.label || '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
+   const [quantity, setQuantity] = React.useState({
+      value: option.quantity,
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
+   const [price, setPrice] = React.useState({
+      value: option.price,
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
+   const [discount, setDiscount] = React.useState({
+      value: option.discount,
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
+
+   const [updateProductOption] = useMutation(PRODUCT_OPTION.UPDATE, {
+      onCompleted: () => {
+         toast.success('Option updated!')
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
+   const handleDeleteOptionItem = () => {
+      updateProductOption({
+         variables: {
+            id: option.id,
+            _set: {
+               simpleRecipeYieldId: null,
+               supplierItemId: null,
+               sachetItemId: null,
+            },
+         },
+      })
+   }
+
+   const isActuallyUpdated = (field, value) => {
+      if (history[field] !== value) {
+         return true
+      }
+      return false
+   }
+
+   const handleBlur = field => {
+      switch (field) {
+         case 'label': {
+            const val = label.value.trim()
+            const { isValid, errors } = validator.label(val)
+            if (isValid && isActuallyUpdated(field, val)) {
+               updateProductOption({
+                  variables: {
+                     id: option.id,
+                     _set: {
+                        label: val,
+                     },
+                  },
+               })
+            }
+            setLabel({
+               ...label,
+               meta: {
+                  isTouched: true,
+                  isValid,
+                  errors,
+               },
+            })
+            return
+         }
+         case 'price': {
+            const val = price.value
+            const { isValid, errors } = validator.label(val)
+            if (isValid && isActuallyUpdated(field, val)) {
+               updateProductOption({
+                  variables: {
+                     id: option.id,
+                     _set: {
+                        price: val,
+                     },
+                  },
+               })
+            }
+            setPrice({
+               ...price,
+               meta: {
+                  isTouched: true,
+                  isValid,
+                  errors,
+               },
+            })
+            return
+         }
+         case 'discount': {
+            const val = discount.value
+            const { isValid, errors } = validator.discount(val)
+            if (isValid && isActuallyUpdated(field, val)) {
+               updateProductOption({
+                  variables: {
+                     id: option.id,
+                     _set: {
+                        discount: val,
+                     },
+                  },
+               })
+            }
+            setDiscount({
+               ...discount,
+               meta: {
+                  isTouched: true,
+                  isValid,
+                  errors,
+               },
+            })
+            return
+         }
+         case 'quantity': {
+            const val = quantity.value
+            const { isValid, errors } = validator.quantity(val)
+            if (isValid && isActuallyUpdated(field, val)) {
+               updateProductOption({
+                  variables: {
+                     id: option.id,
+                     _set: {
+                        quantity: val,
+                     },
+                  },
+               })
+            }
+            setQuantity({
+               ...quantity,
+               meta: {
+                  isTouched: true,
+                  isValid,
+                  errors,
+               },
+            })
+            return
+         }
+         default:
+            return null
+      }
+   }
 
    const renderLinkedItem = () => {
       const renderItemName = () => {
          if (option.simpleRecipeYield) {
-            return `${option.simpleRecipeYield.yield.serving} serving - ${option.simpleRecipeYield.simpleRecipe.name}`
+            return `${option.simpleRecipeYield.simpleRecipe.name} - ${option.simpleRecipeYield.yield.serving} serving`
          }
          if (option.supplierItem) {
             return `${option.supplierItem.name} - ${option.supplierItem.unitSize} ${option.supplierItem.unit}`
@@ -112,7 +283,17 @@ const Option = ({ option, handleAddOptionItem }) => {
             {option.simpleRecipeYield ||
             option.supplierItem ||
             option.sachetItem ? (
-               renderItemName()
+               <Flex container alignItems="center">
+                  <Text as="title">{renderItemName()}</Text>
+                  <Spacer xAxis size="16px" />
+                  <IconButton type="ghost" onClick={handleAddOptionItem}>
+                     <EditIcon color="#00A7E1" />
+                  </IconButton>
+                  <Spacer xAxis size="8px" />
+                  <IconButton type="ghost" onClick={handleDeleteOptionItem}>
+                     <DeleteIcon color="#FF5A52" />
+                  </IconButton>
+               </Flex>
             ) : (
                <IconButton type="ghost" onClick={handleAddOptionItem}>
                   <PlusIcon />
@@ -132,13 +313,11 @@ const Option = ({ option, handleAddOptionItem }) => {
                <Form.Text
                   id={`label-${option.id}`}
                   name={`label-${option.id}`}
-                  // onBlur={onBlur}
-                  onChange={e => setLabel(e.target.value)}
-                  value={label}
+                  onBlur={() => handleBlur('label')}
+                  onChange={e => setLabel({ ...label, value: e.target.value })}
+                  value={label.value}
                   placeholder="Enter label"
-                  // hasError={
-                  //    state.username.meta.isTouched && !state.username.meta.isValid
-                  // }
+                  hasError={label.meta.isTouched && !label.meta.isValid}
                />
             </Flex>
             <Spacer xAxis size="32px" />
@@ -149,13 +328,13 @@ const Option = ({ option, handleAddOptionItem }) => {
                <Form.Number
                   id={`quantity-${option.id}`}
                   name={`quantity-${option.id}`}
-                  // onBlur={onBlur}
-                  onChange={e => setQuantity(e.target.value)}
-                  value={quantity}
+                  onBlur={() => handleBlur('quantity')}
+                  onChange={e =>
+                     setQuantity({ ...quantity, value: e.target.value })
+                  }
+                  value={quantity.value}
                   placeholder="Enter quantity"
-                  // hasError={
-                  //    state.username.meta.isTouched && !state.username.meta.isValid
-                  // }
+                  hasError={quantity.meta.isTouched && !quantity.meta.isValid}
                />
             </Flex>
             <Spacer xAxis size="32px" />
@@ -166,13 +345,11 @@ const Option = ({ option, handleAddOptionItem }) => {
                <Form.Number
                   id={`price-${option.id}`}
                   name={`price-${option.id}`}
-                  // onBlur={onBlur}
-                  onChange={e => setPrice(e.target.value)}
-                  value={price}
+                  onBlur={() => handleBlur('price')}
+                  onChange={e => setPrice({ ...price, value: e.target.value })}
+                  value={price.value}
                   placeholder="Enter price"
-                  // hasError={
-                  //    state.username.meta.isTouched && !state.username.meta.isValid
-                  // }
+                  hasError={price.meta.isTouched && !price.meta.isValid}
                />
             </Flex>
             <Spacer xAxis size="32px" />
@@ -183,13 +360,13 @@ const Option = ({ option, handleAddOptionItem }) => {
                <Form.Number
                   id={`discount-${option.id}`}
                   name={`discount-${option.id}`}
-                  // onBlur={onBlur}
-                  onChange={e => setDiscount(e.target.value)}
-                  value={discount}
+                  onBlur={() => handleBlur('discount')}
+                  onChange={e =>
+                     setDiscount({ ...discount, value: e.target.value })
+                  }
+                  value={discount.value}
                   placeholder="Enter discount"
-                  // hasError={
-                  //    state.username.meta.isTouched && !state.username.meta.isValid
-                  // }
+                  hasError={discount.meta.isTouched && !discount.meta.isValid}
                />
             </Flex>
             <Spacer xAxis size="64px" />
@@ -202,12 +379,5 @@ const Option = ({ option, handleAddOptionItem }) => {
       return <p>Body</p>
    }
 
-   return (
-      <Collapsible
-         isDraggable
-         isHeadClickable
-         head={renderHead()}
-         body={renderBody()}
-      />
-   )
+   return <Collapsible isDraggable head={renderHead()} body={renderBody()} />
 }

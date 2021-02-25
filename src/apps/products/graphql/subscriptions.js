@@ -708,6 +708,7 @@ export const S_SIMPLE_RECIPE_YIELDS = gql`
          id
          yield
          simpleRecipe {
+            id
             name
          }
       }
