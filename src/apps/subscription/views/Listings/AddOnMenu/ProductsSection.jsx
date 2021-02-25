@@ -49,7 +49,7 @@ const ProductsSection = () => {
       {
          title: 'Product',
          headerFilter: true,
-         field: 'recipeProduct.name',
+         field: 'product.name',
          headerFilterPlaceholder: 'Search products...',
          headerTooltip: column => {
             const identifier = 'product_listing_column_name'
@@ -88,21 +88,9 @@ const ProductsSection = () => {
       const data = row.getData()
 
       if (row.isSelected()) {
-         let productId
-         let type
-         if ('recipeProduct' in data) {
-            type = 'SRP'
-            productId = data.recipeProduct.id
-         }
-         if ('inventoryProduct' in data) {
-            type = 'IP'
-            productId = data.inventoryProduct.id
-         }
          dispatch({
             type: 'SET_PRODUCT',
             payload: {
-               type,
-               id: productId,
                option: { id: data.id },
             },
          })
@@ -223,7 +211,7 @@ const MealKits = ({ columns, mealKitTableRef, handleRowSelection }) => {
          options={{
             ...tableOptions,
             selectable: true,
-            groupBy: 'recipeProduct.name',
+            groupBy: 'product.name',
          }}
       />
    )
@@ -259,7 +247,7 @@ const ReadyToEats = ({ columns, handleRowSelection, readyToEatTableRef }) => {
          options={{
             ...tableOptions,
             selectable: true,
-            groupBy: 'recipeProduct.name',
+            groupBy: 'product.name',
          }}
       />
    )
@@ -267,17 +255,20 @@ const ReadyToEats = ({ columns, handleRowSelection, readyToEatTableRef }) => {
 
 const Inventory = ({ inventoryTableRef, handleRowSelection }) => {
    const { tooltip } = useTooltip()
-   const {
-      error,
-      loading,
-      data: { inventoryProductOptions = {} } = {},
-   } = useQuery(INVENTORY_PRODUCT_OPTIONS)
+   const { error, loading, data: { productOptions = {} } = {} } = useQuery(
+      INVENTORY_PRODUCT_OPTIONS,
+      {
+         variables: {
+            type: { _eq: 'inventory' },
+         },
+      }
+   )
 
    const columns = [
       {
          title: 'Product',
          headerFilter: true,
-         field: 'inventoryProduct.name',
+         field: 'product.name',
          headerFilterPlaceholder: 'Search products...',
          headerTooltip: column => {
             const identifier = 'product_listing_column_name'
@@ -314,11 +305,11 @@ const Inventory = ({ inventoryTableRef, handleRowSelection }) => {
          rowSelected={handleRowSelection}
          rowDeselected={handleRowSelection}
          selectableCheck={() => true}
-         data={inventoryProductOptions.nodes || []}
+         data={productOptions.nodes || []}
          options={{
             ...tableOptions,
             selectable: true,
-            groupBy: 'inventoryProduct.name',
+            groupBy: 'product.name',
          }}
       />
    )
@@ -380,18 +371,10 @@ const SaveTunnel = ({
                isSingleSelect: !checked,
                unitPrice: Number(form.unitPrice),
                productCategory: form.productCategory,
+               productOptionId: product.option.id,
                ...(state.plans.isPermanent
                   ? { subscriptionId: plan.subscription.id }
                   : { subscriptionOccurenceId: plan.occurence.id }),
-               ...(product.type === 'SRP'
-                  ? {
-                       simpleRecipeProductId: product.id,
-                       simpleRecipeProductOptionId: product.option.id,
-                    }
-                  : {
-                       inventoryProductId: product.id,
-                       inventoryProductOptionId: product.option.id,
-                    }),
             }))
             return result
          })
@@ -421,7 +404,7 @@ const SaveTunnel = ({
                right={{
                   title: 'Save',
                   action: () => save(),
-                  disabled: !form.productCategory,
+                  disabled: !form.productCategory && !form.unitPrice,
                }}
                tooltip={<Tooltip identifier="listing_menu_tunnel_heading" />}
             />

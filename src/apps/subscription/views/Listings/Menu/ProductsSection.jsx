@@ -49,7 +49,7 @@ const ProductsSection = () => {
       {
          title: 'Product',
          headerFilter: true,
-         field: 'recipeProduct.name',
+         field: 'product.name',
          headerFilterPlaceholder: 'Search products...',
          headerTooltip: column => {
             const identifier = 'product_listing_column_name'
@@ -88,21 +88,9 @@ const ProductsSection = () => {
       const data = row.getData()
 
       if (row.isSelected()) {
-         let productId
-         let type
-         if ('recipeProduct' in data) {
-            type = 'SRP'
-            productId = data.recipeProduct.id
-         }
-         if ('inventoryProduct' in data) {
-            type = 'IP'
-            productId = data.inventoryProduct.id
-         }
          dispatch({
             type: 'SET_PRODUCT',
             payload: {
-               type,
-               id: productId,
                option: { id: data.id },
             },
          })
@@ -119,7 +107,7 @@ const ProductsSection = () => {
       if (!localStorage.getItem('serving_size')) return true
 
       let compareWith
-      if ('recipeProduct' in data) {
+      if (['mealKit', 'readyToEat'].includes(data.type)) {
          compareWith = data.recipeYield.size
       }
       return compareWith === parseInt(localStorage.getItem('serving_size'), 10)
@@ -241,7 +229,7 @@ const MealKits = ({
          options={{
             ...tableOptions,
             selectable: true,
-            groupBy: 'recipeProduct.name',
+            groupBy: 'product.name',
          }}
       />
    )
@@ -282,7 +270,7 @@ const ReadyToEats = ({
          options={{
             ...tableOptions,
             selectable: true,
-            groupBy: 'recipeProduct.name',
+            groupBy: 'product.name',
          }}
       />
    )
@@ -290,17 +278,20 @@ const ReadyToEats = ({
 
 const Inventory = ({ inventoryTableRef, handleRowSelection }) => {
    const { tooltip } = useTooltip()
-   const {
-      error,
-      loading,
-      data: { inventoryProductOptions = {} } = {},
-   } = useQuery(INVENTORY_PRODUCT_OPTIONS)
+   const { error, loading, data: { productOptions = {} } = {} } = useQuery(
+      INVENTORY_PRODUCT_OPTIONS,
+      {
+         variables: {
+            type: { _eq: 'inventory' },
+         },
+      }
+   )
 
    const columns = [
       {
          title: 'Product',
          headerFilter: true,
-         field: 'inventoryProduct.name',
+         field: 'product.name',
          headerFilterPlaceholder: 'Search products...',
          headerTooltip: column => {
             const identifier = 'product_listing_column_name'
@@ -337,11 +328,11 @@ const Inventory = ({ inventoryTableRef, handleRowSelection }) => {
          selectableCheck={() => true}
          rowSelected={handleRowSelection}
          rowDeselected={handleRowSelection}
-         data={inventoryProductOptions.nodes || []}
+         data={productOptions.nodes || []}
          options={{
             ...tableOptions,
             selectable: true,
-            groupBy: 'inventoryProduct.name',
+            groupBy: 'product.name',
          }}
       />
    )
@@ -400,20 +391,12 @@ const SaveTunnel = ({
             const result = products.map(product => ({
                isSingleSelect: !checked,
                addOnLabel: form.addOnLabel,
+               productOptionId: product.option.id,
                addOnPrice: Number(form.addOnPrice),
                productCategory: form.productCategory,
                ...(state.plans.isPermanent
                   ? { subscriptionId: plan.subscription.id }
                   : { subscriptionOccurenceId: plan.occurence.id }),
-               ...(product.type === 'SRP'
-                  ? {
-                       simpleRecipeProductId: product.id,
-                       simpleRecipeProductOptionId: product.option.id,
-                    }
-                  : {
-                       inventoryProductId: product.id,
-                       inventoryProductOptionId: product.option.id,
-                    }),
             }))
             return result
          })
@@ -452,7 +435,7 @@ const SaveTunnel = ({
                <Form.Group>
                   <Flex container alignItems="center">
                      <Form.Label htmlFor="addOnLabel" title="addOnLabel">
-                        Add On Label*
+                        Add On Label
                      </Form.Label>
                      <Tooltip identifier="listing_menu_tunnel_field_addonlabel" />
                   </Flex>
@@ -468,7 +451,7 @@ const SaveTunnel = ({
                <Form.Group>
                   <Flex container alignItems="center">
                      <Form.Label htmlFor="addOnPrice" title="addOnPrice">
-                        Add On Price*
+                        Add On Price
                      </Form.Label>
                      <Tooltip identifier="listing_menu_tunnel_field_addOnPrice" />
                   </Flex>
