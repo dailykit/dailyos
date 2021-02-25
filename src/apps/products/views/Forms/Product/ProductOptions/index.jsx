@@ -277,6 +277,16 @@ const Option = ({
       },
    })
 
+   const [deleteProductOption] = useMutation(PRODUCT_OPTION.DELETE, {
+      onCompleted: () => {
+         toast.success('Option deleted!')
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
    const handleDeleteOptionItem = () => {
       updateProductOption({
          variables: {
@@ -288,6 +298,19 @@ const Option = ({
             },
          },
       })
+   }
+
+   const handleDeleteOption = () => {
+      const isConfirmed = window.confirm(
+         `Are you sure you want to delete - ${option.label}?`
+      )
+      if (isConfirmed) {
+         deleteProductOption({
+            variables: {
+               id: option.id,
+            },
+         })
+      }
    }
 
    const isActuallyUpdated = (field, value) => {
@@ -436,72 +459,96 @@ const Option = ({
 
    const renderHead = () => {
       return (
-         <Flex container alignItems="center" width="100%">
-            <Flex>
-               <Form.Label htmlFor={`label-${option.id}`} title="label">
-                  Label
-               </Form.Label>
-               <Form.Text
-                  id={`label-${option.id}`}
-                  name={`label-${option.id}`}
-                  onBlur={() => handleBlur('label')}
-                  onChange={e => setLabel({ ...label, value: e.target.value })}
-                  value={label.value}
-                  placeholder="Enter label"
-                  hasError={label.meta.isTouched && !label.meta.isValid}
-               />
+         <Flex
+            container
+            alignItems="center"
+            justifyContent="space-between"
+            width="100%"
+         >
+            <Flex container alignItems="center">
+               <Flex>
+                  <Form.Label htmlFor={`label-${option.id}`} title="label">
+                     Label
+                  </Form.Label>
+                  <Form.Text
+                     id={`label-${option.id}`}
+                     name={`label-${option.id}`}
+                     onBlur={() => handleBlur('label')}
+                     onChange={e =>
+                        setLabel({ ...label, value: e.target.value })
+                     }
+                     value={label.value}
+                     placeholder="Enter label"
+                     hasError={label.meta.isTouched && !label.meta.isValid}
+                  />
+               </Flex>
+               <Spacer xAxis size="32px" />
+               <Flex maxWidth="100px">
+                  <Form.Label
+                     htmlFor={`quantity-${option.id}`}
+                     title="quantity"
+                  >
+                     Quantity
+                  </Form.Label>
+                  <Form.Number
+                     id={`quantity-${option.id}`}
+                     name={`quantity-${option.id}`}
+                     onBlur={() => handleBlur('quantity')}
+                     onChange={e =>
+                        setQuantity({ ...quantity, value: e.target.value })
+                     }
+                     value={quantity.value}
+                     placeholder="Enter quantity"
+                     hasError={
+                        quantity.meta.isTouched && !quantity.meta.isValid
+                     }
+                  />
+               </Flex>
+               <Spacer xAxis size="32px" />
+               <Flex maxWidth="100px">
+                  <Form.Label htmlFor={`price-${option.id}`} title="price">
+                     Price
+                  </Form.Label>
+                  <Form.Number
+                     id={`price-${option.id}`}
+                     name={`price-${option.id}`}
+                     onBlur={() => handleBlur('price')}
+                     onChange={e =>
+                        setPrice({ ...price, value: e.target.value })
+                     }
+                     value={price.value}
+                     placeholder="Enter price"
+                     hasError={price.meta.isTouched && !price.meta.isValid}
+                  />
+               </Flex>
+               <Spacer xAxis size="32px" />
+               <Flex maxWidth="100px">
+                  <Form.Label
+                     htmlFor={`discount-${option.id}`}
+                     title="discount"
+                  >
+                     Discount
+                  </Form.Label>
+                  <Form.Number
+                     id={`discount-${option.id}`}
+                     name={`discount-${option.id}`}
+                     onBlur={() => handleBlur('discount')}
+                     onChange={e =>
+                        setDiscount({ ...discount, value: e.target.value })
+                     }
+                     value={discount.value}
+                     placeholder="Enter discount"
+                     hasError={
+                        discount.meta.isTouched && !discount.meta.isValid
+                     }
+                  />
+               </Flex>
+               <Spacer xAxis size="64px" />
+               {renderLinkedItem()}
             </Flex>
-            <Spacer xAxis size="32px" />
-            <Flex maxWidth="100px">
-               <Form.Label htmlFor={`quantity-${option.id}`} title="quantity">
-                  Quantity
-               </Form.Label>
-               <Form.Number
-                  id={`quantity-${option.id}`}
-                  name={`quantity-${option.id}`}
-                  onBlur={() => handleBlur('quantity')}
-                  onChange={e =>
-                     setQuantity({ ...quantity, value: e.target.value })
-                  }
-                  value={quantity.value}
-                  placeholder="Enter quantity"
-                  hasError={quantity.meta.isTouched && !quantity.meta.isValid}
-               />
-            </Flex>
-            <Spacer xAxis size="32px" />
-            <Flex maxWidth="100px">
-               <Form.Label htmlFor={`price-${option.id}`} title="price">
-                  Price
-               </Form.Label>
-               <Form.Number
-                  id={`price-${option.id}`}
-                  name={`price-${option.id}`}
-                  onBlur={() => handleBlur('price')}
-                  onChange={e => setPrice({ ...price, value: e.target.value })}
-                  value={price.value}
-                  placeholder="Enter price"
-                  hasError={price.meta.isTouched && !price.meta.isValid}
-               />
-            </Flex>
-            <Spacer xAxis size="32px" />
-            <Flex maxWidth="100px">
-               <Form.Label htmlFor={`discount-${option.id}`} title="discount">
-                  Discount
-               </Form.Label>
-               <Form.Number
-                  id={`discount-${option.id}`}
-                  name={`discount-${option.id}`}
-                  onBlur={() => handleBlur('discount')}
-                  onChange={e =>
-                     setDiscount({ ...discount, value: e.target.value })
-                  }
-                  value={discount.value}
-                  placeholder="Enter discount"
-                  hasError={discount.meta.isTouched && !discount.meta.isValid}
-               />
-            </Flex>
-            <Spacer xAxis size="64px" />
-            {renderLinkedItem()}
+            <IconButton type="ghost" onClick={handleDeleteOption}>
+               <DeleteIcon color="#FF5A52" />
+            </IconButton>
          </Flex>
       )
    }

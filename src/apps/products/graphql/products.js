@@ -40,7 +40,10 @@ export const PRODUCT = {
             basePrice
             isPopupAllowed
             isPublished
-            productOptions {
+            productOptions(
+               where: { isArchived: { _eq: false } }
+               order_by: { position: desc_nulls_last }
+            ) {
                id
                label
                price
@@ -92,6 +95,16 @@ export const PRODUCT_OPTION = {
          $object: products_productOption_insert_input!
       ) {
          createProductOption(object: $object) {
+            id
+         }
+      }
+   `,
+   DELETE: gql`
+      mutation UpdateProductOption($id: Int!) {
+         updateProductOption(
+            pk_columns: { id: $id }
+            _set: { isArchived: true }
+         ) {
             id
          }
       }
