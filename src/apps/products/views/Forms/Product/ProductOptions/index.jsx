@@ -36,6 +36,7 @@ import {
    ModifierTemplatesTunnel,
    ModifierTypeTunnel,
 } from './tunnels'
+import { OperationConfig } from '../../../../../../shared/components'
 
 const ProductOptions = ({ productId, options }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
@@ -50,7 +51,7 @@ const ProductOptions = ({ productId, options }) => {
       closeOperationConfigTunnel,
    ] = useTunnel(4)
 
-   const { productDispatch } = React.useContext(ProductContext)
+   const { productState, productDispatch } = React.useContext(ProductContext)
    const { modifiersDispatch } = React.useContext(ModifiersContext)
 
    const opConfigInvokedBy = React.useRef('')
@@ -59,6 +60,16 @@ const ProductOptions = ({ productId, options }) => {
    const [createProductOption] = useMutation(PRODUCT_OPTION.CREATE, {
       onCompleted: () => {
          toast.success('Option created.')
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
+   const [updateProductOption] = useMutation(PRODUCT_OPTION.UPDATE, {
+      onCompleted: () => {
+         toast.success('Option updated!')
       },
       onError: error => {
          toast.error('Something went wrong!')
@@ -101,6 +112,31 @@ const ProductOptions = ({ productId, options }) => {
          payload: { modifier },
       })
       openModifiersTunnel(2)
+   }
+
+   const handleAddOpConfig = optionId => {
+      productDispatch({
+         type: 'OPTION',
+         payload: optionId,
+      })
+      opConfigInvokedBy.current = 'option'
+      openOperationConfigTunnel(1)
+   }
+
+   const saveOperationConfig = config => {
+      if (opConfigInvokedBy.current === 'option') {
+         updateProductOption({
+            variables: {
+               id: productState.optionId,
+               _set: {
+                  operationConfigId: config.id,
+               },
+            },
+         })
+      }
+      if (opConfigInvokedBy.current === 'modifier') {
+         modifierOpConfig.current = config
+      }
    }
 
    return (
@@ -150,7 +186,13 @@ const ProductOptions = ({ productId, options }) => {
                <ModifierTemplatesTunnel close={closeModifiersTunnel} />
             </Tunnel>
          </Tunnels>
-         {options.length && (
+         <OperationConfig
+            tunnels={operationConfigTunnels}
+            openTunnel={openOperationConfigTunnel}
+            closeTunnel={closeOperationConfigTunnel}
+            onSelect={saveOperationConfig}
+         />
+         {Boolean(options.length) && (
             <Flex margin="0 0 32px 0">
                {options.map(option => (
                   <Option
@@ -161,6 +203,7 @@ const ProductOptions = ({ productId, options }) => {
                      handleEditModifier={() =>
                         handleEditModifier(option.modifier)
                      }
+                     handleAddOpConfig={() => handleAddOpConfig(option.id)}
                   />
                ))}
             </Flex>
@@ -181,6 +224,7 @@ const Option = ({
    handleAddOptionItem,
    handleAddModifier,
    handleEditModifier,
+   handleAddOpConfig,
 }) => {
    const [history, setHistory] = React.useState({
       ...option,
@@ -473,6 +517,17 @@ const Option = ({
       })
    }
 
+   const handleDeleteOpConfig = () => {
+      updateProductOption({
+         variables: {
+            id: option.id,
+            _set: {
+               operationConfigId: null,
+            },
+         },
+      })
+   }
+
    const renderBody = () => {
       return (
          <Flex container padding="8px 0 0 0">
@@ -499,7 +554,28 @@ const Option = ({
                )}
             </Flex>
             <Spacer xAxis size="32px" />
-            {/* {renderOpConfig()} */}
+            <Flex>
+               {option.operationConfig ? (
+                  <Flex container alignItems="center">
+                     <Flex>
+                        <Text as="subtitle">Operation Configuration</Text>
+                        <Text as="p">{option.operationConfig.name}</Text>
+                     </Flex>
+                     <Spacer xAxis size="16px" />
+                     <IconButton type="ghost" onClick={handleAddOpConfig}>
+                        <EditIcon color="#00A7E1" />
+                     </IconButton>
+                     <Spacer xAxis size="8px" />
+                     <IconButton type="ghost" onClick={handleDeleteOpConfig}>
+                        <DeleteIcon color="#FF5A52" />
+                     </IconButton>
+                  </Flex>
+               ) : (
+                  <ComboButton type="ghost" onClick={handleAddOpConfig}>
+                     <PlusIcon /> Add Operational Configuration
+                  </ComboButton>
+               )}
+            </Flex>
          </Flex>
       )
    }

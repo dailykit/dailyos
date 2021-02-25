@@ -78,14 +78,7 @@ export const PRODUCT = {
                }
                operationConfig {
                   id
-                  station {
-                     id
-                     name
-                  }
-                  labelTemplate {
-                     id
-                     name
-                  }
+                  name
                }
             }
          }
