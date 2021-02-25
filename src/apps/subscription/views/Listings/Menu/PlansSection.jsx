@@ -98,7 +98,7 @@ const PlansSection = () => {
          },
          {
             hozAlign: 'right',
-            title: 'Menu Products',
+            title: 'Add On Products',
             formatter: reactFormatter(<AddOnProductsCount />),
             headerHozAlign: 'right',
             headerTooltip: column => {
