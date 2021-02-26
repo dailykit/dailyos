@@ -26,8 +26,7 @@ export default function ConfigTunnel({
    const [configContext, setConfigContext] = React.useContext(ConfigContext)
    const [configJson, setConfigJson] = React.useState({})
    const [fields, setFields] = React.useState([])
-   let elements = []
-   console.log(configContext)
+   const elements = []
 
    const onConfigChange = (e, value) => {
       let updatedConfig
@@ -41,8 +40,6 @@ export default function ConfigTunnel({
             e.target.value
          )
       }
-
-      // console.log("updateObj", updateObj, e.target.name);
       setConfigJson(prev => {
          return {
             ...prev,
@@ -116,18 +113,20 @@ export default function ConfigTunnel({
          const response = await getFile(filePath)
          if (response.status === 200) {
             const configData = await response.json()
-            setConfigJson(configData)
+            const updatedConfigData = _.defaultsDeep(
+               configContext.config,
+               configData
+            )
+            console.log('configJson', configData)
+
+            console.log('updatedConfig', updatedConfigData)
+            setConfigJson(updatedConfigData)
          }
       }
-      if (configContext.config) {
-         setConfigJson(configContext.config)
-      } else {
-         fetchFile()
-      }
+      fetchFile()
    }, [configContext])
 
    React.useEffect(() => {
-      console.log('re-run...')
       if (Object.keys(configJson).length) {
          renderAllFields(configJson, '')
       }

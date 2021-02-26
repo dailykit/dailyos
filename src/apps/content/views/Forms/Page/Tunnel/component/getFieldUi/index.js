@@ -53,7 +53,7 @@ export const getFieldUi = ({ key, configJson, onConfigChange }) => {
       )
    } else if (
       field.dataType === 'number' &&
-      field.userInsertType === 'number'
+      field.userInsertType === 'numberField'
    ) {
       configUi = (
          <Number
