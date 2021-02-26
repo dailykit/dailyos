@@ -345,6 +345,7 @@ export const ADDON_PRODUCTS = gql`
    ) {
       addOnProducts: subscription_subscriptionOccurence_addOn_aggregate(
          where: $where
+         order_by: { created_at: desc }
       ) {
          aggregate {
             count

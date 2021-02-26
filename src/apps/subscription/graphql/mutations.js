@@ -163,3 +163,17 @@ export const DELETE_ADDON_PRODUCT = gql`
       }
    }
 `
+
+export const UPDATE_ADDON_PRODUCT = gql`
+   mutation updateAddOnProduct(
+      $id: Int!
+      $_set: subscription_subscriptionOccurence_addOn_set_input!
+   ) {
+      updateAddOnProduct: update_subscription_subscriptionOccurence_addOn_by_pk(
+         pk_columns: { id: $id }
+         _set: $_set
+      ) {
+         id
+      }
+   }
+`
