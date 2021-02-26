@@ -36,9 +36,11 @@ import {
    ModifierTemplatesTunnel,
    ModifierTypeTunnel,
 } from './tunnels'
-import { OperationConfig } from '../../../../../../shared/components'
+import { DragNDrop, OperationConfig } from '../../../../../../shared/components'
+import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
 
 const ProductOptions = ({ productId, options }) => {
+   const { initiatePriority } = useDnd()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
    const [
       modifiersTunnel,
@@ -56,6 +58,16 @@ const ProductOptions = ({ productId, options }) => {
 
    const opConfigInvokedBy = React.useRef('')
    const modifierOpConfig = React.useRef(undefined)
+
+   React.useEffect(() => {
+      if (options.length) {
+         initiatePriority({
+            tablename: 'productOption',
+            schemaname: 'products',
+            data: options,
+         })
+      }
+   }, [options])
 
    const [createProductOption] = useMutation(PRODUCT_OPTION.CREATE, {
       onCompleted: () => {
@@ -194,18 +206,27 @@ const ProductOptions = ({ productId, options }) => {
          />
          {Boolean(options.length) && (
             <Flex margin="0 0 32px 0">
-               {options.map(option => (
-                  <Option
-                     key={option.id}
-                     option={option}
-                     handleAddOptionItem={() => handleAddOptionItem(option.id)}
-                     handleAddModifier={() => handleAddModifier(option.id)}
-                     handleEditModifier={() =>
-                        handleEditModifier(option.modifier)
-                     }
-                     handleAddOpConfig={() => handleAddOpConfig(option.id)}
-                  />
-               ))}
+               <DragNDrop
+                  list={options}
+                  droppableId="productOptionsDroppableId"
+                  tablename="productOption"
+                  schemaname="products"
+               >
+                  {options.map(option => (
+                     <Option
+                        key={option.id}
+                        option={option}
+                        handleAddOptionItem={() =>
+                           handleAddOptionItem(option.id)
+                        }
+                        handleAddModifier={() => handleAddModifier(option.id)}
+                        handleEditModifier={() =>
+                           handleEditModifier(option.modifier)
+                        }
+                        handleAddOpConfig={() => handleAddOpConfig(option.id)}
+                     />
+                  ))}
+               </DragNDrop>
             </Flex>
          )}
          <ButtonTile

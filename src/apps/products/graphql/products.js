@@ -45,6 +45,7 @@ export const PRODUCT = {
                order_by: { position: desc_nulls_last }
             ) {
                id
+               position
                label
                price
                discount
