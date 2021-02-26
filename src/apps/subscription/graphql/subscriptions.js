@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const PICKUP_OPTIONS = gql`
-   query options {
-      options: subscription_subscriptionPickupOption {
+   query pickup_options {
+      pickup_options: subscription_subscriptionPickupOption {
          id
          time
          address

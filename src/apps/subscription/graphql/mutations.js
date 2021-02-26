@@ -1,5 +1,19 @@
 import gql from 'graphql-tag'
 
+export const INSERT_PICKUP_OPTION = gql`
+   mutation createPickupOption(
+      $object: subscription_subscriptionPickupOption_insert_input!
+   ) {
+      createPickupOption: insert_subscription_subscriptionPickupOption_one(
+         object: $object
+      ) {
+         id
+         time
+         address
+      }
+   }
+`
+
 export const INSERT_OCCURENCE_PRODUCTS = gql`
    mutation insertOccurenceProducts(
       $objects: [subscription_subscriptionOccurence_product_insert_input!]!

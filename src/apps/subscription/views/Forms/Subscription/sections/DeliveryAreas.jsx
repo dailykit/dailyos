@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash'
 import styled from 'styled-components'
 import { toast } from 'react-toastify'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 import {
    Form,
    Flex,
@@ -16,13 +16,9 @@ import {
    ButtonTile,
    IconButton,
    TunnelHeader,
-   Table,
-   TableHead,
-   TableBody,
-   TableRow,
-   TableCell,
 } from '@dailykit/ui'
 
+import PickUpTunnel from './PickUp'
 import tableOptions from '../../../../tableOption'
 import { useTooltip } from '../../../../../../shared/providers'
 import { DeleteIcon } from '../../../../../../shared/assets/icons'
@@ -36,7 +32,6 @@ import {
    ZIPCODE,
    SUBSCRIPTION_ZIPCODES,
    INSERT_SUBSCRIPTION_ZIPCODES,
-   PICKUP_OPTIONS,
    UPDATE_SUBSCRIPTION_ZIPCODE,
 } from '../../../../graphql'
 
@@ -321,10 +316,8 @@ const AreasTunnel = ({
             isDeliveryActive: delivery.isActive,
             deliveryPrice: Number(delivery.price),
             deliveryTime: { from: delivery.from, to: delivery.to },
-            ...(pickupOption.id && {
-               isPickupActive: pickupOption.id ? isPickupActive : false,
-               subscriptionPickupOptionId: pickupOption.id || null,
-            }),
+            isPickupActive: pickupOption?.id ? isPickupActive : false,
+            subscriptionPickupOptionId: pickupOption?.id || null,
          }))
          insertSubscriptionZipcodes({
             variables: {
@@ -343,10 +336,8 @@ const AreasTunnel = ({
                   isDeliveryActive: delivery.isActive,
                   deliveryPrice: Number(delivery.price),
                   deliveryTime: { from: delivery.from, to: delivery.to },
-                  ...(pickupOption.id && {
-                     isPickupActive: pickupOption.id ? isPickupActive : false,
-                     subscriptionPickupOptionId: pickupOption.id || null,
-                  }),
+                  isPickupActive: pickupOption?.id ? isPickupActive : false,
+                  subscriptionPickupOptionId: pickupOption?.id || null,
                },
             },
          })
@@ -481,7 +472,10 @@ const AreasTunnel = ({
                      </Form.Toggle>
                   </Form.Group>
                   <Spacer size="24px" />
-                  <SelectedOption option={pickupOption} />
+                  <SelectedOption
+                     option={pickupOption}
+                     setPickupOption={setPickupOption}
+                  />
                   <Spacer size="24px" />
                </>
             )}
@@ -491,78 +485,45 @@ const AreasTunnel = ({
                text="Select Pickup Option"
                onClick={() => openOptionTunnel(1)}
             />
-            <Tunnels tunnels={tunnels}>
-               <Tunnel layer={1} size="sm">
-                  <TunnelHeader
-                     title="Select Pickup Option"
-                     close={() => closeOptionTunnel(1)}
-                  />
-                  <Flex
-                     padding="16px"
-                     overflowY="auto"
-                     height="calc(100% - 105px)"
-                  >
-                     <PickupOptions
-                        setPickupOption={setPickupOption}
-                        closeTunnel={closeOptionTunnel}
-                     />
-                  </Flex>
-               </Tunnel>
-            </Tunnels>
+            <PickUpTunnel
+               onSave={option => setPickupOption(option)}
+               tunnel={{
+                  list: tunnels,
+                  close: closeOptionTunnel,
+               }}
+            />
          </Flex>
       </>
    )
 }
 
-const SelectedOption = ({ option }) => {
+const SelectedOption = ({ option, setPickupOption }) => {
    return (
       <Styles.SelectedOption container alignItems="center">
-         <section>
-            <span>Pickup time</span>
-            <p as="subtitle">
-               {option?.time?.from} - {option?.time?.to}
-            </p>
-         </section>
-         <Spacer size="16px" xAxis />
-         <section>
-            <span>Address</span>
-            <p as="subtitle">{parseAddress(option.address)}</p>
-         </section>
-         <Spacer size="16px" />
+         <main>
+            <section>
+               <span>Pickup time</span>
+               <p as="subtitle">
+                  {option?.time?.from} - {option?.time?.to}
+               </p>
+            </section>
+            <Spacer size="16px" xAxis />
+            <section>
+               <span>Address</span>
+               <p as="subtitle">{parseAddress(option.address)}</p>
+            </section>
+            <Spacer size="16px" />
+         </main>
+         <aside>
+            <IconButton
+               size="sm"
+               type="ghost"
+               onClick={() => setPickupOption(null)}
+            >
+               <DeleteIcon color="#FF5A52" />
+            </IconButton>
+         </aside>
       </Styles.SelectedOption>
-   )
-}
-
-const PickupOptions = ({ setPickupOption, closeTunnel }) => {
-   const { loading, data: { options = [] } = {} } = useQuery(PICKUP_OPTIONS)
-
-   if (loading) return <InlineLoader />
-   return (
-      <Table>
-         <TableHead>
-            <TableRow>
-               <TableCell>Time</TableCell>
-               <TableCell>Address</TableCell>
-            </TableRow>
-         </TableHead>
-         <TableBody>
-            {options.map(option => (
-               <TableRow
-                  key={option.id}
-                  onClick={() => setPickupOption(option) || closeTunnel(1)}
-               >
-                  <TableCell>
-                     <Text as="p">
-                        {option.time?.from} - {option.time?.to}
-                     </Text>
-                  </TableCell>
-                  <TableCell>
-                     <Text as="p">{parseAddress(option.address)}</Text>
-                  </TableCell>
-               </TableRow>
-            ))}
-         </TableBody>
-      </Table>
    )
 }
 
