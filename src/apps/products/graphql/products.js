@@ -94,13 +94,21 @@ export const PRODUCT = {
                   name
                }
             }
-            customizableProductOptions(
+            customizableProductComponents(
                where: { isArchived: { _eq: false } }
                order_by: { position: desc_nulls_last }
             ) {
                id
                options
-               selectedOptions
+               selectedOptions {
+                  productOption {
+                     id
+                     label
+                     price
+                     quantity
+                     discount
+                  }
+               }
                linkedProduct {
                   id
                   name
@@ -158,42 +166,36 @@ export const PRODUCT_OPTION = {
    `,
 }
 
-export const CUSTOMIZABLE_PRODUCT_OPTION = {
+export const CUSTOMIZABLE_PRODUCT_COMPONENT = {
    CREATE: gql`
-      mutation CreateCustomizableProductOption(
-         $objects: [products_customizableProductOption_insert_input!]!
+      mutation CreateCustomizableProductComponent(
+         $object: products_customizableProductComponent_insert_input!
       ) {
-         createCustomizableProductOption(objects: $objects) {
-            returning {
-               id
-            }
+         createCustomizableProductComponent(object: $object) {
+            id
          }
       }
    `,
    DELETE: gql`
-      mutation UpdateCustomizableProductOption($id: Int!) {
-         updateCustomizableProductOption(
-            where: { id: { _eq: $id } }
+      mutation UpdateCustomizableProductComponent($id: Int!) {
+         updateCustomizableProductComponent(
+            pk_columns: { id: $id }
             _set: { isArchived: true }
          ) {
-            returning {
-               id
-            }
+            id
          }
       }
    `,
    UPDATE: gql`
-      mutation UpdateCustomizableProductOption(
+      mutation UpdateCustomizableProductComponent(
          $id: Int!
-         $_set: products_customizableProductOption_set_input
+         $_set: products_customizableProductComponent_set_input
       ) {
-         updateCustomizableProductOption(
-            where: { id: { _eq: $id } }
+         updateCustomizableProductComponent(
+            pk_columns: { id: $id }
             _set: $_set
          ) {
-            returning {
-               id
-            }
+            id
          }
       }
    `,

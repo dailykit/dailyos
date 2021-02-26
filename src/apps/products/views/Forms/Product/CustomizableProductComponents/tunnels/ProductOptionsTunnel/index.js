@@ -11,7 +11,7 @@ import {
    logger,
 } from '../../../../../../../../shared/utils'
 import {
-   CUSTOMIZABLE_PRODUCT_OPTION,
+   CUSTOMIZABLE_PRODUCT_COMPONENT,
    PRODUCT_OPTION,
 } from '../../../../../../graphql'
 import { TunnelBody } from '../../../tunnels/styled'
@@ -65,19 +65,19 @@ const ProductOptionsTunnel = ({
    })
 
    // Mutation
-   const [updateCustomizableProductOption, { loading: updating }] = useMutation(
-      CUSTOMIZABLE_PRODUCT_OPTION.UPDATE,
-      {
-         onCompleted: () => {
-            toast.success('Product options updated!')
-            closeTunnel(1)
-         },
-         onError: error => {
-            toast.error('Something went wrong!')
-            logger(error)
-         },
-      }
-   )
+   const [
+      updateCustomizableProductComponent,
+      { loading: updating },
+   ] = useMutation(CUSTOMIZABLE_PRODUCT_COMPONENT.UPDATE, {
+      onCompleted: () => {
+         toast.success('Product options updated!')
+         closeTunnel(1)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
 
    const updateOption = (optionId, field, value) => {
       const updatedOptions = options.map(option =>
@@ -140,7 +140,7 @@ const ProductOptionsTunnel = ({
                   discount: +discount.value,
                })
             )
-            updateCustomizableProductOption({
+            updateCustomizableProductComponent({
                variables: {
                   id: customizableOptionId,
                   _set: {

@@ -26,7 +26,7 @@ import { ProductProvider } from '../../../context/product'
 import { ModifiersProvider } from '../../../context/product/modifiers'
 import { PRODUCT } from '../../../graphql'
 import { Assets, Description } from './components'
-import CustomizableOptions from './CustomizableOptions'
+import CustomizableProductComponents from './CustomizableProductComponents'
 import ProductOptions from './ProductOptions'
 import { ResponsiveFlex, StyledFlex } from './styled'
 import validator from './validators'
@@ -143,9 +143,9 @@ const Product = () => {
          }
          case 'customizable': {
             return (
-               <CustomizableOptions
+               <CustomizableProductComponents
                   productId={state.id}
-                  options={state.customizableProductOptions || []}
+                  options={state.customizableProductComponents || []}
                />
             )
          }

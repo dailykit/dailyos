@@ -16,7 +16,7 @@ import {
 } from '../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../shared/utils'
 import {
-   CUSTOMIZABLE_PRODUCT_OPTION,
+   CUSTOMIZABLE_PRODUCT_COMPONENT,
    PRODUCTS,
 } from '../../../../../../graphql'
 import { TunnelBody } from '../../../tunnels/styled'
@@ -39,8 +39,8 @@ const ProductsTunnel = ({ closeTunnel, productId }) => {
       },
    })
 
-   const [createCustomizableProductOption] = useMutation(
-      CUSTOMIZABLE_PRODUCT_OPTION.CREATE,
+   const [createCustomizableProductComponent] = useMutation(
+      CUSTOMIZABLE_PRODUCT_COMPONENT.CREATE,
       {
          onCompleted: () => {
             toast.success('Product added!')
@@ -62,14 +62,12 @@ const ProductsTunnel = ({ closeTunnel, productId }) => {
 
    const select = option => {
       selectOption('id', option.id)
-      createCustomizableProductOption({
+      createCustomizableProductComponent({
          variables: {
-            objects: [
-               {
-                  productId,
-                  linkedProductId: option.id,
-               },
-            ],
+            object: {
+               productId,
+               linkedProductId: option.id,
+            },
          },
       })
    }

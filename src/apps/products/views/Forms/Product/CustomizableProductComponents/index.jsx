@@ -17,7 +17,7 @@ import {
 import { ProductOptionsTunnel, ProductsTunnel } from './tunnels'
 import { ProductTile, ProductOptionsPanel } from '../components'
 import { useMutation } from '@apollo/react-hooks'
-import { CUSTOMIZABLE_PRODUCT_OPTION } from '../../../../graphql'
+import { CUSTOMIZABLE_PRODUCT_COMPONENT } from '../../../../graphql'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../shared/utils'
 import { EditIcon } from '../../../../../../shared/assets/icons'
@@ -32,8 +32,8 @@ const CustomizableOptions = ({ productId, options }) => {
       selectedOptions: [],
    })
 
-   const [deleteCustomizableProductOption] = useMutation(
-      CUSTOMIZABLE_PRODUCT_OPTION.DELETE,
+   const [deleteCustomizableProductComponent] = useMutation(
+      CUSTOMIZABLE_PRODUCT_COMPONENT.DELETE,
       {
          onCompleted: () => {
             toast.success('Product deleted!')
@@ -50,7 +50,7 @@ const CustomizableOptions = ({ productId, options }) => {
          `Are you sure you want to delete - ${option.linkedProduct.name}?`
       )
       if (isConfirmed) {
-         deleteCustomizableProductOption({
+         deleteCustomizableProductComponent({
             variables: {
                id: option.id,
             },
@@ -102,22 +102,7 @@ const CustomizableOptions = ({ productId, options }) => {
                         {option.options.length ? (
                            <Flex container justifyContent="space-between">
                               <ProductOptionsPanel
-                                 options={
-                                    option.selectedOptions || [
-                                       {
-                                          id: 1,
-                                          label: 'Basic',
-                                          price: 1,
-                                          discount: 1,
-                                       },
-                                       {
-                                          id: 1,
-                                          label: 'Basic',
-                                          price: 1,
-                                          discount: 1,
-                                       },
-                                    ]
-                                 }
+                                 options={option.selectedOptions}
                               />
                               <ComboButton
                                  type="ghost"
