@@ -37,7 +37,11 @@ export const S_COLLECTION = gql`
             products(order_by: { position: desc_nulls_last }) {
                id
                position
-               data
+               product {
+                  id
+                  name
+                  assets
+               }
             }
          }
       }

@@ -13,94 +13,31 @@ import {
 } from '@dailykit/ui'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { useTranslation } from 'react-i18next'
-import { CollectionContext } from '../../../../../context/collection'
 import { TunnelBody } from '../styled'
-import {
-   SIMPLE_RECIPE_PRODUCTS,
-   INVENTORY_PRODUCTS,
-   CUSTOMIZABLE_PRODUCTS,
-   COMBO_PRODUCTS,
-   CREATE_COLLECTION_PRODUCT_CATEGORY_PRODUCTS,
-} from '../../../../../graphql'
 import { toast } from 'react-toastify'
 import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
-import {
-   CREATE_COMBO_PRODUCT,
-   CREATE_CUSTOMIZABLE_PRODUCT,
-   CREATE_INVENTORY_PRODUCT,
-   CREATE_SIMPLE_RECIPE_PRODUCT,
-} from '../../../../../../products/graphql'
+import { PRODUCTS } from '../../../../../../products/graphql'
+import { CREATE_COLLECTION_PRODUCT_CATEGORY_PRODUCTS } from '../../../../../graphql'
 
 const address = 'apps.menu.views.forms.collection.tunnels.products.'
 
-const ProductsTunnel = ({ closeTunnel }) => {
+const ProductsTunnel = ({ categoryId, closeTunnel }) => {
    const { t } = useTranslation()
-   const { collectionState } = React.useContext(CollectionContext)
 
    const [search, setSearch] = React.useState('')
    const [products, setProducts] = React.useState([])
    const [list, selected, selectOption] = useMultiList(products)
 
    // Subscription for fetching products
-   const { loading: simpleRecipeProductsLoading } = useSubscription(
-      SIMPLE_RECIPE_PRODUCTS,
-      {
-         skip: collectionState.productType !== 'simple',
-         variables: {
-            where: {
-               isArchived: { _eq: false },
-            },
-         },
-         onSubscriptionData: data => {
-            const products = data.subscriptionData.data.simpleRecipeProducts
-            // const updatedProducts = products.filter(pdct => pdct.isValid.status)
-            setProducts([...products])
-         },
-      }
-   )
-   const { loading: inventoryProductsLoading } = useSubscription(
-      INVENTORY_PRODUCTS,
-      {
-         skip: collectionState.productType !== 'inventory',
-         variables: {
-            where: {
-               isArchived: { _eq: false },
-            },
-         },
-         onSubscriptionData: data => {
-            const products = data.subscriptionData.data.inventoryProducts
-            // const updatedProducts = products.filter(pdct => pdct.isValid.status)
-            setProducts([...products])
-         },
-      }
-   )
-   const { loading: customizableProductsLoading } = useSubscription(
-      CUSTOMIZABLE_PRODUCTS,
-      {
-         skip: collectionState.productType !== 'customizable',
-         variables: {
-            where: {
-               isArchived: { _eq: false },
-            },
-         },
-         onSubscriptionData: data => {
-            const products = data.subscriptionData.data.customizableProducts
-            // const updatedProducts = products.filter(pdct => pdct.isValid.status)
-            setProducts([...products])
-         },
-      }
-   )
-   const { loading: comboProductsLoading } = useSubscription(COMBO_PRODUCTS, {
-      skip: collectionState.productType !== 'combo',
+   const { loading } = useSubscription(PRODUCTS.LIST, {
       variables: {
          where: {
             isArchived: { _eq: false },
          },
       },
       onSubscriptionData: data => {
-         const products = data.subscriptionData.data.comboProducts
-         // const updatedProducts = products.filter(pdct => pdct.isValid.status)
+         const { products } = data.subscriptionData.data
          setProducts([...products])
       },
    })
@@ -117,7 +54,6 @@ const ProductsTunnel = ({ closeTunnel }) => {
                      : ''
                } added!`
             )
-            closeTunnel(2)
             closeTunnel(1)
          },
          onError: error => {
@@ -129,23 +65,10 @@ const ProductsTunnel = ({ closeTunnel }) => {
 
    const save = () => {
       if (inFlight || !selected.length) return
-      const objects = selected.map(product => {
-         const obj = {
-            collection_productCategoryId: collectionState.categoryId,
-         }
-         if (collectionState.productType === 'inventory') {
-            obj.inventoryProductId = product.id
-         } else if (collectionState.productType === 'simple') {
-            obj.simpleRecipeProductId = product.id
-         } else if (collectionState.productType === 'combo') {
-            obj.comboProductId = product.id
-         } else if (collectionState.productType === 'customizable') {
-            obj.customizableProductId = product.id
-         } else {
-            throw Error('Could not resolve product type!')
-         }
-         return obj
-      })
+      const objects = selected.map(product => ({
+         collection_productCategoryId: categoryId,
+         productId: product.id,
+      }))
       createRecord({
          variables: {
             objects,
@@ -153,37 +76,7 @@ const ProductsTunnel = ({ closeTunnel }) => {
       })
    }
 
-   const [createIP] = useMutation(CREATE_INVENTORY_PRODUCT, {
-      onCompleted: data => {
-         console.log(data)
-      },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-   })
-   const [createSRP] = useMutation(CREATE_SIMPLE_RECIPE_PRODUCT, {
-      onCompleted: data => {
-         console.log(data)
-      },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-   })
-   const [createCUSP] = useMutation(CREATE_CUSTOMIZABLE_PRODUCT, {
-      onCompleted: data => {
-         console.log(data)
-      },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-   })
-   const [createCOMP] = useMutation(CREATE_COMBO_PRODUCT, {
-      onCompleted: data => {
-         console.log(data)
-      },
+   const [createProduct] = useMutation(PRODUCTS.CREATE, {
       onError: error => {
          toast.error('Something went wrong!')
          logger(error)
@@ -192,51 +85,14 @@ const ProductsTunnel = ({ closeTunnel }) => {
 
    const quickCreateProduct = () => {
       const productName = search.slice(0, 1).toUpperCase() + search.slice(1)
-      console.log(productName)
-      switch (collectionState.productType) {
-         case 'inventory':
-            return createIP({
-               variables: {
-                  objects: [
-                     {
-                        name: productName,
-                     },
-                  ],
-               },
-            })
-         case 'simple':
-            return createSRP({
-               variables: {
-                  objects: [
-                     {
-                        name: productName,
-                     },
-                  ],
-               },
-            })
-         case 'customizable':
-            return createCUSP({
-               variables: {
-                  objects: [
-                     {
-                        name: productName,
-                     },
-                  ],
-               },
-            })
-         case 'combo':
-            return createCOMP({
-               variables: {
-                  objects: [
-                     {
-                        name: productName,
-                     },
-                  ],
-               },
-            })
-         default:
-            console.error('No product type matched!')
-      }
+      createProduct({
+         variables: {
+            object: {
+               name: productName,
+               type: 'simple',
+            },
+         },
+      })
    }
 
    return (
@@ -250,10 +106,7 @@ const ProductsTunnel = ({ closeTunnel }) => {
             tooltip={<Tooltip identifier="collections_products_tunnel" />}
          />
          <TunnelBody>
-            {simpleRecipeProductsLoading ||
-            inventoryProductsLoading ||
-            customizableProductsLoading ||
-            comboProductsLoading ? (
+            {loading ? (
                <InlineLoader />
             ) : (
                <>
