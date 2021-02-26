@@ -99,9 +99,11 @@ export const PRODUCT = {
                order_by: { position: desc_nulls_last }
             ) {
                id
+               options
                linkedProduct {
                   id
                   name
+                  assets
                }
             }
          }
@@ -129,6 +131,20 @@ export const PRODUCT_OPTION = {
          }
       }
    `,
+   LIST: gql`
+      subscription ProductOptions($where: products_productOption_bool_exp) {
+         productOptions(where: $where) {
+            id
+            label
+            price
+            discount
+            product {
+               id
+               name
+            }
+         }
+      }
+   `,
    UPDATE: gql`
       mutation UpdateProductOption(
          $id: Int!
@@ -147,6 +163,33 @@ export const CUSTOMIZABLE_PRODUCT_OPTION = {
          $objects: [products_customizableProductOption_insert_input!]!
       ) {
          createCustomizableProductOption(objects: $objects) {
+            returning {
+               id
+            }
+         }
+      }
+   `,
+   DELETE: gql`
+      mutation UpdateCustomizableProductOption($id: Int!) {
+         updateCustomizableProductOption(
+            where: { id: { _eq: $id } }
+            _set: { isArchived: true }
+         ) {
+            returning {
+               id
+            }
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation UpdateCustomizableProductOption(
+         $id: Int!
+         $_set: products_customizableProductOption_set_input
+      ) {
+         updateCustomizableProductOption(
+            where: { id: { _eq: $id } }
+            _set: $_set
+         ) {
             returning {
                id
             }

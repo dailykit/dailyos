@@ -1,5 +1,5 @@
 import React from 'react'
-import { useLazyQuery, useMutation } from '@apollo/react-hooks'
+import { useLazyQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import { Flex, Form, Spacer, Text, TunnelHeader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import {
@@ -12,7 +12,9 @@ import {
 } from '../../../../../../../../shared/utils'
 import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
 import {
+   CUSTOMIZABLE_PRODUCT_OPTION,
    INVENTORY_PRODUCT_OPTIONS,
+   PRODUCT_OPTION,
    SIMPLE_RECIPE_PRODUCT_OPTIONS,
    UPDATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
 } from '../../../../../../graphql'
@@ -20,34 +22,34 @@ import validators from '../../../validators'
 import { TunnelBody } from '../../../tunnels/styled'
 import { OptionWrapper } from './styled'
 
-const ProductOptionsTunnel = ({ state, close }) => {
-   const { productState } = React.useContext(CustomizableProductContext)
+const ProductOptionsTunnel = ({
+   customizableOptionId,
+   productId,
+   selectedOptions,
+   closeTunnel,
+}) => {
    const [options, setOptions] = React.useState([])
 
    const transformAndSetOptions = React.useCallback(options => {
       const updatedOptions = options.map(option => {
          const isAlreadySelected = isIncludedInOptions(
             option.id,
-            productState.selectedOptions
+            selectedOptions
          )
          return {
             ...option,
-            isSelected:
-               productState.optionsMode === 'edit' ? isAlreadySelected : false,
+            isSelected: isAlreadySelected,
             price: {
                value: isAlreadySelected
-                  ? productState.selectedOptions.find(
-                       op => op.optionId === option.id
-                    ).price
-                  : 0,
+                  ? selectedOptions.find(op => op.optionId === option.id).price
+                  : option.price,
                meta: { isValid: true, isTouched: false, errors: [] },
             },
             discount: {
                value: isAlreadySelected
-                  ? productState.selectedOptions.find(
-                       op => op.optionId === option.id
-                    ).discount
-                  : 0,
+                  ? selectedOptions.find(op => op.optionId === option.id)
+                       .discount
+                  : option.discount,
                meta: { isValid: true, isTouched: false, errors: [] },
             },
          }
@@ -55,36 +57,24 @@ const ProductOptionsTunnel = ({ state, close }) => {
       setOptions([...updatedOptions])
    }, [])
 
-   const [
-      fetchInventoryProductOptions,
-      { loading: inventoryProductOptionsLoading },
-   ] = useLazyQuery(INVENTORY_PRODUCT_OPTIONS, {
-      onCompleted: data => transformAndSetOptions(data.inventoryProductOptions),
-      onError: error => {
-         toast.error('Could not fetch options!')
-         logger(error)
+   const { loading } = useSubscription(PRODUCT_OPTION.LIST, {
+      variables: {
+         where: {
+            productId: { _eq: productId },
+            isArchived: { _eq: false },
+         },
       },
-   })
-
-   const [
-      fetchSimpleRecipeProductOptions,
-      { loading: simpleRecipeProductOptionsLoading },
-   ] = useLazyQuery(SIMPLE_RECIPE_PRODUCT_OPTIONS, {
-      onCompleted: data =>
-         transformAndSetOptions(data.simpleRecipeProductOptions),
-      onError: error => {
-         toast.error('Could not fetch options!')
-         logger(error)
-      },
+      onSubscriptionData: data =>
+         transformAndSetOptions(data.subscriptionData.data.productOptions),
    })
 
    // Mutation
    const [updateCustomizableProductOption, { loading: updating }] = useMutation(
-      UPDATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
+      CUSTOMIZABLE_PRODUCT_OPTION.UPDATE,
       {
          onCompleted: () => {
             toast.success('Product options updated!')
-            close(3)
+            closeTunnel(1)
          },
          onError: error => {
             toast.error('Something went wrong!')
@@ -92,42 +82,6 @@ const ProductOptionsTunnel = ({ state, close }) => {
          },
       }
    )
-
-   React.useEffect(() => {
-      if (productState.product.__typename === 'products_inventoryProduct') {
-         fetchInventoryProductOptions({
-            variables: {
-               where: {
-                  inventoryProductId: { _eq: productState.product.id },
-                  isArchived: { _eq: false },
-               },
-            },
-         })
-      }
-      if (productState.product.__typename === 'products_simpleRecipeProduct') {
-         fetchSimpleRecipeProductOptions({
-            variables: {
-               where: {
-                  simpleRecipeProductId: { _eq: productState.product.id },
-                  isArchived: { _eq: false },
-                  isActive: { _eq: true },
-               },
-            },
-         })
-      }
-   }, [])
-
-   const renderOptionName = option => {
-      if (option.label) {
-         return option.label
-      } else {
-         const serving =
-            option.simpleRecipeYield.yield.label ||
-            `${option.simpleRecipeYield.yield.serving} serving`
-         const type = option.type === 'readyToEat' ? 'Ready to Eat' : 'Meal Kit'
-         return `${type} | ${serving}`
-      }
-   }
 
    const updateOption = (optionId, field, value) => {
       const updatedOptions = options.map(option =>
@@ -192,8 +146,8 @@ const ProductOptionsTunnel = ({ state, close }) => {
             )
             updateCustomizableProductOption({
                variables: {
-                  id: productState.optionId,
-                  set: {
+                  id: customizableOptionId,
+                  _set: {
                      options: finalOptions,
                   },
                },
@@ -209,12 +163,8 @@ const ProductOptionsTunnel = ({ state, close }) => {
    return (
       <>
          <TunnelHeader
-            title={
-               productState.optionsMode === 'edit'
-                  ? 'Edit Options'
-                  : 'Select Options to Add'
-            }
-            close={() => close(3)}
+            title="Select options to add"
+            close={() => closeTunnel(1)}
             tooltip={
                <Tooltip identifier="customizable_product_product_options_tunnel" />
             }
@@ -224,8 +174,7 @@ const ProductOptionsTunnel = ({ state, close }) => {
             }}
          />
          <TunnelBody>
-            {inventoryProductOptionsLoading ||
-            simpleRecipeProductOptionsLoading ? (
+            {loading ? (
                <InlineLoader />
             ) : (
                <>
@@ -246,7 +195,9 @@ const ProductOptionsTunnel = ({ state, close }) => {
                               />
                            </Form.Group>
                            <Flex>
-                              <Text as="p">{renderOptionName(option)}</Text>
+                              <Text as="p">
+                                 {option.label} - {option.product.name}
+                              </Text>
                               <Spacer size="4px" />
                               <Flex container>
                                  <Form.Group>
