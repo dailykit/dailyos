@@ -145,7 +145,7 @@ const Product = () => {
             return (
                <CustomizableOptions
                   productId={state.id}
-                  options={state.productOptions || []}
+                  options={state.customizableProductOptions || []}
                />
             )
          }

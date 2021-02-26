@@ -21,6 +21,7 @@ export const PRODUCTS = {
          products(where: $where) {
             id
             name
+            title: name
             isPublished
          }
       }
@@ -93,6 +94,16 @@ export const PRODUCT = {
                   name
                }
             }
+            customizableProductOptions(
+               where: { isArchived: { _eq: false } }
+               order_by: { position: desc_nulls_last }
+            ) {
+               id
+               linkedProduct {
+                  id
+                  name
+               }
+            }
          }
       }
    `,
@@ -125,6 +136,20 @@ export const PRODUCT_OPTION = {
       ) {
          updateProductOption(pk_columns: { id: $id }, _set: $_set) {
             id
+         }
+      }
+   `,
+}
+
+export const CUSTOMIZABLE_PRODUCT_OPTION = {
+   CREATE: gql`
+      mutation CreateCustomizableProductOption(
+         $objects: [products_customizableProductOption_insert_input!]!
+      ) {
+         createCustomizableProductOption(objects: $objects) {
+            returning {
+               id
+            }
          }
       }
    `,
