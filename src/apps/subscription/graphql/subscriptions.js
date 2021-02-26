@@ -338,3 +338,36 @@ export const INVENTORY_PRODUCT_OPTIONS = gql`
       }
    }
 `
+
+export const ADDON_PRODUCTS = gql`
+   subscription addOnProducts(
+      $where: subscription_subscriptionOccurence_addOn_bool_exp!
+   ) {
+      addOnProducts: subscription_subscriptionOccurence_addOn_aggregate(
+         where: $where
+      ) {
+         aggregate {
+            count
+         }
+         nodes {
+            id
+            unitPrice
+            isVisible
+            isAvailable
+            isSingleSelect
+            productCategory
+            productOptionId
+            productOption {
+               id
+               type
+               label
+               productId
+               product {
+                  id
+                  name
+               }
+            }
+         }
+      }
+   }
+`

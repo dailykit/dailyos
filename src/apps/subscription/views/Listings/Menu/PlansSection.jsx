@@ -1,20 +1,25 @@
 import React from 'react'
 import moment from 'moment'
 import styled from 'styled-components'
-import { Text, Form, Flex, TextButton } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
+import { Text, Form, Flex, TextButton, useTunnel } from '@dailykit/ui'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 
 import { useMenu } from './state'
 import tableOptions from '../../../tableOption'
+import { AddOnProductsTunnel } from '../../../components'
 import { SUBSCRIPTION_OCCURENCES } from '../../../graphql'
 import { useTooltip } from '../../../../../shared/providers'
 import { InlineLoader, Tooltip } from '../../../../../shared/components'
 
 const PlansSection = () => {
    const tableRef = React.useRef()
-   const { state, dispatch } = useMenu()
    const { tooltip } = useTooltip()
+   const { state, dispatch } = useMenu()
+   const [occurenceId, setOccurenceId] = React.useState(null)
+   const [subscriptionId, setSubscriptionId] = React.useState(null)
+   const [addOnTunnels, openAddOnTunnel, closeAddOnTunnel] = useTunnel(1)
+   const [menuTunnels, openMenuTunnel, closeMenuTunnel] = useTunnel(1)
    const {
       loading,
       data: { subscriptionOccurences = {} } = {},
@@ -25,6 +30,25 @@ const PlansSection = () => {
          },
       },
    })
+
+   React.useEffect(() => {
+      openAddOnTunnel(1)
+   }, [])
+
+   const editAddOns = (e, { _cell = {} }) => {
+      const data = _cell.row.getData()
+      setOccurenceId(data.id)
+      setSubscriptionId(data.subscription.id)
+      openAddOnTunnel(1)
+   }
+
+   const editMenu = (e, { _cell = {} }) => {
+      const data = _cell.row.getData()
+      setOccurenceId(data.id)
+      setSubscriptionId(data.subscription.id)
+      openMenuTunnel(1)
+   }
+
    const columns = React.useMemo(
       () => [
          {
@@ -98,6 +122,7 @@ const PlansSection = () => {
          },
          {
             hozAlign: 'right',
+            cellClick: editAddOns,
             title: 'Add On Products',
             formatter: reactFormatter(<AddOnProductsCount />),
             headerHozAlign: 'right',
@@ -112,6 +137,7 @@ const PlansSection = () => {
          {
             hozAlign: 'right',
             title: 'Menu Products',
+            cellClick: editMenu,
             formatter: reactFormatter(<ProductsCount />),
             headerHozAlign: 'right',
             headerTooltip: column => {
@@ -220,6 +246,11 @@ const PlansSection = () => {
                }}
             />
          )}
+         <AddOnProductsTunnel
+            occurenceId={occurenceId}
+            subscriptionId={subscriptionId}
+            tunnel={{ list: addOnTunnels, close: closeAddOnTunnel }}
+         />
       </Wrapper>
    )
 }
