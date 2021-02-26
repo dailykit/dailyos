@@ -15,13 +15,13 @@ import {
    Tooltip,
 } from '../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../shared/utils'
-import {
-   CUSTOMIZABLE_PRODUCT_COMPONENT,
-   PRODUCTS,
-} from '../../../../../../graphql'
+import { ProductContext } from '../../../../../../context/product'
+import { COMBO_PRODUCT_COMPONENT, PRODUCTS } from '../../../../../../graphql'
 import { TunnelBody } from '../../../tunnels/styled'
 
-const ProductsTunnel = ({ closeTunnel, productId }) => {
+const ProductsTunnel = ({ closeTunnel, comboComponentId }) => {
+   const { productState } = React.useContext(ProductContext)
+
    const [search, setSearch] = React.useState('')
    const [products, setProducts] = React.useState([])
    const [list, current, selectOption] = useSingleList(products)
@@ -30,7 +30,7 @@ const ProductsTunnel = ({ closeTunnel, productId }) => {
    const { loading } = useSubscription(PRODUCTS.LIST, {
       variables: {
          where: {
-            type: { _eq: 'simple' },
+            type: { _eq: productState.productType },
             isArchived: { _eq: false },
          },
       },
@@ -40,11 +40,12 @@ const ProductsTunnel = ({ closeTunnel, productId }) => {
       },
    })
 
-   const [createCustomizableProductComponent] = useMutation(
-      CUSTOMIZABLE_PRODUCT_COMPONENT.CREATE,
+   const [updateComboProductComponent] = useMutation(
+      COMBO_PRODUCT_COMPONENT.UPDATE,
       {
          onCompleted: () => {
             toast.success('Product added!')
+            closeTunnel(2)
             closeTunnel(1)
          },
          onError: error => {
@@ -63,10 +64,10 @@ const ProductsTunnel = ({ closeTunnel, productId }) => {
 
    const select = option => {
       selectOption('id', option.id)
-      createCustomizableProductComponent({
+      updateComboProductComponent({
          variables: {
-            object: {
-               productId,
+            id: comboComponentId,
+            _set: {
                linkedProductId: option.id,
             },
          },
@@ -79,7 +80,7 @@ const ProductsTunnel = ({ closeTunnel, productId }) => {
          variables: {
             object: {
                name: productName,
-               type: 'simple',
+               type: productState.productType,
             },
          },
       })
@@ -89,7 +90,7 @@ const ProductsTunnel = ({ closeTunnel, productId }) => {
       <>
          <TunnelHeader
             title="Select Product to Add"
-            close={() => closeTunnel(1)}
+            close={() => closeTunnel(2)}
             tooltip={
                <Tooltip identifier="customizable_product_products_tunnel" />
             }

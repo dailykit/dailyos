@@ -1,5 +1,5 @@
 import React from 'react'
-import { useLazyQuery, useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Flex, Form, Spacer, Text, TunnelHeader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import {
@@ -7,47 +7,45 @@ import {
    Tooltip,
 } from '../../../../../../../../shared/components'
 import {
-   logger,
    isIncludedInOptions,
+   logger,
 } from '../../../../../../../../shared/utils'
-import { ComboProductContext } from '../../../../../../context/product/comboProduct'
 import {
-   INVENTORY_PRODUCT_OPTIONS,
-   SIMPLE_RECIPE_PRODUCT_OPTIONS,
-   UPDATE_COMBO_PRODUCT_COMPONENT,
+   COMBO_PRODUCT_COMPONENT,
+   PRODUCT_OPTION,
 } from '../../../../../../graphql'
+import { TunnelBody } from '../../../tunnels/styled'
 import validators from '../../../validators'
-import { TunnelBody } from '../styled'
 import { OptionWrapper } from './styled'
 
-const ProductOptionsTunnel = ({ close }) => {
-   const { productState } = React.useContext(ComboProductContext)
+const ProductOptionsTunnel = ({
+   comboComponentId,
+   productId,
+   selectedOptions,
+   closeTunnel,
+}) => {
    const [options, setOptions] = React.useState([])
 
    const transformAndSetOptions = React.useCallback(options => {
       const updatedOptions = options.map(option => {
          const isAlreadySelected = isIncludedInOptions(
             option.id,
-            productState.selectedOptions
+            selectedOptions
          )
          return {
             ...option,
-            isSelected:
-               productState.optionsMode === 'edit' ? isAlreadySelected : false,
+            isSelected: isAlreadySelected,
             price: {
                value: isAlreadySelected
-                  ? productState.selectedOptions.find(
-                       op => op.optionId === option.id
-                    ).price
-                  : 0,
+                  ? selectedOptions.find(op => op.optionId === option.id).price
+                  : option.price,
                meta: { isValid: true, isTouched: false, errors: [] },
             },
             discount: {
                value: isAlreadySelected
-                  ? productState.selectedOptions.find(
-                       op => op.optionId === option.id
-                    ).discount
-                  : 0,
+                  ? selectedOptions.find(op => op.optionId === option.id)
+                       .discount
+                  : option.discount,
                meta: { isValid: true, isTouched: false, errors: [] },
             },
          }
@@ -55,40 +53,24 @@ const ProductOptionsTunnel = ({ close }) => {
       setOptions([...updatedOptions])
    }, [])
 
-   const [
-      fetchInventoryProductOptions,
-      { loading: inventoryProductOptionsLoading },
-   ] = useLazyQuery(INVENTORY_PRODUCT_OPTIONS, {
-      onCompleted: data => transformAndSetOptions(data.inventoryProductOptions),
-      onError: error => {
-         toast.error('Could not fetch options!')
-         logger(error)
+   const { loading } = useSubscription(PRODUCT_OPTION.LIST, {
+      variables: {
+         where: {
+            productId: { _eq: productId },
+            isArchived: { _eq: false },
+         },
       },
-   })
-
-   const [
-      fetchSimpleRecipeProductOptions,
-      { loading: simpleRecipeProductOptionsLoading },
-   ] = useLazyQuery(SIMPLE_RECIPE_PRODUCT_OPTIONS, {
-      onCompleted: data =>
-         transformAndSetOptions(data.simpleRecipeProductOptions),
-      onError: error => {
-         toast.error('Could not fetch options!')
-         logger(error)
-      },
+      onSubscriptionData: data =>
+         transformAndSetOptions(data.subscriptionData.data.productOptions),
    })
 
    // Mutation
-   const [updateComboProductComponent, { loading: saving }] = useMutation(
-      UPDATE_COMBO_PRODUCT_COMPONENT,
+   const [updateComboProductComponent, { loading: updating }] = useMutation(
+      COMBO_PRODUCT_COMPONENT.UPDATE,
       {
          onCompleted: () => {
-            toast.success(
-               productState.optionsMode === 'edit'
-                  ? 'Options updated!'
-                  : 'Product added!'
-            )
-            close(4)
+            toast.success('Product options updated!')
+            closeTunnel(1)
          },
          onError: error => {
             toast.error('Something went wrong!')
@@ -96,42 +78,6 @@ const ProductOptionsTunnel = ({ close }) => {
          },
       }
    )
-
-   React.useEffect(() => {
-      if (productState.product.__typename === 'products_inventoryProduct') {
-         fetchInventoryProductOptions({
-            variables: {
-               where: {
-                  inventoryProductId: { _eq: productState.product.id },
-                  isArchived: { _eq: false },
-               },
-            },
-         })
-      }
-      if (productState.product.__typename === 'products_simpleRecipeProduct') {
-         fetchSimpleRecipeProductOptions({
-            variables: {
-               where: {
-                  simpleRecipeProductId: { _eq: productState.product.id },
-                  isArchived: { _eq: false },
-                  isActive: { _eq: true },
-               },
-            },
-         })
-      }
-   }, [])
-
-   const renderOptionName = option => {
-      if (option.label) {
-         return option.label
-      } else {
-         const serving =
-            option.simpleRecipeYield.yield.label ||
-            `${option.simpleRecipeYield.yield.serving} serving`
-         const type = option.type === 'readyToEat' ? 'Ready to Eat' : 'Meal Kit'
-         return `${type} | ${serving}`
-      }
-   }
 
    const updateOption = (optionId, field, value) => {
       const updatedOptions = options.map(option =>
@@ -194,36 +140,14 @@ const ProductOptionsTunnel = ({ close }) => {
                   discount: +discount.value,
                })
             )
-            if (productState.optionsMode === 'edit') {
-               console.log(productState.componentId)
-               updateComboProductComponent({
-                  variables: {
-                     id: productState.componentId,
-                     set: {
-                        options: finalOptions,
-                     },
+            updateComboProductComponent({
+               variables: {
+                  id: comboComponentId,
+                  _set: {
+                     options: finalOptions,
                   },
-               })
-            }
-            if (productState.optionsMode === 'add') {
-               updateComboProductComponent({
-                  variables: {
-                     id: productState.meta.componentId,
-                     set: {
-                        customizableProductId: null,
-                        inventoryProductId:
-                           productState.meta.productType === 'inventory'
-                              ? productState.product.id
-                              : null,
-                        simpleRecipeProductId:
-                           productState.meta.productType === 'simple'
-                              ? productState.product.id
-                              : null,
-                        options: finalOptions,
-                     },
-                  },
-               })
-            }
+               },
+            })
          } else {
             throw Error('Selected options must be valid!')
          }
@@ -235,30 +159,18 @@ const ProductOptionsTunnel = ({ close }) => {
    return (
       <>
          <TunnelHeader
-            title={
-               productState.optionsMode === 'edit'
-                  ? 'Edit Options'
-                  : 'Select Options to Add'
-            }
-            close={() => close(4)}
+            title="Select options to add"
+            close={() => closeTunnel(1)}
             tooltip={
-               <Tooltip identifier="combo_product_product_options_tunnel" />
+               <Tooltip identifier="customizable_product_product_options_tunnel" />
             }
             right={{
-               title:
-                  productState.optionsMode === 'edit'
-                     ? saving
-                        ? 'Updating...'
-                        : 'Update'
-                     : saving
-                     ? 'Adding...'
-                     : 'Add',
-               action: () => !saving && save(),
+               title: updating ? 'Updating...' : 'Update',
+               action: () => !updating && save(),
             }}
          />
          <TunnelBody>
-            {inventoryProductOptionsLoading ||
-            simpleRecipeProductOptionsLoading ? (
+            {loading ? (
                <InlineLoader />
             ) : (
                <>
@@ -279,7 +191,9 @@ const ProductOptionsTunnel = ({ close }) => {
                               />
                            </Form.Group>
                            <Flex>
-                              <Text as="p">{renderOptionName(option)}</Text>
+                              <Text as="p">
+                                 {option.label} - {option.product.name}
+                              </Text>
                               <Spacer size="4px" />
                               <Flex container>
                                  <Form.Group>

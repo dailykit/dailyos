@@ -12,8 +12,8 @@ import {
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 // graphql
-import { CREATE_COMBO_PRODUCT_COMPONENT } from '../../../../../../graphql'
-import { TunnelBody } from '../styled'
+import { COMBO_PRODUCT_COMPONENT } from '../../../../../../graphql'
+import { TunnelBody } from '../../../tunnels/styled'
 import { logger } from '../../../../../../../../shared/utils'
 import validator from '../../../validators'
 import { DeleteIcon } from '../../../../../../../../shared/assets/icons'
@@ -22,7 +22,7 @@ import { Tooltip } from '../../../../../../../../shared/components'
 const address =
    'apps.menu.views.forms.product.comboproduct.tunnels.itemstunnel.'
 
-export default function ItemTunnel({ state, close }) {
+const LabelTunnel = ({ productId, closeTunnel }) => {
    const { t } = useTranslation()
 
    const [labels, setLabels] = React.useState([
@@ -38,10 +38,10 @@ export default function ItemTunnel({ state, close }) {
 
    // Mutation
    const [createComboProductComponent, { loading: inFlight }] = useMutation(
-      CREATE_COMBO_PRODUCT_COMPONENT,
+      COMBO_PRODUCT_COMPONENT.CREATE,
       {
          onCompleted: () => {
-            close(1)
+            closeTunnel(1)
             toast.success(t(address.concat('items added!')))
          },
          onError: error => {
@@ -62,7 +62,7 @@ export default function ItemTunnel({ state, close }) {
       }
       const objects = labels.map(label => {
          return {
-            comboProductId: state.id,
+            productId,
             label: label.value,
          }
       })
@@ -83,7 +83,7 @@ export default function ItemTunnel({ state, close }) {
                   ? t(address.concat('saving'))
                   : t(address.concat('save')),
             }}
-            close={() => close(1)}
+            close={() => closeTunnel(1)}
             tooltip={<Tooltip identifier="combo_product_items_tunnel" />}
          />
          <TunnelBody>
@@ -164,3 +164,5 @@ export default function ItemTunnel({ state, close }) {
       </>
    )
 }
+
+export default LabelTunnel

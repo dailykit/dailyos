@@ -112,6 +112,30 @@ export const PRODUCT = {
                linkedProduct {
                   id
                   name
+                  type
+                  assets
+               }
+            }
+            comboProductComponents(
+               where: { isArchived: { _eq: false } }
+               order_by: { position: desc_nulls_last }
+            ) {
+               id
+               label
+               options
+               selectedOptions {
+                  productOption {
+                     id
+                     label
+                     price
+                     quantity
+                     discount
+                  }
+               }
+               linkedProduct {
+                  id
+                  name
+                  type
                   assets
                }
             }
@@ -195,6 +219,40 @@ export const CUSTOMIZABLE_PRODUCT_COMPONENT = {
             pk_columns: { id: $id }
             _set: $_set
          ) {
+            id
+         }
+      }
+   `,
+}
+
+export const COMBO_PRODUCT_COMPONENT = {
+   CREATE: gql`
+      mutation CreateComboProductComponent(
+         $objects: [products_comboProductComponent_insert_input!]!
+      ) {
+         createComboProductComponents(objects: $objects) {
+            returning {
+               id
+            }
+         }
+      }
+   `,
+   DELETE: gql`
+      mutation UpdateComboProductComponent($id: Int!) {
+         updateComboProductComponent(
+            pk_columns: { id: $id }
+            _set: { isArchived: true }
+         ) {
+            id
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation UpdateComboProductComponent(
+         $id: Int!
+         $_set: products_comboProductComponent_set_input
+      ) {
+         updateComboProductComponent(pk_columns: { id: $id }, _set: $_set) {
             id
          }
       }

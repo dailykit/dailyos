@@ -30,6 +30,7 @@ import CustomizableProductComponents from './CustomizableProductComponents'
 import ProductOptions from './ProductOptions'
 import { ResponsiveFlex, StyledFlex } from './styled'
 import validator from './validators'
+import ComboProductComponents from './ComboProductComponents'
 
 const Product = () => {
    const { id: productId } = useParams()
@@ -146,6 +147,14 @@ const Product = () => {
                <CustomizableProductComponents
                   productId={state.id}
                   options={state.customizableProductComponents || []}
+               />
+            )
+         }
+         case 'combo': {
+            return (
+               <ComboProductComponents
+                  productId={state.id}
+                  options={state.comboProductComponents || []}
                />
             )
          }
