@@ -1,5 +1,5 @@
 import React from 'react'
-import { useLazyQuery, useMutation, useSubscription } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Flex, Form, Spacer, Text, TunnelHeader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import {
@@ -7,19 +7,15 @@ import {
    Tooltip,
 } from '../../../../../../../../shared/components'
 import {
-   logger,
    isIncludedInOptions,
+   logger,
 } from '../../../../../../../../shared/utils'
-import { CustomizableProductContext } from '../../../../../../context/product/customizableProduct'
 import {
    CUSTOMIZABLE_PRODUCT_OPTION,
-   INVENTORY_PRODUCT_OPTIONS,
    PRODUCT_OPTION,
-   SIMPLE_RECIPE_PRODUCT_OPTIONS,
-   UPDATE_CUSTOMIZABLE_PRODUCT_OPTIONS,
 } from '../../../../../../graphql'
-import validators from '../../../validators'
 import { TunnelBody } from '../../../tunnels/styled'
+import validators from '../../../validators'
 import { OptionWrapper } from './styled'
 
 const ProductOptionsTunnel = ({

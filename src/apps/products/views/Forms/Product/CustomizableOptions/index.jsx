@@ -102,7 +102,22 @@ const CustomizableOptions = ({ productId, options }) => {
                         {option.options.length ? (
                            <Flex container justifyContent="space-between">
                               <ProductOptionsPanel
-                                 options={option.selectedOptions}
+                                 options={
+                                    option.selectedOptions || [
+                                       {
+                                          id: 1,
+                                          label: 'Basic',
+                                          price: 1,
+                                          discount: 1,
+                                       },
+                                       {
+                                          id: 1,
+                                          label: 'Basic',
+                                          price: 1,
+                                          discount: 1,
+                                       },
+                                    ]
+                                 }
                               />
                               <ComboButton
                                  type="ghost"

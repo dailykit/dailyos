@@ -100,6 +100,7 @@ export const PRODUCT = {
             ) {
                id
                options
+               selectedOptions
                linkedProduct {
                   id
                   name
