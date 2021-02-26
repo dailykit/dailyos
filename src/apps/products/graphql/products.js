@@ -9,9 +9,16 @@ export const PRODUCTS = {
          }
       }
    `,
+   DELETE: gql`
+      mutation UpdateProduct($id: Int!) {
+         updateProduct(pk_columns: { id: $id }, _set: { isArchived: true }) {
+            id
+         }
+      }
+   `,
    LIST: gql`
-      subscription ProductsView($where: products_productView_bool_exp) {
-         productsView(where: $where) {
+      subscription Products($where: products_product_bool_exp) {
+         products(where: $where) {
             id
             name
             isPublished
