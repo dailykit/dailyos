@@ -1,13 +1,14 @@
 import React from 'react'
 import { startCase } from 'lodash'
 import styled from 'styled-components'
-import { useSubscription } from '@apollo/react-hooks'
-import { ReactTabulator } from '@dailykit/react-tabulator'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import {
-   Tunnels,
-   Tunnel,
-   TunnelHeader,
    Flex,
+   Tunnel,
+   Tunnels,
+   IconButton,
+   TunnelHeader,
    HorizontalTab,
    HorizontalTabs,
    HorizontalTabList,
@@ -16,10 +17,11 @@ import {
 } from '@dailykit/ui'
 
 import tableOptions from '../tableOption'
-import { ADDON_PRODUCTS } from '../graphql'
 import { currencyFmt } from '../../../shared/utils'
 import { useTooltip } from '../../../shared/providers'
 import { InlineLoader } from '../../../shared/components'
+import { DeleteIcon } from '../../../shared/assets/icons'
+import { ADDON_PRODUCTS, DELETE_ADDON_PRODUCT } from '../graphql'
 
 export const AddOnProductsTunnel = ({
    tunnel,
@@ -27,6 +29,7 @@ export const AddOnProductsTunnel = ({
    subscriptionId,
 }) => {
    const { tooltip } = useTooltip()
+   const [remove] = useMutation(DELETE_ADDON_PRODUCT)
    const columns = React.useMemo(
       () => [
          {
@@ -43,7 +46,18 @@ export const AddOnProductsTunnel = ({
             },
          },
          {
-            maxWidth: 80,
+            title: 'Label',
+            field: 'productOption.label',
+            headerTooltip: column => {
+               const identifier = 'product_listing_column_label'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+         },
+         {
+            width: 120,
             hozAlign: 'right',
             title: 'Unit Price',
             headerFilter: true,
@@ -73,7 +87,7 @@ export const AddOnProductsTunnel = ({
             formatter: ({ _cell }) => startCase(_cell.value),
          },
          {
-            maxWidth: 80,
+            width: 80,
             hozAlign: 'center',
             title: 'Visibility',
             formatter: 'tickCross',
@@ -87,7 +101,7 @@ export const AddOnProductsTunnel = ({
             },
          },
          {
-            maxWidth: 80,
+            width: 80,
             hozAlign: 'center',
             title: 'Availability',
             formatter: 'tickCross',
@@ -101,7 +115,7 @@ export const AddOnProductsTunnel = ({
             },
          },
          {
-            maxWidth: 80,
+            width: 80,
             hozAlign: 'center',
             title: 'Single Select',
             formatter: 'tickCross',
@@ -113,6 +127,15 @@ export const AddOnProductsTunnel = ({
                   column.getDefinition().title
                )
             },
+         },
+         {
+            width: 150,
+            title: 'Actions',
+            headerFilter: false,
+            headerSort: false,
+            hozAlign: 'center',
+            cssClass: 'center-text',
+            formatter: reactFormatter(<Delete remove={remove} />),
          },
       ],
       []
@@ -165,10 +188,6 @@ const AddedToOccurence = ({ columns, occurenceId }) => {
          },
       }
    )
-   console.log(
-      '🚀 ~ file: AddOnProductsTunnel.jsx ~ line 161 ~ AddedToOccurence ~ addOnProducts',
-      addOnProducts
-   )
 
    if (loading) return <InlineLoader />
    return (
@@ -197,10 +216,6 @@ const AddedToSubscription = ({ columns, subscriptionId }) => {
          },
       }
    )
-   console.log(
-      '🚀 ~ file: AddOnProductsTunnel.jsx ~ line 190 ~ AddedToSubscription ~ addOnProducts',
-      addOnProducts
-   )
 
    if (loading) return <InlineLoader />
    return (
@@ -216,6 +231,25 @@ const AddedToSubscription = ({ columns, subscriptionId }) => {
             }}
          />
       </div>
+   )
+}
+
+const Delete = ({ cell, remove }) => {
+   const removeItem = () => {
+      const { id, productOption = {} } = cell.getData()
+      if (
+         window.confirm(
+            `Are your sure you want to delete this ${productOption?.product.name} product?`
+         )
+      ) {
+         remove({ variables: { id } })
+      }
+   }
+
+   return (
+      <IconButton size="sm" type="ghost" onClick={removeItem}>
+         <DeleteIcon color="#FF5A52" />
+      </IconButton>
    )
 }
 

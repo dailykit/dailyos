@@ -153,3 +153,13 @@ export const ZIPCODE = {
       }
    `,
 }
+
+export const DELETE_ADDON_PRODUCT = gql`
+   mutation deleteAddOnProduct($id: Int!) {
+      deleteAddOnProduct: delete_subscription_subscriptionOccurence_addOn_by_pk(
+         id: $id
+      ) {
+         id
+      }
+   }
+`
