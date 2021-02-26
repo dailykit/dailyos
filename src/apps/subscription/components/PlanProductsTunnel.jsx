@@ -26,19 +26,15 @@ import { InlineLoader } from '../../../shared/components'
 import { DeleteIcon } from '../../../shared/assets/icons'
 import { currencyFmt, logger } from '../../../shared/utils'
 import {
-   ADDON_PRODUCTS,
-   DELETE_ADDON_PRODUCT,
-   UPDATE_ADDON_PRODUCT,
+   PLAN_PRODUCTS,
+   DELETE_PLAN_PRODUCT,
+   UPDATE_PLAN_PRODUCT,
 } from '../graphql'
 
-export const AddOnProductsTunnel = ({
-   tunnel,
-   occurenceId,
-   subscriptionId,
-}) => {
+export const PlanProductsTunnel = ({ tunnel, occurenceId, subscriptionId }) => {
    const { tooltip } = useTooltip()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-   const [remove] = useMutation(DELETE_ADDON_PRODUCT, {
+   const [remove] = useMutation(DELETE_PLAN_PRODUCT, {
       onCompleted: () => toast.success('Deleted the product successfully!'),
       onError: error => {
          toast.error('Failed to delete the product!')
@@ -84,17 +80,31 @@ export const AddOnProductsTunnel = ({
          {
             width: 120,
             hozAlign: 'right',
-            title: 'Unit Price',
+            title: 'Add On Price',
             headerFilter: true,
-            field: 'unitPrice',
+            field: 'addOnPrice',
             headerTooltip: column => {
-               const identifier = 'product_listing_column_unitPrice'
+               const identifier = 'product_listing_column_addOnPrice'
                return (
                   tooltip(identifier)?.description ||
                   column.getDefinition().title
                )
             },
             formatter: ({ _cell }) => currencyFmt(_cell.value),
+         },
+         {
+            width: 120,
+            hozAlign: 'right',
+            title: 'Add On Label',
+            headerFilter: true,
+            field: 'addOnLabel',
+            headerTooltip: column => {
+               const identifier = 'product_listing_column_addOnLabel'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
          },
          {
             width: 150,
@@ -170,7 +180,7 @@ export const AddOnProductsTunnel = ({
          <Tunnels tunnels={tunnel.list}>
             <Tunnel layer={1} size="full">
                <TunnelHeader
-                  title="Manage Add On Products"
+                  title="Manage Menu Products"
                   close={() => tunnel.close(1)}
                />
                <Flex
@@ -212,8 +222,8 @@ export const AddOnProductsTunnel = ({
 
 const AddedToOccurence = ({ columns, occurenceId }) => {
    const tableRef = React.useRef()
-   const { loading, data: { addOnProducts = {} } = {} } = useSubscription(
-      ADDON_PRODUCTS,
+   const { loading, data: { planProducts = {} } = {} } = useSubscription(
+      PLAN_PRODUCTS,
       {
          variables: {
             where: { subscriptionOccurenceId: { _eq: occurenceId } },
@@ -227,7 +237,7 @@ const AddedToOccurence = ({ columns, occurenceId }) => {
          <ReactTabulator
             columns={columns}
             ref={tableRef}
-            data={addOnProducts.nodes || []}
+            data={planProducts.nodes || []}
             options={{
                ...tableOptions,
                layout: 'fitColumns',
@@ -240,8 +250,8 @@ const AddedToOccurence = ({ columns, occurenceId }) => {
 
 const AddedToSubscription = ({ columns, subscriptionId }) => {
    const tableRef = React.useRef()
-   const { loading, data: { addOnProducts = {} } = {} } = useSubscription(
-      ADDON_PRODUCTS,
+   const { loading, data: { planProducts = {} } = {} } = useSubscription(
+      PLAN_PRODUCTS,
       {
          variables: {
             where: { subscriptionId: { _eq: subscriptionId } },
@@ -255,7 +265,7 @@ const AddedToSubscription = ({ columns, subscriptionId }) => {
          <ReactTabulator
             columns={columns}
             ref={tableRef}
-            data={addOnProducts.nodes || []}
+            data={planProducts.nodes || []}
             options={{
                ...tableOptions,
                layout: 'fitColumns',
@@ -267,7 +277,7 @@ const AddedToSubscription = ({ columns, subscriptionId }) => {
 }
 
 const EditTunnel = ({ close, product = {} }) => {
-   const [updateProduct, { loading }] = useMutation(UPDATE_ADDON_PRODUCT, {
+   const [updateProduct, { loading }] = useMutation(UPDATE_PLAN_PRODUCT, {
       onCompleted: () => {
          close(1)
          toast.success('Successfully updated the product!')
@@ -278,7 +288,8 @@ const EditTunnel = ({ close, product = {} }) => {
       },
    })
    const [form, setForm] = React.useState({
-      unitPrice: '',
+      addOnPrice: '',
+      addOnLabel: '',
       productCategory: '',
       isVisible: false,
       isAvailable: false,
@@ -289,7 +300,8 @@ const EditTunnel = ({ close, product = {} }) => {
       if (!isEmpty(product)) {
          setForm(existing => ({
             ...existing,
-            unitPrice: product.unitPrice,
+            addOnPrice: product.addOnPrice,
+            addOnLabel: product.addOnLabel,
             productCategory: product.productCategory,
             isVisible: product.isVisible,
             isAvailable: product.isAvailable,
@@ -302,7 +314,7 @@ const EditTunnel = ({ close, product = {} }) => {
       updateProduct({
          variables: {
             id: product.id,
-            _set: { ...form, unitPrice: Number(form.unitPrice) },
+            _set: { ...form, addOnPrice: Number(form.addOnPrice) },
          },
       })
    }
@@ -319,7 +331,7 @@ const EditTunnel = ({ close, product = {} }) => {
                title: 'Save',
                isLoading: loading,
                action: () => update(),
-               disabled: !form.unitPrice || !form.productCategory,
+               disabled: !form.productCategory,
             }}
          />
          <Flex
@@ -328,14 +340,27 @@ const EditTunnel = ({ close, product = {} }) => {
             height="calc(100% - 40px)"
          >
             <Form.Group>
-               <Form.Label htmlFor="unitPrice" title="unitPrice">
-                  Unit Price*
+               <Form.Label htmlFor="addOnPrice" title="addOnPrice">
+                  Add On Price
                </Form.Label>
                <Form.Number
-                  id="unitPrice"
-                  name="unitPrice"
-                  value={form.unitPrice}
-                  placeholder="Enter the unit price"
+                  id="addOnPrice"
+                  name="addOnPrice"
+                  value={form.addOnPrice}
+                  placeholder="Enter the add on price"
+                  onChange={e => handleChange(e.target.name, e.target.value)}
+               />
+            </Form.Group>
+            <Spacer size="24px" />
+            <Form.Group>
+               <Form.Label htmlFor="addOnLabel" title="addOnLabel">
+                  Add On Label
+               </Form.Label>
+               <Form.Text
+                  id="addOnLabel"
+                  name="addOnLabel"
+                  value={form.addOnLabel}
+                  placeholder="Enter the add on label"
                   onChange={e => handleChange(e.target.name, e.target.value)}
                />
             </Form.Group>

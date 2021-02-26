@@ -231,6 +231,7 @@ export const SUBSCRIPTION_OCCURENCES_LIST = gql`
                   }
                }
                subscription {
+                  id
                   products: subscriptionProducts_aggregate(
                      where: {
                         productOption: {
@@ -354,6 +355,41 @@ export const ADDON_PRODUCTS = gql`
             id
             unitPrice
             isVisible
+            isAvailable
+            isSingleSelect
+            productCategory
+            productOptionId
+            productOption {
+               id
+               type
+               label
+               productId
+               product {
+                  id
+                  name
+               }
+            }
+         }
+      }
+   }
+`
+
+export const PLAN_PRODUCTS = gql`
+   subscription planProducts(
+      $where: subscription_subscriptionOccurence_product_bool_exp!
+   ) {
+      planProducts: subscription_subscriptionOccurence_product_aggregate(
+         where: $where
+         order_by: { created_at: desc }
+      ) {
+         aggregate {
+            count
+         }
+         nodes {
+            id
+            isVisible
+            addOnPrice
+            addOnLabel
             isAvailable
             isSingleSelect
             productCategory

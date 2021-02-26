@@ -177,3 +177,27 @@ export const UPDATE_ADDON_PRODUCT = gql`
       }
    }
 `
+
+export const DELETE_PLAN_PRODUCT = gql`
+   mutation deletePlanProduct($id: Int!) {
+      deletePlanProduct: delete_subscription_subscriptionOccurence_product_by_pk(
+         id: $id
+      ) {
+         id
+      }
+   }
+`
+
+export const UPDATE_PLAN_PRODUCT = gql`
+   mutation updatePlanProduct(
+      $id: Int!
+      $_set: subscription_subscriptionOccurence_product_set_input!
+   ) {
+      updatePlanProduct: update_subscription_subscriptionOccurence_product_by_pk(
+         pk_columns: { id: $id }
+         _set: $_set
+      ) {
+         id
+      }
+   }
+`

@@ -7,10 +7,10 @@ import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 
 import { useMenu } from './state'
 import tableOptions from '../../../tableOption'
-import { AddOnProductsTunnel } from '../../../components'
 import { SUBSCRIPTION_OCCURENCES } from '../../../graphql'
 import { useTooltip } from '../../../../../shared/providers'
 import { InlineLoader, Tooltip } from '../../../../../shared/components'
+import { AddOnProductsTunnel, PlanProductsTunnel } from '../../../components'
 
 const PlansSection = () => {
    const tableRef = React.useRef()
@@ -30,10 +30,6 @@ const PlansSection = () => {
          },
       },
    })
-
-   React.useEffect(() => {
-      openAddOnTunnel(1)
-   }, [])
 
    const editAddOns = (e, { _cell = {} }) => {
       const data = _cell.row.getData()
@@ -250,6 +246,11 @@ const PlansSection = () => {
             occurenceId={occurenceId}
             subscriptionId={subscriptionId}
             tunnel={{ list: addOnTunnels, close: closeAddOnTunnel }}
+         />
+         <PlanProductsTunnel
+            occurenceId={occurenceId}
+            subscriptionId={subscriptionId}
+            tunnel={{ list: menuTunnels, close: closeMenuTunnel }}
          />
       </Wrapper>
    )
