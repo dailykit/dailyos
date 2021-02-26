@@ -2,14 +2,15 @@ import React from 'react'
 import { toast } from 'react-toastify'
 import styled from 'styled-components'
 import { startCase, isEmpty } from 'lodash'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
+import { useQuery, useSubscription, useMutation } from '@apollo/react-hooks'
 import {
    Form,
    Flex,
    Tunnel,
    Spacer,
    Tunnels,
+   Dropdown,
    useTunnel,
    IconButton,
    TunnelHeader,
@@ -27,6 +28,7 @@ import { DeleteIcon } from '../../../shared/assets/icons'
 import { currencyFmt, logger } from '../../../shared/utils'
 import {
    PLAN_PRODUCTS,
+   PRODUCT_CATEGORIES,
    DELETE_PLAN_PRODUCT,
    UPDATE_PLAN_PRODUCT,
 } from '../graphql'
@@ -277,6 +279,9 @@ const AddedToSubscription = ({ columns, subscriptionId }) => {
 }
 
 const EditTunnel = ({ close, product = {} }) => {
+   const { data: { productCategories = [] } = {} } = useQuery(
+      PRODUCT_CATEGORIES
+   )
    const [updateProduct, { loading }] = useMutation(UPDATE_PLAN_PRODUCT, {
       onCompleted: () => {
          close(1)
@@ -398,6 +403,19 @@ const EditTunnel = ({ close, product = {} }) => {
                   Can be added to cart only once?
                </Form.Toggle>
             </Form.Group>
+            <Spacer size="24px" />
+            <Dropdown
+               type="single"
+               searchedOption={() => {}}
+               options={productCategories}
+               placeholder="search for a product category"
+               selectedOption={option =>
+                  setForm(existing => ({
+                     ...existing,
+                     productCategory: option.title,
+                  }))
+               }
+            />
          </Flex>
       </>
    )
