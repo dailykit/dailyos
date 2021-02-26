@@ -9,10 +9,6 @@ import {
    RecipeForm,
    IngredientsListing,
    IngredientForm,
-   InventoryProductForm,
-   SimpleRecipeProductForm,
-   CustomizableProductForm,
-   ComboProductForm,
    ProductsListing,
    ProductForm,
 } from '../../views'
@@ -76,48 +72,12 @@ const Main = () => {
             </AccessCheck>
          </Route>
 
-         <Route exact path="/products/products/:id" component>
+         <Route exact path="/products/products/:id">
             <AccessCheck
                title="products"
                message="You do not have sufficient permission to access products listing."
             >
                <ProductForm />
-            </AccessCheck>
-         </Route>
-
-         <Route path="/products/inventory-products/:id">
-            <AccessCheck
-               title="inventory-product"
-               message="You do not have sufficient permission to see inventory product details."
-            >
-               <InventoryProductForm />
-            </AccessCheck>
-         </Route>
-
-         <Route path="/products/simple-recipe-products/:id">
-            <AccessCheck
-               title="simple-recipe-product"
-               message="You do not have sufficient permission to see simple recipe product details."
-            >
-               <SimpleRecipeProductForm />
-            </AccessCheck>
-         </Route>
-
-         <Route path="/products/customizable-products/:id">
-            <AccessCheck
-               title="customizable-product"
-               message="You do not have sufficient permission to see customizable product details."
-            >
-               <CustomizableProductForm />
-            </AccessCheck>
-         </Route>
-
-         <Route path="/products/combo-products/:id">
-            <AccessCheck
-               title="combo-product"
-               message="You do not have sufficient permission to see combo product details."
-            >
-               <ComboProductForm />
             </AccessCheck>
          </Route>
       </>

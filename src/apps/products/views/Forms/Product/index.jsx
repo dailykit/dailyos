@@ -12,7 +12,7 @@ import {
    Text,
 } from '@dailykit/ui'
 import { isEmpty } from 'lodash'
-import { useLocation, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import {
    ErrorState,
@@ -22,19 +22,17 @@ import {
 import { useTabs } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import { CloseIcon, TickIcon } from '../../../assets/icons'
+import { ProductProvider } from '../../../context/product'
 import { ModifiersProvider } from '../../../context/product/modifiers'
-
 import { PRODUCT } from '../../../graphql'
 import { Assets, Description } from './components'
-import { ResponsiveFlex, StyledFlex, StyledRule } from './styled'
-import validator from './validators'
-
+import CustomizableOptions from './CustomizableOptions'
 import ProductOptions from './ProductOptions'
-import { ProductProvider } from '../../../context/product'
+import { ResponsiveFlex, StyledFlex } from './styled'
+import validator from './validators'
 
 const Product = () => {
    const { id: productId } = useParams()
-   const { pathname } = useLocation()
 
    const { setTabTitle, tab, addTab } = useTabs()
 
@@ -132,12 +130,20 @@ const Product = () => {
    }
 
    const renderOptions = () => {
-      const [, type] = pathname.split('/')
+      const { type } = state
 
       switch (type) {
-         case 'products': {
+         case 'simple': {
             return (
                <ProductOptions
+                  productId={state.id}
+                  options={state.productOptions || []}
+               />
+            )
+         }
+         case 'customizable': {
+            return (
+               <CustomizableOptions
                   productId={state.id}
                   options={state.productOptions || []}
                />

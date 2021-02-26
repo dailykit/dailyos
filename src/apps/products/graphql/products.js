@@ -40,6 +40,7 @@ export const PRODUCT = {
          product(id: $id) {
             id
             name
+            type
             assets
             tags
             additionalText
