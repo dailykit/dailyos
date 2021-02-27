@@ -11,14 +11,16 @@ const ProductOptionsPanel = ({ options }) => {
                <th>Quantity</th>
                <th>Price</th>
                <th>Discount</th>
+               <th>Discounted Price</th>
             </tr>
          </thead>
-         {options.map(({ productOption: option }) => (
+         {options.map(({ productOption: option, price, discount }) => (
             <tr key={option.id}>
                <td>{option.label}</td>
                <td>{option.quantity}</td>
-               <td>{option.price}</td>
-               <td>{option.discount}</td>
+               <td>${price}</td>
+               <td>{discount}%</td>
+               <td>${(price - (discount / 100) * price).toFixed(2)}</td>
             </tr>
          ))}
       </StyledTable>

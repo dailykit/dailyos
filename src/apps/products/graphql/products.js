@@ -104,10 +104,10 @@ export const PRODUCT = {
                   productOption {
                      id
                      label
-                     price
                      quantity
-                     discount
                   }
+                  price
+                  discount
                }
                linkedProduct {
                   id
@@ -127,10 +127,10 @@ export const PRODUCT = {
                   productOption {
                      id
                      label
-                     price
                      quantity
-                     discount
                   }
+                  price
+                  discount
                }
                linkedProduct {
                   id
