@@ -25,7 +25,7 @@ import { CloseIcon, TickIcon } from '../../../assets/icons'
 import { ProductProvider } from '../../../context/product'
 import { ModifiersProvider } from '../../../context/product/modifiers'
 import { PRODUCT } from '../../../graphql'
-import { Assets, Description } from './components'
+import { Assets, Description, Pricing } from './components'
 import CustomizableProductComponents from './CustomizableProductComponents'
 import ProductOptions from './ProductOptions'
 import { ResponsiveFlex, StyledFlex } from './styled'
@@ -246,11 +246,18 @@ const Product = () => {
                   </HorizontalTabList>
                   <HorizontalTabPanels>
                      <HorizontalTabPanel>
-                        <StyledFlex as="section" container>
-                           <Description state={state} />
+                        <StyledFlex
+                           as="section"
+                           container
+                           alignItems="start"
+                           justifyContent="space-between"
+                        >
+                           <Pricing state={state} />
                            <Spacer xAxis size="16px" />
                            <Assets state={state} />
                         </StyledFlex>
+                        <Spacer size="32px" />
+                        <Description state={state} />
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>{renderOptions()}</HorizontalTabPanel>
                   </HorizontalTabPanels>

@@ -46,7 +46,8 @@ export const PRODUCT = {
             tags
             additionalText
             description
-            basePrice
+            price
+            discount
             isPopupAllowed
             isPublished
             productOptions(

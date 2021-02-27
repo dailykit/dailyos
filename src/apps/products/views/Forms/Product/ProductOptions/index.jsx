@@ -368,7 +368,7 @@ const Option = ({
          }
          case 'price': {
             const val = price.value
-            const { isValid, errors } = validator.label(val)
+            const { isValid, errors } = validator.price(val)
             if (isValid && isActuallyUpdated(field, val)) {
                updateProductOption({
                   variables: {
