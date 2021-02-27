@@ -33,7 +33,7 @@ import {
 } from '../../../../../shared/components'
 import {
    PRODUCT_CATEGORIES,
-   INSERT_OCCURENCE_PRODUCTS,
+   INSERT_OCCURENCE_ADDON_PRODUCTS,
    SIMPLE_RECIPE_PRODUCT_OPTIONS,
    INVENTORY_PRODUCT_OPTIONS,
 } from '../../../graphql'
@@ -102,17 +102,6 @@ const ProductsSection = () => {
       }
    }
 
-   const handleRowValidation = row => {
-      const data = row.getData()
-      if (!localStorage.getItem('serving_size')) return true
-
-      let compareWith
-      if (['mealKit', 'readyToEat'].includes(data.type)) {
-         compareWith = data.recipeYield.size
-      }
-      return compareWith === parseInt(localStorage.getItem('serving_size'), 10)
-   }
-
    const isValid =
       !isEmpty(state.plans.selected) &&
       !isEmpty(state.products.selected) &&
@@ -153,7 +142,6 @@ const ProductsSection = () => {
                         columns={columns}
                         readyToEatTableRef={readyToEatTableRef}
                         handleRowSelection={handleRowSelection}
-                        handleRowValidation={handleRowValidation}
                      />
                   )}
                </HorizontalTabPanel>
@@ -165,7 +153,6 @@ const ProductsSection = () => {
                         columns={columns}
                         mealKitTableRef={mealKitTableRef}
                         handleRowSelection={handleRowSelection}
-                        handleRowValidation={handleRowValidation}
                      />
                   )}
                </HorizontalTabPanel>
@@ -195,12 +182,7 @@ const ProductsSection = () => {
 
 export default ProductsSection
 
-const MealKits = ({
-   columns,
-   mealKitTableRef,
-   handleRowSelection,
-   handleRowValidation,
-}) => {
+const MealKits = ({ columns, mealKitTableRef, handleRowSelection }) => {
    const { error, loading, data: { productOptions = {} } = {} } = useQuery(
       SIMPLE_RECIPE_PRODUCT_OPTIONS,
       {
@@ -222,10 +204,10 @@ const MealKits = ({
       <ReactTabulator
          columns={columns}
          ref={mealKitTableRef}
+         selectableCheck={() => true}
          rowSelected={handleRowSelection}
          data={productOptions.nodes || []}
          rowDeselected={handleRowSelection}
-         selectableCheck={handleRowValidation}
          options={{
             ...tableOptions,
             selectable: true,
@@ -235,12 +217,7 @@ const MealKits = ({
    )
 }
 
-const ReadyToEats = ({
-   columns,
-   handleRowSelection,
-   readyToEatTableRef,
-   handleRowValidation,
-}) => {
+const ReadyToEats = ({ columns, handleRowSelection, readyToEatTableRef }) => {
    const { error, loading, data: { productOptions = {} } = {} } = useQuery(
       SIMPLE_RECIPE_PRODUCT_OPTIONS,
       {
@@ -266,7 +243,7 @@ const ReadyToEats = ({
          rowSelected={handleRowSelection}
          data={productOptions.nodes || []}
          rowDeselected={handleRowSelection}
-         selectableCheck={handleRowValidation}
+         selectableCheck={() => true}
          options={{
             ...tableOptions,
             selectable: true,
@@ -325,9 +302,9 @@ const Inventory = ({ inventoryTableRef, handleRowSelection }) => {
       <ReactTabulator
          columns={columns}
          ref={inventoryTableRef}
-         selectableCheck={() => true}
          rowSelected={handleRowSelection}
          rowDeselected={handleRowSelection}
+         selectableCheck={() => true}
          data={productOptions.nodes || []}
          options={{
             ...tableOptions,
@@ -348,39 +325,41 @@ const SaveTunnel = ({
    const { state, dispatch } = useMenu()
    const [checked, setChecked] = React.useState(false)
    const [form, setForm] = React.useState({
-      addOnLabel: '',
-      addOnPrice: '',
+      unitPrice: '',
       productCategory: '',
    })
    const { data: { productCategories = [] } = {} } = useQuery(
       PRODUCT_CATEGORIES
    )
-   const [insertOccurenceProducts] = useMutation(INSERT_OCCURENCE_PRODUCTS, {
-      onCompleted: () => {
-         setForm({
-            addOnLabel: '',
-            addOnPrice: '',
-            productCategory: '',
-         })
-         closeTunnel(1)
-         dispatch({ type: 'CLEAR_STATE' })
-         const mealKitRows =
-            mealKitTableRef?.current?.table?.getSelectedRows() || []
-         const readyToEatRows =
-            readyToEatTableRef?.current?.table?.getSelectedRows() || []
-         const inventoryRows =
-            inventoryTableRef?.current?.table?.getSelectedRows() || []
-         mealKitRows.forEach(row => row.deselect())
-         readyToEatRows.forEach(row => row.deselect())
-         inventoryRows.forEach(row => row.deselect())
-         localStorage.removeItem('serving_size')
-         toast.success('Successfully added the products to the subscription!')
-      },
-      onError: error => {
-         logger(error)
-         toast.error('Failed to add the products to the subscription!')
-      },
-   })
+   const [insertOccurenceProducts] = useMutation(
+      INSERT_OCCURENCE_ADDON_PRODUCTS,
+      {
+         onCompleted: () => {
+            setForm({
+               unitPrice: '',
+               productCategory: '',
+            })
+            closeTunnel(1)
+            dispatch({ type: 'CLEAR_STATE' })
+            const mealKitRows =
+               mealKitTableRef?.current?.table?.getSelectedRows() || []
+            const readyToEatRows =
+               readyToEatTableRef?.current?.table?.getSelectedRows() || []
+            const inventoryRows =
+               inventoryTableRef?.current?.table?.getSelectedRows() || []
+            mealKitRows.forEach(row => row.deselect())
+            readyToEatRows.forEach(row => row.deselect())
+            inventoryRows.forEach(row => row.deselect())
+            toast.success(
+               'Successfully added the products to the subscription!'
+            )
+         },
+         onError: error => {
+            logger(error)
+            toast.error('Failed to add the products to the subscription!')
+         },
+      }
+   )
 
    const save = async () => {
       const plans = state.plans.selected
@@ -390,10 +369,9 @@ const SaveTunnel = ({
          plans.map(plan => {
             const result = products.map(product => ({
                isSingleSelect: !checked,
-               addOnLabel: form.addOnLabel,
-               productOptionId: product.option.id,
-               addOnPrice: Number(form.addOnPrice),
+               unitPrice: Number(form.unitPrice),
                productCategory: form.productCategory,
+               productOptionId: product.option.id,
                ...(state.plans.isPermanent
                   ? { subscriptionId: plan.subscription.id }
                   : { subscriptionOccurenceId: plan.occurence.id }),
@@ -426,41 +404,24 @@ const SaveTunnel = ({
                right={{
                   title: 'Save',
                   action: () => save(),
-                  disabled: !form.productCategory,
+                  disabled: !form.productCategory && !form.unitPrice,
                }}
                tooltip={<Tooltip identifier="listing_menu_tunnel_heading" />}
             />
             <Main>
-               <Spacer size="24px" />
                <Form.Group>
                   <Flex container alignItems="center">
-                     <Form.Label htmlFor="addOnLabel" title="addOnLabel">
-                        Add On Label
+                     <Form.Label htmlFor="unitPrice" title="unitPrice">
+                        Unit Price*
                      </Form.Label>
-                     <Tooltip identifier="listing_menu_tunnel_field_addonlabel" />
+                     <Tooltip identifier="listing_menu_tunnel_field_unitprice" />
                   </Flex>
                   <Form.Text
-                     id="addOnLabel"
-                     name="addOnLabel"
+                     id="unitPrice"
+                     name="unitPrice"
                      onChange={handleChange}
-                     value={form.addOnLabel}
-                     placeholder="Enter the add on label"
-                  />
-               </Form.Group>
-               <Spacer size="24px" />
-               <Form.Group>
-                  <Flex container alignItems="center">
-                     <Form.Label htmlFor="addOnPrice" title="addOnPrice">
-                        Add On Price
-                     </Form.Label>
-                     <Tooltip identifier="listing_menu_tunnel_field_addOnPrice" />
-                  </Flex>
-                  <Form.Text
-                     id="addOnPrice"
-                     name="addOnPrice"
-                     onChange={handleChange}
-                     value={form.addOnPrice}
-                     placeholder="Enter the add on price"
+                     value={form.unitPrice}
+                     placeholder="Enter the unit price"
                   />
                </Form.Group>
                <Spacer size="24px" />

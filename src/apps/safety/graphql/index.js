@@ -3,7 +3,7 @@ import {
    DELETE_SAFETY_CHECK,
    CREATE_CHECKUP,
    DELETE_CHECKUP,
-} from './mutations/'
+} from './mutations'
 import {
    SAFETY_CHECKS,
    SAFETY_CHECK,

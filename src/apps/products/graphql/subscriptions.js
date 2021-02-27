@@ -46,6 +46,31 @@ export const S_INGREDIENTS = gql`
    }
 `
 
+export const S_PROCESSINGS = gql`
+   subscription Processings($where: ingredient_ingredientProcessing_bool_exp) {
+      ingredientProcessings(where: $where) {
+         id
+         title: processingName
+         processingName
+      }
+   }
+`
+
+export const S_SACHETS = gql`
+   subscription Sachets($where: ingredient_ingredientSachet_bool_exp) {
+      ingredientSachets(where: $where) {
+         id
+         isValid
+         quantity
+         unit
+         ingredient {
+            id
+            name
+         }
+      }
+   }
+`
+
 export const S_INGREDIENT = gql`
    subscription Ingredient($id: Int!) {
       ingredient(id: $id) {

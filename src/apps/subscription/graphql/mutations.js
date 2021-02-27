@@ -1,10 +1,36 @@
 import gql from 'graphql-tag'
 
+export const INSERT_PICKUP_OPTION = gql`
+   mutation createPickupOption(
+      $object: subscription_subscriptionPickupOption_insert_input!
+   ) {
+      createPickupOption: insert_subscription_subscriptionPickupOption_one(
+         object: $object
+      ) {
+         id
+         time
+         address
+      }
+   }
+`
+
 export const INSERT_OCCURENCE_PRODUCTS = gql`
    mutation insertOccurenceProducts(
       $objects: [subscription_subscriptionOccurence_product_insert_input!]!
    ) {
       insertOccurenceProducts: insert_subscription_subscriptionOccurence_product(
+         objects: $objects
+      ) {
+         affected_rows
+      }
+   }
+`
+
+export const INSERT_OCCURENCE_ADDON_PRODUCTS = gql`
+   mutation insertOccurenceAddOnProducts(
+      $objects: [subscription_subscriptionOccurence_addOn_insert_input!]!
+   ) {
+      insertOccurenceAddOnProducts: insert_subscription_subscriptionOccurence_addOn(
          objects: $objects
       ) {
          affected_rows
@@ -87,6 +113,20 @@ export const INSERT_SUBSCRIPTION_ZIPCODES = gql`
    }
 `
 
+export const UPDATE_SUBSCRIPTION_ZIPCODE = gql`
+   mutation updateSubscriptionZipcode(
+      $pk_columns: subscription_subscription_zipcode_pk_columns_input!
+      $_set: subscription_subscription_zipcode_set_input!
+   ) {
+      update_subscription_subscription_zipcode_by_pk(
+         pk_columns: $pk_columns
+         _set: $_set
+      ) {
+         zipcode
+      }
+   }
+`
+
 export const UPDATE_SUBSCRIPTION = gql`
    mutation updateSubscription(
       $id: Int!
@@ -113,3 +153,51 @@ export const ZIPCODE = {
       }
    `,
 }
+
+export const DELETE_ADDON_PRODUCT = gql`
+   mutation deleteAddOnProduct($id: Int!) {
+      deleteAddOnProduct: delete_subscription_subscriptionOccurence_addOn_by_pk(
+         id: $id
+      ) {
+         id
+      }
+   }
+`
+
+export const UPDATE_ADDON_PRODUCT = gql`
+   mutation updateAddOnProduct(
+      $id: Int!
+      $_set: subscription_subscriptionOccurence_addOn_set_input!
+   ) {
+      updateAddOnProduct: update_subscription_subscriptionOccurence_addOn_by_pk(
+         pk_columns: { id: $id }
+         _set: $_set
+      ) {
+         id
+      }
+   }
+`
+
+export const DELETE_PLAN_PRODUCT = gql`
+   mutation deletePlanProduct($id: Int!) {
+      deletePlanProduct: delete_subscription_subscriptionOccurence_product_by_pk(
+         id: $id
+      ) {
+         id
+      }
+   }
+`
+
+export const UPDATE_PLAN_PRODUCT = gql`
+   mutation updatePlanProduct(
+      $id: Int!
+      $_set: subscription_subscriptionOccurence_product_set_input!
+   ) {
+      updatePlanProduct: update_subscription_subscriptionOccurence_product_by_pk(
+         pk_columns: { id: $id }
+         _set: $_set
+      ) {
+         id
+      }
+   }
+`

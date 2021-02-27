@@ -1,5 +1,15 @@
 import gql from 'graphql-tag'
 
+export const PICKUP_OPTIONS = gql`
+   query pickup_options {
+      pickup_options: subscription_subscriptionPickupOption {
+         id
+         time
+         address
+      }
+   }
+`
+
 export const OCCURRENCES_DATES = gql`
    subscription occurrences_dates {
       occurrences_dates: subscriptionOccurences(distinct_on: fulfillmentDate) {
@@ -25,10 +35,16 @@ export const SUBSCRIPTION_OCCURENCES = gql`
             cutoffTimeStamp
             products: products_aggregate(
                where: {
-                  _or: [
-                     { inventoryProduct: { isArchived: { _eq: false } } }
-                     { simpleRecipeProduct: { isArchived: { _eq: false } } }
-                  ]
+                  productOption: { product: { isArchived: { _eq: false } } }
+               }
+            ) {
+               aggregate {
+                  count
+               }
+            }
+            addOnProducts: addOnProducts_aggregate(
+               where: {
+                  productOption: { product: { isArchived: { _eq: false } } }
                }
             ) {
                aggregate {
@@ -40,10 +56,16 @@ export const SUBSCRIPTION_OCCURENCES = gql`
                rrule
                products: subscriptionProducts_aggregate(
                   where: {
-                     _or: [
-                        { inventoryProduct: { isArchived: { _eq: false } } }
-                        { simpleRecipeProduct: { isArchived: { _eq: false } } }
-                     ]
+                     productOption: { product: { isArchived: { _eq: false } } }
+                  }
+               ) {
+                  aggregate {
+                     count
+                  }
+               }
+               addOnProducts: subscriptionAddOnProducts_aggregate(
+                  where: {
+                     productOption: { product: { isArchived: { _eq: false } } }
                   }
                ) {
                   aggregate {
@@ -75,13 +97,11 @@ export const SUBSCRIPTION_OCCURENCES = gql`
 
 export const SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
    query productOptions($type: String_comparison_exp!) {
-      productOptions: simpleRecipeProductOptionsAggregate(
+      productOptions: productOptionsAggregate(
          where: {
             type: $type
-            simpleRecipeProduct: {
-               isArchived: { _eq: false }
-               isPublished: { _eq: true }
-            }
+            simpleRecipeYieldId: { _is_null: false }
+            product: { isArchived: { _eq: false }, isPublished: { _eq: true } }
          }
       ) {
          aggregate {
@@ -89,7 +109,6 @@ export const SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
          }
          nodes {
             id
-            isActive
             price
             type
             recipeYield: simpleRecipeYield {
@@ -102,7 +121,7 @@ export const SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
                   image
                }
             }
-            recipeProduct: simpleRecipeProduct {
+            product {
                id
                name
             }
@@ -195,10 +214,16 @@ export const SUBSCRIPTION_OCCURENCES_LIST = gql`
                cutoffTimeStamp
                products: products_aggregate(
                   where: {
-                     _or: [
-                        { inventoryProduct: { isArchived: { _eq: false } } }
-                        { simpleRecipeProduct: { isArchived: { _eq: false } } }
-                     ]
+                     productOption: { product: { isArchived: { _eq: false } } }
+                  }
+               ) {
+                  aggregate {
+                     count
+                  }
+               }
+               addOnProducts: addOnProducts_aggregate(
+                  where: {
+                     productOption: { product: { isArchived: { _eq: false } } }
                   }
                ) {
                   aggregate {
@@ -206,16 +231,23 @@ export const SUBSCRIPTION_OCCURENCES_LIST = gql`
                   }
                }
                subscription {
+                  id
                   products: subscriptionProducts_aggregate(
                      where: {
-                        _or: [
-                           { inventoryProduct: { isArchived: { _eq: false } } }
-                           {
-                              simpleRecipeProduct: {
-                                 isArchived: { _eq: false }
-                              }
-                           }
-                        ]
+                        productOption: {
+                           product: { isArchived: { _eq: false } }
+                        }
+                     }
+                  ) {
+                     aggregate {
+                        count
+                     }
+                  }
+                  addOnProducts: subscriptionAddOnProducts_aggregate(
+                     where: {
+                        productOption: {
+                           product: { isArchived: { _eq: false } }
+                        }
                      }
                   ) {
                      aggregate {
@@ -240,6 +272,14 @@ export const SUBSCRIPTION_ZIPCODES = gql`
          deliveryTime
          deliveryPrice
          subscriptionId
+         isDeliveryActive
+         isPickupActive
+         subscriptionPickupOptionId
+         subscriptionPickupOption {
+            id
+            time
+            address
+         }
       }
    }
 `
@@ -277,13 +317,11 @@ export const SUBSCRIPTION = gql`
 `
 
 export const INVENTORY_PRODUCT_OPTIONS = gql`
-   query inventoryProductOptions {
-      inventoryProductOptions: inventoryProductOptionsAggregate(
+   query productOptions($type: String_comparison_exp!) {
+      productOptions: productOptionsAggregate(
          where: {
-            inventoryProduct: {
-               isArchived: { _eq: false }
-               isPublished: { _eq: true }
-            }
+            product: { isArchived: { _eq: false }, isPublished: { _eq: true } }
+            type: $type
          }
       ) {
          aggregate {
@@ -291,11 +329,81 @@ export const INVENTORY_PRODUCT_OPTIONS = gql`
          }
          nodes {
             id
-            inventoryProduct {
+            type
+            product {
                id
                name
             }
             quantity
+         }
+      }
+   }
+`
+
+export const ADDON_PRODUCTS = gql`
+   subscription addOnProducts(
+      $where: subscription_subscriptionOccurence_addOn_bool_exp!
+   ) {
+      addOnProducts: subscription_subscriptionOccurence_addOn_aggregate(
+         where: $where
+         order_by: { created_at: desc }
+      ) {
+         aggregate {
+            count
+         }
+         nodes {
+            id
+            unitPrice
+            isVisible
+            isAvailable
+            isSingleSelect
+            productCategory
+            productOptionId
+            productOption {
+               id
+               type
+               label
+               productId
+               product {
+                  id
+                  name
+               }
+            }
+         }
+      }
+   }
+`
+
+export const PLAN_PRODUCTS = gql`
+   subscription planProducts(
+      $where: subscription_subscriptionOccurence_product_bool_exp!
+   ) {
+      planProducts: subscription_subscriptionOccurence_product_aggregate(
+         where: $where
+         order_by: { created_at: desc }
+      ) {
+         aggregate {
+            count
+         }
+         nodes {
+            id
+            isVisible
+            addOnPrice
+            addOnLabel
+            isAvailable
+            isSingleSelect
+            productCategory
+            productOptionId
+            productOption {
+               id
+               type
+               label
+               productId
+               product {
+                  id
+                  name
+               }
+            }
          }
       }
    }

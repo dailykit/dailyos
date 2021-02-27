@@ -18,7 +18,6 @@ import {
    HorizontalTabPanels,
 } from '@dailykit/ui'
 
-import { usePlan } from '../state'
 import Customers from './Customers'
 import Occurences from './Occurences'
 import DeliveryAreas from './DeliveryAreas'
@@ -33,7 +32,7 @@ import {
 } from '../../../../../../shared/components'
 
 const DeliveryDay = ({ id }) => {
-   const { state, dispatch } = usePlan()
+   const [endDate, setEndDate] = React.useState('')
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [areasTotal, setAreasTotal] = React.useState(0)
    const [customersTotal, setCustomersTotal] = React.useState(0)
@@ -45,15 +44,9 @@ const DeliveryDay = ({ id }) => {
       onSubscriptionData: ({
          subscriptionData: { data: { subscription = {} } = {} } = {},
       }) => {
-         dispatch({ type: 'SET_SUBSCRIPTION', payload: { ...subscription } })
+         setEndDate(subscription.endDate)
       },
    })
-
-   React.useState(() => {
-      return () => {
-         dispatch({ type: 'SET_SUBSCRIPTION', payload: { id: null } })
-      }
-   }, [])
 
    if (loading) return <InlineLoader />
    if (error) {
@@ -79,8 +72,7 @@ const DeliveryDay = ({ id }) => {
             </IconButton>
          </Flex>
          <Text as="subtitle">
-            Ends on -{' '}
-            {moment(state.subscription.endDate).format('MMM DD, YYYY')}
+            Ends on - {moment(endDate).format('MMM DD, YYYY')}
          </Text>
          <HorizontalTabs id="subscriptionTabs">
             <HorizontalTabList>
@@ -103,7 +95,7 @@ const DeliveryDay = ({ id }) => {
          <ErrorBoundary rootRoute="/subscription/subscriptions">
             <Tunnels tunnels={tunnels}>
                <Tunnel layer="1">
-                  <EditSubscriptionTunnel closeTunnel={closeTunnel} />
+                  <EditSubscriptionTunnel id={id} closeTunnel={closeTunnel} />
                </Tunnel>
             </Tunnels>
          </ErrorBoundary>
@@ -113,8 +105,7 @@ const DeliveryDay = ({ id }) => {
 
 export default DeliveryDay
 
-const EditSubscriptionTunnel = ({ closeTunnel }) => {
-   const { state } = usePlan()
+const EditSubscriptionTunnel = ({ id, closeTunnel }) => {
    const [endDate, setEndDate] = React.useState('')
    const [updateSubscription] = useMutation(UPDATE_SUBSCRIPTION, {
       onCompleted: () => {
@@ -132,7 +123,7 @@ const EditSubscriptionTunnel = ({ closeTunnel }) => {
    const save = () => {
       updateSubscription({
          variables: {
-            id: state.subscription.id,
+            id,
             _set: {
                endDate,
             },
@@ -165,7 +156,6 @@ const EditSubscriptionTunnel = ({ closeTunnel }) => {
                   id="endDate"
                   name="endDate"
                   value={endDate}
-                  defaultValue={state.subscription.endDate}
                   onChange={e => setEndDate(e.target.value)}
                />
             </Form.Group>

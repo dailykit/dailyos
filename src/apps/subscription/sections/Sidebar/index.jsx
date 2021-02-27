@@ -23,6 +23,11 @@ const Sidebar = ({ visible, toggleSidebar }) => {
                Menu
             </StyledListItem>
             <StyledListItem
+               onClick={() => addTab('Add On Menu', '/subscription/addon-menu')}
+            >
+               Menu
+            </StyledListItem>
+            <StyledListItem
                onClick={() =>
                   addTab('Subscriptions', '/subscription/subscriptions')
                }

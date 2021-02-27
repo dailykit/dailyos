@@ -14,8 +14,8 @@ import { AddOnProductsTunnel, PlanProductsTunnel } from '../../../components'
 
 const PlansSection = () => {
    const tableRef = React.useRef()
-   const { tooltip } = useTooltip()
    const { state, dispatch } = useMenu()
+   const { tooltip } = useTooltip()
    const [occurenceId, setOccurenceId] = React.useState(null)
    const [subscriptionId, setSubscriptionId] = React.useState(null)
    const [addOnTunnels, openAddOnTunnel, closeAddOnTunnel] = useTunnel(1)
@@ -132,8 +132,8 @@ const PlansSection = () => {
          },
          {
             hozAlign: 'right',
-            title: 'Menu Products',
             cellClick: editMenu,
+            title: 'Menu Products',
             formatter: reactFormatter(<ProductsCount />),
             headerHozAlign: 'right',
             headerTooltip: column => {
@@ -168,8 +168,6 @@ const PlansSection = () => {
             payload: {
                occurence: { id: data.id },
                subscription: { id: data.subscription.id },
-               item: { count: data.subscription.itemCount.count },
-               serving: { size: data.subscription.itemCount.serving.size },
             },
          })
       } else {
@@ -178,13 +176,6 @@ const PlansSection = () => {
             payload: data.id,
          })
       }
-   }
-   const handleRowValidation = row => {
-      if (!localStorage.getItem('serving_size')) return true
-      return (
-         row.getData().subscription.itemCount.serving.size ===
-         Number(localStorage.getItem('serving_size'))
-      )
    }
    return (
       <Wrapper>
@@ -232,7 +223,7 @@ const PlansSection = () => {
                rowSelected={handleRowSelection}
                rowDeselected={handleRowSelection}
                data={subscriptionOccurences.nodes}
-               selectableCheck={handleRowValidation}
+               selectableCheck={() => true}
                options={{
                   ...tableOptions,
                   selectable: true,

@@ -120,7 +120,7 @@ export const QUERIES = {
       `,
       STATUSES: gql`
          subscription orderStatuses {
-            order_orderStatusEnum {
+            order_orderStatusEnum(order_by: { index: asc }) {
                value
             }
          }

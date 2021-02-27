@@ -295,11 +295,11 @@ const RecipeForm = () => {
                               <Spacer xAxis size="32px" />
                               <Photo state={state} />
                            </StyledFlex>
-                           <Spacer size="32px" />
-                           <Servings state={state} />
                         </Flex>
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>
+                        <Servings state={state} />
+                        <Spacer size="32px" />
                         <Ingredients state={state} />
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>

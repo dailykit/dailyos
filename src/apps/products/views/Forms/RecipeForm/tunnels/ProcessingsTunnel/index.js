@@ -1,5 +1,5 @@
 import React from 'react'
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    List,
    ListHeader,
@@ -16,8 +16,7 @@ import { RecipeContext } from '../../../../../context/recipe'
 import {
    CREATE_PROCESSINGS,
    CREATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING,
-   PROCESSINGS,
-   UPDATE_RECIPE,
+   S_PROCESSINGS,
    UPSERT_MASTER_PROCESSING,
 } from '../../../../../graphql'
 import { TunnelBody } from '../styled'
@@ -25,25 +24,23 @@ import { TunnelBody } from '../styled'
 const ProcessingsTunnel = ({ state, closeTunnel }) => {
    const { recipeState } = React.useContext(RecipeContext)
 
+   const [ingredientProcessings, setIngredientProcessings] = React.useState([])
+
    // Query
-   const { data: { ingredientProcessings = [] } = {}, loading } = useQuery(
-      PROCESSINGS,
-      {
-         variables: {
-            where: {
-               _and: [
-                  { ingredientId: { _eq: recipeState.newIngredient?.id } },
-                  { isArchived: { _eq: false } },
-               ],
-            },
+   const { loading } = useSubscription(S_PROCESSINGS, {
+      variables: {
+         where: {
+            _and: [
+               { ingredientId: { _eq: recipeState.newIngredient?.id } },
+               { isArchived: { _eq: false } },
+            ],
          },
-         onError: error => {
-            toast.error('Something went wrong!')
-            logger(error)
-         },
-         fetchPolicy: 'cache-and-network',
-      }
-   )
+      },
+      onSubscriptionData: data => {
+         const processings = data.subscriptionData.data.ingredientProcessings
+         setIngredientProcessings(processings)
+      },
+   })
 
    // State for search input
    const [search, setSearch] = React.useState('')
@@ -92,7 +89,7 @@ const ProcessingsTunnel = ({ state, closeTunnel }) => {
             id: data.createIngredientProcessing.returning[0].id,
             title: data.createIngredientProcessing.returning[0].processingName,
          }
-         add(processing)
+         // add(processing)
       },
       onError: error => {
          toast.error('Something went wrong!')

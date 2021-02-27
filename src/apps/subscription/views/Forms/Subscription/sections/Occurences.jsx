@@ -1,8 +1,8 @@
 import React from 'react'
 import moment from 'moment'
 import { toast } from 'react-toastify'
-import { Flex, Text, Spacer } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
+import { Flex, Text, Spacer, useTunnel } from '@dailykit/ui'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 
 import tableOptions from '../../../../tableOption'
@@ -14,10 +14,15 @@ import {
    ErrorState,
    InlineLoader,
 } from '../../../../../../shared/components'
+import { AddOnProductsTunnel, PlanProductsTunnel } from '../../../../components'
 
 const Occurences = ({ id, setOccurencesTotal }) => {
    const tableRef = React.useRef()
    const { tooltip } = useTooltip()
+   const [occurenceId, setOccurenceId] = React.useState(null)
+   const [subscriptionId, setSubscriptionId] = React.useState(null)
+   const [addOnTunnels, openAddOnTunnel, closeAddOnTunnel] = useTunnel(1)
+   const [menuTunnels, openMenuTunnel, closeMenuTunnel] = useTunnel(1)
    const {
       error,
       loading,
@@ -31,6 +36,20 @@ const Occurences = ({ id, setOccurencesTotal }) => {
          setOccurencesTotal(aggregate?.count || 0)
       },
    })
+
+   const editAddOns = (e, { _cell = {} }) => {
+      const data = _cell.row.getData()
+      setOccurenceId(data.id)
+      setSubscriptionId(data.subscription.id)
+      openAddOnTunnel(1)
+   }
+
+   const editMenu = (e, { _cell = {} }) => {
+      const data = _cell.row.getData()
+      setOccurenceId(data.id)
+      setSubscriptionId(data.subscription.id)
+      openMenuTunnel(1)
+   }
 
    const columns = [
       {
@@ -70,7 +89,22 @@ const Occurences = ({ id, setOccurencesTotal }) => {
          },
       },
       {
+         cssClass: 'cell',
          hozAlign: 'right',
+         cellClick: editAddOns,
+         title: 'Add On Products',
+         formatter: reactFormatter(<AddOnProductsCount />),
+         headerTooltip: column => {
+            const identifier = 'listing_occurences_column_products'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+      {
+         cssClass: 'cell',
+         hozAlign: 'right',
+         cellClick: editMenu,
          title: 'Menu Products',
          formatter: reactFormatter(<ProductsCount />),
          headerTooltip: column => {
@@ -101,6 +135,16 @@ const Occurences = ({ id, setOccurencesTotal }) => {
             options={{ ...tableOptions, layout: 'fitColumns' }}
             data={subscription_occurences?.occurences_aggregate?.nodes || []}
          />
+         <AddOnProductsTunnel
+            occurenceId={occurenceId}
+            subscriptionId={subscriptionId}
+            tunnel={{ list: addOnTunnels, close: closeAddOnTunnel }}
+         />
+         <PlanProductsTunnel
+            occurenceId={occurenceId}
+            subscriptionId={subscriptionId}
+            tunnel={{ list: menuTunnels, close: closeMenuTunnel }}
+         />
       </>
    )
 }
@@ -117,6 +161,21 @@ const ProductsCount = ({ cell: { _cell } }) => {
          /
          <span title="Added to the subscription">
             {data.subscription.products.aggregate.count}
+         </span>
+      </div>
+   )
+}
+
+const AddOnProductsCount = ({ cell: { _cell } }) => {
+   const data = _cell.row.getData()
+   return (
+      <div>
+         <span title="Added to this occurence">
+            {data.addOnProducts.aggregate.count}
+         </span>
+         /
+         <span title="Added to the subscription">
+            {data.subscription.addOnProducts.aggregate.count}
          </span>
       </div>
    )
