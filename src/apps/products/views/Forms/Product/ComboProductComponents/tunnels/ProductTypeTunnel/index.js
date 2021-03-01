@@ -1,9 +1,9 @@
 import React from 'react'
-import { Text, TunnelHeader } from '@dailykit/ui'
-import { Trans, useTranslation } from 'react-i18next'
-import { SolidTile, TunnelBody } from '../../../tunnels/styled'
+import { OptionTile, Spacer, TunnelHeader } from '@dailykit/ui'
+import { useTranslation } from 'react-i18next'
 import { Tooltip } from '../../../../../../../../shared/components'
 import { ProductContext } from '../../../../../../context/product'
+import { TunnelBody } from '../../../tunnels/styled'
 
 const address =
    'apps.menu.views.forms.product.comboproduct.tunnels.producttypetunnel.'
@@ -30,20 +30,15 @@ const ProductTypeTunnel = ({ closeTunnel, openTunnel }) => {
             }
          />
          <TunnelBody>
-            <SolidTile onClick={() => select('simple')}>
-               <Text as="h1">Simple Product</Text>
-               <Text as="subtitle">Simple Product</Text>
-            </SolidTile>
-            <br />
-            <SolidTile onClick={() => select('customizable')}>
-               <Text as="h1">{t(address.concat('customizable product'))}</Text>
-               <Text as="subtitle">
-                  <Trans i18nKey={address.concat('subtitle 3')}>
-                     Simple Recipe Product is only one recipe, sold as Meal Kits
-                     as well as Ready to Eat
-                  </Trans>
-               </Text>
-            </SolidTile>
+            <OptionTile
+               title="Simple Product"
+               onClick={() => select('simple')}
+            />
+            <Spacer size="16px" />
+            <OptionTile
+               title="Customizable Product"
+               onClick={() => select('customizable')}
+            />
          </TunnelBody>
       </>
    )

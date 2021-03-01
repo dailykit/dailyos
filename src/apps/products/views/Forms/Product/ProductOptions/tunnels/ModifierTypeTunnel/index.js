@@ -1,5 +1,5 @@
 import React from 'react'
-import { TunnelHeader, Text } from '@dailykit/ui'
+import { TunnelHeader, Text, OptionTile, Spacer } from '@dailykit/ui'
 import { TunnelBody, SolidTile } from '../../../tunnels/styled'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
 import { Tooltip } from '../../../../../../../../shared/components'
@@ -26,25 +26,22 @@ const ModifierTypeTunnel = ({ open, close }) => {
             tooltip={<Tooltip identifier="modifier_option_type_tunnel" />}
          />
          <TunnelBody>
-            <SolidTile onClick={() => select('inventoryProductOption')}>
-               <Text as="h1">Inventory Product</Text>
-            </SolidTile>
-            <br />
-            <SolidTile onClick={() => select('simpleRecipeProductOption')}>
-               <Text as="h1">Simple Recipe Product</Text>
-            </SolidTile>
-            <br />
-            <SolidTile onClick={() => select('sachetItem')}>
-               <Text as="h1">Sachet Item</Text>
-            </SolidTile>
-            <br />
-            <SolidTile onClick={() => select('bulkItem')}>
-               <Text as="h1">Bulk Item</Text>
-            </SolidTile>
-            <br />
-            <SolidTile onClick={() => select('supplierItem')}>
-               <Text as="h1">Supplier Item</Text>
-            </SolidTile>
+            <OptionTile
+               title="Simple Product"
+               onClick={() => select('simpleProduct')}
+            />
+            <Spacer size="16px" />
+            <OptionTile
+               title="Sachet Item"
+               onClick={() => select('sachetItem')}
+            />
+            <Spacer size="16px" />
+            <OptionTile title="Bulk Item" onClick={() => select('bulkItem')} />
+            <Spacer size="16px" />
+            <OptionTile
+               title="Supplier Item"
+               onClick={() => select('supplierItem')}
+            />
          </TunnelBody>
       </>
    )

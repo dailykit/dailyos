@@ -1,8 +1,8 @@
 import React from 'react'
-import { TunnelHeader, Text } from '@dailykit/ui'
-import { TunnelBody, SolidTile } from '../../../tunnels/styled'
-import { ModifiersContext } from '../../../../../../context/product/modifiers'
+import { OptionTile, Spacer, TunnelHeader } from '@dailykit/ui'
 import { Tooltip } from '../../../../../../../../shared/components'
+import { ModifiersContext } from '../../../../../../context/product/modifiers'
+import { TunnelBody } from '../../../tunnels/styled'
 
 const ModifierModeTunnel = ({ open, close }) => {
    const { modifiersDispatch } = React.useContext(ModifiersContext)
@@ -15,18 +15,18 @@ const ModifierModeTunnel = ({ open, close }) => {
             tooltip={<Tooltip identifier="modifier_mode_tunnel" />}
          />
          <TunnelBody>
-            <SolidTile onClick={() => open(6)}>
-               <Text as="h1">Choose Existing Template</Text>
-            </SolidTile>
-            <br />
-            <SolidTile
+            <OptionTile
+               title="Choose Existing Template"
+               onClick={() => open(6)}
+            />
+            <Spacer size="16px" />
+            <OptionTile
+               title="Create New Template"
                onClick={() => {
                   modifiersDispatch({ type: 'RESET' })
                   open(2)
                }}
-            >
-               <Text as="h1">Create New Template</Text>
-            </SolidTile>
+            />
          </TunnelBody>
       </>
    )
