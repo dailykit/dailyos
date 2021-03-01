@@ -24,10 +24,10 @@ export const StyledWrapper = styled.div`
       line-height: 23px;
    }
    @media screen and (max-width: 767px) {
-      width: calc(100vw - 32px);
+      width: calc(100vw - 11vw);
    }
    @media screen and (min-width: 768px) {
-      width: calc(100vw - 64px);
+      width: calc(100vw - 21vw);
    }
 `
 export const StyledPagination = styled.div`
