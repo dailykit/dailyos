@@ -277,9 +277,11 @@ const Option = ({
    React.useEffect(() => {
       if (option.type && productOptionTypes.length) {
          const index = productOptionTypes.findIndex(
-            el => el.orderMode === option.type
+            el => el.title === option.type
          )
-         setSelectedOptionTypeIndex(index + 1)
+         if (index !== -1) {
+            setSelectedOptionTypeIndex(index + 1)
+         }
       }
    }, [option.type, productOptionTypes])
 
@@ -477,7 +479,10 @@ const Option = ({
          variables: {
             id: option.id,
             _set: {
-               type: selected.orderMode,
+               type: selected.title,
+               simpleRecipeYieldId: null,
+               supplierItemId: null,
+               sachetItemId: null,
             },
          },
       })
@@ -608,8 +613,8 @@ const Option = ({
                   />
                </Flex>
                <Spacer xAxis size="32px" />
-               <Flex>
-                  <Form.Label title="option-type">Option Type</Form.Label>
+               <Flex width="240px">
+                  <Form.Label title="option-type">Type</Form.Label>
                   <Dropdown
                      type="single"
                      defaultValue={selectedOptionTypeIndex}
