@@ -9,8 +9,7 @@ import { Sidebar, Main, SidePanel, Header } from './sections'
 import ErrorBoundary from '../../shared/components/ErrorBoundary'
 
 // Styles
-import { Wrapper } from './styles'
-import { StyledWrapper } from '../../styled'
+import { Wrapper, StyledWrapper } from './styles'
 
 const theme = {
    basePt: 8,
@@ -42,7 +41,7 @@ const App = () => {
       return column
    }
    return (
-      <StyledWrapper>
+      <StyledWrapper isOpen={isSidebarVisible}>
          <ThemeProvider theme={theme}>
             {/* <Context.Provider value={{ state, dispatch }}> */}
             {/* <Header toggleSidebar={setIsSidebarVisible} /> */}
