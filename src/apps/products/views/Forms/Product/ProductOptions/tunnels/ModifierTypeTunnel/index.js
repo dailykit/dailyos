@@ -28,7 +28,7 @@ const ModifierTypeTunnel = ({ open, close }) => {
          <TunnelBody>
             <OptionTile
                title="Simple Product"
-               onClick={() => select('simpleProduct')}
+               onClick={() => select('simpleProductOption')}
             />
             <Spacer size="16px" />
             <OptionTile

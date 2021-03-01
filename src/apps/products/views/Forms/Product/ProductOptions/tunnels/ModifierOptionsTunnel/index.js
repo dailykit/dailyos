@@ -20,6 +20,7 @@ import { ModifiersContext } from '../../../../../../context/product/modifiers'
 import {
    BULK_ITEMS,
    INVENTORY_PRODUCT_OPTIONS,
+   PRODUCT_OPTION,
    SACHET_ITEMS,
    SIMPLE_RECIPE_PRODUCT_OPTIONS,
    SUPPLIER_ITEMS,
@@ -34,64 +35,30 @@ const ModifierOptionsTunnel = ({ close }) => {
    const [options, setOptions] = React.useState([])
    const [list, current, selectOption] = useSingleList(options)
 
-   const SRPType = type => {
-      return type === 'mealKit' ? 'Meal Kit' : 'Ready to Eat'
-   }
-
    // Queries
-   const [
-      inventoryProductsOptions,
-      { loading: inventoryProductsLoading },
-   ] = useLazyQuery(INVENTORY_PRODUCT_OPTIONS, {
-      variables: {
-         where: {
-            _and: [
-               { inventoryProduct: { isPublished: { _eq: true } } },
-               { isArchived: { _eq: false } },
-            ],
+   // TODO: switch queries with subscription
+   const [productsOptions, { loading: productsLoading }] = useLazyQuery(
+      PRODUCT_OPTION.LIST_QUERY,
+      {
+         variables: {
+            where: {
+               isArchived: { _eq: false },
+            },
          },
-      },
-      onCompleted: data => {
-         const updatedOptions = data.inventoryProductOptions.map(item => ({
-            ...item,
-            title: `${item.inventoryProduct.name} - ${item.label}`,
-         }))
-         setOptions([...updatedOptions])
-      },
-      onError: error => {
-         toast.error('Failed to fetch Inventory Products!')
-         logger(error)
-      },
-      fetchPolicy: 'cache-and-network',
-   })
-
-   const [
-      simpleRecipeProductsOptions,
-      { loading: simpleRecipeProductsLoading },
-   ] = useLazyQuery(SIMPLE_RECIPE_PRODUCT_OPTIONS, {
-      variables: {
-         where: {
-            _and: [
-               { simpleRecipeProduct: { isPublished: { _eq: true } } },
-               { isArchived: { _eq: false } },
-            ],
+         onCompleted: data => {
+            const updatedOptions = data.productOptions.map(item => ({
+               ...item,
+               title: `${item.product.name} - ${item.label}`,
+            }))
+            setOptions([...updatedOptions])
          },
-      },
-      onCompleted: data => {
-         const updatedOptions = data.simpleRecipeProductOptions.map(item => ({
-            ...item,
-            title: `${item.simpleRecipeProduct.name} - ${SRPType(item.type)} (${
-               item.simpleRecipeYield.yield.serving
-            })`,
-         }))
-         setOptions([...updatedOptions])
-      },
-      onError: error => {
-         toast.error('Failed to fetch Simple Recipe Products!')
-         logger(error)
-      },
-      fetchPolicy: 'cache-and-network',
-   })
+         onError: error => {
+            toast.error('Failed to fetch Product Options!')
+            logger(error)
+         },
+         fetchPolicy: 'cache-and-network',
+      }
+   )
 
    const [sachetItems, { loading: sachetItemsLoading }] = useLazyQuery(
       SACHET_ITEMS,
@@ -146,14 +113,8 @@ const ModifierOptionsTunnel = ({ close }) => {
    )
 
    React.useEffect(() => {
-      if (
-         modifiersState.meta.modifierProductType === 'inventoryProductOption'
-      ) {
-         inventoryProductsOptions()
-      } else if (
-         modifiersState.meta.modifierProductType === 'simpleRecipeProductOption'
-      ) {
-         simpleRecipeProductsOptions()
+      if (modifiersState.meta.modifierProductType === 'simpleProductOption') {
+         productsOptions()
       } else if (modifiersState.meta.modifierProductType === 'sachetItem') {
          sachetItems()
       } else if (modifiersState.meta.modifierProductType === 'bulkItem') {
@@ -175,10 +136,7 @@ const ModifierOptionsTunnel = ({ close }) => {
          },
          originalName: option.title,
          image: {
-            value:
-               option.inventoryProduct?.assets?.images[0] ||
-               option.simpleRecipeProduct?.assets?.images[0] ||
-               '',
+            value: option.Product?.assets?.images[0] || '',
          },
          isActive: { value: true },
          isVisible: { value: true },
@@ -195,15 +153,9 @@ const ModifierOptionsTunnel = ({ close }) => {
          operationConfig: { value: null },
       }
       switch (modifiersState.meta.modifierProductType) {
-         case 'inventoryProductOption':
+         case 'simpleProductOption':
             object.price = {
-               value: option.price[0]?.value,
-               meta: { isValid: true, isTouched: false, errors: [] },
-            }
-            break
-         case 'simpleRecipeProductOption':
-            object.price = {
-               value: option.price[0]?.value,
+               value: option.price,
                meta: { isValid: true, isTouched: false, errors: [] },
             }
             break
@@ -263,8 +215,7 @@ const ModifierOptionsTunnel = ({ close }) => {
          />
          <TunnelBody>
             {[
-               inventoryProductsLoading,
-               simpleRecipeProductsLoading,
+               productsLoading,
                sachetItemsLoading,
                bulkItemsLoading,
                supplierItemsLoading,

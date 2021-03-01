@@ -166,6 +166,21 @@ export const PRODUCT_OPTION = {
          }
       }
    `,
+   LIST_QUERY: gql`
+      query ProductOptions($where: products_productOption_bool_exp) {
+         productOptions(where: $where) {
+            id
+            label
+            price
+            discount
+            product {
+               id
+               name
+               assets
+            }
+         }
+      }
+   `,
    LIST: gql`
       subscription ProductOptions($where: products_productOption_bool_exp) {
          productOptions(where: $where) {
