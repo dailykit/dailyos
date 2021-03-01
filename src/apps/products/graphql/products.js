@@ -56,6 +56,7 @@ export const PRODUCT = {
             ) {
                id
                position
+               type
                label
                price
                discount
@@ -255,6 +256,18 @@ export const COMBO_PRODUCT_COMPONENT = {
       ) {
          updateComboProductComponent(pk_columns: { id: $id }, _set: $_set) {
             id
+         }
+      }
+   `,
+}
+
+export const PRODUCT_OPTION_TYPES = {
+   LIST: gql`
+      subscription ProductOptionTypes {
+         productOptionTypes {
+            id: title
+            title
+            orderMode
          }
       }
    `,

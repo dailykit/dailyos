@@ -1,10 +1,11 @@
 import React from 'react'
 import { toast } from 'react-toastify'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
    Collapsible,
    ComboButton,
+   Dropdown,
    Flex,
    Form,
    IconButton,
@@ -16,7 +17,7 @@ import {
    useTunnel,
 } from '@dailykit/ui'
 
-import { PRODUCT_OPTION } from '../../../../graphql'
+import { PRODUCT_OPTION, PRODUCT_OPTION_TYPES } from '../../../../graphql'
 import { logger } from '../../../../../../shared/utils'
 import {
    DeleteIcon,
@@ -36,8 +37,13 @@ import {
    ModifierTemplatesTunnel,
    ModifierTypeTunnel,
 } from './tunnels'
-import { DragNDrop, OperationConfig } from '../../../../../../shared/components'
+import {
+   DragNDrop,
+   InlineLoader,
+   OperationConfig,
+} from '../../../../../../shared/components'
 import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
+import { from } from 'apollo-link'
 
 const ProductOptions = ({ productId, options }) => {
    const { initiatePriority } = useDnd()
@@ -56,6 +62,8 @@ const ProductOptions = ({ productId, options }) => {
    const { productState, productDispatch } = React.useContext(ProductContext)
    const { modifiersDispatch } = React.useContext(ModifiersContext)
 
+   const [productOptionTypes, setProductOptionTypes] = React.useState([])
+
    const opConfigInvokedBy = React.useRef('')
    const modifierOpConfig = React.useRef(undefined)
 
@@ -68,6 +76,12 @@ const ProductOptions = ({ productId, options }) => {
          })
       }
    }, [options])
+
+   const { loading } = useSubscription(PRODUCT_OPTION_TYPES.LIST, {
+      onSubscriptionData: data => {
+         setProductOptionTypes(data.subscriptionData.data.productOptionTypes)
+      },
+   })
 
    const [createProductOption] = useMutation(PRODUCT_OPTION.CREATE, {
       onCompleted: () => {
@@ -151,6 +165,8 @@ const ProductOptions = ({ productId, options }) => {
       }
    }
 
+   if (loading) return <InlineLoader />
+
    return (
       <>
          <Tunnels tunnels={tunnels}>
@@ -216,6 +232,7 @@ const ProductOptions = ({ productId, options }) => {
                      <Option
                         key={option.id}
                         option={option}
+                        productOptionTypes={productOptionTypes}
                         handleAddOptionItem={() =>
                            handleAddOptionItem(option.id)
                         }
@@ -242,6 +259,7 @@ export default ProductOptions
 
 const Option = ({
    option,
+   productOptionTypes,
    handleAddOptionItem,
    handleAddModifier,
    handleEditModifier,
@@ -250,6 +268,20 @@ const Option = ({
    const [history, setHistory] = React.useState({
       ...option,
    })
+   const [selectedOptionTypeIndex, setSelectedOptionTypeIndex] = React.useState(
+      null
+   )
+
+   const searchedOption = option => console.log(option)
+
+   React.useEffect(() => {
+      if (option.type && productOptionTypes.length) {
+         const index = productOptionTypes.findIndex(
+            el => el.orderMode === option.type
+         )
+         setSelectedOptionTypeIndex(index + 1)
+      }
+   }, [option.type, productOptionTypes])
 
    React.useEffect(() => {
       setHistory({ ...option })
@@ -440,6 +472,17 @@ const Option = ({
       }
    }
 
+   const selectedOption = selected => {
+      updateProductOption({
+         variables: {
+            id: option.id,
+            _set: {
+               type: selected.orderMode,
+            },
+         },
+      })
+   }
+
    const renderLinkedItem = () => {
       const renderItemName = () => {
          if (option.simpleRecipeYield) {
@@ -487,7 +530,7 @@ const Option = ({
             width="100%"
          >
             <Flex container alignItems="center">
-               <Flex>
+               <Flex maxWidth="140px">
                   <Form.Label htmlFor={`label-${option.id}`} title="label">
                      Label
                   </Form.Label>
@@ -525,7 +568,7 @@ const Option = ({
                      }
                   />
                </Flex>
-               <Spacer xAxis size="32px" />
+               <Spacer xAxis size="16px" />
                <Flex maxWidth="100px">
                   <Form.Label htmlFor={`price-${option.id}`} title="price">
                      Price
@@ -542,7 +585,7 @@ const Option = ({
                      hasError={price.meta.isTouched && !price.meta.isValid}
                   />
                </Flex>
-               <Spacer xAxis size="32px" />
+               <Spacer xAxis size="16px" />
                <Flex maxWidth="100px">
                   <Form.Label
                      htmlFor={`discount-${option.id}`}
@@ -564,7 +607,19 @@ const Option = ({
                      }
                   />
                </Flex>
-               <Spacer xAxis size="64px" />
+               <Spacer xAxis size="32px" />
+               <Flex>
+                  <Form.Label title="option-type">Option Type</Form.Label>
+                  <Dropdown
+                     type="single"
+                     defaultValue={selectedOptionTypeIndex}
+                     options={productOptionTypes}
+                     searchedOption={searchedOption}
+                     selectedOption={selectedOption}
+                     placeholder="type what you're looking for..."
+                  />
+               </Flex>
+               <Spacer xAxis size="32px" />
                {renderLinkedItem()}
             </Flex>
             <IconButton type="ghost" onClick={handleDeleteOption}>
