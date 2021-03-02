@@ -1,6 +1,15 @@
 import gql from 'graphql-tag'
 
 export const PRODUCTS = {
+   COUNT: gql`
+      subscription ProductsCount {
+         productsAggregate(where: { isArchived: { _eq: false } }) {
+            aggregate {
+               count
+            }
+         }
+      }
+   `,
    CREATE: gql`
       mutation CreateProduct($object: products_product_insert_input!) {
          createProduct(object: $object) {
