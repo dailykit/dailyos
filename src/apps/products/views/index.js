@@ -1,13 +1,6 @@
 import Home from './Home'
 import { IngredientsListing, RecipesListing, ProductsListing } from './Listings'
-import {
-   IngredientForm,
-   RecipeForm,
-   InventoryProductForm,
-   SimpleRecipeProductForm,
-   CustomizableProductForm,
-   ComboProductForm,
-} from './Forms'
+import { IngredientForm, RecipeForm, ProductForm } from './Forms'
 
 export {
    Home,
@@ -16,8 +9,5 @@ export {
    IngredientForm,
    RecipeForm,
    ProductsListing,
-   InventoryProductForm,
-   SimpleRecipeProductForm,
-   CustomizableProductForm,
-   ComboProductForm,
+   ProductForm,
 }

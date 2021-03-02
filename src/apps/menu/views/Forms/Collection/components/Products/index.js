@@ -14,12 +14,7 @@ import {
    DELETE_COLLECTION_PRODUCT_CATEGORY,
 } from '../../../../../graphql'
 
-import { CollectionContext } from '../../../../../context'
-import {
-   ProductsTunnel,
-   ProductTypeTunnel,
-   CategoriesTunnel,
-} from '../../tunnels'
+import { ProductsTunnel, CategoriesTunnel } from '../../tunnels'
 
 import { DeleteIcon } from '../../../../../assets/icons'
 import {
@@ -35,12 +30,12 @@ import { logger } from '../../../../../../../shared/utils'
 import { DragNDrop } from '../../../../../../../shared/components'
 
 const Products = ({ state }) => {
-   const { collectionDispatch } = React.useContext(CollectionContext)
-
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
    const [categoryTunnels, openCategoryTunnel, closeCategoryTunnel] = useTunnel(
       1
    )
+
+   const [selectedCategoryId, setSelectedCategoryId] = React.useState(null)
 
    const [deleteCollectionProductCategory] = useMutation(
       DELETE_COLLECTION_PRODUCT_CATEGORY,
@@ -56,12 +51,7 @@ const Products = ({ state }) => {
    )
 
    const addProduct = categoryId => {
-      collectionDispatch({
-         type: 'CATEGORY_ID',
-         payload: {
-            categoryId,
-         },
-      })
+      setSelectedCategoryId(categoryId)
       openTunnel(1)
    }
 
@@ -82,13 +72,10 @@ const Products = ({ state }) => {
       <>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               <ProductTypeTunnel
+               <ProductsTunnel
+                  categoryId={selectedCategoryId}
                   closeTunnel={closeTunnel}
-                  openTunnel={openTunnel}
                />
-            </Tunnel>
-            <Tunnel>
-               <ProductsTunnel closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={categoryTunnels}>
@@ -161,7 +148,7 @@ const Product = ({ product }) => {
 
    const removeProduct = () => {
       const isConfirmed = window.confirm(
-         `Are you sure you want to remove ${product.data.name}?`
+         `Are you sure you want to remove ${product.product.name}?`
       )
       if (isConfirmed) {
          deleteRecord({
@@ -175,8 +162,10 @@ const Product = ({ product }) => {
    return (
       <StyledProductWrapper>
          <ProductContent>
-            {product.data.image && <ProductImage src={product.data.image} />}
-            <Text as="p"> {product.data.name} </Text>
+            {Boolean(product.product.assets.images.length) && (
+               <ProductImage src={product.product.assets.images[0]} />
+            )}
+            <Text as="p"> {product.product.name} </Text>
          </ProductContent>
          <ActionButton onClick={removeProduct}>
             <DeleteIcon color="#FF6B5E" />

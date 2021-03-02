@@ -1,4 +1,9 @@
 const validator = {
+   label: value => {
+      let isValid = true
+      let errors = []
+      return { isValid, errors }
+   },
    name: value => {
       const text = value.trim()
       let isValid = true
@@ -12,35 +17,30 @@ const validator = {
    quantity: value => {
       let isValid = true
       let errors = []
-      if (!Number.isInteger(+value) || +value <= 0) {
+      if (value <= 0) {
          isValid = false
-         errors = [...errors, 'Invalid quantity!']
+         errors = [...errors, 'Quantity should be greater than 0!']
       }
       return { isValid, errors }
    },
    price: value => {
       let isValid = true
       let errors = []
-      if (!value) {
+      if (value < 0) {
          isValid = false
-         errors = [...errors, 'Cannot be empty!']
-      }
-      if (+value <= 0) {
-         isValid = false
-         errors = [...errors, 'Should be greater than 0!']
+         errors = [...errors, 'Price should be a greater than or equal to 0!']
       }
       return { isValid, errors }
    },
    discount: value => {
       let isValid = true
       let errors = []
-      if (!value) {
+      if (value < 0) {
          isValid = false
-         errors = [...errors, 'Cannot be empty!']
-      }
-      if (+value < 0) {
-         isValid = false
-         errors = [...errors, 'Invalid value!']
+         errors = [
+            ...errors,
+            'Discount should be a greater than or equal to 0!',
+         ]
       }
       return { isValid, errors }
    },

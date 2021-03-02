@@ -1,44 +1,46 @@
 import React from 'react'
-
-// third party imports
-import { useTranslation } from 'react-i18next'
 import {
    ComboButton,
    Flex,
+   IconButton,
    RadioGroup,
    Spacer,
    Text,
+   TextButton,
    Tunnel,
    Tunnels,
    useTunnel,
 } from '@dailykit/ui'
-
+// third party imports
+import { useTranslation } from 'react-i18next'
 // shared dir imports
-import { Tooltip } from '../../../../../shared/components'
-import { useTabs } from '../../../../../shared/providers'
-
+import { InlineLoader, Tooltip } from '../../../../../shared/components'
+import { useTabs, useTooltip } from '../../../../../shared/providers'
 // local imports
 import { AddIcon } from '../../../assets/icons'
-import {
-   ComboProducts,
-   CustomizableProducts,
-   InventoryProducts,
-   SimpleRecipeProducts,
-} from './components'
-import { ProductTypeTunnel } from './tunnels'
 import { ResponsiveFlex } from '../styled'
+import { ProductTypeTunnel } from './tunnels'
+import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { PRODUCTS } from '../../../graphql'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../shared/utils'
+import tableOptions from '../tableOption'
+import { DeleteIcon } from '../../../../../shared/assets/icons'
 
 const address = 'apps.menu.views.listings.productslisting.'
 
 const ProductsListing = () => {
    const { t } = useTranslation()
    const { tab, addTab } = useTabs()
-   const [view, setView] = React.useState('inventory')
+   const { tooltip } = useTooltip()
+
+   const tableRef = React.useRef()
+   const [view, setView] = React.useState('simple')
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
    const options = [
-      { id: 'inventory', title: t(address.concat('inventory')) },
-      { id: 'simple', title: t(address.concat('simple recipe')) },
+      { id: 'simple', title: 'Simple' },
       { id: 'customizable', title: t(address.concat('customizable')) },
       { id: 'combo', title: t(address.concat('combo')) },
    ]
@@ -49,20 +51,78 @@ const ProductsListing = () => {
       }
    }, [tab, addTab])
 
-   const renderListing = () => {
-      switch (view) {
-         case 'inventory':
-            return <InventoryProducts />
-         case 'simple':
-            return <SimpleRecipeProducts />
-         case 'customizable':
-            return <CustomizableProducts />
-         case 'combo':
-            return <ComboProducts />
-         default:
-            return <InventoryProducts />
+   const { data: { products = [] } = {}, loading } = useSubscription(
+      PRODUCTS.LIST,
+      {
+         variables: {
+            where: {
+               type: { _eq: view },
+            },
+         },
+      }
+   )
+
+   const [deleteProduct] = useMutation(PRODUCTS.DELETE, {
+      onCompleted: () => {
+         toast.success('Product deleted!')
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
+   // Handler
+   const deleteProductHandler = product => {
+      if (
+         window.confirm(
+            `Are you sure you want to delete product - ${product.name}?`
+         )
+      ) {
+         deleteProduct({
+            variables: {
+               ids: product.id,
+            },
+         })
       }
    }
+
+   const columns = [
+      {
+         title: t(address.concat('product name')),
+         field: 'name',
+         headerFilter: true,
+         cellClick: (e, cell) => {
+            const { name, id } = cell._cell.row.data
+            addTab(name, `/products/products/${id}`)
+         },
+         cssClass: 'colHover',
+         headerTooltip: function (column) {
+            const identifier = 'products_listing_name_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+      {
+         title: 'Published',
+         field: 'isPublished',
+         formatter: 'tickCross',
+         hozAlign: 'center',
+         headerHozAlign: 'center',
+         width: 150,
+      },
+      {
+         title: 'Actions',
+         headerFilter: false,
+         headerSort: false,
+         hozAlign: 'center',
+         formatter: reactFormatter(
+            <DeleteProduct onDelete={deleteProductHandler} />
+         ),
+         width: 150,
+      },
+   ]
 
    return (
       <>
@@ -88,14 +148,40 @@ const ProductsListing = () => {
             </Flex>
             <RadioGroup
                options={options}
-               active="inventory"
+               active={view}
                onChange={option => setView(option.id)}
             />
             <Spacer size="16px" />
-            {renderListing()}
+            <TextButton
+               type="outline"
+               onClick={() => tableRef.current.table.clearHeaderFilter()}
+            >
+               Clear Filters
+            </TextButton>
+            <Spacer size="16px" />
+            {loading ? (
+               <InlineLoader />
+            ) : (
+               <ReactTabulator
+                  ref={tableRef}
+                  columns={columns}
+                  data={products}
+                  options={tableOptions}
+               />
+            )}
          </ResponsiveFlex>
       </>
    )
 }
 
 export default ProductsListing
+
+function DeleteProduct({ cell, onDelete }) {
+   const product = cell.getData()
+
+   return (
+      <IconButton type="ghost" onClick={() => onDelete(product)}>
+         <DeleteIcon color="#FF5A52" />
+      </IconButton>
+   )
+}

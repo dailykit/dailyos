@@ -6,14 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { useTabs } from '../../../../shared/providers'
 import { StyledHome, StyledCardList } from './styled'
 
-import {
-   RECIPES_COUNT,
-   SRP_COUNT,
-   IP_COUNT,
-   COP_COUNT,
-   CUP_COUNT,
-   INGREDIENTS_COUNT,
-} from '../../graphql'
+import { RECIPES_COUNT, PRODUCTS, INGREDIENTS_COUNT } from '../../graphql'
 
 const address = 'apps.products.views.home.'
 
@@ -23,10 +16,7 @@ const Home = () => {
 
    const { data: ingredientsData } = useSubscription(INGREDIENTS_COUNT)
    const { data: recipeData } = useSubscription(RECIPES_COUNT)
-   const { data: simpleRecipeProductData } = useSubscription(SRP_COUNT)
-   const { data: inventoryProductData } = useSubscription(IP_COUNT)
-   const { data: comboProductData } = useSubscription(COP_COUNT)
-   const { data: customizableProductData } = useSubscription(CUP_COUNT)
+   const { data: productsData } = useSubscription(PRODUCTS.COUNT)
 
    return (
       <StyledHome>
@@ -34,16 +24,7 @@ const Home = () => {
          <StyledCardList>
             <DashboardTile
                title={t(address.concat('products'))}
-               count={
-                  simpleRecipeProductData?.simpleRecipeProductsAggregate
-                     .aggregate.count +
-                     inventoryProductData?.inventoryProductsAggregate.aggregate
-                        .count +
-                     customizableProductData?.customizableProductsAggregate
-                        .aggregate.count +
-                     comboProductData?.comboProductsAggregate.aggregate.count ||
-                  '...'
-               }
+               count={productsData?.productsAggregate.aggregate.count || '...'}
                conf="All available"
                onClick={() => addTab('Products', '/products/products')}
             />
