@@ -5,7 +5,7 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import { useGlobalContext } from './context'
 
 // Sections
-import { Sidebar, Main, SidePanel, Header } from './sections'
+import { Sidebar, Main, SidePanel, Header, EditorOptions } from './sections'
 import ErrorBoundary from '../../shared/components/ErrorBoundary'
 
 // Styles
@@ -43,27 +43,16 @@ const App = () => {
    return (
       <StyledWrapper isOpen={isSidebarVisible}>
          <ThemeProvider theme={theme}>
-            {/* <Context.Provider value={{ state, dispatch }}> */}
-            {/* <Header toggleSidebar={setIsSidebarVisible} /> */}
-            {/* <Router basename={process.env.PUBLIC_URL}>
-                  <Sidebar />
-                  <Main />
-                  <SidePanel />
-                  </Wrapper>
-               </Router> */}
-            <Router basename={process.env.PUBLIC_URL}>
-               <Header toggleSidebar={sideBarHandler} />
-               <Wrapper column={gridColumns()}>
-                  <Sidebar
-                     visible={isSidebarVisible}
-                     toggleSidebar={sideBarHandler}
-                  />
-                  <ErrorBoundary rootRoute="/apps/crm">
-                     <Main />
-                  </ErrorBoundary>
-               </Wrapper>
-            </Router>
-            {/* </Context.Provider> */}
+            <Header toggleSidebar={sideBarHandler} />
+            {/* <Wrapper column={gridColumns()}> */}
+            <Sidebar
+               visible={isSidebarVisible}
+               toggleSidebar={sideBarHandler}
+            />
+            <ErrorBoundary rootRoute="/apps/crm">
+               <Main />
+            </ErrorBoundary>
+            {/* </Wrapper> */}
          </ThemeProvider>
       </StyledWrapper>
    )

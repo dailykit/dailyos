@@ -13,7 +13,7 @@ import {
 } from '@dailykit/ui'
 // State
 import { Context } from '../../../../state'
-import { useTabs } from '../../../../context'
+import { useTabsInfo } from '../../../../context'
 
 // Components
 import { Modal } from '../../../../components'
@@ -63,7 +63,7 @@ const EditorOptions = ({
       openPagePreviewTunnel,
       closePagePreviewTunnel,
    ] = useTunnel(1)
-   const { tab } = useTabs()
+   const { tabInfo } = useTabsInfo()
    const [isModalVisible, setIsModalVisible] = React.useState()
    const [isWebBuilderOpen, SetIsWebBuilderOpen] = React.useState(false)
    const [isDark, setIsDark] = React.useState(false)
@@ -127,11 +127,11 @@ const EditorOptions = ({
    ]
 
    const result = {
-      filePath: tab?.filePath,
-      cssPaths: tab?.linkedCss.map(file => {
+      filePath: tabInfo?.filePath,
+      cssPaths: tabInfo?.linkedCss.map(file => {
          return file?.cssFile?.path
       }),
-      jsPaths: tab?.linkedJs.map(file => {
+      jsPaths: tabInfo?.linkedJs.map(file => {
          return file?.jsFile?.path
       }),
    }
@@ -204,7 +204,7 @@ const EditorOptions = ({
                      day: 'numeric',
                      hour: 'numeric',
                      minute: 'numeric',
-                  }).format(tab.lastSaved !== '' ? tab.lastSaved : lastSaved)}
+                  }).format(tabInfo.lastSaved !== '' ? tabInfo.lastSaved : lastSaved)}
                </span>
             </div>
          )} */}

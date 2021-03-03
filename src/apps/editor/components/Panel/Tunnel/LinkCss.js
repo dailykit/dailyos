@@ -5,7 +5,7 @@ import { TunnelHeader, Tunnel, Tunnels, Dropdown } from '@dailykit/ui'
 import { GET_FILES, LINK_CSS_FILES } from '../../../graphql'
 import { TunnelBody } from './style'
 // import { Context } from '../../../state'
-import { useTabs } from '../../../context'
+import { useTabsInfo } from '../../../context'
 
 export default function LinkCss({
    tunnels,
@@ -13,7 +13,7 @@ export default function LinkCss({
    closeTunnel,
    linkCssIds,
 }) {
-   const { tab } = useTabs()
+   const { tabInfo } = useTabsInfo()
    // const { state, dispatch } = React.useContext(Context)
    const [cssOptions, setCssOptions] = React.useState([])
    const [linkCssFiles, setLinkCssFiles] = React.useState([])
@@ -72,7 +72,7 @@ export default function LinkCss({
    const selectedOptionHandler = options => {
       const result = options.map(option => {
          return {
-            guiFileId: tab.id,
+            guiFileId: tabInfo.id,
             cssFileId: option?.id,
          }
       })
