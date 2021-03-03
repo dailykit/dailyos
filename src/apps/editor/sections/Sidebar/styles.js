@@ -62,11 +62,13 @@ export const StyledSidebar = styled.aside(
       bottom: 0;
       width: 240px;
       position: absolute;
-      background: #d9e9f1;
+      background: #fff;
       left: 0;
       transition: 0.3s ease-in-out;
       transform: translateX(${visible ? '0' : '-240px'});
       z-index: 2;
+      border: 1px solid #e0c9c9;
+      border-right: 0;
    `
 )
 

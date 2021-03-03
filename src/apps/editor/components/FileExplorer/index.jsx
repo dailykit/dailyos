@@ -1,10 +1,8 @@
 import React from 'react'
 import { useQuery, useLazyQuery } from '@apollo/react-hooks'
 import { Loader } from '@dailykit/ui'
-import { useTabs, useGlobalContext } from '../../context'
-
-// State
-import { Context } from '../../state'
+import { useTabsInfo, useGlobalContext } from '../../context'
+import { useTabs } from '../../../../shared/providers'
 
 // Components
 import TreeView from '../TreeView'
@@ -22,6 +20,7 @@ import toggleNode from '../../utils/toggleNode'
 
 const FileExplorer = () => {
    const { addTab } = useTabs()
+   const { addTabInfo } = useTabsInfo()
    const { onToggleInfo } = useGlobalContext()
    const fileRef = React.useRef({})
    const [data, setData] = React.useState([])
@@ -67,7 +66,8 @@ const FileExplorer = () => {
                linkedCss: data.editor_file[0].linkedCssFiles,
                linkedJs: data.editor_file[0].linkedJsFiles,
             }
-            addTab(payload)
+            addTabInfo(payload)
+            addTab(payload?.name, payload?.path)
          }
       },
       fetchPolicy: 'cache-and-network',

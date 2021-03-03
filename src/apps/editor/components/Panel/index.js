@@ -26,7 +26,7 @@ import {
    DeleteIcon,
 } from '../../../../shared/assets/icons'
 // import { Context } from '../../state'
-import { useTabs, useGlobalContext } from '../../context'
+import { useTabsInfo, useGlobalContext } from '../../context'
 import {
    PanelWrapper,
    Icon,
@@ -42,8 +42,7 @@ import { useDnd } from '../../../../shared/components/DragNDrop/useDnd'
 import { toast } from 'react-toastify'
 
 const Panel = () => {
-   console.log('called')
-   const { tab, tabs } = useTabs()
+   const { tabInfo, tabsInfo } = useTabsInfo()
    const { updateLinkedFile, globalState } = useGlobalContext()
    const { initiatePriority } = useDnd()
    // const { state, dispatch } = React.useContext(Context)
@@ -74,15 +73,15 @@ const Panel = () => {
    })
 
    //query to load all files in dropdown
-   console.log(tab)
-   const ext = tab?.path.split('.').pop()
+   const ext = tabInfo?.path.split('.').pop()
+   console.log('extention', ext, tabInfo)
    const isFileValid = ['html', 'ejs', 'liquid', 'pug', 'mustache'].includes(
       ext
    )
 
    const { loading: linkLoading } = useSubscription(FILE_LINKS, {
       variables: {
-         path: tab?.filePath.replace(process.env.REACT_APP_ROOT_FOLDER, ''),
+         path: tabInfo?.filePath.replace(process.env.REACT_APP_ROOT_FOLDER, ''),
       },
       onSubscriptionData: ({
          subscriptionData: { data: { editor_file = [] } = {} } = {},
@@ -127,15 +126,15 @@ const Panel = () => {
          setSelectedCssFiles([...cssResult])
          setSelectedJsFiles([...jsResult])
          updateLinkedFile({
-            path: tab.path,
+            path: tabInfo.path,
             linkedCss: cssLinks,
             linkedJs: jsLinks,
          })
       },
-      skip: !tab && !tabs?.length,
+      skip: !tabInfo && !tabsInfo?.length,
    })
 
-   //mutation for removing linked css
+   // mutation for removing linked css
    const [removeLinkCss] = useMutation(REMOVE_CSS_LINK, {
       onCompleted: () => {
          toast.success('File unlinked successfully!')
@@ -146,7 +145,7 @@ const Panel = () => {
       },
    })
 
-   //mutation for removing linked css
+   // mutation for removing linked css
    const [removeLinkJs] = useMutation(REMOVE_JS_LINK, {
       onCompleted: () => {
          toast.success('File unlinked successfully!')
@@ -240,7 +239,7 @@ const Panel = () => {
                                     <span
                                        className="delete"
                                        onClick={() =>
-                                          unlinkCss(tab?.id, file.id)
+                                          unlinkCss(tabInfo?.id, file.id)
                                        }
                                     >
                                        <DeleteIcon color="black" />
@@ -305,7 +304,9 @@ const Panel = () => {
                                     <span>{file.title}</span>
                                     <span
                                        className="delete"
-                                       onClick={() => unlinkJs(tab.id, file.id)}
+                                       onClick={() =>
+                                          unlinkJs(tabInfo.id, file.id)
+                                       }
                                     >
                                        <DeleteIcon color="black" />
                                     </span>

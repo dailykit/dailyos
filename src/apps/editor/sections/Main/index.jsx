@@ -18,7 +18,7 @@ import { MainWrapper } from './styles'
 const Main = () => {
    const { globalState, setPopupInfo, setContextMenuInfo } = useGlobalContext()
    const mainWidth = () => {
-      let width = '100vw'
+      let width = '100%'
       if (globalState.isSidebarVisible) {
          width = `calc(${width} - 240px)`
       } else {
@@ -185,10 +185,8 @@ const Main = () => {
    return (
       <MainWrapper width={mainWidth()}>
          <main>
-            <Switch>
-               <Route path="/editor" component={Home} exact />
-               <Route path="/editor/:path+" component={Editor} exact />
-            </Switch>
+            <Route path="/editor" component={Home} exact />
+            <Route path="/editor/:path+" component={Editor} exact />
 
             <FileType
                show={globalState.popupInfo.fileTypePopup}

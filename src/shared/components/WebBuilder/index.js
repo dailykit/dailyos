@@ -119,7 +119,7 @@ const Builder = React.forwardRef(
                     path
                     assets
                   }
-                }                
+                }
            `,
                   },
                })

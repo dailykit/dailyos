@@ -4,13 +4,14 @@ import MonacoEditor, { loader } from '@monaco-editor/react'
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { Loader } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { useTabs, useGlobalContext } from '../../../context'
+import { useTabsInfo, useGlobalContext } from '../../../context'
 
 // Components
 import ReferenceFile from './ReferenceFile'
-import EditorOptions from './EditorOptions'
+// import EditorOptions from './EditorOptions'
 import History from './History'
 import { WebBuilder } from '../../../../../shared/components'
+import { useTabs } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 
 // Queries
@@ -18,24 +19,24 @@ import { GET_FILE_FETCH, UPDATE_FILE, DRAFT_FILE } from '../../../graphql'
 
 // Styles
 import { EditorWrapper } from './styles'
-import { pathToArray } from 'graphql/jsutils/Path'
 
 const Editor = () => {
    const { tab, addTab } = useTabs()
-
+   const { tabInfo } = useTabsInfo()
    const {
       globalState,
       setDraft,
       removeVersion,
       updateLastSaved,
       removeDraft,
+      addEditorInfo,
    } = useGlobalContext()
    const { path } = useParams()
    const history = useHistory()
    const monacoRef = useRef()
    const editorRef = useRef()
    const webBuilderRef = useRef()
-
+   console.log('from Editor', path)
    const [code, setCode] = React.useState('')
    const [file, setFile] = React.useState({})
    const [isModalVisible, toggleModal] = React.useState(false)
@@ -51,11 +52,6 @@ const Editor = () => {
    })
    const [language, setLanguage] = React.useState('javascript')
    const [theme, setTheme] = React.useState('vs-light')
-   const [isDark, setIsDark] = React.useState(false)
-   const [isWebBuilderOpen, setIsWebBuilderOpen] = React.useState(false)
-   const callWebBuilderFunc = action => {
-      webBuilderRef.current.func(action)
-   }
 
    const { loading } = useQuery(GET_FILE_FETCH, {
       variables: {
@@ -106,21 +102,6 @@ const Editor = () => {
       editorRef.current.executeEdits(code, [op])
    }
 
-   function handleEditorDidMount(editor) {
-      editor.getAction('editor.action.formatDocument').run()
-      editorRef.current = editor
-      editorRef.current.addCommand(
-         monacoRef.current.KeyMod.Shift | monacoRef.current.KeyCode.KEY_2,
-         () => toggleModal(!isModalVisible)
-      )
-      editorRef.current.addCommand(
-         monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.KEY_S,
-         function () {
-            draft()
-         }
-      )
-   }
-
    const publish = message => {
       const content = editorRef.current.getValue()
       updateFile({
@@ -146,14 +127,40 @@ const Editor = () => {
       })
    }
 
+   const handleEditorDidMount = editor => {
+      editor.getAction('editor.action.formatDocument').run()
+      editorRef.current = editor
+      addEditorInfo({
+         ...globalState.editorInfo,
+         editor,
+      })
+      editorRef.current.addCommand(
+         monacoRef.current.KeyMod.Shift | monacoRef.current.KeyCode.KEY_2,
+         () => toggleModal(!isModalVisible)
+      )
+      editorRef.current.addCommand(
+         monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.KEY_S,
+         () => {
+            draft()
+         }
+      )
+   }
+
+   const handlerEditorOnChange = () => {
+      addEditorInfo({
+         ...globalState.editorInfo,
+         editor: editorRef.current,
+      })
+   }
+
    const viewCurrentVersion = () => {
-      setCode(tab.draft)
+      setCode(tabInfo.draft)
       removeVersion({ path })
       removeDraft({ path })
    }
 
    const selectVersion = contentVersion => {
-      if (tab && tab?.draft === '') {
+      if (tabInfo && tabInfo?.draft === '') {
          setDraft({
             content: editorRef.current.getValue(),
             path,
@@ -182,15 +189,15 @@ const Editor = () => {
       smoothScrolling: true,
    }
 
-   const undo = () => {
-      editorRef.current.focus()
-      editorRef.current.getModel().undo()
-   }
+   // const undo = () => {
+   //    editorRef.current.focus()
+   //    editorRef.current.getModel().undo()
+   // }
 
-   const redo = () => {
-      editorRef.current.focus()
-      editorRef.current.getModel().redo()
-   }
+   // const redo = () => {
+   //    editorRef.current.focus()
+   //    editorRef.current.getModel().redo()
+   // }
 
    // const langFormatProvider = {
    //    provideDocumentFormattingEdits(model, options, token) {
@@ -216,8 +223,16 @@ const Editor = () => {
    //    }
    // }
    React.useEffect(() => {
-      setTheme(isDark ? 'vs-dark' : 'vs-light')
-   }, [isDark])
+      setTheme(globalState.editorInfo.isDarkMode ? 'vs-dark' : 'vs-light')
+   }, [globalState.editorInfo.isDarkMode])
+
+   React.useEffect(() => {
+      addEditorInfo({
+         ...globalState.editorInfo,
+         editor: editorRef.current,
+         language,
+      })
+   }, [editorRef.current, language])
 
    React.useEffect(() => {
       if (!tab) {
@@ -234,7 +249,10 @@ const Editor = () => {
    //    }
    // }, [])
    React.useEffect(() => {
-      setIsWebBuilderOpen(false)
+      addEditorInfo({
+         ...globalState.editorInfo,
+         isDesignMode: false,
+      })
       webBuilderRef.current = null
    }, [path])
 
@@ -250,7 +268,7 @@ const Editor = () => {
                />
             )}
 
-            <EditorOptions
+            {/* <EditorOptions
                publish={publish}
                draft={draft}
                lastSaved={file.lastSaved}
@@ -264,9 +282,9 @@ const Editor = () => {
                fullscreen={() => callWebBuilderFunc('core:fullscreen')}
                saveTemplate={() => callWebBuilderFunc('save-template')}
                deviceManager={command => callWebBuilderFunc(command)}
-            />
+            /> */}
 
-            {!isWebBuilderOpen ? (
+            {!globalState?.editorInfo?.isDesignMode ? (
                <MonacoEditor
                   height="86vh"
                   width="100%"
@@ -275,16 +293,16 @@ const Editor = () => {
                   value={code}
                   options={options}
                   onMount={handleEditorDidMount}
+                  onChange={handlerEditorOnChange}
                />
             ) : (
                <WebBuilder
                   content={editorRef.current.getValue()}
                   onChangeContent={updatedCode => setCode(updatedCode)}
-                  path={tab?.filePath}
-                  linkedCss={tab?.linkedCss}
-                  linkedJs={tab?.linkedJs}
-                  ref={webBuilderRef}
-                  tab={tab}
+                  path={tabInfo?.filePath}
+                  linkedCss={tabInfo?.linkedCss}
+                  linkedJs={tabInfo?.linkedJs}
+                  ref={globalState?.editorInfo?.webBuilder}
                />
             )}
             {globalState.isHistoryVisible && Object.keys(file).length > 0 && (

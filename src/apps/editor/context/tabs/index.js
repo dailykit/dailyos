@@ -2,14 +2,22 @@ import React from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
 const Context = React.createContext()
+const webBuilderRef = React.createRef()
 
 const initialState = {
-   tabs: [],
+   tabsInfo: [],
    isHistoryVisible: false,
    isTabDropDownVisible: false,
    isSidebarVisible: false,
    isSidePanelVisible: false,
    onToggleInfo: {},
+   editorInfo: {
+      isDesignMode: false,
+      isDarkMode: false,
+      language: 'javascript',
+      editor: null,
+      webBuilder: webBuilderRef,
+   },
    popupInfo: {
       createTypePopup: false,
       fileTypePopup: false,
@@ -20,24 +28,14 @@ const initialState = {
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
-      case 'SET_TITLE': {
-         const { tabs } = state
-         const index = tabs.findIndex(tab => tab.path === payload.path)
-         tabs[index] = {
-            ...tabs[index],
-            title: payload.title,
-         }
-         return {
-            ...state,
-            tabs,
-         }
-      }
-      case 'ADD_TAB': {
-         const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
+      case 'ADD_TAB_INFO': {
+         const tabIndex = state.tabsInfo.findIndex(
+            tab => tab.path === payload.path
+         )
          if (tabIndex === -1) {
             return {
                ...state,
-               tabs: [
+               tabsInfo: [
                   {
                      title: payload.name,
                      name: payload.name,
@@ -50,7 +48,7 @@ const reducers = (state, { type, payload }) => {
                      linkedCss: payload.linkedCss,
                      linkedJs: payload.linkedJs,
                   },
-                  ...state.tabs,
+                  ...state.tabsInfo,
                ],
             }
          }
@@ -76,6 +74,14 @@ const reducers = (state, { type, payload }) => {
          return newState
       }
 
+      case 'ADD_EDITOR_INFO': {
+         const newState = {
+            ...state,
+            editorInfo: payload,
+         }
+         return newState
+      }
+
       case 'SET_POPUP_INFO': {
          return {
             ...state,
@@ -95,139 +101,122 @@ const reducers = (state, { type, payload }) => {
       }
 
       case 'SET_DRAFT': {
-         const { tabs } = state
-         const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
+         const { tabsInfo } = state
+         const tabIndex = state.tabsInfo.findIndex(
+            tab => tab.path === payload.path
+         )
          if (tabIndex !== -1) {
-            tabs[tabIndex] = {
-               ...tabs[tabIndex],
+            tabsInfo[tabIndex] = {
+               ...tabsInfo[tabIndex],
                draft: payload.content,
             }
             const newState = {
                ...state,
-               tabs,
+               tabsInfo,
             }
             return newState
          }
          return state
       }
       case 'REMOVE_DRAFT': {
-         const { tabs } = state
-         const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
+         const { tabsInfo } = state
+         const tabIndex = state.tabsInfo.findIndex(
+            tab => tab.path === payload.path
+         )
          if (tabIndex !== -1) {
-            tabs[tabIndex] = {
-               ...tabs[tabIndex],
+            tabsInfo[tabIndex] = {
+               ...tabsInfo[tabIndex],
                draft: '',
             }
             const newState = {
                ...state,
-               tabs,
+               tabsInfo,
             }
             return newState
          }
          return state
       }
       case 'SET_VERSION': {
-         const { tabs } = state
-         const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
+         const { tabsInfo } = state
+         const tabIndex = state.tabsInfo.findIndex(
+            tab => tab.path === payload.path
+         )
          if (tabIndex !== -1) {
-            tabs[tabIndex] = {
-               ...tabs[tabIndex],
+            tabsInfo[tabIndex] = {
+               ...tabsInfo[tabIndex],
                version: payload.version,
             }
             const newState = {
                ...state,
-               tabs,
+               tabsInfo,
             }
             return newState
          }
          return state
       }
       case 'REMOVE_VERSION': {
-         const { tabs } = state
-         const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
+         const { tabsInfo } = state
+         const tabIndex = state.tabsInfo.findIndex(
+            tab => tab.path === payload.path
+         )
          if (tabIndex !== -1) {
-            tabs[state.currentTab] = {
-               ...tabs[state.currentTab],
+            tabsInfo[state.currentTab] = {
+               ...tabsInfo[state.currentTab],
                version: null,
             }
             const newState = {
                ...state,
-               tabs,
+               tabsInfo,
             }
             return newState
          }
          return state
       }
       case 'UPDATE_LAST_SAVED': {
-         const { tabs } = state
-         const tabIndex = state.tabs.findIndex(tab => tab.path === payload.path)
+         const { tabsInfo } = state
+         const tabIndex = state.tabsInfo.findIndex(
+            tab => tab.path === payload.path
+         )
          if (tabIndex !== -1) {
-            tabs[tabIndex] = {
-               ...tabs[tabIndex],
+            tabsInfo[tabIndex] = {
+               ...tabsInfo[tabIndex],
                lastSaved: Date.now(),
             }
             const newState = {
                ...state,
-               tabs,
+               tabsInfo,
             }
             return newState
          }
          return state
       }
       case 'UPDATE_LINKED_FILE': {
-         if (state.tabs.some(tab => tab.path === payload.path)) {
+         if (state.tabsInfo.some(tab => tab.path === payload.path)) {
             const tabId =
-               state.tabs.findIndex(tab => tab.path === payload.path) >= 0 &&
-               state.tabs.findIndex(tab => tab.path === payload.path)
-            const { tabs } = state
-            tabs[tabId] = {
-               ...tabs[tabId],
+               state.tabsInfo.findIndex(tab => tab.path === payload.path) >=
+                  0 &&
+               state.tabsInfo.findIndex(tab => tab.path === payload.path)
+            const { tabsInfo } = state
+            tabsInfo[tabId] = {
+               ...tabsInfo[tabId],
                linkedCss: payload.linkedCss,
                linkedJs: payload.linkedJs,
             }
             const newState = {
                ...state,
-               tabs,
+               tabsInfo,
             }
             return newState
          }
          return state
       }
 
-      // Store Tab Data
-      case 'STORE_TAB_DATA': {
-         const { tabs } = state
-         const tabIndex = tabs.findIndex(tab => tab.path === payload.path)
-         if (tabIndex !== -1) {
-            tabs[tabIndex].data = {
-               ...tabs[tabIndex].data,
-               ...payload.data,
-            }
-            return {
-               ...state,
-               tabs,
-            }
-         }
-         return state
-      }
-      // Delete Tab
-      case 'DELETE_TAB': {
-         return {
-            ...state,
-            tabs: state.tabs.filter((_, index) => index !== payload.index),
-         }
-      }
-      case 'CLOSE_ALL_TABS':
-         return {
-            ...state,
-            tabs: [],
-         }
       default:
          return state
    }
 }
 
-export const TabProvider = ({ children }) => {
+export const GlobalInfoProvider = ({ children }) => {
    const [state, dispatch] = React.useReducer(reducers, initialState)
 
    return (
@@ -237,81 +226,31 @@ export const TabProvider = ({ children }) => {
    )
 }
 
-export const useTabs = () => {
+export const useTabsInfo = () => {
    const history = useHistory()
    const location = useLocation()
 
    const {
-      state: { tabs },
+      state: { tabsInfo },
       dispatch,
    } = React.useContext(Context)
 
-   const tab = tabs.find(currTab => currTab.path === location.pathname)
+   const tabInfo = tabsInfo.find(currTab => currTab.path === location.pathname)
 
-   const setTitle = React.useCallback(
-      title => {
-         dispatch({
-            type: 'SET_TITLE',
-            payload: {
-               title,
-               path: tab.path,
-            },
-         })
-      },
-      [dispatch, tab]
-   )
-
-   const addTab = React.useCallback(
+   const addTabInfo = React.useCallback(
       data => {
          dispatch({
-            type: 'ADD_TAB',
+            type: 'ADD_TAB_INFO',
             payload: data,
          })
-         history.push(data.path)
       },
       [dispatch, history]
    )
 
-   const switchTab = React.useCallback(path => history.push(path), [history])
-
-   const removeTab = React.useCallback(
-      ({ tab, index }) => {
-         dispatch({ type: 'DELETE_TAB', payload: { tab, index } })
-
-         const tabsCount = tabs.length
-         // closing last remaining tab
-         if (index === 0 && tabsCount === 1) {
-            history.push('/editor')
-         }
-         // closing first tab when there's more than one tab
-         else if (index === 0 && tabsCount > 1) {
-            history.push(tabs[index + 1].path)
-         }
-         // closing any tab when there's more than one tab
-         else if (index > 0 && tabsCount > 1) {
-            history.push(tabs[index - 1].path)
-         }
-      },
-      [tabs, dispatch, history]
-   )
-
-   const closeAllTabs = React.useCallback(() => {
-      dispatch({ type: 'CLOSE_ALL_TABS' })
-      switchTab('/editor')
-   }, [switchTab, dispatch])
-
-   const doesTabExists = path =>
-      tabs.find(currTab => currTab.path === path) || false
-
    return {
-      tab,
-      tabs,
-      addTab,
-      setTitle,
-      switchTab,
-      removeTab,
-      closeAllTabs,
-      doesTabExists,
+      tabInfo,
+      tabsInfo,
+      addTabInfo,
       dispatch,
    }
 }
@@ -396,6 +335,13 @@ export const useGlobalContext = () => {
       })
    })
 
+   const addEditorInfo = React.useCallback(data => {
+      dispatch({
+         type: 'ADD_EDITOR_INFO',
+         payload: data,
+      })
+   })
+
    return {
       toggleSideBar,
       toggleSidePanel,
@@ -409,5 +355,6 @@ export const useGlobalContext = () => {
       removeVersion,
       updateLastSaved,
       updateLinkedFile,
+      addEditorInfo,
    }
 }
