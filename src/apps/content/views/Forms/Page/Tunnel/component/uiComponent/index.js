@@ -1,6 +1,9 @@
 import React from 'react'
 import { Form, Loader, Flex, Spacer } from '@dailykit/ui'
-import { Tooltip } from '../../../../../../../../shared/components'
+import {
+   Tooltip,
+   RichTextEditor,
+} from '../../../../../../../../shared/components'
 
 export const Text = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
    <Flex
@@ -280,3 +283,28 @@ export const NumberWithSelect = ({
       </Form.TextSelect>
    </Flex>
 )
+
+export const RichText = ({ fieldDetail, marginLeft, path, onConfigChange }) => {
+   const onEditorChange = html => {
+      const e = {
+         target: {
+            name: path,
+         },
+      }
+      onConfigChange(e, html)
+   }
+   return (
+      <Flex margin={`0 0 0 ${marginLeft}`}>
+         <Flex container alignItems="flex-end">
+            <Form.Label title={fieldDetail.label} htmlFor="richText">
+               {fieldDetail.label.toUpperCase()}
+            </Form.Label>
+            <Tooltip identifier="RichText_component_info" />
+         </Flex>
+         <RichTextEditor
+            defaultValue={fieldDetail?.value || fieldDetail.default}
+            onChange={html => onEditorChange(html)}
+         />
+      </Flex>
+   )
+}

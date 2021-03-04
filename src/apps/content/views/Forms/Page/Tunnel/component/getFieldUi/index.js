@@ -12,6 +12,7 @@ import {
    TextArea,
    TextWithSelect,
    NumberWithSelect,
+   RichText,
 } from '../uiComponent'
 
 export const getFieldUi = ({ key, configJson, onConfigChange }) => {
@@ -138,6 +139,18 @@ export const getFieldUi = ({ key, configJson, onConfigChange }) => {
    ) {
       configUi = (
          <NumberWithSelect
+            fieldDetail={field}
+            marginLeft={indentation}
+            path={key}
+            onConfigChange={onConfigChange}
+         />
+      )
+   } else if (
+      field.dataType === 'html' &&
+      field.userInsertType === 'richTextEditor'
+   ) {
+      configUi = (
+         <RichText
             fieldDetail={field}
             marginLeft={indentation}
             path={key}

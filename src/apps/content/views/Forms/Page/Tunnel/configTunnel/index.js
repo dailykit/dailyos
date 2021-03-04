@@ -31,7 +31,7 @@ export default function ConfigTunnel({
    const onConfigChange = (e, value) => {
       let updatedConfig
       const type = _.get(configJson, `${e.target.name}.dataType`)
-      if (type === 'boolean') {
+      if (type === 'boolean' || type === 'html') {
          updatedConfig = _.set(configJson, `${e.target.name}.value`, value)
       } else {
          updatedConfig = _.set(

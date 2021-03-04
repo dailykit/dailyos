@@ -12,6 +12,7 @@ import Insight from './Insight'
 import WebBuilder from './WebBuilder'
 import DragNDrop from './DragNDrop'
 import Popup from './Popup'
+import RichTextEditor from './RichTextEditor'
 
 export {
    Lang,
@@ -28,6 +29,7 @@ export {
    WebBuilder,
    DragNDrop,
    Popup,
+   RichTextEditor,
 }
 export * from './AssetUploader'
 export * from './InlineLoader'
