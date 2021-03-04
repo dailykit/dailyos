@@ -58,6 +58,7 @@ export const PRODUCT = {
             price
             discount
             isPopupAllowed
+            isValid
             isPublished
             productOptions(
                where: { isArchived: { _eq: false } }
