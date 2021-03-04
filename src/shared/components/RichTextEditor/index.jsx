@@ -14,7 +14,7 @@ export default function RichText({
    defaultValue = '<p>Rich Text Editor</p>',
    onChange,
 }) {
-   const [editorOnFocus, setEditorOnFocus] = useState(false)
+   //    const [editorOnFocus, setEditorOnFocus] = useState(false)
    const [editorState, setEditorState] = useState(
       EditorState.createWithContent(
          ContentState.createFromBlockArray(convertFromHTML(defaultValue))
@@ -28,9 +28,9 @@ export default function RichText({
    }
    return (
       <Editor
-         toolbarHidden={!editorOnFocus}
-         onFocus={() => setEditorOnFocus(true)}
-         onBlur={() => setEditorOnFocus(false)}
+         //  toolbarHidden={!editorOnFocus}
+         //  onFocus={() => setEditorOnFocus(true)}
+         //  onBlur={() => setEditorOnFocus(false)}
          editorState={editorState}
          wrapperClassName="wrapper-class"
          editorClassName="editor-class"
