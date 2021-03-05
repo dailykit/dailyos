@@ -286,7 +286,7 @@ const Editor = () => {
 
             {!globalState?.editorInfo?.isDesignMode ? (
                <MonacoEditor
-                  height="86vh"
+                  height="79vh"
                   width="100%"
                   language={language}
                   theme={theme}

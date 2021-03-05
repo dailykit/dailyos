@@ -81,15 +81,18 @@ const File = ({ linkedFiles, selectedOption, emptyOptions }) => {
                   ))}
                </TagGroup>
             )}
-            <ListHeader type="MSL1" label="Files" />
+            <ListHeader type="MSL2" label="Files" />
             <ListOptions>
                {list
                   .filter(option => option.title.toLowerCase().includes(search))
                   .map(option => (
                      <ListItem
-                        type="MSL1"
+                        type="MSL2"
                         key={option.id}
-                        title={option.title}
+                        content={{
+                           title: option.title,
+                           description: option.value,
+                        }}
                         onClick={() => selectOption('id', option.id)}
                         isActive={selected.find(item => item.id === option.id)}
                      />

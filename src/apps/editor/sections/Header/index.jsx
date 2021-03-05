@@ -38,7 +38,7 @@ import {
 } from '../../assets/Icons'
 
 const Header = ({ toggleSidebar }) => {
-   const { tab } = useTabs()
+   const { tab, tabs } = useTabs()
    const [
       linkFilesTunnels,
       openLinkFilesTunnel,
@@ -159,145 +159,155 @@ const Header = ({ toggleSidebar }) => {
       })
    }
 
-   console.log('fromheader', globalState)
-
    return (
       <>
          <StyledHeader>
             <StyledMenu onClick={() => toggleSidebar(visible => !visible)}>
                <MenuIcon color="#000" size="24" />
             </StyledMenu>
-            <Flex container alignItems="center" justifyContent="space-between">
-               <Form.Label htmlFor="theme" title="theme">
-                  Dark Theme
-               </Form.Label>
-               <Spacer size="4px" xAxis />
-               <Form.Toggle
-                  name="first_time"
-                  onChange={() =>
-                     addEditorInfo({
-                        ...globalState.editorInfo,
-                        isDarkMode: !globalState?.editorInfo?.isDarkMode,
-                     })
-                  }
-                  value={globalState?.editorInfo?.isDarkMode}
-               />
-               <Spacer size="20px" xAxis />
-               {['html', 'liquid', 'ejs', 'mustache', 'pug'].includes(
-                  globalState?.editorInfo?.language
-               ) && (
-                  <IconButton
-                     type="ghost"
-                     onClick={() => openLinkFilesTunnel(1)}
+            {tabs.length > 0 && (
+               <>
+                  <Flex
+                     container
+                     alignItems="center"
+                     justifyContent="space-between"
                   >
-                     <LinkFileIcon size="20" />
-                  </IconButton>
-               )}
-
-               <Spacer size="20px" xAxis />
-               <ButtonGroup>
-                  <IconButton
-                     type="ghost"
-                     onClick={() =>
-                        globalState?.editorInfo?.isDesignMode
-                           ? callWebBuilderFunc('core:undo')
-                           : undoEditor()
-                     }
-                  >
-                     <RotateLeftIcon size="20" />
-                  </IconButton>
-                  <IconButton
-                     type="ghost"
-                     onClick={() =>
-                        globalState?.editorInfo?.isDesignMode
-                           ? callWebBuilderFunc('core:redo')
-                           : redoEditor()
-                     }
-                  >
-                     <RotateRightIcon size="20" />
-                  </IconButton>
-               </ButtonGroup>
-               <Spacer size="20px" xAxis />
-               {globalState.editorInfo?.isDesignMode && (
-                  <IconButton
-                     type="ghost"
-                     onClick={() => callWebBuilderFunc('core:fullscreen')}
-                  >
-                     <ExpandFullIcon size="20" />
-                  </IconButton>
-               )}
-
-               <Spacer size="20px" xAxis />
-               {globalState?.editorInfo?.language === 'html' && (
-                  <RadioGroup
-                     options={ModeOptions}
-                     active={globalState.editorInfo?.isDesignMode ? 1 : 2}
-                     onChange={() =>
-                        addEditorInfo({
-                           ...globalState.editorInfo,
-                           isDesignMode: !globalState.editorInfo?.isDesignMode,
-                        })
-                     }
-                  />
-               )}
-
-               {globalState?.editorInfo?.isDesignMode && (
-                  <>
-                     <Spacer size="20px" xAxis />
-                     <RadioGroup
-                        options={deviceOptions}
-                        active={1}
-                        onChange={option => {
-                           setDeviceActive(option.name)
-                           callWebBuilderFunc(option.command)
-                        }}
+                     <Form.Label htmlFor="theme" title="theme">
+                        Dark Theme
+                     </Form.Label>
+                     <Spacer size="4px" xAxis />
+                     <Form.Toggle
+                        name="first_time"
+                        onChange={() =>
+                           addEditorInfo({
+                              ...globalState.editorInfo,
+                              isDarkMode: !globalState?.editorInfo?.isDarkMode,
+                           })
+                        }
+                        value={globalState?.editorInfo?.isDarkMode}
                      />
-                  </>
-               )}
-            </Flex>
-            <Flex container alignItems="center" justifyContent="space-between">
-               {globalState.editorInfo?.isDesignMode && (
-                  <>
-                     <Spacer size="8px" xAxis />
-                     <ComboButton
-                        type="ghost"
-                        onClick={() => openPagePreviewTunnel(1)}
-                     >
-                        <EyeIcon size="16px" />
-                        PREVIEW
-                     </ComboButton>
-                  </>
-               )}
-               <TextButton
-                  type="ghost"
-                  onClick={() =>
-                     globalState?.editorInfo?.isDesignMode
-                        ? callWebBuilderFunc('save-template')
-                        : draft()
-                  }
-               >
-                  SAVE
-               </TextButton>
-               <TextButton
-                  type="solid"
-                  onClick={() => setIsModalVisible(!isModalVisible)}
-               >
-                  PUBLISH
-               </TextButton>
-            </Flex>
+                     <Spacer size="20px" xAxis />
+                     {['html', 'liquid', 'ejs', 'mustache', 'pug'].includes(
+                        globalState?.editorInfo?.language
+                     ) && (
+                        <IconButton
+                           type="ghost"
+                           onClick={() => openLinkFilesTunnel(1)}
+                        >
+                           <LinkFileIcon size="20" />
+                        </IconButton>
+                     )}
 
-            <LinkFilesTunnel
-               tunnels={linkFilesTunnels}
-               openTunnel={openLinkFilesTunnel}
-               closeTunnel={closeLinkFilesTunnel}
-            />
-            <PagePreviewTunnel
-               tunnels={pagePreviewTunnels}
-               openTunnel={openPagePreviewTunnel}
-               closeTunnel={closePagePreviewTunnel}
-               query={result}
-            />
+                     <Spacer size="20px" xAxis />
+                     <ButtonGroup>
+                        <IconButton
+                           type="ghost"
+                           onClick={() =>
+                              globalState?.editorInfo?.isDesignMode
+                                 ? callWebBuilderFunc('core:undo')
+                                 : undoEditor()
+                           }
+                        >
+                           <RotateLeftIcon size="20" />
+                        </IconButton>
+                        <IconButton
+                           type="ghost"
+                           onClick={() =>
+                              globalState?.editorInfo?.isDesignMode
+                                 ? callWebBuilderFunc('core:redo')
+                                 : redoEditor()
+                           }
+                        >
+                           <RotateRightIcon size="20" />
+                        </IconButton>
+                     </ButtonGroup>
+                     <Spacer size="20px" xAxis />
+                     {globalState.editorInfo?.isDesignMode && (
+                        <IconButton
+                           type="ghost"
+                           onClick={() => callWebBuilderFunc('core:fullscreen')}
+                        >
+                           <ExpandFullIcon size="20" />
+                        </IconButton>
+                     )}
+
+                     <Spacer size="20px" xAxis />
+                     {globalState?.editorInfo?.language === 'html' && (
+                        <RadioGroup
+                           options={ModeOptions}
+                           active={globalState.editorInfo?.isDesignMode ? 1 : 2}
+                           onChange={() =>
+                              addEditorInfo({
+                                 ...globalState.editorInfo,
+                                 isDesignMode: !globalState.editorInfo
+                                    ?.isDesignMode,
+                              })
+                           }
+                        />
+                     )}
+
+                     {globalState?.editorInfo?.isDesignMode && (
+                        <>
+                           <Spacer size="20px" xAxis />
+                           <RadioGroup
+                              options={deviceOptions}
+                              active={1}
+                              onChange={option => {
+                                 setDeviceActive(option.name)
+                                 callWebBuilderFunc(option.command)
+                              }}
+                           />
+                        </>
+                     )}
+                  </Flex>
+                  <Flex
+                     container
+                     alignItems="center"
+                     justifyContent="space-between"
+                  >
+                     {globalState.editorInfo?.isDesignMode && (
+                        <>
+                           <Spacer size="8px" xAxis />
+                           <ComboButton
+                              type="ghost"
+                              onClick={() => openPagePreviewTunnel(1)}
+                           >
+                              <EyeIcon size="16px" />
+                              PREVIEW
+                           </ComboButton>
+                        </>
+                     )}
+                     <TextButton
+                        type="ghost"
+                        onClick={() =>
+                           globalState?.editorInfo?.isDesignMode
+                              ? callWebBuilderFunc('save-template')
+                              : draft()
+                        }
+                     >
+                        SAVE
+                     </TextButton>
+                     <TextButton
+                        type="solid"
+                        onClick={() => setIsModalVisible(!isModalVisible)}
+                     >
+                        PUBLISH
+                     </TextButton>
+                  </Flex>
+               </>
+            )}
          </StyledHeader>
+         <LinkFilesTunnel
+            tunnels={linkFilesTunnels}
+            openTunnel={openLinkFilesTunnel}
+            closeTunnel={closeLinkFilesTunnel}
+         />
+         <PagePreviewTunnel
+            tunnels={pagePreviewTunnels}
+            openTunnel={openPagePreviewTunnel}
+            closeTunnel={closePagePreviewTunnel}
+            query={result}
+         />
       </>
    )
 }
