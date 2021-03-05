@@ -294,21 +294,20 @@ const Header = ({ toggleSidebar }) => {
                         PUBLISH
                      </TextButton>
                   </Flex>
-
-                  <LinkFilesTunnel
-                     tunnels={linkFilesTunnels}
-                     openTunnel={openLinkFilesTunnel}
-                     closeTunnel={closeLinkFilesTunnel}
-                  />
-                  <PagePreviewTunnel
-                     tunnels={pagePreviewTunnels}
-                     openTunnel={openPagePreviewTunnel}
-                     closeTunnel={closePagePreviewTunnel}
-                     query={result}
-                  />
                </>
             )}
          </StyledHeader>
+         <LinkFilesTunnel
+            tunnels={linkFilesTunnels}
+            openTunnel={openLinkFilesTunnel}
+            closeTunnel={closeLinkFilesTunnel}
+         />
+         <PagePreviewTunnel
+            tunnels={pagePreviewTunnels}
+            openTunnel={openPagePreviewTunnel}
+            closeTunnel={closePagePreviewTunnel}
+            query={result}
+         />
       </>
    )
 }

@@ -26,11 +26,6 @@ export const StyledWrapper = styled.div`
       height: calc(85vh - 40px);
       width: 100%;
    }
-   > aside {
-      display: flex;
-      grid-area: aside;
-      flex-direction: column;
-   }
    > header {
       grid-area: header;
    }
