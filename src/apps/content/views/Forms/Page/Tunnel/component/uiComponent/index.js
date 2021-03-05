@@ -1,5 +1,5 @@
-import React from 'react'
-import { Form, Loader, Flex, Spacer } from '@dailykit/ui'
+import React, { useState } from 'react'
+import { Form, Loader, Flex, Spacer, Dropdown } from '@dailykit/ui'
 import {
    Tooltip,
    RichTextEditor,
@@ -164,29 +164,51 @@ export const Time = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
       />
    </Flex>
 )
-export const Select = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
-   <Flex
-      container
-      justifyContent="space-between"
-      alignItems="center"
-      margin={`0 0 0 ${marginLeft}`}
-   >
-      <Flex container alignItems="flex-end">
-         <Form.Label title={fieldDetail.label} htmlFor="select">
-            {fieldDetail.label.toUpperCase()}
-         </Form.Label>
-         <Tooltip identifier="select_component_info" />
+export const Select = ({ fieldDetail, marginLeft, path, onConfigChange }) => {
+   const [searchOption, setSearchOption] = useState('')
+   const [searchResult, setSearchResult] = useState(fieldDetail?.options)
+   const selectedOptionHandler = options => {
+      const e = {
+         target: {
+            name: path,
+         },
+      }
+      onConfigChange(e, options)
+   }
+
+   React.useEffect(() => {
+      const result = fieldDetail?.options.filter(option =>
+         option.title.toLowerCase().includes(searchOption)
+      )
+      setSearchResult(result)
+   }, [searchOption])
+   return (
+      <Flex
+         container
+         justifyContent="space-between"
+         alignItems="center"
+         margin={`0 0 0 ${marginLeft}`}
+      >
+         <Flex container alignItems="flex-end">
+            <Form.Label title={fieldDetail.label} htmlFor="select">
+               {fieldDetail.label.toUpperCase()}
+            </Form.Label>
+            <Tooltip identifier="select_component_info" />
+         </Flex>
+         <Dropdown
+            type={fieldDetail?.type || 'single'}
+            options={searchResult}
+            defaultValue={
+               fieldDetail?.type === 'single' && fieldDetail?.value?.id
+            }
+            defaultOptions={fieldDetail?.value}
+            searchedOption={option => setSearchOption(option)}
+            selectedOption={option => selectedOptionHandler(option)}
+            placeholder="type what you're looking for..."
+         />
       </Flex>
-      <Form.Select
-         id={path}
-         name={path}
-         onChange={onConfigChange}
-         options={fieldDetail.options}
-         value={fieldDetail.value}
-         defaultValue={fieldDetail.default}
-      />
-   </Flex>
-)
+   )
+}
 
 export const TextArea = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
    <Flex

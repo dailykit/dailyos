@@ -13,7 +13,7 @@ export const Wrapper = styled.div(
 export const StyledWrapper = styled.div`
    display: grid;
    position: relative;
-   height: 100vh;
+   height: calc(100vh - 115px);
    grid-template-rows: 40px 1fr;
    grid-template-columns: ${({ isOpen }) => (isOpen ? '240px 1fr' : '1fr')};
    grid-template-areas: ${({ isOpen }) =>
@@ -23,7 +23,7 @@ export const StyledWrapper = styled.div`
    > main {
       grid-area: main;
       overflow-y: auto;
-      height: calc(100vh - 40px);
+      height: calc(85vh - 40px);
       width: 100%;
    }
    > aside {
