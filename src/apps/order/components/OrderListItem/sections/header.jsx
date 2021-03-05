@@ -67,9 +67,7 @@ export const Header = ({ order }) => {
                type="outline"
                onClick={() => createTab(order.id)}
             >
-               {'ORD' +
-                  order.id +
-                  (Boolean(order?.cart?.isTest) ? '(Test)' : '')}
+               {`ORD${order.id} ${order?.cart?.isTest ? '(Test)' : ''}`}
                <NewTabIcon size={14} />
             </ComboButton>
             <Spacer size="8px" xAxis />
@@ -106,15 +104,10 @@ export const Header = ({ order }) => {
             </StyledStatus>
             {!order.thirdPartyOrderId && (
                <>
-                  {/* <Spacer size="16px" xAxis />
-                  <ReadyBy data={order?.pickupWindow} /> */}
                   <Spacer size="16px" xAxis />
                   <TimeSlot
                      type={order.fulfillmentType}
-                     data={{
-                        pickup: order?.pickupWindow,
-                        dropoff: order?.dropoffWindow,
-                     }}
+                     time={order.cart.fulfillmentInfo?.slot}
                   />
                </>
             )}
@@ -123,32 +116,8 @@ export const Header = ({ order }) => {
    )
 }
 
-const ReadyBy = ({ data = {} }) => {
+const TimeSlot = ({ type, time = {} }) => {
    const { t } = useTranslation()
-   return (
-      <StyledStatus>
-         <span>{t(address.concat('ready by'))}:&nbsp;</span>
-         <span>
-            {data?.approved?.startsAt
-               ? formatDate(data?.approved?.startsAt)
-               : 'N/A'}
-         </span>
-      </StyledStatus>
-   )
-}
-
-const TimeSlot = ({ type, data: { pickup = {}, dropoff = {} } = {} }) => {
-   const { t } = useTranslation()
-
-   let startsAt = ''
-   let endsAt = ''
-   if (isPickup(type)) {
-      startsAt = pickup?.approved?.startsAt || ''
-      endsAt = pickup?.approved?.endsAt || ''
-   } else {
-      startsAt = dropoff?.requested?.startsAt || ''
-      endsAt = dropoff?.requested?.endsAt || ''
-   }
    return (
       <StyledStatus>
          <span>
@@ -158,23 +127,23 @@ const TimeSlot = ({ type, data: { pickup = {}, dropoff = {} } = {} }) => {
             :&nbsp;
          </span>
          <span>
-            {startsAt
-               ? formatDate(startsAt, {
+            {time?.from
+               ? formatDate(time.from, {
                     month: 'short',
                     day: 'numeric',
                     year: 'numeric',
                  })
                : 'N/A'}
             ,&nbsp;
-            {startsAt
-               ? formatDate(startsAt, {
+            {time.from
+               ? formatDate(time.from, {
                     minute: 'numeric',
                     hour: 'numeric',
                  })
                : 'N/A'}
             -
-            {endsAt
-               ? formatDate(endsAt, {
+            {time.to
+               ? formatDate(time.to, {
                     minute: 'numeric',
                     hour: 'numeric',
                  })

@@ -1444,6 +1444,7 @@ export const QUERIES = {
                   address
                   transactionId
                   paymentStatus
+                  fulfillmentInfo
                   customer: customerInfo
                   cartItemProductComponentsAggregate: cartItemProductComponents_aggregate {
                      aggregate {
