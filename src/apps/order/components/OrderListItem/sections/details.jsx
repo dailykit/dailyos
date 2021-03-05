@@ -4,16 +4,16 @@ import { useTranslation } from 'react-i18next'
 import { Flex, Text, Spacer } from '@dailykit/ui'
 
 import {
+   Notes,
    PhoneIcon,
    EmailIcon,
    HomeIcon,
    ArrowUpIcon,
    ArrowDownIcon,
-   Notes,
 } from '../../../assets/icons'
 import { Styles, StyledStat } from './styled'
-import { currencyFmt } from '../../../../../shared/utils'
 import { useWindowSize } from '../../../../../shared/hooks'
+import { currencyFmt, parseAddress } from '../../../../../shared/utils'
 
 const address = 'apps.order.components.orderlistitem.'
 
@@ -27,21 +27,21 @@ export const Details = ({ order }) => {
    const { width } = useWindowSize()
    React.useEffect(() => {
       if (!isNull(order.brand) && !isEmpty(order.brand)) {
-         if (order.source === 'a-la-carte') {
+         if (order.cart.source === 'a-la-carte') {
             if (!isEmpty(order.brand.onDemandName)) {
-               setBrand(brand => ({
-                  ...brand,
+               setBrand(existing => ({
+                  ...existing,
                   name: order.brand.onDemandName[0].name,
                }))
             }
             if (!isEmpty(order.brand.onDemandLogo)) {
-               setBrand(brand => ({
-                  ...brand,
+               setBrand(existing => ({
+                  ...existing,
                   logo: order.brand.onDemandLogo[0].url,
                }))
             }
          } else if (
-            order.source === 'subscription' &&
+            order.cart.source === 'subscription' &&
             !isEmpty(order.brand.subscriptionSettings)
          ) {
             const { name = '', logo = '' } = order.brand.subscriptionSettings[0]
@@ -92,7 +92,7 @@ export const Details = ({ order }) => {
             <main>
                <StyledStat>
                   <span>Source</span>
-                  <span>{order.source}</span>
+                  <span>{order.cart.source}</span>
                </StyledStat>
                <Spacer size="8px" />
                {order.thirdPartyOrderId && (
@@ -106,8 +106,8 @@ export const Details = ({ order }) => {
          <Styles.Accordian isOpen={currentPanel === 'customer'}>
             <header>
                <Text as="p">
-                  {order.customer?.customerFirstName || 'N/A'}&nbsp;
-                  {order.customer?.customerLastName}
+                  {order.cart.customer?.customerFirstName || 'N/A'}&nbsp;
+                  {order.cart.customer?.customerLastName}
                </Text>
                <ToggleButton
                   type="customer"
@@ -122,7 +122,7 @@ export const Details = ({ order }) => {
                   </span>
                   <Spacer size="4px" xAxis />
                   <Text as="subtitle">
-                     {order.customer?.customerPhone || 'N/A'}
+                     {order.cart.customer?.customerPhone || 'N/A'}
                   </Text>
                </Flex>
                <Spacer size="8px" />
@@ -131,14 +131,14 @@ export const Details = ({ order }) => {
                      <EmailIcon size={14} color="#718096" />
                   </span>
                   <Spacer size="4px" xAxis />
-                  {order.customer?.customerEmail ? (
+                  {order.cart.customer?.customerEmail ? (
                      <Text as="subtitle">
                         <a
                            target="__blank"
                            rel="noopener roreferrer"
-                           href={`mailto:${order.customer?.customerEmail}`}
+                           href={`mailto:${order.cart.customer?.customerEmail}`}
                         >
-                           {order.customer?.customerEmail}
+                           {order.cart.customer?.customerEmail}
                         </a>
                      </Text>
                   ) : (
@@ -152,7 +152,8 @@ export const Details = ({ order }) => {
                   </span>
                   <Spacer size="4px" xAxis />
                   <Text as="subtitle">
-                     {normalize(order?.customer?.customerAddress) || 'N/A'}
+                     {parseAddress(order.cart.customer?.customerAddress) ||
+                        'N/A'}
                   </Text>
                </Flex>
                <Spacer size="8px" />
@@ -162,7 +163,7 @@ export const Details = ({ order }) => {
                   </span>
                   <Spacer size="4px" xAxis />
                   <Text as="subtitle">
-                     {order?.customer?.customerAddress?.notes || 'N/A'}
+                     {order.cart.customer?.customerAddress?.notes || 'N/A'}
                   </Text>
                </Flex>
                <Spacer size="8px" />
@@ -219,30 +220,4 @@ const ToggleButton = ({ type, current, toggle }) => {
          {current === type ? <ArrowDownIcon /> : <ArrowUpIcon />}
       </button>
    )
-}
-
-const normalize = (address = {}) => {
-   let result = ''
-   if (address?.line1) {
-      result += address.line1
-   }
-   if (address?.line2) {
-      result += ', ' + address.line2
-   }
-   if (address?.landmark) {
-      result += ', ' + address.landmark
-   }
-   if (address?.city) {
-      result += ', ' + address.city
-   }
-   if (address?.state) {
-      result += ', ' + address.state
-   }
-   if (address?.country) {
-      result += ', ' + address.country
-   }
-   if (address?.zipcode) {
-      result += ', ' + address.zipcode
-   }
-   return result
 }
