@@ -67,35 +67,16 @@ const App = () => {
             payload: {
                _or: [
                   {
-                     orderInventoryProducts: {
-                        assemblyStationId: {
-                           _eq: configState.current_station?.id,
-                        },
-                     },
-                  },
-                  {
-                     orderReadyToEatProducts: {
-                        assemblyStationId: {
-                           _eq: configState.current_station?.id,
-                        },
-                     },
-                  },
-                  {
-                     orderMealKitProducts: {
-                        _or: [
-                           {
-                              assemblyStationId: {
-                                 _eq: configState.current_station?.id,
-                              },
-                           },
-                           {
-                              orderSachets: {
-                                 packingStationId: {
+                     cart: {
+                        cartItemProductComponents: {
+                           productOption: {
+                              operationConfig: {
+                                 stationId: {
                                     _eq: configState.current_station?.id,
                                  },
                               },
                            },
-                        ],
+                        },
                      },
                   },
                ],

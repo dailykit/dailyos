@@ -17,7 +17,7 @@ const initialState = {
       offset: 0,
       loading: true,
       where: {
-         orderStatus: { _eq: 'PENDING' },
+         cart: { status: { _eq: 'ORDER_PENDING' } },
          _or: [
             { isRejected: { _eq: false } },
             { isRejected: { _is_null: true } },

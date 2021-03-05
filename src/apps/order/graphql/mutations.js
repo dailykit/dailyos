@@ -1,6 +1,20 @@
 import gql from 'graphql-tag'
 
 export const MUTATIONS = {
+   CART: {
+      UPDATE: {
+         ONE: gql`
+            mutation updateCart(
+               $pk_columns: order_cart_pk_columns_input!
+               $_set: order_cart_set_input!
+            ) {
+               updateCart(pk_columns: $pk_columns, _set: $_set) {
+                  id
+               }
+            }
+         `,
+      },
+   },
    ORDER: {
       UPDATE: gql`
          mutation updateOrder(

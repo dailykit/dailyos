@@ -9,7 +9,7 @@ import { QUERIES, MUTATIONS } from '../../graphql'
 import { Details, Products, Actions, Header } from './sections'
 
 const OrderListItem = ({ containerId, order = {} }) => {
-   const [updateOrder] = useMutation(MUTATIONS.ORDER.UPDATE, {
+   const [updateCart] = useMutation(MUTATIONS.CART.UPDATE.ONE, {
       onCompleted: () => {
          toast.success('Successfully updated the order!')
       },
@@ -27,27 +27,27 @@ const OrderListItem = ({ containerId, order = {} }) => {
          toast.error('Pending order confirmation!')
          return
       }
-      if (order.orderStatus === 'DELIVERED') return
+      if (order.cart?.status === 'ORDER_DELIVERED') return
       const status_list = statuses.map(status => status.value)
-      const next = status_list.indexOf(order.orderStatus)
+      const next = status_list.indexOf(order.cart?.status)
       if (next + 1 < status_list.length - 1) {
-         updateOrder({
+         updateCart({
             variables: {
-               id: order.id,
-               _set: { orderStatus: status_list[next + 1] },
+               pk_columns: { id: order.cart.id },
+               _set: { status: status_list[next + 1] },
             },
          })
       }
    }
 
    return (
-      <Styles.Order status={order.orderStatus} id={containerId}>
+      <Styles.Order status={order.cart?.status} id={containerId}>
          <Details order={order} />
          <Header order={order} />
          <Products order={order} />
          <Actions order={order} />
-         <Styles.Status status={order.orderStatus} onClick={updateStatus}>
-            {order.orderStatus.split('_').join(' ')}
+         <Styles.Status status={order.cart?.status} onClick={updateStatus}>
+            {order.cart?.orderStatus?.title}
             <span>
                <RightIcon size={20} color="#fff" />
             </span>

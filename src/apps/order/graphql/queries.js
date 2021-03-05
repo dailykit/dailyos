@@ -1389,35 +1389,21 @@ export const QUERIES = {
             ) {
                id
                tax
-               source
                discount
                itemTotal
                amountPaid
                created_at
                isAccepted
                isRejected
-               orderStatus
                deliveryPrice
-               paymentStatus
                transactionId
                fulfillmentType
+               thirdPartyOrderId
                thirdPartyOrder {
                   id
                   source
                   thirdPartyOrderId
                   products: parsedData(path: "items")
-               }
-               thirdPartyOrderId
-               restaurant: deliveryInfo(path: "pickup.pickupInfo")
-               customer: deliveryInfo(path: "dropoff.dropoffInfo")
-               pickupWindow: deliveryInfo(path: "pickup.window")
-               dropoffWindow: deliveryInfo(path: "dropoff.window")
-               customer: deliveryInfo(path: "dropoff.dropoffInfo")
-               deliveryCompany: deliveryInfo(path: "deliveryCompany")
-               cart: orderCart {
-                  id
-                  isTest
-                  transactionId
                }
                brand {
                   id
@@ -1446,108 +1432,35 @@ export const QUERIES = {
                      logo: value(path: "logo.url")
                   }
                }
-               orderMealKitProducts(
-                  where: { orderModifierId: { _is_null: true } }
-               ) {
+               cartId
+               cart {
                   id
-                  price
-                  isAssembled
-                  assemblyStatus
-                  assemblyStation {
-                     id
-                     name
+                  status
+                  orderStatus {
+                     title
                   }
-                  comboProduct {
-                     id
-                     name
-                  }
-                  comboProductComponent {
-                     id
-                     label
-                  }
-                  orderSachets(where: { orderModifierId: { _is_null: true } }) {
-                     id
-                     status
-                     isAssembled
-                  }
-                  simpleRecipeProduct {
-                     id
-                     name
-                  }
-                  simpleRecipeProductOption {
-                     id
-                     simpleRecipeYield {
-                        id
-                        yield
+                  isTest
+                  source
+                  address
+                  transactionId
+                  paymentStatus
+                  customer: customerInfo
+                  cartItemProductComponentsAggregate: cartItemProductComponents_aggregate {
+                     aggregate {
+                        count
                      }
-                  }
-               }
-               orderReadyToEatProducts(
-                  where: { orderModifierId: { _is_null: true } }
-               ) {
-                  id
-                  price
-                  isAssembled
-                  assemblyStatus
-                  simpleRecipeProduct {
-                     id
-                     name
-                  }
-                  assemblyStation {
-                     id
-                     name
-                  }
-                  comboProduct {
-                     id
-                     name
-                  }
-                  comboProductComponent {
-                     id
-                     label
-                  }
-                  simpleRecipeProduct {
-                     id
-                     name
-                  }
-                  simpleRecipeProductOption {
-                     id
-                     simpleRecipeYield {
+                     nodes {
                         id
-                        yield
+                        productOption {
+                           id
+                           type
+                        }
+                        cartItemProduct {
+                           id
+                           name
+                           image
+                        }
                      }
-                  }
-               }
-               orderInventoryProducts(
-                  where: { orderModifierId: { _is_null: true } }
-               ) {
-                  id
-                  price
-                  isAssembled
-                  inventoryProduct {
-                     id
-                     name
-                  }
-                  comboProduct {
-                     id
-                     name
-                  }
-                  comboProductComponent {
-                     id
-                     label
-                  }
-                  assemblyStation {
-                     id
-                     name
-                  }
-                  assemblyStatus
-                  customizableProduct {
-                     id
-                     name
-                  }
-                  inventoryProductOption {
-                     id
-                     quantity
-                     label
                   }
                }
             }
@@ -1573,6 +1486,7 @@ export const QUERIES = {
             subscription orderByStatus {
                orderByStatus: order_orderStatusEnum(order_by: { index: asc }) {
                   value
+                  title
                   orders: orders_aggregate(
                      where: {
                         _or: [
@@ -1584,7 +1498,7 @@ export const QUERIES = {
                      aggregate {
                         count
                         sum {
-                           amount: amountPaid
+                           amountPaid
                         }
                         avg {
                            amountPaid
@@ -2461,6 +2375,20 @@ export const DEVICES = {
          printers(where: { printerType: $type }) {
             name
             printNodeId
+         }
+      }
+   `,
+}
+
+export const QUERIES2 = {
+   ORDERS_AGGREGATE: gql`
+      subscription ordersAggregate {
+         ordersAggregate: order_ordersAggregate {
+            title
+            value
+            count: totalOrders
+            sum: totalOrderSum
+            avg: totalOrderAverage
          }
       }
    `,

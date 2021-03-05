@@ -245,7 +245,7 @@ const Order = () => {
                   payload: {
                      new: {
                         id: order.id,
-                        orderStatus: 'UNDER_PROCESSING',
+                        orderStatus: 'ORDER_UNDER_PROCESSING',
                      },
                   },
                },

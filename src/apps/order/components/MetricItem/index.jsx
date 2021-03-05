@@ -22,12 +22,16 @@ export const MetricItem = ({
       dispatch({
          type: 'SET_FILTER',
          payload: {
-            orderStatus: {
-               ...(!['ALL', 'REJECTED OR CANCELLED'].includes(title) && {
-                  _eq: title.split(' ').join('_'),
-               }),
+            cart: {
+               status: {
+                  ...(!['ORDER_ALL', 'ORDER_REJECTED_OR_CANCELLED'].includes(
+                     variant
+                  ) && {
+                     _eq: variant,
+                  }),
+               },
             },
-            ...(title === 'REJECTED OR CANCELLED'
+            ...(variant === 'ORDER_REJECTED_OR_CANCELLED'
                ? { _or: [{ isRejected: { _eq: true } }] }
                : {
                     _or: [
@@ -35,7 +39,7 @@ export const MetricItem = ({
                        { isRejected: { _is_null: true } },
                     ],
                  }),
-            ...(title === 'ALL' && {
+            ...(variant === 'ORDER_ALL' && {
                _or: [
                   { isRejected: { _eq: false } },
                   { isRejected: { _eq: true } },
@@ -64,9 +68,9 @@ export const MetricItem = ({
          variant={variant}
          onClick={() => changeStatus()}
          className={
-            (Object.keys(state.orders.where?.orderStatus).length === 0 &&
-               title === 'ALL') ||
-            title.split(' ').join('_') === state.orders.where?.orderStatus?._eq
+            (Object.keys(state.orders.where?.cart?.status).length === 0 &&
+               variant === 'ORDER_ALL') ||
+            variant === state.orders.where?.cart?.status?._eq
                ? 'active'
                : ''
          }

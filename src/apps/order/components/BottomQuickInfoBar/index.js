@@ -1,12 +1,13 @@
-import { useSubscription } from '@apollo/react-hooks'
 import React from 'react'
-import { logger, currencyFmt } from '../../../../shared/utils'
-import { Wrapper } from './styled'
-import { QUERIES } from '../../graphql'
-import { InlineLoader, ErrorState } from '../../../../shared/components'
 import { toast } from 'react-toastify'
-import { useOrder } from '../../context'
+import { useSubscription } from '@apollo/react-hooks'
+
+import { Wrapper } from './styled'
 import SachetBar from './SachetBar'
+import { useOrder } from '../../context'
+import { QUERIES, QUERIES2 } from '../../graphql'
+import { logger, currencyFmt } from '../../../../shared/utils'
+import { InlineLoader, ErrorState } from '../../../../shared/components'
 
 const BottomQuickInfoBar = ({ openOrderSummaryTunnel }) => {
    const { state } = useOrder()
@@ -19,8 +20,8 @@ const BottomQuickInfoBar = ({ openOrderSummaryTunnel }) => {
    const {
       loading,
       error,
-      data: { orderByStatus = [] } = {},
-   } = useSubscription(QUERIES.ORDERS.AGGREGATE.BY_STATUS)
+      data: { ordersAggregate = [] } = {},
+   } = useSubscription(QUERIES2.ORDERS_AGGREGATE)
 
    if (loading) return <InlineLoader />
    if (error) {
@@ -30,28 +31,31 @@ const BottomQuickInfoBar = ({ openOrderSummaryTunnel }) => {
    }
 
    const getCardText = () => {
-      const activeStatusCard = state.orders.where?.orderStatus?._eq
+      const activeStatusCard = state.orders.where?.cart?.status?._eq
       const isAllActive = state.orders?.where?._or.find(
-         el => el.isRejected?._eq === false
+         el =>
+            el.isRejected?._eq === false ||
+            el.isRejected?._eq === true ||
+            el.isRejected?.is_null === true
       )
 
       const cardText = {}
 
       if (activeStatusCard) {
-         const { value, orders } = orderByStatus.find(
+         const { title, count, sum, avg } = ordersAggregate.find(
             el => el.value === activeStatusCard
          )
-         cardText.title = value.split('_').join(' ')
-         cardText.count = orders.aggregate.count
-         cardText.amount = orders.aggregate.sum.amount || 0
-         cardText.average = orders.aggregate.avg.amountPaid || 0
+         cardText.title = title
+         cardText.count = count
+         cardText.amount = sum
+         cardText.average = avg
       } else if (isAllActive) {
-         cardText.title = 'ALL'
+         cardText.title = 'All'
          cardText.count = orders.aggregate.count
          cardText.amount = orders.aggregate.sum.amountPaid || 0
          cardText.average = orders.aggregate.avg.amountPaid || 0
       } else {
-         cardText.title = 'REJECTED OR CANCELLED'
+         cardText.title = 'Rejected Or Cancelled'
          cardText.count = cancelledOrders.aggregate.count
          cardText.amount = cancelledOrders.aggregate.sum.amountPaid || 0
          cardText.average = cancelledOrders.aggregate.avg.amountPaid || 0
