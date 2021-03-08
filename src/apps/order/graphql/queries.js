@@ -1455,11 +1455,35 @@ export const QUERIES = {
                         productOption {
                            id
                            type
+                           label
+                           optionType: productOptionType {
+                              orderMode
+                           }
                         }
                         cartItemProduct {
                            id
                            name
                            image
+                           isAssembled
+                        }
+                        totalSachets: cartItemProductComponentSachets_aggregate {
+                           aggregate {
+                              count
+                           }
+                        }
+                        packedSachets: cartItemProductComponentSachets_aggregate(
+                           where: { packingStatus: { _eq: "COMPLETED" } }
+                        ) {
+                           aggregate {
+                              count
+                           }
+                        }
+                        assembledSachets: cartItemProductComponentSachets_aggregate(
+                           where: { isAssembled: { _eq: true } }
+                        ) {
+                           aggregate {
+                              count
+                           }
                         }
                      }
                   }
