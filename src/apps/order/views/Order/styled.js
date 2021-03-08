@@ -25,11 +25,22 @@ export const Styles = {
    ProductItem: styled.li(
       ({ isActive }) => css`
          padding: 12px;
+         display: flex;
          cursor: pointer;
          list-style: none;
          border-radius: 2px;
          ${isActive && `color: #fff`};
          background: ${isActive ? '#353244' : '#f3f3f3'};
+         aside {
+            width: 80px;
+            overflow: hidden;
+            margin-right: 14px;
+         }
+         img {
+            width: 100%;
+            object-fit: cover;
+            border-radius: 2px;
+         }
          h3 {
             font-size: 14px;
             font-weight: 500;
@@ -68,7 +79,7 @@ export const Scroll = {
 }
 
 export const StyledProductTitle = styled.span`
-   font-weight: 500;
+   font-weight: 400;
    font-size: 16px;
    line-height: 14px;
 `

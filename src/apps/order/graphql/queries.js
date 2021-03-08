@@ -20,17 +20,12 @@ export const QUERIES = {
             order(id: $id) {
                id
                tax
-               source
                discount
                itemTotal
                isAccepted
                isRejected
                created_at
-               deliveryInfo
-               orderStatus
-               paymentStatus
                deliveryPrice
-               transactionId
                fulfillmentType
                thirdPartyOrderId
                thirdPartyOrder {
@@ -39,71 +34,87 @@ export const QUERIES = {
                   products: parsedData(path: "items")
                   emailContent: parsedData(path: "HtmlDocument")
                }
-               cart: orderCart {
+               cartId
+               cart {
                   id
+                  status
+                  source
                   isTest
-               }
-               pickup: deliveryInfo(path: "pickup.window")
-               restaurant: deliveryInfo(path: "pickup.pickupInfo")
-               dropoff: deliveryInfo(path: "dropoff.window")
-               customer: deliveryInfo(path: "dropoff.dropoffInfo")
-               total_mealkits: orderMealKitProducts_aggregate {
-                  aggregate {
-                     count(columns: id)
-                  }
-               }
-               packed_mealkits: orderMealKitProducts_aggregate(
-                  where: { assemblyStatus: { _eq: "COMPLETED" } }
-               ) {
-                  aggregate {
-                     count(columns: id)
-                  }
-               }
-               assembled_mealkits: orderMealKitProducts_aggregate(
-                  where: { isAssembled: { _eq: true } }
-               ) {
-                  aggregate {
-                     count(columns: id)
-                  }
-               }
+                  paymentStatus
+                  transactionId
+                  fulfillmentInfo
+                  customer: customerInfo
 
-               total_readytoeats: orderReadyToEatProducts_aggregate {
-                  aggregate {
-                     count(columns: id)
+                  assembledProducts: cartItemProductComponents_aggregate(
+                     where: { cartItemProduct: { isAssembled: { _eq: true } } }
+                  ) {
+                     aggregate {
+                        count
+                     }
+                  }
+                  packedProducts: cartItemProductComponents_aggregate(
+                     where: {
+                        cartItemProduct: {
+                           assemblyStatus: { _eq: "COMPLETED" }
+                        }
+                     }
+                  ) {
+                     aggregate {
+                        count
+                     }
+                  }
+                  totalProducts: cartItemProductComponents_aggregate {
+                     aggregate {
+                        count
+                     }
                   }
                }
-               packed_readytoeats: orderReadyToEatProducts_aggregate(
-                  where: { assemblyStatus: { _eq: "COMPLETED" } }
+            }
+         }
+      `,
+      PRODUCTS: gql`
+         subscription products(
+            $where: order_cartItemProductComponent_bool_exp!
+         ) {
+            products: order_cartItemProductComponent(
+               where: $where
+               order_by: { created_at: desc }
+            ) {
+               id
+               isAssembled
+               assemblyStatus
+               productOption {
+                  id
+                  type
+                  label
+                  operationConfigId
+                  operationConfig {
+                     labelTemplateId
+                     stationId
+                  }
+               }
+               cartItemProduct {
+                  id
+                  name
+                  image
+               }
+               totalSachets: cartItemProductComponentSachets_aggregate {
+                  aggregate {
+                     count
+                  }
+               }
+               packedSachets: cartItemProductComponentSachets_aggregate(
+                  where: { packingStatus: { _eq: "COMPLETED" } }
                ) {
                   aggregate {
-                     count(columns: id)
+                     count
                   }
                }
-               assembled_readytoeats: orderReadyToEatProducts_aggregate(
+               assembledSachets: cartItemProductComponentSachets_aggregate(
                   where: { isAssembled: { _eq: true } }
                ) {
                   aggregate {
-                     count(columns: id)
-                  }
-               }
-
-               total_inventories: orderInventoryProducts_aggregate {
-                  aggregate {
-                     count(columns: id)
-                  }
-               }
-               packed_inventories: orderInventoryProducts_aggregate(
-                  where: { assemblyStatus: { _eq: "COMPLETED" } }
-               ) {
-                  aggregate {
-                     count(columns: id)
-                  }
-               }
-               assembled_inventories: orderInventoryProducts_aggregate(
-                  where: { isAssembled: { _eq: true } }
-               ) {
-                  aggregate {
-                     count(columns: id)
+                     count
                   }
                }
             }
@@ -1456,9 +1467,6 @@ export const QUERIES = {
                            id
                            type
                            label
-                           optionType: productOptionType {
-                              orderMode
-                           }
                         }
                         cartItemProduct {
                            id

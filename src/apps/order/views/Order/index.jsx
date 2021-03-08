@@ -1,10 +1,10 @@
 import React from 'react'
 import axios from 'axios'
-import { isEmpty, isNull } from 'lodash'
 import { toast } from 'react-toastify'
 import htmlToReact from 'html-to-react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { isEmpty, isNull, groupBy } from 'lodash'
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
 import {
    Tag,
@@ -21,14 +21,14 @@ import {
    HorizontalTabPanels,
 } from '@dailykit/ui'
 
-import { ResponsiveFlex, Styles } from './styled'
 import { formatDate } from '../../utils'
 import { findAndSelectSachet } from './methods'
+import { ResponsiveFlex, Styles } from './styled'
 import { QUERIES, MUTATIONS } from '../../graphql'
 import { PrintIcon, UserIcon } from '../../assets/icons'
 import { useConfig, useOrder } from '../../context'
 import { currencyFmt, logger } from '../../../../shared/utils'
-import { MealKits, Inventories, ReadyToEats } from './sections'
+import { Products, MealKits, Inventories, ReadyToEats } from './sections'
 import { useAccess, useTabs } from '../../../../shared/providers'
 import {
    Tooltip,
@@ -84,35 +84,47 @@ const Order = () => {
    )
 
    const {
-      error: mealkitsError,
-      loading: mealkitsLoading,
-      data: { mealkits = [] } = {},
-   } = useSubscription(QUERIES.ORDER.MEALKITS, {
+      loading: productsLoading,
+      error: productsError,
+      data: { products = [] } = {},
+   } = useSubscription(QUERIES.ORDER.PRODUCTS, {
+      skip: !order?.cartId,
       variables: {
-         orderId: params.id,
+         where: {
+            cartId: {
+               _eq: order?.cartId,
+            },
+         },
+      },
+      onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
+         setIsThirdParty(Boolean(data?.order?.thirdPartyOrderId))
       },
    })
 
-   const {
-      error: readytoeatsError,
-      loading: readytoeatsLoading,
-      data: { readytoeats = [] } = {},
-   } = useSubscription(QUERIES.ORDER.READY_TO_EAT.LIST, {
-      variables: {
-         orderId: params.id,
-      },
-   })
+   React.useEffect(() => {
+      if (!productsLoading && !isEmpty(products)) {
+         const [product] = products
+         const {
+            id,
+            isAssembled,
+            assemblyStatus,
+            productOption,
+            cartItemProduct,
+         } = product
+         dispatch({
+            type: 'SELECT_PRODUCT',
+            payload: {
+               id,
+               isAssembled,
+               assemblyStatus,
+               productOption,
+               cartItemProduct,
+            },
+         })
+      }
+   }, [productsLoading, products])
 
-   const {
-      error: inventoriesError,
-      loading: inventoriesLoading,
-      data: { inventories = [] } = {},
-   } = useSubscription(QUERIES.ORDER.INVENTORY.LIST, {
-      variables: {
-         orderId: params.id,
-      },
-   })
-
+   /*
    React.useEffect(() => {
       if (!mealkitsLoading && !readytoeatsLoading && !inventoriesLoading) {
          const types = [
@@ -209,6 +221,7 @@ const Order = () => {
       inventories,
       inventoriesLoading,
    ])
+   */
 
    React.useEffect(() => {
       if (!loading && order?.id && !tab) {
@@ -279,6 +292,7 @@ const Order = () => {
       kots()
    }, [order])
 
+   /*
    const onTabChange = React.useCallback(
       index => {
          setTabIndex(index)
@@ -319,6 +333,7 @@ const Order = () => {
       },
       [setTabIndex, mealkits, inventories, readytoeats]
    )
+   */
 
    if (loading) return <InlineLoader />
    if (error) {
@@ -326,6 +341,7 @@ const Order = () => {
       toast.error('Failed to fetch order details!')
       return <ErrorState message="Failed to fetch order details!" />
    }
+   const types = groupBy(products, 'productOption.type')
    return (
       <Flex>
          <Spacer size="16px" />
@@ -422,32 +438,11 @@ const Order = () => {
                </Flex>
                {!isThirdParty && (
                   <>
-                     {/* 
-                    <Spacer size="32px" xAxis />
-                     <Flex as="section" container alignItems="center">
-                        <Flex container alignItems="center">
-                           <Text as="h4">{t(address.concat('ready by'))}</Text>
-                           <Tooltip identifier="order_details_date_ready_by" />
-                        </Flex>
-                        <Text as="p">
-                           &nbsp;:&nbsp;
-                           {order?.deliveryInfo?.pickup?.window?.approved?.startsAt
-                              ? formatDate(
-                                   order?.deliveryInfo?.pickup?.window?.approved
-                                      ?.startsAt
-                                )
-                              : 'N/A'}
-                        </Text>
-                     </Flex> 
-                  */}
                      <Spacer size="32px" xAxis />
                      <Flex as="section" container alignItems="center">
                         <TimeSlot
-                           type={order?.fulfillmentType}
-                           data={{
-                              pickup: order.pickup,
-                              dropoff: order.dropoff,
-                           }}
+                           type={order.fulfillmentType}
+                           time={order.cart.fulfillmentInfo?.slot}
                         />
                      </Flex>
                   </>
@@ -455,6 +450,7 @@ const Order = () => {
             </Flex>
          </ResponsiveFlex>
          <Spacer size="16px" />
+
          <ResponsiveFlex
             container
             padding="0 16px"
@@ -463,17 +459,9 @@ const Order = () => {
          >
             {!isThirdParty ? (
                <Text as="h3">
-                  {order.assembled_mealkits.aggregate.count +
-                     order.assembled_readytoeats.aggregate.count +
-                     order.assembled_inventories.aggregate.count}{' '}
-                  /{' '}
-                  {order.packed_mealkits.aggregate.count +
-                     order.packed_readytoeats.aggregate.count +
-                     order.packed_inventories.aggregate.count}{' '}
-                  /{' '}
-                  {order.total_mealkits.aggregate.count +
-                     order.total_readytoeats.aggregate.count +
-                     order.total_inventories.aggregate.count}
+                  {order.cart.assembledProducts.aggregate.count} /{' '}
+                  {order.cart.packedProducts.aggregate.count} /{' '}
+                  {order.cart.totalProducts.aggregate.count}
                   &nbsp;{t(address.concat('items'))}
                </Text>
             ) : (
@@ -535,6 +523,7 @@ const Order = () => {
                </Flex>
             </ResponsiveFlex>
          </ResponsiveFlex>
+
          <Spacer size="8px" />
          {isThirdParty ? (
             <HorizontalTabs>
@@ -585,58 +574,28 @@ const Order = () => {
                </HorizontalTabPanels>
             </HorizontalTabs>
          ) : (
-            <HorizontalTabs index={tabIndex} onChange={onTabChange}>
+            <HorizontalTabs
+            // index={tabIndex} onChange={onTabChange}
+            >
                <HorizontalTabList style={{ padding: '0 16px' }}>
-                  {!isEmpty(mealkits) && (
-                     <HorizontalTab>
-                        Meal Kits ({mealkits.length})
+                  {Object.keys(types).map(key => (
+                     <HorizontalTab key={key}>
+                        {key}
+                        <span> ({types[key].length})</span>
                      </HorizontalTab>
-                  )}
-                  {!isEmpty(inventories) && (
-                     <HorizontalTab>
-                        Inventories ({inventories.length})
-                     </HorizontalTab>
-                  )}
-                  {!isEmpty(readytoeats) && (
-                     <HorizontalTab>
-                        Ready To Eats ({readytoeats.length})
-                     </HorizontalTab>
-                  )}
+                  ))}
                </HorizontalTabList>
                <HorizontalTabPanels>
-                  {!isEmpty(mealkits) && (
-                     <HorizontalTabPanel>
-                        <MealKits
-                           data={{
-                              mealkits,
-                              error: mealkitsError,
-                              loading: mealkitsLoading,
-                           }}
+                  {Object.values(types).map((listing, index) => (
+                     <HorizontalTabPanel key={index}>
+                        <Products
+                           order={order}
+                           products={listing}
+                           loading={productsLoading}
+                           error={productsError}
                         />
                      </HorizontalTabPanel>
-                  )}
-                  {!isEmpty(inventories) && (
-                     <HorizontalTabPanel>
-                        <Inventories
-                           data={{
-                              inventories,
-                              error: inventoriesError,
-                              loading: inventoriesLoading,
-                           }}
-                        />
-                     </HorizontalTabPanel>
-                  )}
-                  {!isEmpty(readytoeats) && (
-                     <HorizontalTabPanel>
-                        <ReadyToEats
-                           data={{
-                              readytoeats,
-                              error: readytoeatsError,
-                              loading: readytoeatsLoading,
-                           }}
-                        />
-                     </HorizontalTabPanel>
-                  )}
+                  ))}
                </HorizontalTabPanels>
             </HorizontalTabs>
          )}
@@ -646,16 +605,7 @@ const Order = () => {
 
 export default Order
 
-const TimeSlot = ({ type, data: { pickup = {}, dropoff = {} } = {} }) => {
-   let startsAt = ''
-   let endsAt = ''
-   if (isPickup(type)) {
-      startsAt = pickup?.approved?.startsAt || ''
-      endsAt = pickup?.approved?.endsAt || ''
-   } else {
-      startsAt = dropoff?.requested?.startsAt || ''
-      endsAt = dropoff?.requested?.endsAt || ''
-   }
+const TimeSlot = ({ type, time = {} }) => {
    return (
       <Flex as="section" container alignItems="center">
          <Flex container alignItems="center">
@@ -663,24 +613,23 @@ const TimeSlot = ({ type, data: { pickup = {}, dropoff = {} } = {} }) => {
             <Tooltip identifier="order_details_date_fulfillment" />
          </Flex>
          <Text as="p">
-            &nbsp;:&nbsp;
-            {startsAt
-               ? formatDate(startsAt, {
+            {time?.from
+               ? formatDate(time.from, {
                     month: 'short',
                     day: 'numeric',
                     year: 'numeric',
                  })
                : 'N/A'}
             ,&nbsp;
-            {startsAt
-               ? formatDate(startsAt, {
+            {time.from
+               ? formatDate(time.from, {
                     minute: 'numeric',
                     hour: 'numeric',
                  })
                : 'N/A'}
             -
-            {endsAt
-               ? formatDate(endsAt, {
+            {time.to
+               ? formatDate(time.to, {
                     minute: 'numeric',
                     hour: 'numeric',
                  })

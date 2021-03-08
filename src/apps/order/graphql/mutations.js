@@ -96,6 +96,15 @@ export const MUTATIONS = {
          },
       },
    },
+   CART_ITEM: {
+      UPDATE: gql`
+         mutation updateCartItem($id: Int!, $_set: order_cartItem_set_input!) {
+            updateCartItem(pk_columns: { id: $id }, _set: $_set) {
+               id
+            }
+         }
+      `,
+   },
    SETTING: {
       UPDATE: gql`
          mutation update_settings_appSettings(
