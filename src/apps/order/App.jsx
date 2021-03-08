@@ -114,7 +114,12 @@ const App = () => {
             {state.current_view === 'SACHET_ITEM' && <ProcessSachet />}
          </ErrorBoundary>
          <Main />
-         <Footer />
+         <Footer
+            isOpen={isOpen}
+            openPortal={openPortal}
+            closePortal={closePortal}
+            setPosition={setPosition}
+         />
          <BottomQuickInfoBar openOrderSummaryTunnel={openOrderSummaryTunnel} />
          <OrderSummaryTunnel>
             <ErrorBoundary>
