@@ -56,14 +56,14 @@ export const Products = ({
    const print = () => {
       if (
          isNull(
-            state.current_product?.productOption?.operationConfig
+            state.current_product?.parent?.productOption?.operationConfig
                ?.labelTemplateId
          )
       ) {
          toast.error('No template assigned!')
          return
       }
-      const url = `${process.env.REACT_APP_TEMPLATE_URL}?template={"name":"mealkit_product1","type":"label","format":"html"}&data={"id":${state.current_product?.cartItemProduct.id}}`
+      const url = `${process.env.REACT_APP_TEMPLATE_URL}?template={"name":"mealkit_product1","type":"label","format":"html"}&data={"id":${state.current_product?.id}}`
 
       if (config.print.print_simulation.value.isActive) {
          setLabel(url)
@@ -76,10 +76,11 @@ export const Products = ({
             id: state.current_product?.id,
             assemblyStatus: 'COMPLETED',
             labelTemplateId:
-               state.current_product?.productOption?.operationConfig
+               state.current_product?.parent?.productOption?.operationConfig
                   ?.labelTemplateId,
             assemblyStationId:
-               state.current_product?.productOption?.operationConfig?.stationId,
+               state.current_product?.parent?.productOption?.operationConfig
+                  ?.stationId,
             // simpleRecipeProductId: current.simpleRecipeProductId,
             // simpleRecipeProductOptionId: current.simpleRecipeProductOptionId,
          }
@@ -112,8 +113,8 @@ export const Products = ({
       if (isSuperUser) {
          access = true
       } else if (
-         state.current_product?.productOptionct?.operationConfig?.stationId ===
-         config.current_station?.id
+         state.current_product?.parent?.productOption?.operationConfig
+            ?.stationId === config.current_station?.id
       ) {
          access = true
       } else {
@@ -123,23 +124,10 @@ export const Products = ({
    }
 
    const selectProduct = product => {
-      const {
-         id,
-         isAssembled,
-         assemblyStatus,
-         productOption,
-         cartItemProduct,
-      } = product
       setLabel('')
       dispatch({
          type: 'SELECT_PRODUCT',
-         payload: {
-            id,
-            isAssembled,
-            assemblyStatus,
-            productOption,
-            cartItemProduct,
-         },
+         payload: product,
       })
       // findAndSelectSachet({
       //    dispatch,
@@ -152,8 +140,8 @@ export const Products = ({
    const packFallBackMessage = () => {
       if (isOrderConfirmed) {
          if (
-            state.current_product?.productOption?.operationConfig?.stationId ===
-            config.current_station?.id
+            state.current_product?.parent?.productOption?.operationConfig
+               ?.stationId === config.current_station?.id
          ) {
             return 'Mark Packed'
          }
@@ -165,8 +153,8 @@ export const Products = ({
    const assembleFallBackMessage = () => {
       if (isOrderConfirmed) {
          if (
-            state.current_product?.productOption?.operationConfig?.stationId ===
-            config.current_station?.id
+            state.current_product?.parent?.productOption?.operationConfig
+               ?.stationId === config.current_station?.id
          ) {
             return ''
          }
@@ -384,20 +372,14 @@ const ProductCard = ({ product, isActive, onClick }) => {
 
    return (
       <Styles.ProductItem isActive={isActive} onClick={onClick}>
-         {product?.cartItemProduct?.image && (
+         {product?.displayImage && (
             <aside>
-               <img
-                  src={product?.cartItemProduct.image}
-                  alt={product?.cartItemProduct.name}
-               />
+               <img src={product?.displayImage} alt={product?.displayName} />
             </aside>
          )}
          <main>
             <div>
-               <StyledProductTitle>
-                  {product?.cartItemProduct?.name} -{' '}
-                  {product?.productOption?.label}
-               </StyledProductTitle>
+               <StyledProductTitle>{product?.displayName}</StyledProductTitle>
             </div>
             <Spacer size="14px" />
             <Flex container alignItems="center" justifyContent="space-between">

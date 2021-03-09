@@ -44,26 +44,29 @@ export const QUERIES = {
                   transactionId
                   fulfillmentInfo
                   customer: customerInfo
-
-                  assembledProducts: cartItemProductComponents_aggregate(
-                     where: { cartItemProduct: { isAssembled: { _eq: true } } }
-                  ) {
-                     aggregate {
-                        count
-                     }
-                  }
-                  packedProducts: cartItemProductComponents_aggregate(
+                  assembledProducts: orderItems_aggregate(
                      where: {
-                        cartItemProduct: {
-                           assemblyStatus: { _eq: "COMPLETED" }
-                        }
+                        levelType: { _eq: "orderItem" }
+                        isAssembled: { _eq: true }
                      }
                   ) {
                      aggregate {
                         count
                      }
                   }
-                  totalProducts: cartItemProductComponents_aggregate {
+                  packedProducts: orderItems_aggregate(
+                     where: {
+                        levelType: { _eq: "orderItem" }
+                        assemblyStatus: { _eq: "COMPLETED" }
+                     }
+                  ) {
+                     aggregate {
+                        count
+                     }
+                  }
+                  totalProducts: orderItems_aggregate(
+                     where: { levelType: { _eq: "orderItem" } }
+                  ) {
                      aggregate {
                         count
                      }
@@ -73,44 +76,41 @@ export const QUERIES = {
          }
       `,
       PRODUCTS: gql`
-         subscription products(
-            $where: order_cartItemProductComponent_bool_exp!
-         ) {
-            products: order_cartItemProductComponent(
+         subscription products($where: order_cartItemView_bool_exp!) {
+            products: order_cartItemView(
                where: $where
                order_by: { created_at: desc }
             ) {
                id
                isAssembled
                assemblyStatus
-               productOption {
-                  id
-                  type
-                  label
-                  operationConfigId
-                  operationConfig {
-                     labelTemplateId
-                     stationId
+               displayName
+               displayImage
+               operationConfigId
+               operationConfig {
+                  labelTemplateId
+                  stationId
+               }
+               parent {
+                  productOptionId
+                  productOption {
+                     id
+                     type
                   }
                }
-               cartItemProduct {
-                  id
-                  name
-                  image
-               }
-               totalSachets: cartItemProductComponentSachets_aggregate {
+               totalSachets: childs_aggregate {
                   aggregate {
                      count
                   }
                }
-               packedSachets: cartItemProductComponentSachets_aggregate(
+               packedSachets: childs_aggregate(
                   where: { packingStatus: { _eq: "COMPLETED" } }
                ) {
                   aggregate {
                      count
                   }
                }
-               assembledSachets: cartItemProductComponentSachets_aggregate(
+               assembledSachets: childs_aggregate(
                   where: { isAssembled: { _eq: true } }
                ) {
                   aggregate {

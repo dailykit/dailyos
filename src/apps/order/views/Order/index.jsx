@@ -91,6 +91,7 @@ const Order = () => {
       skip: !order?.cartId,
       variables: {
          where: {
+            levelType: { _eq: 'orderItem' },
             cartId: {
                _eq: order?.cartId,
             },
@@ -104,22 +105,9 @@ const Order = () => {
    React.useEffect(() => {
       if (!productsLoading && !isEmpty(products)) {
          const [product] = products
-         const {
-            id,
-            isAssembled,
-            assemblyStatus,
-            productOption,
-            cartItemProduct,
-         } = product
          dispatch({
             type: 'SELECT_PRODUCT',
-            payload: {
-               id,
-               isAssembled,
-               assemblyStatus,
-               productOption,
-               cartItemProduct,
-            },
+            payload: product,
          })
       }
    }, [productsLoading, products])
@@ -341,7 +329,7 @@ const Order = () => {
       toast.error('Failed to fetch order details!')
       return <ErrorState message="Failed to fetch order details!" />
    }
-   const types = groupBy(products, 'productOption.type')
+   const types = groupBy(products, 'parent.productOption.type')
    return (
       <Flex>
          <Spacer size="16px" />
