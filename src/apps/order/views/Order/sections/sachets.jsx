@@ -2,32 +2,53 @@ import React from 'react'
 import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { Flex, Filler } from '@dailykit/ui'
+import { useSubscription } from '@apollo/react-hooks'
 
 import { List } from '../styled'
 import { SachetItem } from './sachet_item'
-import { useConfig } from '../../../context'
+import { useConfig, useOrder } from '../../../context'
 import { useAccess } from '../../../../../shared/providers'
-import { Tooltip, DragNDrop } from '../../../../../shared/components'
+import {
+   Tooltip,
+   DragNDrop,
+   InlineLoader,
+} from '../../../../../shared/components'
 import { useDnd } from '../../../../../shared/components/DragNDrop/useDnd'
+import { QUERIES } from '../../../graphql'
 
 const address = 'apps.order.views.order.'
 
-const ProductDetails = ({ product }) => {
+const Sachets = () => {
    const { t } = useTranslation()
    const { state: config } = useConfig()
    const { initiatePriority } = useDnd()
    const { isSuperUser } = useAccess()
+   const { state } = useOrder()
 
-   React.useEffect(() => {
-      if (!isEmpty(product?.orderSachets)) {
-         initiatePriority({
-            data: product?.orderSachets,
-            tablename: 'orderSachet',
-            schemaname: 'order',
-         })
+   const { loading, data: { sachets = [] } = {} } = useSubscription(
+      QUERIES.ORDER.SACHET.MULTIPLE,
+      {
+         skip: !state?.current_product?.id,
+         variables: {
+            where: {
+               parentCartItemId: { _eq: state?.current_product?.id },
+               levelType: { _eq: 'orderItemSachet' },
+            },
+         },
       }
-   }, [product])
+   )
 
+   // React.useEffect(() => {
+   //    if (!loading && !isEmpty(sachets)) {
+   //       initiatePriority({
+   //          data: sachets,
+   //          tablename: 'cartItem',
+   //          schemaname: 'order',
+   //       })
+   //    }
+   // }, [loading, sachets])
+
+   if (loading) return <InlineLoader />
    return (
       <>
          <List.Head>
@@ -49,25 +70,21 @@ const ProductDetails = ({ product }) => {
             </Flex>
          </List.Head>
          <List.Body>
-            {!isEmpty(product?.orderSachets) ? (
+            {!isEmpty(sachets) ? (
                <DragNDrop
-                  list={product?.orderSachets}
+                  list={sachets}
                   droppableId="sachetItems"
-                  tablename="orderSachet"
+                  tablename="cartItem"
                   schemaname="order"
                >
-                  {product?.orderSachets
+                  {sachets
                      ?.filter(
                         node =>
                            isSuperUser ||
-                           node.packingStationId === config?.current_station?.id
+                           node.stationId === config?.current_station?.id
                      )
                      ?.map(item => (
-                        <SachetItem
-                           item={item}
-                           key={item.id}
-                           product={product}
-                        />
+                        <SachetItem item={item} key={item.id} />
                      ))}
                </DragNDrop>
             ) : (
@@ -78,4 +95,4 @@ const ProductDetails = ({ product }) => {
    )
 }
 
-export default ProductDetails
+export default Sachets

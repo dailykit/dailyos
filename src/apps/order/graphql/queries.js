@@ -1383,6 +1383,48 @@ export const QUERIES = {
                }
             }
          `,
+         MULTIPLE: gql`
+            subscription sachets($where: order_cartItemView_bool_exp!) {
+               sachets: order_cartItemView(
+                  where: $where
+                  order_by: { position: desc, created_at: desc }
+               ) {
+                  id
+                  position
+                  stationId
+                  isAssembled
+                  packingStatus
+                  displayName
+                  displayUnit
+                  displayBulkDensity
+                  displayUnitQuantity
+                  supplierItemId
+                  supplierItem {
+                     id
+                     supplierItemName
+                  }
+                  operationConfigId
+                  operationConfig {
+                     id
+                     stationId
+                     station {
+                        id
+                        name
+                     }
+                     labelTemplateId
+                     labelTemplate {
+                        id
+                        name
+                     }
+                     packagingId
+                     packaging {
+                        id
+                        name
+                     }
+                  }
+               }
+            }
+         `,
       },
    },
    ORDERS: {

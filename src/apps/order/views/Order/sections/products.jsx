@@ -16,9 +16,9 @@ import {
    TextButton,
 } from '@dailykit/ui'
 
+import Sachets from './sachets'
 import ProductModifiers from './modifiers'
 import { MUTATIONS } from '../../../graphql'
-import ProductDetails from './product_details'
 import { findAndSelectSachet } from '../methods'
 import { UserIcon } from '../../../assets/icons'
 import { logger } from '../../../../../shared/utils'
@@ -333,9 +333,7 @@ export const Products = ({
                                        </span>
                                     </section>
                                  </Legend>
-                                 {state.current_product?.id && (
-                                    <ProductDetails />
-                                 )}
+                                 {state.current_product?.id && <Sachets />}
                               </section>
                               {/* {!hideModifiers && current?.hasModifiers && (
                            <>

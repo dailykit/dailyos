@@ -16,7 +16,7 @@ import {
 
 import ProductModifiers from './modifiers'
 import { MUTATIONS } from '../../../graphql'
-import ProductDetails from './product_details'
+// import ProductDetails from './sachets'
 import { findAndSelectSachet } from '../methods'
 import { UserIcon } from '../../../assets/icons'
 import { logger } from '../../../../../shared/utils'
@@ -283,7 +283,7 @@ export const MealKits = ({
                      <span>{t(address.concat('assembled'))}</span>
                   </section>
                </Legend>
-               {current && <ProductDetails product={current} />}
+               {/* {current && <ProductDetails product={current} />} */}
             </section>
             {!hideModifiers && current?.hasModifiers && (
                <>
