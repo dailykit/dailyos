@@ -66,8 +66,8 @@ export const Products = ({ order }) => {
    }
 
    const types = groupBy(
-      order.cart.cartItemProductComponentsAggregate.nodes,
-      'productOption.type'
+      order.cart.orderItems_aggregate.nodes,
+      'parent.productOption.type'
    )
    return (
       <Styles.Products>
@@ -76,10 +76,7 @@ export const Products = ({ order }) => {
                <Styles.Tab>
                   {t(address.concat('all'))}{' '}
                   <StyledCount>
-                     {
-                        order.cart.cartItemProductComponentsAggregate.aggregate
-                           .count
-                     }
+                     {order.cart.orderItems_aggregate.aggregate.count}
                   </StyledCount>
                </Styles.Tab>
                {Object.keys(types).map(key => (
@@ -91,43 +88,42 @@ export const Products = ({ order }) => {
             </Styles.TabList>
             <Styles.TabPanels>
                <Styles.TabPanel>
-                  {order.cart.cartItemProductComponentsAggregate.nodes.map(
-                     item => (
-                        <StyledProductItem key={item.id}>
-                           <div>
-                              <ProductTitle
-                                 data={item.cartItemProduct}
-                                 type="INVENTORY"
-                              />
-                           </div>
-                           <StyledServings>
+                  {order.cart.orderItems_aggregate.nodes.map(item => (
+                     <StyledProductItem key={item.id}>
+                        <div>
+                           <StyledProductTitle>
+                              {item.displayName}
+                           </StyledProductTitle>
+                        </div>
+                        {/* <StyledServings>
                               <span>
                                  <UserIcon size={16} color="#555B6E" />
                               </span>
                               <span>{item?.productOption?.label}</span>
-                           </StyledServings>
-                           <span>
-                              {item.assembledSachets?.aggregate?.count || 0} /{' '}
-                              {item.packedSachets?.aggregate?.count || 0} /{' '}
-                              {item.totalSachets?.aggregate?.count || 0}
-                           </span>
-                        </StyledProductItem>
-                     )
-                  )}
+                           </StyledServings> */}
+                        <span>
+                           {item.assembledSachets?.aggregate?.count || 0} /{' '}
+                           {item.packedSachets?.aggregate?.count || 0} /{' '}
+                           {item.totalSachets?.aggregate?.count || 0}
+                        </span>
+                     </StyledProductItem>
+                  ))}
                </Styles.TabPanel>
                {Object.values(types).map((listing, index) => (
                   <Styles.TabPanel key={index}>
                      {listing.map(item => (
                         <StyledProductItem key={item.id}>
                            <div>
-                              <ProductTitle data={item.cartItemProduct} />
+                              <StyledProductTitle>
+                                 {item.displayName}
+                              </StyledProductTitle>
                            </div>
-                           <StyledServings>
+                           {/* <StyledServings>
                               <span>
                                  <UserIcon size={16} color="#555B6E" />
                               </span>
                               <span>{item.productOption?.label}</span>
-                           </StyledServings>
+                           </StyledServings> */}
                            <span>
                               {item.assembledSachets?.aggregate?.count || 0} /{' '}
                               {item.packedSachets?.aggregate?.count || 0} /{' '}
@@ -141,8 +137,4 @@ export const Products = ({ order }) => {
          </Styles.Tabs>
       </Styles.Products>
    )
-}
-
-const ProductTitle = ({ data }) => {
-   return <StyledProductTitle>{data.name}</StyledProductTitle>
 }

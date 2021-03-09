@@ -98,6 +98,7 @@ export const StyledCount = styled.span`
 `
 
 export const StyledProductItem = styled.div`
+   height: 32px;
    display: grid;
    grid-gap: 24px;
    padding: 0 12px;

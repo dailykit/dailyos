@@ -1457,36 +1457,38 @@ export const QUERIES = {
                   paymentStatus
                   fulfillmentInfo
                   customer: customerInfo
-                  cartItemProductComponentsAggregate: cartItemProductComponents_aggregate {
+                  orderItems_aggregate(
+                     where: { levelType: { _eq: "orderItem" } }
+                  ) {
                      aggregate {
                         count
                      }
                      nodes {
                         id
-                        productOption {
-                           id
-                           type
-                           label
+                        isAssembled
+                        assemblyStatus
+                        displayName
+                        displayImage
+                        parent {
+                           productOptionId
+                           productOption {
+                              id
+                              type
+                           }
                         }
-                        cartItemProduct {
-                           id
-                           name
-                           image
-                           isAssembled
-                        }
-                        totalSachets: cartItemProductComponentSachets_aggregate {
+                        totalSachets: childs_aggregate {
                            aggregate {
                               count
                            }
                         }
-                        packedSachets: cartItemProductComponentSachets_aggregate(
+                        packedSachets: childs_aggregate(
                            where: { packingStatus: { _eq: "COMPLETED" } }
                         ) {
                            aggregate {
                               count
                            }
                         }
-                        assembledSachets: cartItemProductComponentSachets_aggregate(
+                        assembledSachets: childs_aggregate(
                            where: { isAssembled: { _eq: true } }
                         ) {
                            aggregate {
