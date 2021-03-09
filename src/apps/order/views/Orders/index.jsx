@@ -23,9 +23,10 @@ const Orders = () => {
       loading: loadingAggregate,
       data: { orders: ordersAggregate = {} } = {},
    } = useSubscription(QUERIES.ORDERS.AGGREGATE.TOTAL, {
+      skip: !state.orders.where?.cart?.status?._eq,
       variables: {
          where: {
-            cart: { status: { _eq: state.orders.where.cart.status._eq } },
+            cart: { status: { _eq: state.orders.where?.cart?.status?._eq } },
          },
       },
    })

@@ -133,14 +133,18 @@ const reducers = (state, { type, payload }) => {
          }
       }
       case 'CLEAR_SOURCE_FILTER': {
-         const { source, ...rest } = state.orders.where
+         const { cart, ...rest } = state.orders.where
+         const { source, ...restCart } = cart
          return {
             ...state,
             orders: {
                loading: true,
                limit: 10,
                offset: 0,
-               where: rest,
+               where: {
+                  ...rest,
+                  cart: restCart,
+               },
             },
          }
       }

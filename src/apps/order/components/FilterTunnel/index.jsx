@@ -194,6 +194,7 @@ export const FilterTunnel = () => {
                      type: 'SET_FILTER',
                      payload: {
                         cart: {
+                           ...state.orders.where?.cart,
                            source: {
                               _eq:
                                  option.id === 1

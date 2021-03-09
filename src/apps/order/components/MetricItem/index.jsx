@@ -23,6 +23,7 @@ export const MetricItem = ({
          type: 'SET_FILTER',
          payload: {
             cart: {
+               ...state.orders.where?.cart,
                status: {
                   ...(!['ORDER_ALL', 'ORDER_REJECTED_OR_CANCELLED'].includes(
                      variant
@@ -68,7 +69,7 @@ export const MetricItem = ({
          variant={variant}
          onClick={() => changeStatus()}
          className={
-            (Object.keys(state.orders.where?.cart?.status).length === 0 &&
+            (Object.keys(state.orders.where?.cart?.status || {}).length === 0 &&
                variant === 'ORDER_ALL') ||
             variant === state.orders.where?.cart?.status?._eq
                ? 'active'
