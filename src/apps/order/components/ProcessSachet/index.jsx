@@ -2,7 +2,7 @@ import React from 'react'
 import { isEmpty, isNull } from 'lodash'
 import axios from 'axios'
 import { toast } from 'react-toastify'
-import { useSubscription, useMutation, useLazyQuery } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 import {
    Form,
    Flex,
@@ -37,48 +37,43 @@ import { StyledIconButton } from '../OrderSummary/styled'
 export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
    const {
       state: {
-         current_view,
+         current_view: currentView,
          sachet: { id, product },
       },
       switchView,
    } = useOrder()
    const { state } = useConfig()
    const [weight, setWeight] = React.useState(0)
-   const [sachet, setSachet] = React.useState(null)
+   const [sachet, setSachet] = React.useState({})
+   const [isLoading, setIsLoading] = React.useState(true)
    const [scaleState, setScaleState] = React.useState('low')
    const [labelPreview, setLabelPreview] = React.useState('')
-   const [order, setOrder] = React.useState({
-      isRejected: null,
-      isAccepted: null,
+
+   const [updateCartItem] = useMutation(MUTATIONS.CART_ITEM.UPDATE, {
+      onCompleted: () => toast.success('Succesfully updated sachet details!'),
+      onError: error => {
+         logger(error)
+         toast.error('Failed to update sachet details!')
+      },
    })
 
-   const [updateSachet] = useMutation(MUTATIONS.ORDER.SACHET.UPDATE)
-   const [
-      fetchLabalTemplate,
-      { data: { labelTemplate = {} } = {} },
-   ] = useLazyQuery(QUERIES.LABEL_TEMPLATE.ONE)
-
-   const { loading, error } = useSubscription(QUERIES.ORDER.SACHET.ONE, {
-      variables: { id },
-      onSubscriptionData: async ({
-         subscriptionData: { data: { orderSachet = {} } = {} },
+   const { error } = useSubscription(QUERIES.ORDER.SACHET.MULTIPLE, {
+      variables: {
+         where: {
+            id: { _eq: id },
+            parentCartItemId: { _eq: state?.current_product?.id },
+            levelType: { _eq: 'orderItemSachet' },
+         },
+      },
+      onSubscriptionData: ({
+         subscriptionData: { data: { sachets = {} } = {} },
       }) => {
-         if (!isEmpty(orderSachet)) {
+         if (!isEmpty(sachets)) {
+            const [node] = sachets
             setWeight(0)
-            setSachet(orderSachet)
-            fetchLabalTemplate({
-               variables: {
-                  id: Number(orderSachet?.labelTemplateId),
-               },
-            })
-            if (orderSachet.orderMealKitProductId) {
-               setOrder(orderSachet.mealkit.order)
-            } else if (orderSachet.orderReadyToEatProductId) {
-               setOrder(orderSachet.readyToEat.order)
-            } else if (orderSachet.orderInventoryProductId) {
-               setOrder(orderSachet.inventory.order)
-            }
+            setSachet(node)
          }
+         setIsLoading(false)
       },
    })
 
@@ -94,18 +89,18 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
 
    React.useEffect(() => {
       if (sachet) {
-         if (weight < sachet.quantity) {
+         if (weight < sachet.displayUnitQuantity) {
             setScaleState('low')
-         } else if (weight > sachet.quantity) {
+         } else if (weight > sachet.displayUnitQuantity) {
             setScaleState('above')
-         } else if (weight === sachet.quantity) {
+         } else if (weight === sachet.displayUnitQuantity) {
             setScaleState('match')
          }
       }
    }, [weight, sachet])
 
    const print = React.useCallback(() => {
-      updateSachet({
+      updateCartItem({
          variables: {
             id: sachet.id,
             _set: {
@@ -113,12 +108,12 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
             },
          },
       })
-      if (isNull(sachet.labelTemplateId)) return
+      if (isNull(sachet?.operationConfig?.labelTemplateId)) return
 
       if (state.print.print_simulation.value.isActive) {
          const template = encodeURIComponent(
             JSON.stringify({
-               name: labelTemplate?.name,
+               name: sachet?.operationConfig?.labelTemplate?.name,
                type: 'label',
                format: 'html',
             })
@@ -139,10 +134,10 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
          const data = {
             id: sachet.id,
             isPortioned: true,
-            ingredientName: sachet.ingredientName,
+            ingredientName: sachet.displayName,
             processingName: sachet.processingName,
-            labelTemplateId: sachet.labelTemplateId,
-            packingStationId: sachet.packingStationId,
+            packingStationId: sachet?.operationConfig?.stationId,
+            labelTemplateId: sachet?.operationConfig?.labelTemplate?.name,
          }
          axios.post(
             url,
@@ -162,11 +157,11 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
             }
          )
       }
-   }, [sachet, labelTemplate])
+   }, [sachet])
 
    React.useEffect(() => {
       let timer
-      if (weight === sachet?.quantity) {
+      if (weight === sachet?.displayUnitQuantity) {
          timer = setTimeout(() => {
             print()
          }, 3000)
@@ -196,7 +191,7 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
                <select
                   id="mode"
                   name="mode"
-                  value={current_view}
+                  value={currentView}
                   onChange={e => changeView(e.target.value)}
                >
                   <option value="SUMMARY">Summary</option>
@@ -209,8 +204,9 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
          </Wrapper>
       )
    }
-   if (loading || !sachet) return <InlineLoader />
+   if (isLoading) return <InlineLoader />
    if (error) {
+      setIsLoading(false)
       logger(error)
       toast.error('Failed to fetch sachet details!')
       return (
@@ -223,7 +219,7 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
                <select
                   id="mode"
                   name="mode"
-                  value={current_view}
+                  value={currentView}
                   onChange={e => changeView(e.target.value)}
                >
                   <option value="SUMMARY">Summary</option>
@@ -252,7 +248,7 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
             <select
                id="mode"
                name="mode"
-               value={current_view}
+               value={currentView}
                onChange={e => changeView(e.target.value)}
             >
                <option value="SUMMARY">Summary</option>
@@ -264,21 +260,15 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
          </StyledHeader>
          <StyledMain>
             <section>
-               <h4>{sachet.ingredientName}</h4>
-               <StyledStat status={sachet.status}>{sachet.status}</StyledStat>
+               <h4>{sachet.displayName}</h4>
+               <StyledStat status={sachet.pakingStatus}>
+                  {sachet.packingStatus}
+               </StyledStat>
             </section>
             <section>
                <section>
                   <span>Supplier Item</span>
-                  <span>
-                     {(sachet.bulkItemId &&
-                        sachet?.bulkItem?.supplierItem?.name) ||
-                        ''}
-                     {(sachet.sachetItemId &&
-                        sachet?.sachetItem?.bulkItem?.supplierItem?.name) ||
-                        ''}
-                     {!sachet?.bulkItemId && !sachet?.sachetItemId && 'NA'}
-                  </span>
+                  <span>{sachet?.supplierItem?.supplierItemName || 'N/A'}</span>
                </section>
                <section>
                   <span>Processing Name</span>
@@ -287,8 +277,8 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
                <section>
                   <span>Quantity</span>
                   <span>
-                     {sachet.quantity}
-                     {sachet.unit}
+                     {sachet.displayUnitQuantity}
+                     {sachet.displayUnit}
                   </span>
                </section>
             </section>
@@ -297,7 +287,7 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
                   <span>
                      <ScaleIcon size={24} color="#fff" />
                   </span>
-                  {!isNull(sachet.labelTemplateId) && (
+                  {!isNull(sachet.operationConfig?.labelTemplateId) && (
                      <button onClick={() => print()}>Print Label</button>
                   )}
                </header>
@@ -305,21 +295,22 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
                   {weight}
                   {sachet.unit}
                </h2>
-               {weight > 0 && weight > sachet.quantity && (
+               {weight > 0 && weight > sachet.displayUnitQuantity && (
                   <h3>
-                     Reduce weight by {Math.abs(sachet.quantity - weight)}
-                     {sachet.unit}
+                     Reduce weight by{' '}
+                     {Math.abs(sachet.displayUnitQuantity - weight)}
+                     {sachet.displayUnit}
                   </h3>
                )}
-               {weight > 0 && weight < sachet.quantity && (
+               {weight > 0 && weight < sachet.displayUnitQuantity && (
                   <h3>
-                     Add {Math.abs(sachet.quantity - weight)}
-                     {sachet.unit} more
+                     Add {Math.abs(sachet.displayUnitQuantity - weight)}
+                     {sachet.displayUnit} more
                   </h3>
                )}
                <span />
             </StyledWeigh>
-            {sachet.status !== 'PACKED' &&
+            {sachet.packingStatus !== 'COMPLETED' &&
                state.scale.weight_simulation.value.isActive && (
                   <Flex container alignItems="center">
                      <Form.Group>
@@ -334,7 +325,7 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
                      <Spacer size="8px" xAxis />
                      <TextButton
                         type="outline"
-                        onClick={() => setWeight(sachet.quantity)}
+                        onClick={() => setWeight(sachet.displayUnitQuantity)}
                      >
                         Match
                      </TextButton>
@@ -368,22 +359,40 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
             </Flex>
          )}
          <Spacer size="16px" />
-         {sachet?.packagingId && (
+         {sachet?.operationConfig?.packagingId && (
             <>
                <StyledPackaging>
                   <Flex as="aside" container alignItems="center">
                      <Text as="h3">Packaging</Text>
                      <Tooltip identifier="process_mealkit_section_packaging_heading" />
                   </Flex>
-                  <span>{sachet?.packging?.name || 'N/A'}</span>
-                  <section title={sachet?.packging?.name || 'N/A'}>
-                     {sachet?.packging?.assets?.images[0] && (
-                        <img
-                           src={sachet?.packging?.assets?.images[0].url}
-                           alt={sachet?.packging?.name || 'N/A'}
-                           title={sachet?.packging?.name || 'N/A'}
-                        />
-                     )}
+                  <span>
+                     {sachet?.operationConfig?.packaging?.name || 'N/A'}
+                  </span>
+                  <section
+                     title={sachet?.operationConfig?.packaging?.name || 'N/A'}
+                  >
+                     {Array.isArray(
+                        sachet?.operationConfig?.packaging?.assets?.images
+                     ) &&
+                        !isEmpty(
+                           sachet?.operationConfig?.packaging?.assets?.images
+                        ) && (
+                           <img
+                              src={
+                                 sachet?.operationConfig?.packaging?.assets
+                                    ?.images[0].url
+                              }
+                              alt={
+                                 sachet?.operationConfig?.packaging?.name ||
+                                 'N/A'
+                              }
+                              title={
+                                 sachet?.operationConfig?.packaging?.name ||
+                                 'N/A'
+                              }
+                           />
+                        )}
                   </section>
                </StyledPackaging>
                <Spacer size="16px" />
@@ -425,23 +434,26 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
             <TextButton
                size="sm"
                type="solid"
-               disabled={sachet.status === 'PACKED'}
+               disabled={sachet.packingStatus === 'COMPLETED'}
                fallBackMessage="Pending order confirmation!"
-               hasAccess={Boolean(order.isAccepted && !order.isRejected)}
+               hasAccess={Boolean(
+                  sachet?.cart?.order?.isAccepted &&
+                     !sachet?.cart?.order?.isRejected
+               )}
                onClick={() =>
-                  updateSachet({
+                  updateCartItem({
                      variables: {
                         id: sachet.id,
                         _set: {
-                           status: 'PACKED',
                            isLabelled: true,
                            isPortioned: true,
+                           packingStatus: 'COMPLETED',
                         },
                      },
                   })
                }
             >
-               {sachet.status === 'PACKED' ? 'Packed' : 'Mark Packed'}
+               {sachet.packingStatus === 'COMPLETED' ? 'Packed' : 'Mark Packed'}
             </TextButton>
             <Spacer size="16px" xAxis />
             <TextButton
@@ -449,9 +461,12 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
                type="solid"
                disabled={sachet.isAssembled || sachet.status === 'PENDING'}
                fallBackMessage="Pending order confirmation!"
-               hasAccess={Boolean(order.isAccepted && !order.isRejected)}
+               hasAccess={Boolean(
+                  sachet?.cart?.order?.isAccepted &&
+                     !sachet?.cart?.order?.isRejected
+               )}
                onClick={() =>
-                  updateSachet({
+                  updateCartItem({
                      variables: {
                         id: sachet.id,
                         _set: {

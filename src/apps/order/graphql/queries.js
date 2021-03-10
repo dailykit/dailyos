@@ -1390,12 +1390,21 @@ export const QUERIES = {
                   order_by: { position: desc, created_at: desc }
                ) {
                   id
+                  cart {
+                     id
+                     order {
+                        id
+                        isAccepted
+                        isRejected
+                     }
+                  }
                   position
                   stationId
                   isAssembled
                   packingStatus
                   displayName
                   displayUnit
+                  processingName
                   displayBulkDensity
                   displayUnitQuantity
                   supplierItemId
@@ -1420,6 +1429,7 @@ export const QUERIES = {
                      packaging {
                         id
                         name
+                        assets
                      }
                   }
                }
