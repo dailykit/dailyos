@@ -99,7 +99,6 @@ export const PRODUCT = {
                modifier {
                   id
                   name
-                  data
                }
                operationConfig {
                   id

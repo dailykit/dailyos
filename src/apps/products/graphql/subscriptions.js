@@ -320,7 +320,6 @@ export const MODIFIERS = gql`
       modifiers {
          id
          title: name
-         data
       }
    }
 `
