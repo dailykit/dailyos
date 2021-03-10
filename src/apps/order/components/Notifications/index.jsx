@@ -1,47 +1,31 @@
 import React from 'react'
 import { useSubscription } from '@apollo/react-hooks'
-import {
-   Text,
-   Flex,
-   Tunnel,
-   Tunnels,
-   useTunnel,
-   TunnelHeader,
-} from '@dailykit/ui'
+import { Text, Flex, Tunnel, Tunnels, TunnelHeader } from '@dailykit/ui'
 
 import { QUERIES } from '../../graphql'
 import { Notifs, Notif, Main } from './styled'
 import { InlineLoader } from '../../../../shared/components'
 import { useTabs } from '../../../../shared/providers'
 
-export const Notifications = ({ isOpen, closePortal }) => {
+export const Notifications = ({ tunnels, closeTunnel }) => {
    const { addTab } = useTabs()
    const {
       error,
       loading,
       data: { displayNotifications: notifications = [] } = {},
    } = useSubscription(QUERIES.NOTIFICATION.LIST)
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-
-   React.useEffect(() => {
-      if (isOpen) {
-         openTunnel(1)
-      } else {
-         closeTunnel(1)
-      }
-   }, [isOpen])
 
    const createTab = (e, notif) => {
       const index = notif?.content?.action?.url.lastIndexOf('/') + 1
       const id = notif?.content?.action?.url.slice(index)
       addTab(`ORD${id}`, notif.content.action.url)
-      closePortal(e)
+      closeTunnel(1)
    }
 
    return (
       <Tunnels tunnels={tunnels}>
          <Tunnel layer={1} size="sm">
-            <TunnelHeader title="Notifications" close={closePortal} />
+            <TunnelHeader title="Notifications" close={() => closeTunnel(1)} />
             {loading ? (
                <InlineLoader />
             ) : (

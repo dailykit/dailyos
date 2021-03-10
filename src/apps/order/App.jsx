@@ -1,5 +1,4 @@
 import React from 'react'
-import usePortal from 'react-useportal'
 import { Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
 
 // Context
@@ -35,10 +34,8 @@ const App = () => {
    ] = useTunnel(1)
    const [filterTunnels, openFilterTunnel, closeFilterTunnel] = useTunnel(1)
    const [configTunnels, openConfigTunnel, closeConfigTunnel] = useTunnel(1)
+   const [notifTunnels, openNotifTunnel, closeNotifTunnel] = useTunnel(1)
    const [position, setPosition] = React.useState('left')
-   const { openPortal, closePortal, isOpen, Portal } = usePortal({
-      bindTo: document && document.getElementById('notifications'),
-   })
 
    React.useEffect(() => {
       setRoutes([
@@ -68,6 +65,7 @@ const App = () => {
                _or: [
                   {
                      cart: {
+                        ...state.orders?.where?.cart,
                         cartItemProductComponents: {
                            productOption: {
                               operationConfig: {
@@ -114,12 +112,7 @@ const App = () => {
             {state.current_view === 'SACHET_ITEM' && <ProcessSachet />}
          </ErrorBoundary>
          <Main />
-         <Footer
-            isOpen={isOpen}
-            openPortal={openPortal}
-            closePortal={closePortal}
-            setPosition={setPosition}
-         />
+         <Footer openTunnel={openNotifTunnel} setPosition={setPosition} />
          <BottomQuickInfoBar openOrderSummaryTunnel={openOrderSummaryTunnel} />
          <OrderSummaryTunnel>
             <ErrorBoundary>
@@ -140,15 +133,12 @@ const App = () => {
             </ErrorBoundary>
          </OrderSummaryTunnel>
 
-         {isOpen && (
-            <Portal>
-               <Notifications
-                  isOpen={isOpen}
-                  openPortal={openPortal}
-                  closePortal={closePortal}
-               />
-            </Portal>
-         )}
+         <ErrorBoundary rootRoute="/apps/order">
+            <Notifications
+               tunnels={notifTunnels}
+               closeTunnel={closeNotifTunnel}
+            />
+         </ErrorBoundary>
          <ErrorBoundary rootRoute="/apps/order">
             <Tunnels tunnels={tunnels}>
                <Tunnel layer="1" size="md">
