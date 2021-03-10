@@ -23,7 +23,7 @@ const BottomQuickInfoBar = ({ openOrderSummaryTunnel }) => {
       data: { ordersAggregate = [] } = {},
    } = useSubscription(QUERIES2.ORDERS_AGGREGATE)
 
-   if (loading) return <InlineLoader />
+   if (loading) return <div />
    if (error) {
       logger(error)
       toast.error('Failed to fetch the order summary!')

@@ -114,10 +114,10 @@ const App = () => {
          <Main />
          <Footer openTunnel={openNotifTunnel} setPosition={setPosition} />
          <BottomQuickInfoBar openOrderSummaryTunnel={openOrderSummaryTunnel} />
-         <OrderSummaryTunnel>
-            <ErrorBoundary>
-               <Tunnels mt={0} tunnels={orderSummaryTunnels}>
-                  <StyledTunnel layer="1" size="md">
+         <ErrorBoundary>
+            <Tunnels mt={0} tunnels={orderSummaryTunnels}>
+               <StyledTunnel layer="1" size="md">
+                  <OrderSummaryTunnel>
                      {state.current_view === 'SUMMARY' && (
                         <OrderSummary
                            closeOrderSummaryTunnel={closeOrderSummaryTunnel}
@@ -128,11 +128,10 @@ const App = () => {
                            closeOrderSummaryTunnel={closeOrderSummaryTunnel}
                         />
                      )}
-                  </StyledTunnel>
-               </Tunnels>
-            </ErrorBoundary>
-         </OrderSummaryTunnel>
-
+                  </OrderSummaryTunnel>
+               </StyledTunnel>
+            </Tunnels>
+         </ErrorBoundary>
          <ErrorBoundary rootRoute="/apps/order">
             <Notifications
                tunnels={notifTunnels}
