@@ -1,4 +1,5 @@
 export * from './MealKit'
 export * from './ReadyToEat'
 export * from './Inventory'
+export * from './Products'
 export * from './MealKitSachets'

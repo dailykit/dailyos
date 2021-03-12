@@ -1744,7 +1744,37 @@ export const QUERIES = {
       `,
    },
    PLANNED: {
-      PRODUCTS: {
+      PRODUCTS: gql`
+         subscription plannedProducts(
+            $type: String_comparison_exp!
+            $cart: order_cart_bool_exp!
+         ) {
+            plannedProducts: productsAggregate(
+               where: { type: $type, cartItems: { cart: $cart } }
+            ) {
+               aggregate {
+                  count
+               }
+               nodes {
+                  id
+                  name
+                  cartItems_aggregate(where: { cart: $cart }) {
+                     aggregate {
+                        count
+                     }
+                     nodes {
+                        id
+                        isAssembled
+                        cart {
+                           orderId
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      `,
+      PRODUCTS2: {
          INVENTORY: {
             LIST: gql`
                subscription inventoryProducts($order: order_order_bool_exp) {

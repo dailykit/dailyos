@@ -21,3 +21,23 @@ export const Wrapper = styled.div`
       width: calc(100vw - 240px);
    }
 `
+
+export const Container = styled.div`
+   > [data-reach-tabs] {
+      > [data-reach-tab-list] {
+         padding: 0;
+      }
+      > [data-reach-tab-panels] {
+         > [data-reach-tab-panel] {
+            padding: 0 16px;
+            > [data-reach-tabs] {
+               > [data-reach-tab-panels] {
+                  > [data-reach-tab-panel] {
+                     padding: 0;
+                  }
+               }
+            }
+         }
+      }
+   }
+`
