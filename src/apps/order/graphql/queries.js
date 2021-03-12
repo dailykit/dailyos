@@ -44,7 +44,7 @@ export const QUERIES = {
                   transactionId
                   fulfillmentInfo
                   customer: customerInfo
-                  assembledProducts: orderItems_aggregate(
+                  assembledProducts: cartItemViews_aggregate(
                      where: {
                         levelType: { _eq: "orderItem" }
                         isAssembled: { _eq: true }
@@ -54,7 +54,7 @@ export const QUERIES = {
                         count
                      }
                   }
-                  packedProducts: orderItems_aggregate(
+                  packedProducts: cartItemViews_aggregate(
                      where: {
                         levelType: { _eq: "orderItem" }
                         assemblyStatus: { _eq: "COMPLETED" }
@@ -64,7 +64,7 @@ export const QUERIES = {
                         count
                      }
                   }
-                  totalProducts: orderItems_aggregate(
+                  totalProducts: cartItemViews_aggregate(
                      where: { levelType: { _eq: "orderItem" } }
                   ) {
                      aggregate {
@@ -91,13 +91,7 @@ export const QUERIES = {
                   labelTemplateId
                   stationId
                }
-               parent {
-                  productOptionId
-                  productOption {
-                     id
-                     type
-                  }
-               }
+               productOptionType
                totalSachets: childs_aggregate {
                   aggregate {
                      count

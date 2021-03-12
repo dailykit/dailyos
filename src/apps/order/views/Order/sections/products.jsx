@@ -54,12 +54,7 @@ export const Products = ({
    })
 
    const print = () => {
-      if (
-         isNull(
-            state.current_product?.parent?.productOption?.operationConfig
-               ?.labelTemplateId
-         )
-      ) {
+      if (isNull(state.current_product?.operationConfig?.labelTemplateId)) {
          toast.error('No template assigned!')
          return
       }
@@ -76,11 +71,9 @@ export const Products = ({
             id: state.current_product?.id,
             assemblyStatus: 'COMPLETED',
             labelTemplateId:
-               state.current_product?.parent?.productOption?.operationConfig
-                  ?.labelTemplateId,
+               state.current_product?.operationConfig?.labelTemplateId,
             assemblyStationId:
-               state.current_product?.parent?.productOption?.operationConfig
-                  ?.stationId,
+               state.current_product?.operationConfig?.stationId,
             // simpleRecipeProductId: current.simpleRecipeProductId,
             // simpleRecipeProductOptionId: current.simpleRecipeProductOptionId,
          }
@@ -113,8 +106,8 @@ export const Products = ({
       if (isSuperUser) {
          access = true
       } else if (
-         state.current_product?.parent?.productOption?.operationConfig
-            ?.stationId === config.current_station?.id
+         state.current_product?.operationConfig?.stationId ===
+         config.current_station?.id
       ) {
          access = true
       } else {
@@ -140,8 +133,8 @@ export const Products = ({
    const packFallBackMessage = () => {
       if (isOrderConfirmed) {
          if (
-            state.current_product?.parent?.productOption?.operationConfig
-               ?.stationId === config.current_station?.id
+            state.current_product?.operationConfig?.stationId ===
+            config.current_station?.id
          ) {
             return 'Mark Packed'
          }
@@ -153,8 +146,8 @@ export const Products = ({
    const assembleFallBackMessage = () => {
       if (isOrderConfirmed) {
          if (
-            state.current_product?.parent?.productOption?.operationConfig
-               ?.stationId === config.current_station?.id
+            state.current_product?.operationConfig?.stationId ===
+            config.current_station?.id
          ) {
             return ''
          }

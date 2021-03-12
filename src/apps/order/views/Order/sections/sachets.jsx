@@ -38,15 +38,15 @@ const Sachets = () => {
       }
    )
 
-   // React.useEffect(() => {
-   //    if (!loading && !isEmpty(sachets)) {
-   //       initiatePriority({
-   //          data: sachets,
-   //          tablename: 'cartItem',
-   //          schemaname: 'order',
-   //       })
-   //    }
-   // }, [loading, sachets])
+   React.useEffect(() => {
+      if (!loading && !isEmpty(sachets)) {
+         initiatePriority({
+            data: sachets,
+            tablename: 'cartItem',
+            schemaname: 'order',
+         })
+      }
+   }, [loading, sachets])
 
    if (loading) return <InlineLoader />
    return (

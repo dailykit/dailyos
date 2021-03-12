@@ -329,7 +329,7 @@ const Order = () => {
       toast.error('Failed to fetch order details!')
       return <ErrorState message="Failed to fetch order details!" />
    }
-   const types = groupBy(products, 'parent.productOption.type')
+   const types = groupBy(products, 'productOptionType')
    return (
       <Flex>
          <Spacer size="16px" />
