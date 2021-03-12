@@ -1766,6 +1766,7 @@ export const QUERIES = {
                         id
                         isAssembled
                         cart {
+                           id
                            orderId
                         }
                      }
@@ -1856,6 +1857,7 @@ export const QUERIES = {
                               isAssembled
                               displayName
                               cart {
+                                 id
                                  orderId
                               }
                            }
@@ -1910,7 +1912,146 @@ export const QUERIES = {
                               isAssembled
                               displayName
                               cart {
+                                 id
                                  orderId
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      `,
+      INGREDIENTS: gql`
+         subscription ingredients($cart: order_cart_bool_exp!) {
+            ingredients: ingredientsAggregate(
+               where: {
+                  ingredientSachetViews: {
+                     cartItemViews: {
+                        level: { _eq: 4 }
+                        orderMode: {
+                           _in: ["assembledTogether", "assembledSeparately"]
+                        }
+                        cart: $cart
+                     }
+                  }
+               }
+            ) {
+               aggregate {
+                  count
+               }
+               nodes {
+                  id
+                  name
+                  cartItemViews_aggregate(
+                     where: {
+                        level: { _eq: 4 }
+                        orderMode: {
+                           _in: ["assembledTogether", "assembledSeparately"]
+                        }
+                        cart: $cart
+                     }
+                  ) {
+                     aggregate {
+                        sum {
+                           displayUnitQuantity
+                        }
+                     }
+                  }
+                  ingredientProcessings_aggregate(
+                     where: {
+                        ingredientSachetViews: {
+                           cartItemViews: {
+                              level: { _eq: 4 }
+                              orderMode: {
+                                 _in: [
+                                    "assembledTogether"
+                                    "assembledSeparately"
+                                 ]
+                              }
+                              cart: $cart
+                           }
+                        }
+                     }
+                  ) {
+                     aggregate {
+                        count
+                     }
+                     nodes {
+                        id
+                        processingName
+                        cartItemViews_aggregate(
+                           where: {
+                              level: { _eq: 4 }
+                              orderMode: {
+                                 _in: [
+                                    "assembledTogether"
+                                    "assembledSeparately"
+                                 ]
+                              }
+                              cart: $cart
+                           }
+                        ) {
+                           aggregate {
+                              count
+                              sum {
+                                 displayUnitQuantity
+                              }
+                           }
+                        }
+                        ingredientSachets_aggregate(
+                           where: {
+                              cartItemViews: {
+                                 level: { _eq: 4 }
+                                 orderMode: {
+                                    _in: [
+                                       "assembledTogether"
+                                       "assembledSeparately"
+                                    ]
+                                 }
+                                 cart: $cart
+                              }
+                           }
+                        ) {
+                           aggregate {
+                              count
+                           }
+                           nodes {
+                              id
+                              unit
+                              quantity
+                              cartItemViews_aggregate(
+                                 where: {
+                                    level: { _eq: 4 }
+                                    orderMode: {
+                                       _in: [
+                                          "assembledTogether"
+                                          "assembledSeparately"
+                                       ]
+                                    }
+                                    cart: $cart
+                                 }
+                              ) {
+                                 aggregate {
+                                    count
+                                    sum {
+                                       displayUnitQuantity
+                                    }
+                                 }
+                                 nodes {
+                                    id
+                                    cart {
+                                       id
+                                       orderId
+                                    }
+                                    product {
+                                       id
+                                       name
+                                    }
+                                    displayName
+                                    isAssembled
+                                 }
                               }
                            }
                         }

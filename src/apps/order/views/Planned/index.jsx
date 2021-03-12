@@ -10,7 +10,13 @@ import {
 
 import { Container } from './styled'
 import { useTabs } from '../../../../shared/providers'
-import { Products, ProductOptions, SimpleRecipes, SubRecipes } from './sections'
+import {
+   Products,
+   ProductOptions,
+   SimpleRecipes,
+   SubRecipes,
+   Ingredients,
+} from './sections'
 
 const Planned = () => {
    const { tab, addTab } = useTabs()
@@ -36,6 +42,9 @@ const Planned = () => {
                <Tab>
                   <TabItem>Sub Recipes</TabItem>
                </Tab>
+               <Tab>
+                  <TabItem>Ingredients</TabItem>
+               </Tab>
             </TabList>
             <TabPanels>
                <TabPanel>
@@ -49,6 +58,9 @@ const Planned = () => {
                </TabPanel>
                <TabPanel>
                   <SubRecipes />
+               </TabPanel>
+               <TabPanel>
+                  <Ingredients />
                </TabPanel>
             </TabPanels>
          </Tabs>
