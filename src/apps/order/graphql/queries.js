@@ -1866,6 +1866,60 @@ export const QUERIES = {
             }
          }
       `,
+      SUB_RECIPES: gql`
+         subscription simpleRecipes($cart: order_cart_bool_exp!) {
+            simpleRecipes: simpleRecipesAggregate(
+               where: {
+                  simpleRecipeYields: {
+                     subRecipeCartItemViews: { level: { _gte: 4 }, cart: $cart }
+                  }
+               }
+            ) {
+               aggregate {
+                  count
+               }
+               nodes {
+                  id
+                  name
+                  simpleRecipeYields_aggregate(
+                     where: {
+                        subRecipeCartItemViews: {
+                           level: { _gte: 4 }
+                           cart: $cart
+                        }
+                     }
+                  ) {
+                     aggregate {
+                        count
+                     }
+                     nodes {
+                        id
+                        serving
+                        subRecipeCartItemViews_aggregate(
+                           where: { level: { _gte: 4 }, cart: $cart }
+                        ) {
+                           aggregate {
+                              count
+                              sum {
+                                 displayServing
+                                 displayUnitQuantity
+                              }
+                           }
+                           nodes {
+                              id
+                              isAssembled
+                              displayName
+                              cart {
+                                 orderId
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      `,
       PRODUCTS2: {
          INVENTORY: {
             LIST: gql`

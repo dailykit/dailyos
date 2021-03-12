@@ -13,7 +13,7 @@ import { useTabs } from '../../../../../../shared/providers'
 import { Spacer } from '../../../../components/OrderSummary/styled'
 import { ErrorState, InlineLoader } from '../../../../../../shared/components'
 
-export const SimpleRecipes = () => {
+export const SubRecipes = () => {
    return (
       <div>
          <Spacer size="16px" />
@@ -30,7 +30,7 @@ const Listing = () => {
       loading,
       error,
       data: { simpleRecipes = {} } = {},
-   } = useSubscription(QUERIES.PLANNED.SIMPLE_RECIPES, {
+   } = useSubscription(QUERIES.PLANNED.SUB_RECIPES, {
       variables: {
          cart: state.orders.where.cart,
       },
@@ -48,9 +48,7 @@ const Listing = () => {
    }
 
    if (simpleRecipes.aggregate.count === 0)
-      return (
-         <Filler height="320px" message="There are no simple recipes yet!" />
-      )
+      return <Filler height="320px" message="There are no sub recipes yet!" />
    return (
       <ul>
          {simpleRecipes.nodes.map(node => (
@@ -85,7 +83,7 @@ const Yields = ({ nodes }) => {
                         <span title="Total Servings">
                            (
                            {
-                              node.simpleRecipeCartItemViews_aggregate.aggregate
+                              node.subRecipeCartItemViews_aggregate.aggregate
                                  .sum.displayServing
                            }
                            )
@@ -93,8 +91,8 @@ const Yields = ({ nodes }) => {
                      </span>
                      <span title="Total Quantity">
                         {
-                           node.simpleRecipeCartItemViews_aggregate.aggregate
-                              .sum.displayUnitQuantity
+                           node.subRecipeCartItemViews_aggregate.aggregate.sum
+                              .displayUnitQuantity
                         }
                      </span>
                   </StyledTab>
@@ -104,7 +102,7 @@ const Yields = ({ nodes }) => {
                {nodes.map(node => (
                   <StyledTabPanel>
                      <Cards
-                        nodes={node.simpleRecipeCartItemViews_aggregate.nodes}
+                        nodes={node.subRecipeCartItemViews_aggregate.nodes}
                      />
                   </StyledTabPanel>
                ))}
