@@ -66,7 +66,7 @@ const App = () => {
                   {
                      cart: {
                         ...state.orders?.where?.cart,
-                        cartItemProductComponents: {
+                        cartItemViews: {
                            productOption: {
                               operationConfig: {
                                  stationId: {

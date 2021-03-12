@@ -1459,7 +1459,6 @@ export const QUERIES = {
                isAccepted
                isRejected
                deliveryPrice
-               transactionId
                fulfillmentType
                thirdPartyOrderId
                thirdPartyOrder {
@@ -1467,33 +1466,6 @@ export const QUERIES = {
                   source
                   thirdPartyOrderId
                   products: parsedData(path: "items")
-               }
-               brand {
-                  id
-                  onDemandName: onDemandSettings(
-                     where: {
-                        onDemandSetting: { identifier: { _eq: "Brand Name" } }
-                     }
-                  ) {
-                     name: value(path: "name")
-                  }
-                  onDemandLogo: onDemandSettings(
-                     where: {
-                        onDemandSetting: { identifier: { _eq: "Brand Logo" } }
-                     }
-                  ) {
-                     url: value(path: "url")
-                  }
-                  subscriptionSettings: subscriptionStoreSettings(
-                     where: {
-                        subscriptionStoreSetting: {
-                           identifier: { _eq: "theme-brand" }
-                        }
-                     }
-                  ) {
-                     name: value(path: "name")
-                     logo: value(path: "logo.url")
-                  }
                }
                cartId
                cart {
@@ -1509,7 +1481,38 @@ export const QUERIES = {
                   paymentStatus
                   fulfillmentInfo
                   customer: customerInfo
-                  orderItems_aggregate(
+                  brand {
+                     id
+                     onDemandName: onDemandSettings(
+                        where: {
+                           onDemandSetting: {
+                              identifier: { _eq: "Brand Name" }
+                           }
+                        }
+                     ) {
+                        name: value(path: "name")
+                     }
+                     onDemandLogo: onDemandSettings(
+                        where: {
+                           onDemandSetting: {
+                              identifier: { _eq: "Brand Logo" }
+                           }
+                        }
+                     ) {
+                        url: value(path: "url")
+                     }
+                     subscriptionSettings: subscriptionStoreSettings(
+                        where: {
+                           subscriptionStoreSetting: {
+                              identifier: { _eq: "theme-brand" }
+                           }
+                        }
+                     ) {
+                        name: value(path: "name")
+                        logo: value(path: "logo.url")
+                     }
+                  }
+                  cartItemViews_aggregate(
                      where: { levelType: { _eq: "orderItem" } }
                   ) {
                      aggregate {
@@ -1521,13 +1524,7 @@ export const QUERIES = {
                         assemblyStatus
                         displayName
                         displayImage
-                        parent {
-                           productOptionId
-                           productOption {
-                              id
-                              type
-                           }
-                        }
+                        productOptionType
                         totalSachets: childs_aggregate {
                            aggregate {
                               count
@@ -2454,6 +2451,25 @@ export const QUERIES = {
          }
       `,
    },
+   PRODUCT_OPTION_TYPES: gql`
+      query productOptionTypes($where: order_cartItemView_bool_exp!) {
+         productOptionTypes: order_cartItemView(
+            where: $where
+            distinct_on: productOptionType
+         ) {
+            id
+            type: productOptionType
+         }
+      }
+   `,
+   PRODUCT_TYPES: gql`
+      query productTypes {
+         productTypes: products_productType {
+            title
+            displayName
+         }
+      }
+   `,
 }
 
 export const DEVICES = {

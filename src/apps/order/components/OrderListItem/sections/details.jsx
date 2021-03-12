@@ -26,25 +26,28 @@ export const Details = ({ order }) => {
    const [currentPanel, setCurrentPanel] = React.useState('customer')
    const { width } = useWindowSize()
    React.useEffect(() => {
-      if (!isNull(order.brand) && !isEmpty(order.brand)) {
+      if (!isNull(order.cart?.brand) && !isEmpty(order.cart?.brand)) {
          if (order.cart.source === 'a-la-carte') {
-            if (!isEmpty(order.brand.onDemandName)) {
+            if (!isEmpty(order.cart?.brand.onDemandName)) {
                setBrand(existing => ({
                   ...existing,
-                  name: order.brand.onDemandName[0].name,
+                  name: order.cart?.brand.onDemandName[0].name,
                }))
             }
-            if (!isEmpty(order.brand.onDemandLogo)) {
+            if (!isEmpty(order.cart?.brand.onDemandLogo)) {
                setBrand(existing => ({
                   ...existing,
-                  logo: order.brand.onDemandLogo[0].url,
+                  logo: order.cart?.brand.onDemandLogo[0].url,
                }))
             }
          } else if (
             order.cart.source === 'subscription' &&
-            !isEmpty(order.brand.subscriptionSettings)
+            !isEmpty(order.cart?.brand.subscriptionSettings)
          ) {
-            const { name = '', logo = '' } = order.brand.subscriptionSettings[0]
+            const {
+               name = '',
+               logo = '',
+            } = order.cart?.brand.subscriptionSettings[0]
             setBrand({ name, logo })
          }
       }
