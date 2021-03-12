@@ -1809,6 +1809,63 @@ export const QUERIES = {
             }
          }
       `,
+      SIMPLE_RECIPES: gql`
+         subscription simpleRecipes($cart: order_cart_bool_exp!) {
+            simpleRecipes: simpleRecipesAggregate(
+               where: {
+                  simpleRecipeYields: {
+                     simpleRecipeCartItemViews: {
+                        level: { _eq: 3 }
+                        cart: $cart
+                     }
+                  }
+               }
+            ) {
+               aggregate {
+                  count
+               }
+               nodes {
+                  id
+                  name
+                  simpleRecipeYields_aggregate(
+                     where: {
+                        simpleRecipeCartItemViews: {
+                           level: { _eq: 3 }
+                           cart: $cart
+                        }
+                     }
+                  ) {
+                     aggregate {
+                        count
+                     }
+                     nodes {
+                        id
+                        serving
+                        simpleRecipeCartItemViews_aggregate(
+                           where: { level: { _eq: 3 }, cart: $cart }
+                        ) {
+                           aggregate {
+                              count
+                              sum {
+                                 displayServing
+                                 displayUnitQuantity
+                              }
+                           }
+                           nodes {
+                              id
+                              isAssembled
+                              displayName
+                              cart {
+                                 orderId
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      `,
       PRODUCTS2: {
          INVENTORY: {
             LIST: gql`

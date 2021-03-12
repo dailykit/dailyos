@@ -9,8 +9,8 @@ import {
 } from '@dailykit/ui'
 
 import { Container } from './styled'
-import { Products, ProductOptions } from './sections'
 import { useTabs } from '../../../../shared/providers'
+import { Products, ProductOptions, SimpleRecipes } from './sections'
 
 const Planned = () => {
    const { tab, addTab } = useTabs()
@@ -30,6 +30,9 @@ const Planned = () => {
                <Tab>
                   <TabItem>Product Options</TabItem>
                </Tab>
+               <Tab>
+                  <TabItem>Simple Recipes</TabItem>
+               </Tab>
             </TabList>
             <TabPanels>
                <TabPanel>
@@ -37,6 +40,9 @@ const Planned = () => {
                </TabPanel>
                <TabPanel>
                   <ProductOptions />
+               </TabPanel>
+               <TabPanel>
+                  <SimpleRecipes />
                </TabPanel>
             </TabPanels>
          </Tabs>
