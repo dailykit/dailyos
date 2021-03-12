@@ -8,8 +8,8 @@ import {
    SectionTabPanels as TabPanels,
 } from '@dailykit/ui'
 
-import { Products } from './sections'
 import { Container } from './styled'
+import { Products, ProductOptions } from './sections'
 import { useTabs } from '../../../../shared/providers'
 
 const Planned = () => {
@@ -25,19 +25,18 @@ const Planned = () => {
          <Tabs>
             <TabList>
                <Tab>
-                  <Flex
-                     container
-                     height="40px"
-                     alignItems="center"
-                     justifyContent="center"
-                  >
-                     Products
-                  </Flex>
+                  <TabItem>Products</TabItem>
+               </Tab>
+               <Tab>
+                  <TabItem>Product Options</TabItem>
                </Tab>
             </TabList>
             <TabPanels>
                <TabPanel>
                   <Products />
+               </TabPanel>
+               <TabPanel>
+                  <ProductOptions />
                </TabPanel>
             </TabPanels>
          </Tabs>
@@ -46,3 +45,11 @@ const Planned = () => {
 }
 
 export default Planned
+
+const TabItem = ({ children }) => {
+   return (
+      <Flex container height="40px" alignItems="center" justifyContent="center">
+         {children}
+      </Flex>
+   )
+}

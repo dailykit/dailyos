@@ -92,7 +92,7 @@ export const Products = ({ order }) => {
                      <StyledProductItem key={item.id}>
                         <div>
                            <StyledProductTitle>
-                              {item.displayName}
+                              {item.displayName.split('->').pop().trim()}
                            </StyledProductTitle>
                         </div>
                         {/* <StyledServings>
@@ -115,7 +115,7 @@ export const Products = ({ order }) => {
                         <StyledProductItem key={item.id}>
                            <div>
                               <StyledProductTitle>
-                                 {item.displayName}
+                                 {item.displayName.split('->').pop().trim()}
                               </StyledProductTitle>
                            </div>
                            {/* <StyledServings>

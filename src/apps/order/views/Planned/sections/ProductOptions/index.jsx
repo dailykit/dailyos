@@ -21,9 +21,9 @@ import { useTabs } from '../../../../../../shared/providers'
 import { Spacer } from '../../../../components/OrderSummary/styled'
 import { ErrorState, InlineLoader } from '../../../../../../shared/components'
 
-export const Products = () => {
-   const { loading, error, data: { productTypes = [] } = {} } = useQuery(
-      QUERIES.PRODUCT_TYPES
+export const ProductOptions = () => {
+   const { loading, error, data: { productOptionTypes = [] } = {} } = useQuery(
+      QUERIES.PRODUCT_OPTION_TYPES
    )
 
    if (loading) return <InlineLoader />
@@ -37,20 +37,25 @@ export const Products = () => {
       )
    }
 
-   if (productTypes.length === 0)
-      return <Filler height="320px" message="There are no product types yet!" />
+   if (productOptionTypes.length === 0)
+      return (
+         <Filler
+            height="320px"
+            message="There are no product option types yet!"
+         />
+      )
    return (
       <Tabs>
          <TabList>
-            {productTypes.map(type => (
-               <Tab key={type.title}>{type.displayName}</Tab>
+            {productOptionTypes.map(type => (
+               <Tab key={type.title}>{type.title}</Tab>
             ))}
          </TabList>
          <TabPanels>
-            {productTypes.map(type => (
+            {productOptionTypes.map(type => (
                <TabPanel key={type.title}>
                   <Spacer size="16px" />
-                  <Text as="h2">{type.displayName}</Text>
+                  <Text as="h2">{type.title}</Text>
                   <Spacer size="14px" />
                   <Listing type={type} />
                </TabPanel>
@@ -65,8 +70,8 @@ const Listing = ({ type }) => {
    const {
       loading,
       error,
-      data: { plannedProducts = {} } = {},
-   } = useSubscription(QUERIES.PLANNED.PRODUCTS, {
+      data: { productOptions = {} } = {},
+   } = useSubscription(QUERIES.PLANNED.PRODUCT_OPTIONS, {
       variables: {
          type: { _eq: type.title },
          cart: state.orders.where.cart,
@@ -84,25 +89,25 @@ const Listing = ({ type }) => {
       )
    }
 
-   if (plannedProducts.aggregate.count === 0)
+   if (productOptions.aggregate.count === 0)
       return <Filler height="320px" message="No products yet!" />
    return (
       <ul>
-         {plannedProducts.nodes.map(node => (
+         {productOptions.nodes.map(node => (
             <Product key={node.id}>
                <aside>
-                  <Text as="h3" title={node.name}>
-                     {node.name}
+                  <Text as="h3" title={node.displayName}>
+                     {node.displayName.split('->').pop().trim()}
                   </Text>
                   <Text as="subtitle">
-                     Total: {node.cartItems_aggregate?.aggregate?.count}
+                     Total: {node.cartItemViews_aggregate?.aggregate?.count}
                   </Text>
                </aside>
                <main>
-                  {node.cartItems_aggregate?.aggregate?.count === 0 ? (
+                  {node.cartItemViews_aggregate?.aggregate?.count === 0 ? (
                      <span>No order items.</span>
                   ) : (
-                     <Cards nodes={node.cartItems_aggregate?.nodes || []} />
+                     <Cards nodes={node.cartItemViews_aggregate?.nodes || []} />
                   )}
                </main>
             </Product>

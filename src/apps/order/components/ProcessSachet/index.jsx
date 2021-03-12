@@ -134,9 +134,9 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
          const data = {
             id: sachet.id,
             isPortioned: true,
-            ingredientName: sachet.displayName,
             processingName: sachet.processingName,
             packingStationId: sachet?.operationConfig?.stationId,
+            ingredientName: sachet.displayName.split('->').pop().trim(),
             labelTemplateId: sachet?.operationConfig?.labelTemplate?.name,
          }
          axios.post(
@@ -260,7 +260,7 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
          </StyledHeader>
          <StyledMain>
             <section>
-               <h4>{sachet.displayName}</h4>
+               <h4>{sachet.displayName.split('->').pop().trim()}</h4>
                <StyledStat status={sachet.pakingStatus}>
                   {sachet.packingStatus}
                </StyledStat>

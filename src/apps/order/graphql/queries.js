@@ -1774,6 +1774,41 @@ export const QUERIES = {
             }
          }
       `,
+      PRODUCT_OPTIONS: gql`
+         subscription productOptions(
+            $type: String_comparison_exp!
+            $cart: order_cart_bool_exp!
+         ) {
+            productOptions: products_productOptionView_aggregate(
+               where: {
+                  type: $type
+                  cartItemViews: { level: { _eq: 2 }, cart: $cart }
+               }
+            ) {
+               aggregate {
+                  count
+               }
+               nodes {
+                  id
+                  displayName
+                  cartItemViews_aggregate(
+                     where: { level: { _eq: 2 }, cart: $cart }
+                  ) {
+                     aggregate {
+                        count
+                     }
+                     nodes {
+                        id
+                        isAssembled
+                        cart {
+                           orderId
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      `,
       PRODUCTS2: {
          INVENTORY: {
             LIST: gql`
@@ -2476,13 +2511,9 @@ export const QUERIES = {
       `,
    },
    PRODUCT_OPTION_TYPES: gql`
-      query productOptionTypes($where: order_cartItemView_bool_exp!) {
-         productOptionTypes: order_cartItemView(
-            where: $where
-            distinct_on: productOptionType
-         ) {
-            id
-            type: productOptionType
+      query productOptionTypes {
+         productOptionTypes {
+            title
          }
       }
    `,

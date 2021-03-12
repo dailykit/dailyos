@@ -365,12 +365,17 @@ const ProductCard = ({ product, isActive, onClick }) => {
       <Styles.ProductItem isActive={isActive} onClick={onClick}>
          {product?.displayImage && (
             <aside>
-               <img src={product?.displayImage} alt={product?.displayName} />
+               <img
+                  src={product?.displayImage}
+                  alt={product?.displayName.split('->').pop().trim()}
+               />
             </aside>
          )}
          <main>
             <div>
-               <StyledProductTitle>{product?.displayName}</StyledProductTitle>
+               <StyledProductTitle>
+                  {product?.displayName.split('->').pop().trim()}
+               </StyledProductTitle>
             </div>
             <Spacer size="14px" />
             <Flex container alignItems="center" justifyContent="space-between">

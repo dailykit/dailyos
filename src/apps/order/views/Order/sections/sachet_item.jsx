@@ -23,7 +23,9 @@ export const SachetItem = ({ item }) => {
       if (state.sachet?.id === id) {
          switchView('SUMMARY')
       } else {
-         selectSachet(id, { name: state.current_product?.displayName })
+         selectSachet(id, {
+            name: state.current_product?.displayName.split('->').pop().trim(),
+         })
       }
       setIsOpen(isOpen === id ? '' : id)
    }
@@ -39,9 +41,11 @@ export const SachetItem = ({ item }) => {
          }}
       >
          <header>
-            <span title={item.displayName || 'N/A'}>
+            <span title={item.displayName ? item.displayName : 'N/A'}>
                {/* {item.orderModifierId && <List.Badge>MODIFIER</List.Badge>} */}
-               {item.displayName || 'N/A'}
+               {item.displayName
+                  ? item.displayName.split('->').pop().trim()
+                  : 'N/A'}
             </span>
             <span>{item.supplierItem?.supplierItemName}</span>
             <span title={item.processingName || 'N/A'}>
