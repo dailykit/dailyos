@@ -16,6 +16,7 @@ import {
    SimpleRecipes,
    SubRecipes,
    Ingredients,
+   SachetItems,
 } from './sections'
 
 const Planned = () => {
@@ -45,6 +46,9 @@ const Planned = () => {
                <Tab>
                   <TabItem>Ingredients</TabItem>
                </Tab>
+               <Tab>
+                  <TabItem>Sachet Items</TabItem>
+               </Tab>
             </TabList>
             <TabPanels>
                <TabPanel>
@@ -61,6 +65,9 @@ const Planned = () => {
                </TabPanel>
                <TabPanel>
                   <Ingredients />
+               </TabPanel>
+               <TabPanel>
+                  <SachetItems />
                </TabPanel>
             </TabPanels>
          </Tabs>

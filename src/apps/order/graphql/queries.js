@@ -2061,6 +2061,44 @@ export const QUERIES = {
             }
          }
       `,
+      SACHET_ITEMS: gql`
+         subscription sachetItems($cart: order_cart_bool_exp) {
+            sachetItems: inventory_sachetItemView_aggregate(
+               where: { cartItemViews: { level: { _eq: 4 }, cart: $cart } }
+            ) {
+               aggregate {
+                  count
+               }
+               nodes {
+                  id
+                  processingName
+                  cartItemViews_aggregate(
+                     where: { level: { _eq: 4 }, cart: $cart }
+                  ) {
+                     aggregate {
+                        count
+                        sum {
+                           displayUnitQuantity
+                        }
+                     }
+                     nodes {
+                        id
+                        isAssembled
+                        product {
+                           name
+                        }
+                        cart {
+                           id
+                           orderId
+                        }
+                        displayName
+                        displayUnitQuantity
+                     }
+                  }
+               }
+            }
+         }
+      `,
       PRODUCTS2: {
          INVENTORY: {
             LIST: gql`
