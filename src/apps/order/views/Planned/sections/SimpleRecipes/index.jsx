@@ -3,28 +3,34 @@ import styled, { css } from 'styled-components'
 import { useSubscription } from '@apollo/react-hooks'
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@reach/tabs'
 
-import { Text, Filler } from '@dailykit/ui'
+import { Flex, Text, Filler, Spacer } from '@dailykit/ui'
 
 import { useOrder } from '../../../../context'
 import { QUERIES } from '../../../../graphql'
 import { NewTabIcon } from '../../../../assets/icons'
 import { logger } from '../../../../../../shared/utils'
 import { useTabs } from '../../../../../../shared/providers'
-import { Spacer } from '../../../../components/OrderSummary/styled'
 import { ErrorState, InlineLoader } from '../../../../../../shared/components'
 
 export const SimpleRecipes = () => {
+   const [total, setTotal] = React.useState(0)
+   const [servings, setServings] = React.useState(0)
    return (
       <div>
          <Spacer size="16px" />
          <Text as="h2">Simple Recipes</Text>
+         <Flex container alignItems="center">
+            <Text as="p">Total: {total}</Text>
+            <Spacer size="24px" xAxis />
+            <Text as="p">Servings: {servings}</Text>
+         </Flex>
          <Spacer size="14px" />
-         <Listing />
+         <Listing setTotal={setTotal} setServings={setServings} />
       </div>
    )
 }
 
-const Listing = () => {
+const Listing = ({ setTotal, setServings }) => {
    const { state } = useOrder()
    const {
       loading,
@@ -33,6 +39,34 @@ const Listing = () => {
    } = useSubscription(QUERIES.PLANNED.SIMPLE_RECIPES, {
       variables: {
          cart: state.orders.where.cart,
+      },
+      onSubscriptionData: ({
+         subscriptionData: { data: { simpleRecipes: recipes = {} } = {} } = {},
+      }) => {
+         const servings = recipes.nodes.reduce(
+            (b, a) =>
+               b +
+               a.simpleRecipeYields_aggregate.nodes.reduce(
+                  (y, x) =>
+                     y +
+                        x.simpleRecipeCartItemViews_aggregate.aggregate.sum
+                           .displayServing || 0,
+                  0
+               ),
+            0
+         )
+         setServings(servings)
+         const total = recipes.nodes.reduce(
+            (b, a) =>
+               b +
+               a.simpleRecipeYields_aggregate.nodes.reduce(
+                  (y, x) =>
+                     y + x.simpleRecipeCartItemViews_aggregate.aggregate.count,
+                  0
+               ),
+            0
+         )
+         setTotal(total)
       },
    })
 
@@ -82,14 +116,17 @@ const Yields = ({ nodes }) => {
                   <StyledTab key={node.id}>
                      <span>
                         {node.serving} Serving{' '}
-                        <span title="Total Servings">
-                           (
-                           {
-                              node.simpleRecipeCartItemViews_aggregate.aggregate
-                                 .sum.displayServing
-                           }
-                           )
-                        </span>
+                        {node.simpleRecipeCartItemViews_aggregate.aggregate.sum
+                           .displayServing && (
+                           <span title="Total Servings">
+                              (
+                              {
+                                 node.simpleRecipeCartItemViews_aggregate
+                                    .aggregate.sum.displayServing
+                              }
+                              )
+                           </span>
+                        )}
                      </span>
                      <span title="Total Quantity">
                         {

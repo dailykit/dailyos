@@ -3,34 +3,56 @@ import styled, { css } from 'styled-components'
 import { useSubscription } from '@apollo/react-hooks'
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@reach/tabs'
 
-import { Text, Filler } from '@dailykit/ui'
+import { Text, Filler, Flex, Spacer } from '@dailykit/ui'
 
 import { useOrder } from '../../../../context'
 import { QUERIES } from '../../../../graphql'
 import { NewTabIcon } from '../../../../assets/icons'
 import { logger } from '../../../../../../shared/utils'
 import { useTabs } from '../../../../../../shared/providers'
-import { Spacer } from '../../../../components/OrderSummary/styled'
 import { ErrorState, InlineLoader } from '../../../../../../shared/components'
 
 export const SachetItems = () => {
+   const [total, setTotal] = React.useState(0)
+   const [quantity, setQuantity] = React.useState(0)
    return (
       <div>
          <Spacer size="16px" />
          <Text as="h2">Sachet Items</Text>
+         <Flex container alignItems="center">
+            <Text as="p">Total: {total}</Text>
+            <Spacer size="24px" xAxis />
+            <Text as="p">Total Quantity: {quantity}</Text>
+         </Flex>
          <Spacer size="14px" />
-         <Listing />
+         <Listing setTotal={setTotal} setQuantity={setQuantity} />
       </div>
    )
 }
 
-const Listing = () => {
+const Listing = ({ setTotal, setQuantity }) => {
    const { state } = useOrder()
    const { loading, error, data: { sachetItems = {} } = {} } = useSubscription(
       QUERIES.PLANNED.SACHET_ITEMS,
       {
          variables: {
             cart: state.orders.where.cart,
+         },
+         onSubscriptionData: ({
+            subscriptionData: { data: { sachetItems: items = {} } = {} } = {},
+         }) => {
+            const quantity = items.nodes.reduce(
+               (b, a) =>
+                  b +
+                  a.cartItemViews_aggregate.aggregate.sum.displayUnitQuantity,
+               0
+            )
+            const count = items.nodes.reduce(
+               (b, a) => b + a.cartItemViews_aggregate.aggregate.count,
+               0
+            )
+            setQuantity(quantity)
+            setTotal(count)
          },
       }
    )

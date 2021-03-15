@@ -3,38 +3,72 @@ import styled, { css } from 'styled-components'
 import { useSubscription } from '@apollo/react-hooks'
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@reach/tabs'
 
-import { Text, Filler } from '@dailykit/ui'
+import { Flex, Text, Filler, Spacer } from '@dailykit/ui'
 
 import { useOrder } from '../../../../context'
 import { QUERIES } from '../../../../graphql'
 import { NewTabIcon } from '../../../../assets/icons'
 import { logger } from '../../../../../../shared/utils'
 import { useTabs } from '../../../../../../shared/providers'
-import { Spacer } from '../../../../components/OrderSummary/styled'
 import { ErrorState, InlineLoader } from '../../../../../../shared/components'
 
 export const SubRecipes = () => {
+   const [total, setTotal] = React.useState(0)
+   const [servings, setServings] = React.useState(0)
    return (
       <div>
          <Spacer size="16px" />
          <Text as="h2">Simple Recipes</Text>
+         <Flex container alignItems="center">
+            <Text as="p">Total: {total}</Text>
+            <Spacer size="24px" xAxis />
+            <Text as="p">Servings: {servings}</Text>
+         </Flex>
          <Spacer size="14px" />
-         <Listing />
+         <Listing setTotal={setTotal} setServings={setServings} />
       </div>
    )
 }
 
-const Listing = () => {
+const Listing = ({ setTotal, setServings }) => {
    const { state } = useOrder()
-   const {
-      loading,
-      error,
-      data: { simpleRecipes = {} } = {},
-   } = useSubscription(QUERIES.PLANNED.SUB_RECIPES, {
-      variables: {
-         cart: state.orders.where.cart,
-      },
-   })
+   const { loading, error, data: { subRecipes = {} } = {} } = useSubscription(
+      QUERIES.PLANNED.SUB_RECIPES,
+      {
+         variables: {
+            cart: state.orders.where.cart,
+         },
+
+         onSubscriptionData: ({
+            subscriptionData: { data: { subRecipes: recipes = {} } = {} } = {},
+         }) => {
+            const servings = recipes.nodes.reduce(
+               (b, a) =>
+                  b +
+                  a.simpleRecipeYields_aggregate.nodes.reduce(
+                     (y, x) =>
+                        y +
+                           x.subRecipeCartItemViews_aggregate.aggregate.sum
+                              .displayServing || 0,
+                     0
+                  ),
+               0
+            )
+            setServings(servings)
+            const total = recipes.nodes.reduce(
+               (b, a) =>
+                  b +
+                  a.simpleRecipeYields_aggregate.nodes.reduce(
+                     (y, x) =>
+                        y + x.subRecipeCartItemViews_aggregate.aggregate.count,
+                     0
+                  ),
+               0
+            )
+            setTotal(total)
+         },
+      }
+   )
 
    if (loading) return <InlineLoader />
    if (error) {
@@ -47,11 +81,11 @@ const Listing = () => {
       )
    }
 
-   if (simpleRecipes.aggregate.count === 0)
+   if (subRecipes.aggregate.count === 0)
       return <Filler height="320px" message="There are no sub recipes yet!" />
    return (
       <ul>
-         {simpleRecipes.nodes.map(node => (
+         {subRecipes.nodes.map(node => (
             <Recipe key={node.id}>
                <aside>
                   <Text as="h3" title={node.name}>

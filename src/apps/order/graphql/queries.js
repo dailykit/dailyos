@@ -1869,8 +1869,8 @@ export const QUERIES = {
          }
       `,
       SUB_RECIPES: gql`
-         subscription simpleRecipes($cart: order_cart_bool_exp!) {
-            simpleRecipes: simpleRecipesAggregate(
+         subscription subRecipes($cart: order_cart_bool_exp!) {
+            subRecipes: simpleRecipesAggregate(
                where: {
                   simpleRecipeYields: {
                      subRecipeCartItemViews: { level: { _gte: 4 }, cart: $cart }

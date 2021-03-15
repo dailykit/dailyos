@@ -22,6 +22,7 @@ import { Spacer } from '../../../../components/OrderSummary/styled'
 import { ErrorState, InlineLoader } from '../../../../../../shared/components'
 
 export const ProductOptions = () => {
+   const [total, setTotal] = React.useState({})
    const { loading, error, data: { productOptionTypes = [] } = {} } = useQuery(
       QUERIES.PRODUCT_OPTION_TYPES
    )
@@ -56,8 +57,9 @@ export const ProductOptions = () => {
                <TabPanel key={type.title}>
                   <Spacer size="16px" />
                   <Text as="h2">{type.title}</Text>
+                  <Text as="p">Total: {total[type.title]}</Text>
                   <Spacer size="14px" />
-                  <Listing type={type} />
+                  <Listing type={type} setTotal={setTotal} />
                </TabPanel>
             ))}
          </TabPanels>
@@ -65,7 +67,7 @@ export const ProductOptions = () => {
    )
 }
 
-const Listing = ({ type }) => {
+const Listing = ({ type, setTotal }) => {
    const { state } = useOrder()
    const {
       loading,
@@ -75,6 +77,15 @@ const Listing = ({ type }) => {
       variables: {
          type: { _eq: type.title },
          cart: state.orders.where.cart,
+      },
+      onSubscriptionData: ({
+         subscriptionData: { data: { productOptions: options = {} } = {} } = {},
+      }) => {
+         const total = options.nodes.reduce(
+            (b, a) => b + a.cartItemViews_aggregate.aggregate.count,
+            0
+         )
+         setTotal(existing => ({ ...existing, [type.title]: total }))
       },
    })
    if (loading) return <InlineLoader />
