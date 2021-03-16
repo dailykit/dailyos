@@ -42,7 +42,7 @@ export const SachetItem = ({ item }) => {
       >
          <header>
             <span title={item.displayName ? item.displayName : 'N/A'}>
-               {/* {item.orderModifierId && <List.Badge>MODIFIER</List.Badge>} */}
+               {item.isModifier && <List.Badge>MODIFIER</List.Badge>}
                {item.displayName
                   ? item.displayName.split('->').pop().trim()
                   : 'N/A'}

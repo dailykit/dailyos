@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import styled from 'styled-components'
 import { toast } from 'react-toastify'
-import { isEmpty, isNull, stubTrue } from 'lodash'
+import { isEmpty, isNull } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { useMutation } from '@apollo/react-hooks'
 import { Tabs, Tab, TabList, TabPanels, TabPanel } from '@reach/tabs'
@@ -17,31 +17,23 @@ import {
 } from '@dailykit/ui'
 
 import Sachets from './sachets'
-import ProductModifiers from './modifiers'
 import { MUTATIONS } from '../../../graphql'
 import { findAndSelectSachet } from '../methods'
 import { UserIcon } from '../../../assets/icons'
 import { logger } from '../../../../../shared/utils'
 import { useConfig, useOrder } from '../../../context'
 import { useAccess } from '../../../../../shared/providers'
-import { Legend, Styles, Scroll, StyledProductTitle } from '../styled'
+import { Legend, Styles, StyledProductTitle } from '../styled'
 import { ErrorState, InlineLoader } from '../../../../../shared/components'
 
 const address = 'apps.order.views.order.'
 
-export const Products = ({
-   hideModifiers,
-   order,
-   loading,
-   error,
-   products,
-}) => {
+export const Products = ({ order, loading, error, products }) => {
    const { t } = useTranslation()
    const { isSuperUser } = useAccess()
    const { state, dispatch } = useOrder()
    const { state: config } = useConfig()
    const [label, setLabel] = React.useState('')
-   const [current, setCurrent] = React.useState({})
 
    const [updateCartItem] = useMutation(MUTATIONS.CART_ITEM.UPDATE, {
       onCompleted: () => {
@@ -273,73 +265,26 @@ export const Products = ({
                               )}
                            </Flex>
                            <Spacer size="24px" />
-                           <section>
-                              {/* 
-                        {!hideModifiers && (
-                           <>
-                              <Scroll.Tabs>
-                                 <Scroll.Tab
-                                    className={
-                                       window.location.hash === '#sachets'
-                                          ? 'active'
-                                          : ''
-                                    }
-                                 >
-                                    <a href="#sachets">Sachets</a>
-                                 </Scroll.Tab>
-                                 {current?.hasModifiers && (
-                                    <Scroll.Tab
-                                       className={
-                                          window.location.hash === '#modifiers'
-                                             ? 'active'
-                                             : ''
-                                       }
-                                    >
-                                       <a href="#modifiers">Modifiers</a>
-                                    </Scroll.Tab>
-                                 )}
-                              </Scroll.Tabs>
-                              <Spacer size="16px" />
-                           </>
-                        )}
-                         */}
-                              <section id="sachets">
-                                 <Text as="h2">Sachets</Text>
-                                 <Legend>
-                                    <h2>{t(address.concat('legends'))}</h2>
-                                    <section>
-                                       <span />
-                                       <span>
-                                          {t(address.concat('pending'))}
-                                       </span>
-                                    </section>
-                                    <section>
-                                       <span />
-                                       <span>
-                                          {t(address.concat('packed'))}
-                                       </span>
-                                    </section>
-                                    <section>
-                                       <span />
-                                       <span>
-                                          {t(address.concat('assembled'))}
-                                       </span>
-                                    </section>
-                                 </Legend>
-                                 {state.current_product?.id && <Sachets />}
-                              </section>
-                              {/* {!hideModifiers && current?.hasModifiers && (
-                           <>
-                              <Spacer size="32px" />
-                              <section id="modifiers">
-                                 <Text as="h2">Modifiers</Text>
-                                 <Spacer size="16px" />
-                                 {current && (
-                                    <ProductModifiers product={current} />
-                                 )}
-                              </section>
-                           </>
-                        )} */}
+                           <section id="sachets">
+                              <Text as="h2">Sachets</Text>
+                              <Legend>
+                                 <h2>{t(address.concat('legends'))}</h2>
+                                 <section>
+                                    <span />
+                                    <span>{t(address.concat('pending'))}</span>
+                                 </section>
+                                 <section>
+                                    <span />
+                                    <span>{t(address.concat('packed'))}</span>
+                                 </section>
+                                 <section>
+                                    <span />
+                                    <span>
+                                       {t(address.concat('assembled'))}
+                                    </span>
+                                 </section>
+                              </Legend>
+                              {state.current_product?.id && <Sachets />}
                            </section>
                         </TabPanel>
                      )

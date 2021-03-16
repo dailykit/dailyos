@@ -2,15 +2,7 @@ import React from 'react'
 import { Text } from '@dailykit/ui'
 import { Route } from 'react-router-dom'
 
-import {
-   Home,
-   Orders,
-   Order,
-   Planned,
-   InventoryProduct,
-   ReadyToEatProduct,
-   MealKitProduct,
-} from '../../views'
+import { Home, Orders, Order, Planned } from '../../views'
 import { useAccess } from '../../../../shared/providers'
 import { Flex, ErrorBoundary } from '../../../../shared/components'
 
@@ -47,30 +39,6 @@ const Main = () => {
                message="You do not have sufficient permission to access planned mode."
             >
                <Planned />
-            </AccessCheck>
-         </Route>
-         <Route path="/order/planned/inventory/:id" exact>
-            <AccessCheck
-               title="planned/inventory"
-               message="You do not have sufficient permission to access planned inventory product."
-            >
-               <InventoryProduct />
-            </AccessCheck>
-         </Route>
-         <Route path="/order/planned/ready-to-eat/:id" exact>
-            <AccessCheck
-               title="planned/ready-to-eat"
-               message="You do not have sufficient permission to access planned ready to eat product."
-            >
-               <ReadyToEatProduct />
-            </AccessCheck>
-         </Route>
-         <Route path="/order/planned/meal-kit/:id" exact>
-            <AccessCheck
-               title="planned/meal-kit"
-               message="You do not have sufficient permission to access planned mealkit product."
-            >
-               <MealKitProduct />
             </AccessCheck>
          </Route>
       </main>

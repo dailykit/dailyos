@@ -21,6 +21,7 @@ import {
    HorizontalTabPanels,
 } from '@dailykit/ui'
 
+import { Products } from './sections'
 import { formatDate } from '../../utils'
 import { findAndSelectSachet } from './methods'
 import { ResponsiveFlex, Styles } from './styled'
@@ -28,7 +29,6 @@ import { QUERIES, MUTATIONS } from '../../graphql'
 import { PrintIcon, UserIcon } from '../../assets/icons'
 import { useConfig, useOrder } from '../../context'
 import { currencyFmt, logger } from '../../../../shared/utils'
-import { Products, MealKits, Inventories, ReadyToEats } from './sections'
 import { useAccess, useTabs } from '../../../../shared/providers'
 import {
    Tooltip,
@@ -36,7 +36,6 @@ import {
    InlineLoader,
    DropdownButton,
 } from '../../../../shared/components'
-import styled from 'styled-components'
 
 const isPickup = value => ['ONDEMAND_PICKUP', 'PREORDER_PICKUP'].includes(value)
 
@@ -260,7 +259,7 @@ const Order = () => {
             }
          )
       } catch (err) {
-         console.error('printKot -> ', err)
+         logger(err)
       }
    }
 
@@ -274,7 +273,7 @@ const Order = () => {
                data.forEach(node => window.open(node.url, '_blank'))
             }
          } catch (err) {
-            console.error('viewKOT -> error', err)
+            logger(err)
          }
       }
       kots()

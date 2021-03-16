@@ -31,18 +31,6 @@ export const MUTATIONS = {
             }
          }
       `,
-      SACHET: {
-         UPDATE: gql`
-            mutation updateOrderSachet(
-               $id: Int!
-               $_set: order_orderSachet_set_input!
-            ) {
-               updateOrderSachet(pk_columns: { id: $id }, _set: $_set) {
-                  id
-               }
-            }
-         `,
-      },
       PRODUCT: {
          INVENTORY: {
             UPDATE: gql`
