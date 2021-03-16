@@ -37,9 +37,7 @@ const SachetBar = ({ openOrderSummaryTunnel }) => {
       <SachetWrapper onClick={() => openOrderSummaryTunnel(1)}>
          <section>
             <h4>{sachet.displayName.split('->').pop().trim()}</h4>
-            <StyledStat status={sachet.packingStatus}>
-               {sachet.packingStatus}
-            </StyledStat>
+            <StyledStat status={sachet.status}>{sachet.status}</StyledStat>
          </section>
          <section>
             <section>

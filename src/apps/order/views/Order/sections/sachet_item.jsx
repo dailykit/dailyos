@@ -33,12 +33,9 @@ export const SachetItem = ({ item }) => {
    return (
       <List.Item
          key={item.id}
-         onClick={() => select(item.id)}
+         status={item.status}
          isOpen={isOpen === item.id}
-         variant={{
-            isAssembled: item.isAssembled,
-            isPacked: item.packingStatus === 'COMPLETED',
-         }}
+         onClick={() => select(item.id)}
       >
          <header>
             <span title={item.displayName ? item.displayName : 'N/A'}>

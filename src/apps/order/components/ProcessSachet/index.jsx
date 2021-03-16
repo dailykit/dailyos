@@ -261,9 +261,7 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
          <StyledMain>
             <section>
                <h4>{sachet.displayName.split('->').pop().trim()}</h4>
-               <StyledStat status={sachet.pakingStatus}>
-                  {sachet.packingStatus}
-               </StyledStat>
+               <StyledStat status={sachet.status}>{sachet.status}</StyledStat>
             </section>
             <section>
                <section>
@@ -310,7 +308,7 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
                )}
                <span />
             </StyledWeigh>
-            {sachet.packingStatus !== 'COMPLETED' &&
+            {sachet.status === 'PENDING' &&
                state.scale.weight_simulation.value.isActive && (
                   <Flex container alignItems="center">
                      <Form.Group>
@@ -434,7 +432,7 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
             <TextButton
                size="sm"
                type="solid"
-               disabled={sachet.packingStatus === 'COMPLETED'}
+               disabled={sachet.status !== 'PENDING'}
                fallBackMessage="Pending order confirmation!"
                hasAccess={Boolean(
                   sachet?.cart?.order?.isAccepted &&
@@ -445,21 +443,19 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
                      variables: {
                         id: sachet.id,
                         _set: {
-                           isLabelled: true,
-                           isPortioned: true,
-                           packingStatus: 'COMPLETED',
+                           status: 'READY',
                         },
                      },
                   })
                }
             >
-               {sachet.packingStatus === 'COMPLETED' ? 'Packed' : 'Mark Packed'}
+               {sachet.status !== 'PENDING' ? 'Ready' : 'Mark Ready'}
             </TextButton>
             <Spacer size="16px" xAxis />
             <TextButton
                size="sm"
                type="solid"
-               disabled={sachet.isAssembled || sachet.status === 'PENDING'}
+               disabled={sachet.status === 'PACKED'}
                fallBackMessage="Pending order confirmation!"
                hasAccess={Boolean(
                   sachet?.cart?.order?.isAccepted &&
@@ -470,13 +466,13 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
                      variables: {
                         id: sachet.id,
                         _set: {
-                           isAssembled: true,
+                           status: 'PACKED',
                         },
                      },
                   })
                }
             >
-               {sachet.isAssembled ? 'Assembled' : 'Mark Assembled'}
+               {sachet.status === 'PACKED' ? 'Packed' : 'Mark Packed'}
             </TextButton>
          </Flex>
       </Wrapper>

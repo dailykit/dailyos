@@ -44,10 +44,13 @@ export const QUERIES = {
                   transactionId
                   fulfillmentInfo
                   customer: customerInfo
+                  orderStatus {
+                     title
+                  }
                   assembledProducts: cartItemViews_aggregate(
                      where: {
                         levelType: { _eq: "orderItem" }
-                        isAssembled: { _eq: true }
+                        status: { _eq: "PACKED" }
                      }
                   ) {
                      aggregate {
@@ -57,7 +60,7 @@ export const QUERIES = {
                   packedProducts: cartItemViews_aggregate(
                      where: {
                         levelType: { _eq: "orderItem" }
-                        assemblyStatus: { _eq: "COMPLETED" }
+                        status: { _in: ["READY", "PACKED"] }
                      }
                   ) {
                      aggregate {
@@ -82,8 +85,7 @@ export const QUERIES = {
                order_by: { created_at: desc }
             ) {
                id
-               isAssembled
-               assemblyStatus
+               status
                displayName
                displayImage
                operationConfigId
@@ -98,14 +100,14 @@ export const QUERIES = {
                   }
                }
                packedSachets: childs_aggregate(
-                  where: { packingStatus: { _eq: "COMPLETED" } }
+                  where: { status: { _in: ["READY", "PACKED"] } }
                ) {
                   aggregate {
                      count
                   }
                }
                assembledSachets: childs_aggregate(
-                  where: { isAssembled: { _eq: true } }
+                  where: { status: { _eq: "PACKED" } }
                ) {
                   aggregate {
                      count
@@ -149,8 +151,7 @@ export const QUERIES = {
                   position
                   stationId
                   isModifier
-                  isAssembled
-                  packingStatus
+                  status
                   displayName
                   displayUnit
                   processingName
@@ -269,8 +270,7 @@ export const QUERIES = {
                      }
                      nodes {
                         id
-                        isAssembled
-                        assemblyStatus
+                        status
                         displayName
                         displayImage
                         productOptionType
@@ -280,14 +280,14 @@ export const QUERIES = {
                            }
                         }
                         packedSachets: childs_aggregate(
-                           where: { packingStatus: { _eq: "COMPLETED" } }
+                           where: { status: { _eq: "READY" } }
                         ) {
                            aggregate {
                               count
                            }
                         }
                         assembledSachets: childs_aggregate(
-                           where: { isAssembled: { _eq: true } }
+                           where: { status: { _eq: "PACKED" } }
                         ) {
                            aggregate {
                               count
@@ -478,7 +478,7 @@ export const QUERIES = {
                      }
                      nodes {
                         id
-                        isAssembled
+                        status
                         cart {
                            id
                            orderId
@@ -514,7 +514,7 @@ export const QUERIES = {
                      }
                      nodes {
                         id
-                        isAssembled
+                        status
                         cart {
                            orderId
                         }
@@ -568,7 +568,7 @@ export const QUERIES = {
                            }
                            nodes {
                               id
-                              isAssembled
+                              status
                               displayName
                               cart {
                                  id
@@ -623,7 +623,7 @@ export const QUERIES = {
                            }
                            nodes {
                               id
-                              isAssembled
+                              status
                               displayName
                               cart {
                                  id
@@ -764,7 +764,7 @@ export const QUERIES = {
                                        name
                                     }
                                     displayName
-                                    isAssembled
+                                    status
                                  }
                               }
                            }
@@ -797,7 +797,7 @@ export const QUERIES = {
                      }
                      nodes {
                         id
-                        isAssembled
+                        status
                         product {
                            name
                         }

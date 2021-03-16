@@ -1,14 +1,14 @@
 import { Flex } from '@dailykit/ui'
 import styled, { css } from 'styled-components'
 
-const selectBg = (isPacked, isAssembled) => {
-   if (isPacked && isAssembled) {
+const selectBg = status => {
+   if (status === 'PACKED') {
       return '#79df54' // green
    }
-   if (!isPacked && !isAssembled) {
+   if (status === 'PENDING') {
       return '#f9daa8' // pending
    }
-   if (isPacked && !isAssembled) {
+   if (status === 'READY') {
       return '#65c6ff' // processing
    }
    return ''
@@ -102,7 +102,7 @@ export const List = {
    ),
    Body: styled.div(() => css``),
    Item: styled.div(
-      ({ isOpen, variant: { isPacked, isAssembled } }) => css`
+      ({ isOpen, status }) => css`
          overflow: hidden;
          margin-bottom: 4px;
          header {
@@ -116,7 +116,7 @@ export const List = {
                border-left: 5px solid rgba(0, 0, 0, 0.3);
             `};
             grid-template-columns: repeat(4, 1fr) 48px;
-            background: ${selectBg(isPacked, isAssembled)};
+            background: ${selectBg(status)};
             > span {
                padding: 0 14px;
                overflow: hidden;

@@ -445,12 +445,16 @@ const Order = () => {
             justifyContent="space-between"
          >
             {!isThirdParty ? (
-               <Text as="h3">
-                  {order.cart.assembledProducts.aggregate.count} /{' '}
-                  {order.cart.packedProducts.aggregate.count} /{' '}
-                  {order.cart.totalProducts.aggregate.count}
-                  &nbsp;{t(address.concat('items'))}
-               </Text>
+               <Flex container alignItems="center">
+                  <Text as="h3">
+                     {order.cart.assembledProducts.aggregate.count} /{' '}
+                     {order.cart.packedProducts.aggregate.count} /{' '}
+                     {order.cart.totalProducts.aggregate.count}
+                     &nbsp;{t(address.concat('items'))}
+                  </Text>
+                  <Spacer size="8px" xAxis />
+                  <Text as="h4">&middot; {order.cart?.orderStatus?.title}</Text>
+               </Flex>
             ) : (
                <span />
             )}

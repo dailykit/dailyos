@@ -31,58 +31,6 @@ export const MUTATIONS = {
             }
          }
       `,
-      PRODUCT: {
-         INVENTORY: {
-            UPDATE: gql`
-               mutation updateOrderInventoryProduct(
-                  $id: Int!
-                  $_set: order_orderInventoryProduct_set_input!
-               ) {
-                  updateOrderInventoryProduct(
-                     pk_columns: { id: $id }
-                     _set: $_set
-                  ) {
-                     id
-                     assemblyStatus
-                  }
-               }
-            `,
-         },
-         READYTOEAT: {
-            UPDATE: gql`
-               mutation updateOrderReadyToEatProduct(
-                  $id: Int!
-                  $_set: order_orderReadyToEatProduct_set_input!
-               ) {
-                  updateOrderReadyToEatProduct(
-                     pk_columns: { id: $id }
-                     _set: $_set
-                  ) {
-                     id
-                     isAssembled
-                     assemblyStatus
-                  }
-               }
-            `,
-         },
-         MEALKIT: {
-            UPDATE: gql`
-               mutation updateOrderMealKitProduct(
-                  $id: Int!
-                  $_set: order_orderMealKitProduct_set_input!
-               ) {
-                  updateOrderMealKitProduct(
-                     pk_columns: { id: $id }
-                     _set: $_set
-                  ) {
-                     id
-                     isAssembled
-                     assemblyStatus
-                  }
-               }
-            `,
-         },
-      },
    },
    CART_ITEM: {
       UPDATE: gql`

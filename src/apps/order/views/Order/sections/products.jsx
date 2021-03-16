@@ -61,7 +61,7 @@ export const Products = ({ order, loading, error, products }) => {
 
          const data = {
             id: state.current_product?.id,
-            assemblyStatus: 'COMPLETED',
+            status: 'READY',
             labelTemplateId:
                state.current_product?.operationConfig?.labelTemplateId,
             assemblyStationId:
@@ -185,26 +185,26 @@ export const Products = ({ order, loading, error, products }) => {
                                  size="sm"
                                  type="solid"
                                  hasAccess={hasStationAccess()}
-                                 disabled={
-                                    state.current_product?.assemblyStatus ===
-                                    'COMPLETED'
-                                 }
+                                 disabled={['READY', 'PACKED'].includes(
+                                    state.current_product?.status
+                                 )}
                                  fallBackMessage={() => packFallBackMessage()}
                                  onClick={() =>
                                     updateCartItem({
                                        variables: {
                                           id: state.current_product?.id,
                                           _set: {
-                                             assemblyStatus: 'COMPLETED',
+                                             status: 'READY',
                                           },
                                        },
                                     })
                                  }
                               >
-                                 {state.current_product?.assemblyStatus ===
-                                 'COMPLETED'
-                                    ? 'Packed'
-                                    : 'Mark Packed'}
+                                 {['READY', 'PACKED'].includes(
+                                    state.current_product?.status
+                                 )
+                                    ? 'Ready'
+                                    : 'Mark Ready'}
                               </TextButton>
                               <Spacer size="16px" xAxis />
                               <TextButton
@@ -215,24 +215,22 @@ export const Products = ({ order, loading, error, products }) => {
                                     assembleFallBackMessage()
                                  }
                                  disabled={
-                                    state.current_product?.isAssembled ||
-                                    state.current_product?.assemblyStatus !==
-                                       'COMPLETED'
+                                    state.current_product?.status === 'PACKED'
                                  }
                                  onClick={() =>
                                     updateCartItem({
                                        variables: {
                                           id: state.current_product?.id,
                                           _set: {
-                                             isAssembled: true,
+                                             status: 'PACKED',
                                           },
                                        },
                                     })
                                  }
                               >
-                                 {state.current_product?.isAssembled
-                                    ? 'Assembled'
-                                    : 'Mark Assembled'}
+                                 {state.current_product?.status === 'PACKED'
+                                    ? 'Packed'
+                                    : 'Mark Packed'}
                               </TextButton>
                            </Flex>
                            <Spacer size="8px" />
@@ -275,13 +273,11 @@ export const Products = ({ order, loading, error, products }) => {
                                  </section>
                                  <section>
                                     <span />
-                                    <span>{t(address.concat('packed'))}</span>
+                                    <span>Ready</span>
                                  </section>
                                  <section>
                                     <span />
-                                    <span>
-                                       {t(address.concat('assembled'))}
-                                    </span>
+                                    <span>Packed</span>
                                  </section>
                               </Legend>
                               {state.current_product?.id && <Sachets />}

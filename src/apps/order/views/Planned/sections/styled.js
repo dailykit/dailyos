@@ -27,14 +27,14 @@ export const ProductOptions = styled.ul`
 `
 
 export const ProductOption = styled.li(
-   ({ isAssembled }) => css`
+   ({ status }) => css`
       height: 40px;
       display: flex;
       padding: 0 12px;
       align-items: center;
       background: #f3f3f3;
       border-radius: 2px;
-      background: ${isAssembled ? '#79df54' : '#f9daa8'};
+      background: ${status === 'PACKED' ? '#79df54' : '#f9daa8'};
       + li {
          margin-top: 4px;
       }

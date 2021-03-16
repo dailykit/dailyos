@@ -109,7 +109,7 @@ const Cards = ({ nodes = [] }) => {
          {nodes.map(node => (
             <ListItem
                key={node.id}
-               isAssembled={node.isAssembled}
+               status={node.status}
                onClick={() =>
                   selectSachet(node.id, { name: node.product?.name })
                }
@@ -153,13 +153,13 @@ const List = styled.ul`
 `
 
 const ListItem = styled.li(
-   ({ isAssembled }) => css`
+   ({ status }) => css`
       height: 40px;
       display: flex;
       list-style: none;
       padding-left: 8px;
       align-items: center;
-      background: ${isAssembled ? '#79df54' : '#f9daa8'};
+      background: ${status === 'PACKED' ? '#79df54' : '#f9daa8'};
       + li {
          border-top: 1px solid rgba(128, 128, 128, 0.3);
       }
