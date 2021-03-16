@@ -51,10 +51,7 @@ const ContentSelection = () => {
                data: { website_websitePageModule: pageModules = [] } = {},
             } = {},
          }) => {
-            const files = pageModules.filter(page => page.moduleType === 'file')
-            const templates = pageModules.filter(
-               page => page.moduleType === 'template'
-            )
+            const files = pageModules
 
             setLinkedFiles(files)
             if (files.length) {
@@ -128,7 +125,7 @@ const ContentSelection = () => {
          const result = selectedFileOptions.map(option => {
             return {
                websitePageId: +pageId,
-               moduleType: 'file',
+               moduleType: option.type==="html"?'block':'file',
                fileId: option.id,
             }
          })
