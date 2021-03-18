@@ -81,10 +81,7 @@ const Panel = () => {
 
    const { loading: linkLoading } = useSubscription(FILE_LINKS, {
       variables: {
-         path: tabInfo?.filePath.replace(
-            window._env_.REACT_APP_ROOT_FOLDER,
-            ''
-         ),
+         path: tabInfo?.filePath.replace(process.env.REACT_APP_ROOT_FOLDER, ''),
       },
       onSubscriptionData: ({
          subscriptionData: { data: { editor_file = [] } = {} } = {},
