@@ -23,9 +23,10 @@ const Orders = () => {
       loading: loadingAggregate,
       data: { orders: ordersAggregate = {} } = {},
    } = useSubscription(QUERIES.ORDERS.AGGREGATE.TOTAL, {
+      skip: !state.orders.where?.cart?.status?._eq,
       variables: {
          where: {
-            orderStatus: { _eq: state.orders.where.orderStatus._eq },
+            cart: { status: { _eq: state.orders.where?.cart?.status?._eq } },
          },
       },
    })
@@ -79,7 +80,7 @@ const Orders = () => {
 
    React.useEffect(() => {
       setActive(1)
-   }, [state.orders.where.orderStatus])
+   }, [state.orders.where.cart?.status])
 
    if (loading) {
       return <InlineLoader />

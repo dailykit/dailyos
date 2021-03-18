@@ -8,43 +8,41 @@ import { StyledStat } from '../ProcessSachet/styled'
 import { SachetWrapper } from './styled'
 
 const SachetBar = ({ openOrderSummaryTunnel }) => {
-   const {
-      state: {
-         sachet: { id },
+   const { state } = useOrder()
+   const [isLoading, setIsLoading] = React.useState(true)
+   const [sachet, setSachet] = React.useState({})
+   const { error } = useSubscription(QUERIES.ORDER.SACHET.MULTIPLE, {
+      skip: !state?.sachet?.id || !state?.current_product?.id,
+      variables: {
+         id: { _eq: state?.sachet?.id },
+         parentCartItemId: { _eq: state?.current_product?.id },
+         levelType: { _eq: 'orderItemSachet' },
       },
-   } = useOrder()
-
-   const [sachet, setSachet] = React.useState(null)
-   const { loading, error } = useSubscription(QUERIES.ORDER.SACHET.ONE, {
-      variables: { id },
       onSubscriptionData: async ({
-         subscriptionData: { data: { orderSachet = {} } = {} },
+         subscriptionData: { data: { sachets = [] } = {} },
       }) => {
-         if (!isEmpty(orderSachet)) {
-            setSachet(orderSachet)
+         if (!isEmpty(sachets)) {
+            const [node] = sachets
+            setSachet(node)
          }
+         setIsLoading(false)
       },
    })
-   if (loading || !sachet) return <InlineLoader />
 
+   if (isLoading) return <div />
+   if (error) {
+      setIsLoading(false)
+   }
    return (
       <SachetWrapper onClick={() => openOrderSummaryTunnel(1)}>
          <section>
-            <h4>{sachet.ingredientName}</h4>
+            <h4>{sachet.displayName.split('->').pop().trim()}</h4>
             <StyledStat status={sachet.status}>{sachet.status}</StyledStat>
          </section>
          <section>
             <section>
                <span>Supplier Item</span>
-               <span>
-                  {(sachet.bulkItemId &&
-                     sachet?.bulkItem?.supplierItem?.name) ||
-                     ''}
-                  {(sachet.sachetItemId &&
-                     sachet?.sachetItem?.bulkItem?.supplierItem?.name) ||
-                     ''}
-                  {!sachet?.bulkItemId && !sachet?.sachetItemId && 'NA'}
-               </span>
+               <span>{sachet?.supplierItem?.supplierItemName}</span>
             </section>
             <section>
                <span>Processing Name</span>
@@ -53,8 +51,8 @@ const SachetBar = ({ openOrderSummaryTunnel }) => {
             <section>
                <span>Quantity</span>
                <span>
-                  {sachet.quantity}
-                  {sachet.unit}
+                  {sachet.displayUnitQuantity}
+                  {sachet.displayUnit}
                </span>
             </section>
          </section>

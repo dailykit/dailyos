@@ -17,7 +17,7 @@ const initialState = {
       offset: 0,
       loading: true,
       where: {
-         orderStatus: { _eq: 'PENDING' },
+         cart: { status: { _eq: 'ORDER_PENDING' } },
          _or: [
             { isRejected: { _eq: false } },
             { isRejected: { _is_null: true } },
@@ -133,14 +133,18 @@ const reducers = (state, { type, payload }) => {
          }
       }
       case 'CLEAR_SOURCE_FILTER': {
-         const { source, ...rest } = state.orders.where
+         const { cart, ...rest } = state.orders.where
+         const { source, ...restCart } = cart
          return {
             ...state,
             orders: {
                loading: true,
                limit: 10,
                offset: 0,
-               where: rest,
+               where: {
+                  ...rest,
+                  cart: restCart,
+               },
             },
          }
       }
