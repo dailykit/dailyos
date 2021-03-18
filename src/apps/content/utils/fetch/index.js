@@ -1,6 +1,6 @@
 export const getFullPath = path => {
    const host =
-      process.env.NODE_ENV === 'development'
+      window._env_.NODE_ENV === 'development'
          ? 'https://test.dailykit.org'
          : window.location.origin
 

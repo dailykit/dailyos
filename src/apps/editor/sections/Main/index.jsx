@@ -112,7 +112,7 @@ const Main = () => {
       if (type === 'create') {
          if (nodeType === 'FILE') {
             const filePath = `${path.replace(
-               process.env.REACT_APP_ROOT_FOLDER,
+               window._env_.REACT_APP_ROOT_FOLDER,
                ''
             )}/${name}.${fileTypeRef.current}`
             await createFile({
@@ -124,7 +124,7 @@ const Main = () => {
             fileTypeRef.current = ''
          } else {
             const folderPath = `${path.replace(
-               process.env.REACT_APP_ROOT_FOLDER,
+               window._env_.REACT_APP_ROOT_FOLDER,
                ''
             )}/${name}`
             await createFolder({

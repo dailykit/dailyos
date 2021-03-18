@@ -129,11 +129,11 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
                id: sachet.id,
             })
          )
-         const url = `${process.env.REACT_APP_TEMPLATE_URL}?template=${template}&data=${data}`
+         const url = `${window._env_.REACT_APP_TEMPLATE_URL}?template=${template}&data=${data}`
          setLabelPreview(url)
       } else {
          const url = `${
-            new URL(process.env.REACT_APP_DATA_HUB_URI).origin
+            new URL(window._env_.REACT_APP_DATA_HUB_URI).origin
          }/datahub/v1/query`
 
          const data = {
@@ -157,7 +157,7 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
                headers: {
                   'Content-Type': 'application/json; charset=utf-8',
                   'x-hasura-admin-secret':
-                     process.env.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
+                     window._env_.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
                },
             }
          )

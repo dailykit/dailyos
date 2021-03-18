@@ -53,13 +53,13 @@ export const ReadyToEats = ({
          toast.error('No template assigned!')
          return
       }
-      const url = `${process.env.REACT_APP_TEMPLATE_URL}?template={"name":"readytoeat_product1","type":"label","format":"html"}&data={"id":${current.id}}`
+      const url = `${window._env_.REACT_APP_TEMPLATE_URL}?template={"name":"readytoeat_product1","type":"label","format":"html"}&data={"id":${current.id}}`
 
       if (config.print.print_simulation.value.isActive) {
          setLabel(url)
       } else {
          const uri = `${
-            new URL(process.env.REACT_APP_DATA_HUB_URI).origin
+            new URL(window._env_.REACT_APP_DATA_HUB_URI).origin
          }/datahub/v1/query`
 
          const data = {
@@ -83,7 +83,7 @@ export const ReadyToEats = ({
                headers: {
                   'Content-Type': 'application/json; charset=utf-8',
                   'x-hasura-admin-secret':
-                     process.env.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
+                     window._env_.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
                },
             }
          )

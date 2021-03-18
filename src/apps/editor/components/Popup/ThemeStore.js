@@ -33,7 +33,7 @@ export default function ThemeStore({ show, closePopup, setCreateType }) {
       const getTemplates = async () => {
          try {
             const { data } = await axios({
-               url: process.env.REACT_APP_THEME_STORE_DATA_HUB_URI,
+               url: window._env_.REACT_APP_THEME_STORE_DATA_HUB_URI,
                method: 'POST',
                headers: {
                   'Content-Type': 'application/json',

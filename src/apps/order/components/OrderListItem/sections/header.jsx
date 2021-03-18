@@ -27,7 +27,7 @@ export const Header = ({ order }) => {
       )
       const data = encodeURIComponent(JSON.stringify({ id: order.id }))
       window.open(
-         `${process.env.REACT_APP_TEMPLATE_URL}?template=${template}&data=${data}`,
+         `${window._env_.REACT_APP_TEMPLATE_URL}?template=${template}&data=${data}`,
          '_blank'
       )
    }

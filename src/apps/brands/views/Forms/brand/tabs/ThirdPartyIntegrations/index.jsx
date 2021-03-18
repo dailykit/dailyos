@@ -25,7 +25,7 @@ const Parseur = ({ id = '' }) => {
          ;(async () => {
             try {
                const response = await axios(
-                  `${process.env.REACT_APP_DAILYOS_SERVER_URI}/api/parseur/${id}`
+                  `${window._env_.REACT_APP_DAILYOS_SERVER_URI}/api/parseur/${id}`
                )
                if (response.status === 200 && response.statusText === 'OK') {
                   if (response.data.success) {
@@ -53,7 +53,7 @@ const Parseur = ({ id = '' }) => {
          try {
             const response = await axios({
                method: 'POST',
-               url: `${process.env.REACT_APP_DAILYOS_SERVER_URI}/api/parseur`,
+               url: `${window._env_.REACT_APP_DAILYOS_SERVER_URI}/api/parseur`,
                data: { brand: { id: params.id } },
             })
             if (response.status === 200 && response.statusText === 'OK') {
@@ -73,7 +73,7 @@ const Parseur = ({ id = '' }) => {
          try {
             const response = await axios({
                method: 'DELETE',
-               url: `${process.env.REACT_APP_DAILYOS_SERVER_URI}/api/parseur`,
+               url: `${window._env_.REACT_APP_DAILYOS_SERVER_URI}/api/parseur`,
                data: {
                   brand: { id: params.id },
                   mailbox: { id },

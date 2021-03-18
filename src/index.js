@@ -44,25 +44,25 @@ const authLink = setContext((_, { headers }) => {
    return {
       headers: {
          ...headers,
-         'x-hasura-admin-secret': `${process.env.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET}`,
+         'x-hasura-admin-secret': `${window._env_.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET}`,
       },
    }
 })
 
 const wsLink = new WebSocketLink({
-   uri: process.env.REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI,
+   uri: window._env_.REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI,
    options: {
       reconnect: true,
       connectionParams: {
          headers: {
-            'x-hasura-admin-secret': `${process.env.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET}`,
+            'x-hasura-admin-secret': `${window._env_.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET}`,
          },
       },
    },
 })
 
 const httpLink = new HttpLink({
-   uri: process.env.REACT_APP_DATA_HUB_URI,
+   uri: window._env_.REACT_APP_DATA_HUB_URI,
 })
 
 const link = split(
@@ -83,8 +83,8 @@ const client = new ApolloClient({
 })
 
 const keycloak = new Keycloak({
-   realm: process.env.REACT_APP_KEYCLOAK_REALM,
-   url: process.env.REACT_APP_KEYCLOAK_URL,
+   realm: window._env_.REACT_APP_KEYCLOAK_REALM,
+   url: window._env_.REACT_APP_KEYCLOAK_URL,
    clientId: 'apps',
    'ssl-required': 'none',
    'public-client': true,
@@ -117,7 +117,7 @@ i18n
       render(
          <ApolloProvider client={client}>
             <AuthProvider keycloak={keycloak}>
-               <Router basename={process.env.PUBLIC_URL}>
+               <Router basename={window._env_.PUBLIC_URL}>
                   <TabProvider>
                      <ToastContainer
                         position="bottom-left"
