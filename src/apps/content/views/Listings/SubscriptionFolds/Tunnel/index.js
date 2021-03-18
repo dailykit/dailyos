@@ -1,39 +1,49 @@
-import React, { useState, useContext,useRef } from 'react'
-import { useMutation,useSubscription } from '@apollo/react-hooks'
-import { TunnelHeader, Loader, Flex, Form, Spacer,Dropdown } from '@dailykit/ui'
+import React, { useState, useContext, useRef } from 'react'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import {
+   TunnelHeader,
+   Loader,
+   Flex,
+   Form,
+   Spacer,
+   Dropdown,
+   TextButton,
+} from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { TunnelBody, StyledWrapper, InputWrapper } from './styled'
-import { useTabs } from '../../../../../../shared/providers'
-import { INSERT_SUBSCRIPTION_FOLD,GET_FILES } from '../../../../graphql'
+import { TunnelBody } from './styled'
+import { INSERT_SUBSCRIPTION_FOLD, GET_FILES } from '../../../../graphql'
 import FoldContext from '../../../../context/Fold'
 
 import { Tooltip, InlineLoader } from '../../../../../../shared/components'
 import { logger } from '../../../../../../shared/utils'
-import { defaultFormat } from 'moment'
 
 export default function LinkFoldTunnel({ close }) {
    const identifierOptions = [
-      { id: 1, title: 'select-plan-bottom-01'},
+      { id: 1, title: 'select-plan-bottom-01' },
       { id: 2, title: 'select-delivery-bottom-01' },
-      { id: 3, title: 'select-menu-bottom-01'},
+      { id: 3, title: 'select-menu-bottom-01' },
       { id: 4, title: 'home-bottom-01' },
    ]
    const [foldContext, setFoldContext] = useContext(FoldContext)
    const [files, setFiles] = useState([])
-   const [searchQueryForIdentifier,setSearchQueryForIdentifier] = useState("")
-   const [searchQueryForFile,setSearchQueryForFile] = useState("")
-   const [searchResultForIdentifier,setSearchResultForIdentifier] = useState(identifierOptions)
-   const [searchResultForFile,setSearchResultForFile] = useState([])
-   const [defaultIdentifierId,setDefaultIdentifierId] = useState(null)
-   const [defaultFileId,setDefaultFileId] = useState(null)
+   const [searchQueryForIdentifier, setSearchQueryForIdentifier] = useState('')
+   const [searchQueryForFile, setSearchQueryForFile] = useState('')
+   const [searchResultForIdentifier, setSearchResultForIdentifier] = useState(
+      identifierOptions
+   )
+   const [searchResultForFile, setSearchResultForFile] = useState([])
+   const [defaultIdentifierId, setDefaultIdentifierId] = useState(null)
+   const [defaultFileId, setDefaultFileId] = useState(null)
    const selectedIdentifierRef = useRef(null)
    const selectedFileIdRef = useRef(null)
 
-
-   const { loading:subscriptionLoading, error:subscriptionError } = useSubscription(GET_FILES, {
+   const {
+      loading: subscriptionLoading,
+      error: subscriptionError,
+   } = useSubscription(GET_FILES, {
       variables: {
          linkedFile: [],
-         fileTypes: ['html', 'liquid', 'pug', 'mustache', 'ejs'],
+         fileTypes: ['html'],
       },
       onSubscriptionData: ({
          subscriptionData: {
@@ -50,29 +60,9 @@ export default function LinkFoldTunnel({ close }) {
          })
          setFiles(result)
          setSearchResultForFile(result)
-         console.log("completed...",result)
+         console.log('completed...', result)
       },
    })
-
-   // const [pageTitle, setPageTitle] = useState({
-   //    value: '',
-   //    meta: {
-   //       isValid: false,
-   //       isTouched: false,
-   //       errors: [],
-   //    },
-   // })
-   // const [pageRoute, setPageRoute] = useState({
-   //    value: '',
-   //    meta: {
-   //       isValid: false,
-   //       isTouched: false,
-   //       errors: [],
-   //    },
-   // })
-
-
-
 
    const selectedOptionforIdentifier = option => {
       selectedIdentifierRef.current = option.title
@@ -81,69 +71,47 @@ export default function LinkFoldTunnel({ close }) {
       selectedFileIdRef.current = option.id
    }
 
-   // // form validation
-   // const validatePageName = (value, name) => {
-   //    const text = value.trim()
-   //    let isValid = true
-   //    let errors = []
-   //    if (name === 'pageTitle') {
-   //       if (text.length < 2) {
-   //          isValid = false
-   //          errors = [...errors, 'Must have atleast two letters.']
-   //       }
-   //    } else {
-   //       if (text.length < 1) {
-   //          isValid = false
-   //          errors = [...errors, 'Must have atleast one letters.']
-   //       }
-   //       if (!text.includes('/') && text.length > 0) {
-   //          isValid = false
-   //          errors = [...errors, "Invalid route..Must start with ' / '."]
-   //       }
-   //    }
-   //    return { isValid, errors }
-   // }
-
    // Mutation
-   const [linkFold, { loading:mutationLoading }] = useMutation(INSERT_SUBSCRIPTION_FOLD, {
-      onCompleted: () => {
-        selectedIdentifierRef.current = 1
-        selectedFileIdRef.current = null
-        setSearchQueryForFile('')
-        setSearchQueryForIdentifier('')
-        setSearchResultForFile([])
-        setSearchResultForIdentifier([])
-        setDefaultFileId(null)
-        setDefaultIdentifierId(null)
-        close(1)
-        toast.success('Fold linked successfully!')
-      },
-      onError: error => {
-         toast.error(`Error : ${error.message}`)
-      },
-   })
-
+   const [linkFold, { loading: mutationLoading }] = useMutation(
+      INSERT_SUBSCRIPTION_FOLD,
+      {
+         onCompleted: () => {
+            selectedIdentifierRef.current = 1
+            selectedFileIdRef.current = null
+            setSearchQueryForFile('')
+            setSearchQueryForIdentifier('')
+            setSearchResultForFile([])
+            setSearchResultForIdentifier([])
+            setDefaultFileId(null)
+            setDefaultIdentifierId(null)
+            close(1)
+            toast.success('Fold linked successfully!')
+         },
+         onError: error => {
+            toast.error(`Error : ${error.message}`)
+         },
+      }
+   )
 
    const closeFunc = () => {
       selectedIdentifierRef.current = 1
-        selectedFileIdRef.current = null
-        setSearchQueryForFile('')
-        setSearchQueryForIdentifier('')
-        setSearchResultForFile([])
-        setSearchResultForIdentifier([])
-        setDefaultFileId(null)
-        setDefaultIdentifierId(null)
-        close()
+      selectedFileIdRef.current = null
+      setSearchQueryForFile('')
+      setSearchQueryForIdentifier('')
+      setSearchResultForFile([])
+      setSearchResultForIdentifier([])
+      setDefaultFileId(null)
+      setDefaultIdentifierId(null)
       close(1)
    }
    const linkFoldHandler = () => {
       // if (pageTitle.meta.isValid && pageRoute.meta.isValid) {
-         linkFold({
-            variables: {
-               identifier:selectedIdentifierRef.current,
-               fileId: selectedFileIdRef.current
-            },
-         })
+      linkFold({
+         variables: {
+            identifier: selectedIdentifierRef.current,
+            fileId: selectedFileIdRef.current,
+         },
+      })
       // }
    }
 
@@ -161,21 +129,37 @@ export default function LinkFoldTunnel({ close }) {
       setSearchResultForFile(result)
    }, [searchQueryForFile])
 
-   React.useEffect(()=>{
-      console.log("useEffect",foldContext)
-      if(Object.keys(foldContext).length ){
-         console.log("if under useEffect")
-         const identifierId = identifierOptions.filter(option=>option.title === foldContext.identifier).map(opt=>{return opt.id})[0]
-         console.log("if under useEffect2",identifierId,foldContext.fileId)
-         setDefaultFileId(foldContext.fileId)
-         setDefaultIdentifierId(identifierId)
+   React.useEffect(() => {
+      if (
+         Object.keys(foldContext).length &&
+         files.length &&
+         foldContext.tunnelRole === 'update'
+      ) {
+         const identifier = identifierOptions.find(
+            option => option.title === foldContext.identifier
+         )
+         const fileIndex = files.findIndex(
+            file => file.id === foldContext.fileId
+         )
+         if (fileIndex !== -1) {
+            setDefaultFileId(fileIndex + 1)
+            selectedFileIdRef.current = files[fileIndex].id
+         } else {
+            setDefaultFileId(null)
+         }
+         if (identifier && Object.keys(identifier).length) {
+            setDefaultIdentifierId(identifier.id)
+            selectedIdentifierRef.current = identifier.title
+         } else {
+            setDefaultFileId(null)
+         }
       }
-   },[foldContext])
+   }, [foldContext, files])
 
-   if(subscriptionError){
-        logger(subscriptionError)
-      }
-   if(subscriptionLoading){
+   if (subscriptionError) {
+      logger(subscriptionError)
+   }
+   if (subscriptionLoading || !searchResultForFile.length) {
       return <InlineLoader />
    }
    return (
@@ -184,10 +168,18 @@ export default function LinkFoldTunnel({ close }) {
             title="Link Subscription Fold"
             right={{
                action: () => linkFoldHandler(),
-               title: mutationLoading ? 'Adding...' : 'Add',
+               title: mutationLoading ? (
+                  <TextButton isLoading={mutationLoading} type="solid">
+                     Loading
+                  </TextButton>
+               ) : (
+                  foldContext?.tunnelRole.toUpperCase() || 'Save'
+               ),
             }}
             close={() => closeFunc()}
-            tooltip={<Tooltip identifier="subscriptionFold_linking_tunnelHeader" />}
+            tooltip={
+               <Tooltip identifier="subscriptionFold_linking_tunnelHeader" />
+            }
          />
          <TunnelBody>
             <Form.Group>
@@ -197,14 +189,14 @@ export default function LinkFoldTunnel({ close }) {
                   </Form.Label>
                   <Tooltip identifier="fold_identifier_info" />
                </Flex>
-               {searchResultForIdentifier.length>0 && <Dropdown
-            type='single'
-            defaultValue={defaultIdentifierId || null}
-            options={searchResultForIdentifier}
-            searchedOption={option=>setSearchQueryForIdentifier(option)}
-            selectedOption={option =>selectedOptionforIdentifier(option)}
-            placeholder="type what you're looking for..."
-         />}
+               <Dropdown
+                  type="single"
+                  defaultValue={defaultIdentifierId || null}
+                  options={searchResultForIdentifier}
+                  searchedOption={option => setSearchQueryForIdentifier(option)}
+                  selectedOption={option => selectedOptionforIdentifier(option)}
+                  placeholder="type what you're looking for..."
+               />
             </Form.Group>
             <Spacer size="16px" />
             <Form.Group>
@@ -214,14 +206,15 @@ export default function LinkFoldTunnel({ close }) {
                   </Form.Label>
                   <Tooltip identifier="page_route_info" />
                </Flex>
-               {searchResultForFile.length>0 && <Dropdown
-            type='single'
-            defaultValue={defaultFileId || null}
-            options={searchResultForFile}
-            searchedOption={option=>setSearchQueryForFile(option)}
-            selectedOption={option =>selectedOptionforFile(option)}
-            placeholder="type what you're looking for..."
-         />}
+
+               <Dropdown
+                  type="single"
+                  defaultValue={defaultFileId || null}
+                  options={searchResultForFile}
+                  searchedOption={option => setSearchQueryForFile(option)}
+                  selectedOption={option => selectedOptionforFile(option)}
+                  placeholder="type what you're looking for..."
+               />
             </Form.Group>
          </TunnelBody>
       </>
