@@ -1,22 +1,31 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Loader, Spacer, IconButton } from '@dailykit/ui'
+import { Form, Spacer, IconButton } from '@dailykit/ui'
 
 import useAssets from './useAssets'
+import { InlineLoader } from '../InlineLoader'
 
 const Images = ({ onImageSelect }) => {
+   const [keyword, setKeyword] = React.useState('')
    const { images, status, error, remove } = useAssets('images')
 
-   if (status === 'LOADING') return <Loader />
+   if (status === 'LOADING') return <InlineLoader />
    if (status === 'ERROR') return <div>{error}</div>
    return (
       <>
+         <Form.Text
+            value={keyword}
+            placeholder="Search Images"
+            onChange={e => setKeyword(e.target.value)}
+         />
+         <Spacer size="16px" />
          <StyledList>
             {images.map(image => (
                <StyledListItem
                   key={image.key}
                   title={image.metadata.title}
                   onClick={() => onImageSelect(image)}
+                  isHidden={!image.url.toLowerCase().includes(keyword)}
                >
                   <StyledImage src={image.url} alt={image.metadata.title} />
                   <span>
@@ -53,6 +62,7 @@ const StyledList = styled.ul`
 
 const StyledListItem = styled.li`
    position: relative;
+   ${({ isHidden }) => isHidden && `display:none;`}
    span {
       top: 6px;
       right: 6px;
