@@ -1,14 +1,14 @@
 import { Flex } from '@dailykit/ui'
 import styled, { css } from 'styled-components'
 
-const selectBg = (isPacked, isAssembled) => {
-   if (isPacked && isAssembled) {
+const selectBg = status => {
+   if (status === 'PACKED') {
       return '#79df54' // green
    }
-   if (!isPacked && !isAssembled) {
+   if (status === 'PENDING') {
       return '#f9daa8' // pending
    }
-   if (isPacked && !isAssembled) {
+   if (status === 'READY') {
       return '#65c6ff' // processing
    }
    return ''
@@ -25,11 +25,22 @@ export const Styles = {
    ProductItem: styled.li(
       ({ isActive }) => css`
          padding: 12px;
+         display: flex;
          cursor: pointer;
          list-style: none;
          border-radius: 2px;
          ${isActive && `color: #fff`};
          background: ${isActive ? '#353244' : '#f3f3f3'};
+         aside {
+            width: 80px;
+            overflow: hidden;
+            margin-right: 14px;
+         }
+         img {
+            width: 100%;
+            object-fit: cover;
+            border-radius: 2px;
+         }
          h3 {
             font-size: 14px;
             font-weight: 500;
@@ -68,7 +79,7 @@ export const Scroll = {
 }
 
 export const StyledProductTitle = styled.span`
-   font-weight: 500;
+   font-weight: 400;
    font-size: 16px;
    line-height: 14px;
 `
@@ -91,7 +102,7 @@ export const List = {
    ),
    Body: styled.div(() => css``),
    Item: styled.div(
-      ({ isOpen, variant: { isPacked, isAssembled } }) => css`
+      ({ isOpen, status }) => css`
          overflow: hidden;
          margin-bottom: 4px;
          header {
@@ -105,7 +116,7 @@ export const List = {
                border-left: 5px solid rgba(0, 0, 0, 0.3);
             `};
             grid-template-columns: repeat(4, 1fr) 48px;
-            background: ${selectBg(isPacked, isAssembled)};
+            background: ${selectBg(status)};
             > span {
                padding: 0 14px;
                overflow: hidden;

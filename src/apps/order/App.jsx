@@ -1,5 +1,4 @@
 import React from 'react'
-import usePortal from 'react-useportal'
 import { Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
 
 // Context
@@ -35,10 +34,8 @@ const App = () => {
    ] = useTunnel(1)
    const [filterTunnels, openFilterTunnel, closeFilterTunnel] = useTunnel(1)
    const [configTunnels, openConfigTunnel, closeConfigTunnel] = useTunnel(1)
+   const [notifTunnels, openNotifTunnel, closeNotifTunnel] = useTunnel(1)
    const [position, setPosition] = React.useState('left')
-   const { openPortal, closePortal, isOpen, Portal } = usePortal({
-      bindTo: document && document.getElementById('notifications'),
-   })
 
    React.useEffect(() => {
       setRoutes([
@@ -67,35 +64,17 @@ const App = () => {
             payload: {
                _or: [
                   {
-                     orderInventoryProducts: {
-                        assemblyStationId: {
-                           _eq: configState.current_station?.id,
-                        },
-                     },
-                  },
-                  {
-                     orderReadyToEatProducts: {
-                        assemblyStationId: {
-                           _eq: configState.current_station?.id,
-                        },
-                     },
-                  },
-                  {
-                     orderMealKitProducts: {
-                        _or: [
-                           {
-                              assemblyStationId: {
-                                 _eq: configState.current_station?.id,
-                              },
-                           },
-                           {
-                              orderSachets: {
-                                 packingStationId: {
+                     cart: {
+                        ...state.orders?.where?.cart,
+                        cartItemViews: {
+                           productOption: {
+                              operationConfig: {
+                                 stationId: {
                                     _eq: configState.current_station?.id,
                                  },
                               },
                            },
-                        ],
+                        },
                      },
                   },
                ],
@@ -133,12 +112,12 @@ const App = () => {
             {state.current_view === 'SACHET_ITEM' && <ProcessSachet />}
          </ErrorBoundary>
          <Main />
-         <Footer />
+         <Footer openTunnel={openNotifTunnel} setPosition={setPosition} />
          <BottomQuickInfoBar openOrderSummaryTunnel={openOrderSummaryTunnel} />
-         <OrderSummaryTunnel>
-            <ErrorBoundary>
-               <Tunnels mt={0} tunnels={orderSummaryTunnels}>
-                  <StyledTunnel layer="1" size="md">
+         <ErrorBoundary>
+            <Tunnels mt={0} tunnels={orderSummaryTunnels}>
+               <StyledTunnel layer="1" size="md">
+                  <OrderSummaryTunnel>
                      {state.current_view === 'SUMMARY' && (
                         <OrderSummary
                            closeOrderSummaryTunnel={closeOrderSummaryTunnel}
@@ -149,20 +128,16 @@ const App = () => {
                            closeOrderSummaryTunnel={closeOrderSummaryTunnel}
                         />
                      )}
-                  </StyledTunnel>
-               </Tunnels>
-            </ErrorBoundary>
-         </OrderSummaryTunnel>
-
-         {isOpen && (
-            <Portal>
-               <Notifications
-                  isOpen={isOpen}
-                  openPortal={openPortal}
-                  closePortal={closePortal}
-               />
-            </Portal>
-         )}
+                  </OrderSummaryTunnel>
+               </StyledTunnel>
+            </Tunnels>
+         </ErrorBoundary>
+         <ErrorBoundary rootRoute="/apps/order">
+            <Notifications
+               tunnels={notifTunnels}
+               closeTunnel={closeNotifTunnel}
+            />
+         </ErrorBoundary>
          <ErrorBoundary rootRoute="/apps/order">
             <Tunnels tunnels={tunnels}>
                <Tunnel layer="1" size="md">

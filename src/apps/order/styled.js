@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 export const StyledWrapper = styled.div(
    ({ position }) => css`
       display: grid;
-      height: calc(100vh - 40px);
+      height: calc(100vh - 110px);
       overflow: hidden;
       grid-template-rows: 1fr 40px;
       grid-template-areas: ${position === 'left'
@@ -23,7 +23,7 @@ export const StyledWrapper = styled.div(
          grid-area: main;
          overflow-y: auto;
          scroll-behavior: smooth;
-         height: calc(100vh - 80px);
+         height: 100%;
       }
       > footer {
          grid-area: footer;
@@ -46,9 +46,9 @@ export const StyledWrapper = styled.div(
       @media only screen and (orientation: portrait) {
          grid-template-areas: 'main' 'bottomBar' 'footer';
          grid-template-columns: 100%;
-         grid-template-rows: calc(100vh - 160px) 80px 40px;
+         grid-template-rows: 1fr 80px 40px;
          > main {
-            height: calc(100vh - 160px);
+            height: calc(100vh - 230px);
          }
       }
    `

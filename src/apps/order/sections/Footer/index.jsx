@@ -13,7 +13,7 @@ import {
    LabelPrinterIcon,
 } from '../../assets/icons'
 
-const Footer = ({ isOpen, openPortal, closePortal, setPosition }) => {
+const Footer = ({ openTunnel, setPosition }) => {
    const { state, dispatch } = useConfig()
    const {
       state: { current_station: station },
@@ -110,7 +110,7 @@ const Footer = ({ isOpen, openPortal, closePortal, setPosition }) => {
             <button
                type="button"
                title="Notifications"
-               onClick={e => (isOpen ? closePortal(e) : openPortal(e))}
+               onClick={() => openTunnel(1)}
             >
                <BellIcon color="#000" size="20" />
             </button>
