@@ -117,7 +117,7 @@ i18n
       render(
          <ApolloProvider client={client}>
             <AuthProvider keycloak={keycloak}>
-               <Router basename={window._env_.PUBLIC_URL}>
+               <Router basename={process.env.PUBLIC_URL}>
                   <TabProvider>
                      <ToastContainer
                         position="bottom-left"

@@ -26,3 +26,6 @@ schema.json
 
 .vscode
 todo.md
+
+/public/env-config.js
+env-config.js
