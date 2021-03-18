@@ -4,21 +4,27 @@ import { BrandName } from './styled'
 import BrandContext from '../../context/Brand'
 import { ViewIcon } from '../../../../shared/assets/icons'
 // Views
-import { PageListing, Home, PageForm } from '../../views'
+import { PageListing, Home, PageForm, SubscriptionFold } from '../../views'
 
 export default function Main() {
    const [context, setContext] = useContext(BrandContext)
+   const { brandName } = context
    return (
       <main>
          <Switch>
-            <Route path="/content" component={Home} exact />
+            <Route exact path="/content" component={Home} />
 
-            <Route path="/content/pages" component={PageListing} exact />
+            <Route exact path="/content/pages" component={PageListing} />
 
             <Route
                path="/content/pages/:pageId/:pageName"
                component={PageForm}
                exact
+            />
+            <Route
+               exact
+               path="/content/subscription"
+               component={SubscriptionFold}
             />
 
             <Route exact path="/content/settings">
@@ -30,7 +36,7 @@ export default function Main() {
          </Switch>
          <BrandName>
             <ViewIcon size="24" /> &nbsp;
-            <p>Showing information for {context.brandName} brand</p>
+            <p>Showing information for {brandName} brand</p>
          </BrandName>
       </main>
    )

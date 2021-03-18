@@ -1,2 +1,4 @@
 import PageListing from './Pages'
-export { PageListing }
+import SubscriptionFold from './SubscriptionFolds'
+
+export { PageListing, SubscriptionFold }

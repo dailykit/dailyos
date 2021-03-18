@@ -156,3 +156,24 @@ export const CREATE_WEBPAGE = gql`
       }
    }
 `
+export const INSERT_SUBSCRIPTION_FOLD = gql`
+mutation INSERT_SUBSCRIPTION_FOLDS($fileId: Int!, $identifier: String!) {
+   insert_content_subscriptionDivIds(objects: {fileId: $fileId, id: $identifier}, on_conflict: {constraint: subscriptionDivIds_pkey, update_columns: fileId}) {
+     returning {
+       identifier: id
+       fileId
+     }
+   }
+ }
+`
+export const DELETE_SUBSCRIPTION_FOLD  = gql`
+mutation DELETE_SUBSCRIPTION_FOLD($identifier: String!, $fileId: Int!) {
+   delete_content_subscriptionDivIds(where: {id: {_eq: $identifier}, fileId: {_eq: $fileId}}) {
+     returning {
+       fileId
+       id
+     }
+   }
+ }
+
+`

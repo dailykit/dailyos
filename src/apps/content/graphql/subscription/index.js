@@ -185,3 +185,26 @@ export const LINKED_COMPONENT = gql`
       }
    }
 `
+export const GET_SUBSCRIPTION_FOLDS = gql`
+   subscription GET_SUBSCRIPTION_FOLDS {
+      content_subscriptionDivIds {
+         fileId
+         identifier: id
+         subscriptionDivFileId {
+            fileName
+            fileType
+            path
+         }
+      }
+   }
+`
+
+export const FOLD_AGGREGATE = gql`
+   subscription FOLD_AGGREGATE {
+      content_subscriptionDivIds_aggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
