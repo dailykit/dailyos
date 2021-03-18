@@ -40,6 +40,10 @@ export const Home = () => {
                count={count}
                onClick={() => addTab('Pages', '/content/pages')}
             />
+               <DashboardTile
+                  title="Subscription"
+                  onClick={() => addTab('Subscription', '/content/subscription')}
+               />
             <DashboardTile
                title="Settings"
                onClick={() => addTab('Settings', '/content/settings')}

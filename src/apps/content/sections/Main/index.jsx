@@ -4,7 +4,7 @@ import { BrandName } from './styled'
 import BrandContext from '../../context/Brand'
 import { ViewIcon } from '../../../../shared/assets/icons'
 // Views
-import { PageListing, Home, PageForm } from '../../views'
+import { PageListing, Home, PageForm,SubscriptionFold } from '../../views'
 
 export default function Main() {
    const [context, setContext] = useContext(BrandContext)
@@ -20,6 +20,7 @@ export default function Main() {
                component={PageForm}
                exact
             />
+            <Route exact path="/content/subscription" component={SubscriptionFold}/>
 
             <Route exact path="/content/settings">
                <h1>Setting Page</h1>

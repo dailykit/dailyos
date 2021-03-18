@@ -185,3 +185,16 @@ export const LINKED_COMPONENT = gql`
       }
    }
 `
+export const GET_SUBSCRIPTION_FOLDS  = gql`
+subscription GET_SUBSCRIPTION_FOLDS {
+   content_subscriptionDivIds {
+     fileId
+     identifier: id
+     subscriptionDivFileId {
+       fileName
+       fileType
+       path
+     }
+   }
+ }
+`

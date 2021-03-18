@@ -13,6 +13,7 @@ import Main from './sections/Main'
 import ErrorBoundary from '../../shared/components/ErrorBoundary'
 import BrandContext from './context/Brand'
 import ConfigContext from './context/Config'
+import FoldContext from './context/Fold'
 
 // Styled
 import { StyledWrapper } from '../../styled'
@@ -27,6 +28,7 @@ const App = () => {
       brandDomain: '',
    })
    const [configContext, setConfigContext] = React.useState({})
+   const [foldContext, setFoldContext] = React.useState({})
    React.useEffect(() => {
       setRoutes([
          {
@@ -54,6 +56,7 @@ const App = () => {
    return (
       <ErrorBoundary rootRoute="/apps/content">
          {/* <StyledWrapper> */}
+         <FoldContext.Provider value={[foldContext, setFoldContext]}>
          <ConfigContext.Provider value={[configContext, setConfigContext]}>
             <BrandContext.Provider value={[context, setContext]}>
                {/* <Router basename={process.env.PUBLIC_URL}>
@@ -66,6 +69,7 @@ const App = () => {
                {/* </Router> */}
             </BrandContext.Provider>
          </ConfigContext.Provider>
+         </FoldContext.Provider>
          {/* </StyledWrapper> */}
       </ErrorBoundary>
    )
