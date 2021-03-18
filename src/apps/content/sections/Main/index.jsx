@@ -11,29 +11,27 @@ export default function Main() {
    const { brandName } = context
    return (
       <main>
-         <Switch>
-            <Route exact path="/content" component={Home} />
+         <Route exact path="/content" component={Home} />
 
-            <Route exact path="/content/pages" component={PageListing} />
+         <Route exact path="/content/pages" component={PageListing} />
 
-            <Route
-               path="/content/pages/:pageId/:pageName"
-               component={PageForm}
-               exact
-            />
-            <Route
-               exact
-               path="/content/subscription"
-               component={SubscriptionFold}
-            />
+         <Route
+            path="/content/pages/:pageId/:pageName"
+            component={PageForm}
+            exact
+         />
+         <Route
+            exact
+            path="/content/subscription"
+            component={SubscriptionFold}
+         />
 
-            <Route exact path="/content/settings">
-               <h1>Setting Page</h1>
-            </Route>
-            <Route exact path="/content/blocks">
-               <h1>Blocks Page</h1>
-            </Route>
-         </Switch>
+         <Route exact path="/content/settings">
+            <h1>Setting Page</h1>
+         </Route>
+         <Route exact path="/content/blocks">
+            <h1>Blocks Page</h1>
+         </Route>
          <BrandName>
             <ViewIcon size="24" /> &nbsp;
             <p>Showing information for {brandName} brand</p>
