@@ -9,4 +9,5 @@ window._env_ = {
   REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET: "60ea76ab-5ab6-4f09-ad44-efeb00f978ce",
   NODE_ENV: "development",
   REACT_APP_CURRENCY: "USD",
+  PUBLIC_URL: "/apps",
 }

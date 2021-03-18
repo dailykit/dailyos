@@ -8,6 +8,7 @@ COPY . .
 
 ENV PATH /app/node_modules/.bin:$PATH
 ENV SKIP_PREFLIGHT_CHECK true
+ENV PUBLIC_URL /apps
 
 RUN yarn build
 
