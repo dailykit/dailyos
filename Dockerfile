@@ -1,44 +1,40 @@
-FROM mhart/alpine-node:12.18.0 as build
-
-ARG PUBLIC_URL
-ARG REACT_APP_TEMPLATE_URL
-ARG REACT_APP_DATA_HUB_URI
-ARG REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI
-ARG REACT_APP_KEYCLOAK_URL
-ARG REACT_APP_KEYCLOAK_REALM
-ARG REACT_APP_DAILYOS_SERVER_URI
-ARG REACT_APP_MAPS_API_KEY
-ARG REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET
-ARG REACT_APP_CURRENCY
-ARG REACT_APP_THEME_STORE_DATA_HUB_URI
-ARG REACT_APP_THEME_STORE_HASURA_GRAPHQL_ADMIN_SECRET
-ARG REACT_APP_ROOT_FOLDER
-
+# => Build container
+FROM node:alpine as builder
 WORKDIR /usr/src/app
-COPY package.json ./
+COPY package.json .
+COPY yarn.lock .
 RUN yarn
 COPY . .
 
 ENV PATH /app/node_modules/.bin:$PATH
 ENV SKIP_PREFLIGHT_CHECK true
-ENV REACT_APP_DATA_HUB_URI $REACT_APP_DATA_HUB_URI
-ENV REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI $REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI
-ENV REACT_APP_KEYCLOAK_URL $REACT_APP_KEYCLOAK_URL
-ENV REACT_APP_KEYCLOAK_REALM $REACT_APP_KEYCLOAK_REALM
-ENV REACT_APP_DAILYOS_SERVER_URI $REACT_APP_DAILYOS_SERVER_URI
-ENV REACT_APP_TEMPLATE_URL $REACT_APP_TEMPLATE_URL
-ENV REACT_APP_MAPS_API_KEY $REACT_APP_MAPS_API_KEY
-ENV REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET $REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET
-ENV REACT_APP_CURRENCY $REACT_APP_CURRENCY
-ENV REACT_APP_THEME_STORE_DATA_HUB_URI $REACT_APP_THEME_STORE_DATA_HUB_URI
-ENV REACT_APP_THEME_STORE_HASURA_GRAPHQL_ADMIN_SECRET $REACT_APP_THEME_STORE_HASURA_GRAPHQL_ADMIN_SECRET
-ENV REACT_APP_ROOT_FOLDER $REACT_APP_ROOT_FOLDER
+ENV PUBLIC_URL /apps
 
 RUN yarn build
 
+# => Run container
 FROM nginx:1.15.2-alpine
-COPY --from=build /usr/src/app/build /usr/share/nginx/html
-RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx.conf /etc/nginx/conf.d
+
+# Nginx config
+RUN rm -rf /etc/nginx/conf.d
+COPY conf /etc/nginx
+
+# Static build
+COPY --from=builder /usr/src/app/build /usr/share/nginx/html/
+
+# Default port exposure
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+
+# Copy .env file and shell script to container
+WORKDIR /usr/share/nginx/html
+COPY ./env.sh .
+COPY .env .
+
+# Add bash
+RUN apk add --no-cache bash
+
+# Make our shell script executable
+RUN chmod +x env.sh
+
+# Start Nginx server
+CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh && nginx -g \"daemon off;\""]

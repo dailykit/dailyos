@@ -20,7 +20,7 @@ const Builder = React.forwardRef(
       },
       ref
    ) => {
-      const url = `${process.env.REACT_APP_DAILYOS_SERVER_URI}/api/assets`
+      const url = `${window._env_.REACT_APP_DAILYOS_SERVER_URI}/api/assets`
       const editorRef = useRef()
       const linkedCssArray = linkedCss.map(file => {
          let fileUrl = `https://test.dailykit.org/template/files${file.cssFile.path}`
@@ -43,11 +43,11 @@ const Builder = React.forwardRef(
       // mutation for saving the template
       const updateCode = (updatedCode, filePath) => {
          axios({
-            url: process.env.REACT_APP_DATA_HUB_URI,
+            url: window._env_.REACT_APP_DATA_HUB_URI,
             method: 'POST',
             headers: {
                'x-hasura-admin-secret':
-                  process.env.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
+                  window._env_.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
             },
             data: {
                query: `
@@ -101,7 +101,7 @@ const Builder = React.forwardRef(
          const getBlocks = async () => {
             try {
                const { data } = await axios({
-                  url: process.env.REACT_APP_THEME_STORE_DATA_HUB_URI,
+                  url: window._env_.REACT_APP_THEME_STORE_DATA_HUB_URI,
                   method: 'POST',
                   headers: {
                      'Content-Type': 'application/json',

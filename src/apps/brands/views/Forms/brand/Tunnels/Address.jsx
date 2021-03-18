@@ -10,7 +10,7 @@ import { useScript } from '../../../../../../shared/utils/useScript'
 export const AddressTunnel = ({ address, update, settingId, closeTunnel }) => {
    const [populated, setPopulated] = React.useState(address)
    const [loaded, error] = useScript(
-      `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_MAPS_API_KEY}&libraries=places`
+      `https://maps.googleapis.com/maps/api/js?key=${window._env_.REACT_APP_MAPS_API_KEY}&libraries=places`
    )
 
    const updateSetting = () => {
@@ -21,7 +21,7 @@ export const AddressTunnel = ({ address, update, settingId, closeTunnel }) => {
    const formatAddress = async address => {
       const response = await fetch(
          `https://maps.googleapis.com/maps/api/geocode/json?key=${
-            process.env.REACT_APP_MAPS_API_KEY
+            window._env_.REACT_APP_MAPS_API_KEY
          }&address=${encodeURIComponent(address.description)}`
       )
       const data = await response.json()

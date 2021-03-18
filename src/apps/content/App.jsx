@@ -59,7 +59,7 @@ const App = () => {
          <FoldContext.Provider value={[foldContext, setFoldContext]}>
          <ConfigContext.Provider value={[configContext, setConfigContext]}>
             <BrandContext.Provider value={[context, setContext]}>
-               {/* <Router basename={process.env.PUBLIC_URL}>
+               {/* <Router basename={window._env_.PUBLIC_URL}>
                   <Header toggleSidebar={toggleSidebar} /> */}
                <Sidebar
                   visible={isSidebarVisible}

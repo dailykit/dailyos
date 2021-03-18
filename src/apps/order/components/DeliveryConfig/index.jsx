@@ -211,7 +211,7 @@ const DeliveryDetails = ({ details }) => {
                title={deliveryInfo.deliveryCompany.name || 'N/A'}
             />
          </StyledDeliveryBy>
-         <LoadScript googleMapsApiKey={process.env.REACT_APP_MAPS_API_KEY}>
+         <LoadScript googleMapsApiKey={window._env_.REACT_APP_MAPS_API_KEY}>
             <GoogleMap
                zoom={15}
                onLoad={onLoad}
