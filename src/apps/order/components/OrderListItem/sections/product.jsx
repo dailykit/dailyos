@@ -1,5 +1,5 @@
 import React from 'react'
-import { isEmpty } from 'lodash'
+import { isEmpty, groupBy } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { Flex, Text } from '@dailykit/ui'
 
@@ -17,11 +17,6 @@ const address = 'apps.order.components.orderlistitem.'
 
 export const Products = ({ order }) => {
    const { t } = useTranslation()
-   const {
-      orderMealKitProducts: mealkits = [],
-      orderInventoryProducts: inventories = [],
-      orderReadyToEatProducts: readytoeats = [],
-   } = order
 
    if (order?.thirdPartyOrderId) {
       const { thirdPartyOrder: { products = [] } = {} } = order
@@ -69,6 +64,11 @@ export const Products = ({ order }) => {
          </Styles.Products>
       )
    }
+
+   const types = groupBy(
+      order.cart.cartItemViews_aggregate.nodes,
+      'productOptionType'
+   )
    return (
       <Styles.Products>
          <Styles.Tabs>
@@ -76,226 +76,65 @@ export const Products = ({ order }) => {
                <Styles.Tab>
                   {t(address.concat('all'))}{' '}
                   <StyledCount>
-                     0 /&nbsp;
-                     {inventories.length + mealkits.length + readytoeats.length}
-                     &nbsp;
+                     {order.cart.cartItemViews_aggregate.aggregate.count}
                   </StyledCount>
                </Styles.Tab>
-               {!isEmpty(mealkits) && (
-                  <Styles.Tab>
-                     {t(address.concat('meal kits'))}{' '}
-                     <StyledCount>{mealkits.length || 0}</StyledCount>
+               {Object.keys(types).map(key => (
+                  <Styles.Tab key={key}>
+                     {key}
+                     <StyledCount>{types[key].length}</StyledCount>
                   </Styles.Tab>
-               )}
-               {!isEmpty(readytoeats) && (
-                  <Styles.Tab>
-                     {t(address.concat('ready to eat'))}{' '}
-                     <StyledCount>{readytoeats.length}</StyledCount>
-                  </Styles.Tab>
-               )}
-               {!isEmpty(inventories) && (
-                  <Styles.Tab>
-                     {t(address.concat('inventory'))}{' '}
-                     <StyledCount>{inventories.length || 0}</StyledCount>
-                  </Styles.Tab>
-               )}
+               ))}
             </Styles.TabList>
             <Styles.TabPanels>
                <Styles.TabPanel>
-                  {inventories.map(inventory => (
-                     <StyledProductItem key={inventory.id}>
+                  {order.cart.cartItemViews_aggregate.nodes.map(item => (
+                     <StyledProductItem key={item.id}>
                         <div>
-                           <ProductTitle data={inventory} type="INVENTORY" />
+                           <StyledProductTitle>
+                              {item.displayName.split('->').pop().trim()}
+                           </StyledProductTitle>
                         </div>
-                        <StyledServings>
-                           <span>
-                              <UserIcon size={16} color="#555B6E" />
-                           </span>
-                           <span>
-                              {inventory?.inventoryProductOption?.quantity}
-                              &nbsp; - &nbsp;
-                              {inventory?.inventoryProductOption?.label}
-                           </span>
-                        </StyledServings>
-                        <span>{inventory.isAssembled ? 1 : 0} / 1</span>
-                     </StyledProductItem>
-                  ))}
-                  {mealkits.map(mealkit => (
-                     <StyledProductItem key={mealkit.id}>
-                        <div>
-                           <ProductTitle data={mealkit} type="MEAL_KIT" />
-                        </div>
-                        <StyledServings>
-                           <span>
-                              <UserIcon size={16} color="#555B6E" />
-                           </span>
-                           <span>
-                              {
-                                 mealkit?.simpleRecipeProductOption
-                                    ?.simpleRecipeYield?.yield?.serving
-                              }
-                              &nbsp; {t(address.concat('servings'))}
-                           </span>
-                        </StyledServings>
+                        {/* <StyledServings>
+                              <span>
+                                 <UserIcon size={16} color="#555B6E" />
+                              </span>
+                              <span>{item?.productOption?.label}</span>
+                           </StyledServings> */}
                         <span>
-                           {
-                              mealkit?.orderSachets.filter(
-                                 sachet => sachet.isAssembled
-                              ).length
-                           }
-                           &nbsp;/&nbsp;
-                           {
-                              mealkit?.orderSachets.filter(
-                                 sachet => sachet.status === 'PACKED'
-                              ).length
-                           }
-                           &nbsp; / {mealkit?.orderSachets?.length}
+                           {item.assembledSachets?.aggregate?.count || 0} /{' '}
+                           {item.packedSachets?.aggregate?.count || 0} /{' '}
+                           {item.totalSachets?.aggregate?.count || 0}
                         </span>
                      </StyledProductItem>
                   ))}
-                  {readytoeats.map(readytoeat => (
-                     <StyledProductItem key={readytoeat.id}>
-                        <div>
-                           <ProductTitle
-                              data={readytoeat}
-                              type="READY_TO_EAT"
-                           />
-                        </div>
-                        <StyledServings>
-                           <span>
-                              <UserIcon size={16} color="#555B6E" />
-                           </span>
-                           <span>
-                              {
-                                 readytoeat?.simpleRecipeProductOption
-                                    ?.simpleRecipeYield?.yield?.serving
-                              }
-                              &nbsp; {t(address.concat('servings'))}
-                           </span>
-                        </StyledServings>
-                        <span>{readytoeat?.isAssembled ? 1 : 0} / 1</span>
-                     </StyledProductItem>
-                  ))}
                </Styles.TabPanel>
-               {!isEmpty(mealkits) && (
-                  <Styles.TabPanel>
-                     {mealkits.length > 0
-                        ? mealkits.map(mealkit => (
-                             <StyledProductItem key={mealkit.id}>
-                                <div>
-                                   <ProductTitle
-                                      data={mealkit}
-                                      type="MEAL_KIT"
-                                   />
-                                </div>
-                                <StyledServings>
-                                   <span>
-                                      <UserIcon size={16} color="#555B6E" />
-                                   </span>
-                                   <span>
-                                      {
-                                         mealkit?.simpleRecipeProductOption
-                                            ?.simpleRecipeYield?.yield?.serving
-                                      }
-                                      &nbsp; {t(address.concat('servings'))}
-                                   </span>
-                                </StyledServings>
-                                <span>
-                                   {
-                                      mealkit?.orderSachets.filter(
-                                         sachet => sachet.isAssembled
-                                      ).length
-                                   }
-                                   &nbsp;/&nbsp;
-                                   {
-                                      mealkit?.orderSachets.filter(
-                                         sachet => sachet.status === 'PACKED'
-                                      ).length
-                                   }
-                                   &nbsp; / {mealkit?.orderSachets?.length}
-                                </span>
-                             </StyledProductItem>
-                          ))
-                        : t(address.concat('no meal kits'))}
+               {Object.values(types).map((listing, index) => (
+                  <Styles.TabPanel key={index}>
+                     {listing.map(item => (
+                        <StyledProductItem key={item.id}>
+                           <div>
+                              <StyledProductTitle>
+                                 {item.displayName.split('->').pop().trim()}
+                              </StyledProductTitle>
+                           </div>
+                           {/* <StyledServings>
+                              <span>
+                                 <UserIcon size={16} color="#555B6E" />
+                              </span>
+                              <span>{item.productOption?.label}</span>
+                           </StyledServings> */}
+                           <span>
+                              {item.assembledSachets?.aggregate?.count || 0} /{' '}
+                              {item.packedSachets?.aggregate?.count || 0} /{' '}
+                              {item.totalSachets?.aggregate?.count || 0}
+                           </span>
+                        </StyledProductItem>
+                     ))}
                   </Styles.TabPanel>
-               )}
-               {!isEmpty(readytoeats) && (
-                  <Styles.TabPanel>
-                     {readytoeats.length > 0
-                        ? readytoeats.map(readytoeat => (
-                             <StyledProductItem key={readytoeat.id}>
-                                <div>
-                                   <ProductTitle
-                                      data={readytoeat}
-                                      type="READY_TO_EAT"
-                                   />
-                                </div>
-                                <StyledServings>
-                                   <span>
-                                      <UserIcon size={16} color="#555B6E" />
-                                   </span>
-                                   <span>
-                                      {
-                                         readytoeat?.simpleRecipeProductOption
-                                            ?.simpleRecipeYield?.yield?.serving
-                                      }
-                                      &nbsp; {t(address.concat('servings'))}
-                                   </span>
-                                </StyledServings>
-                                <span>
-                                   {readytoeat?.isAssembled ? 1 : 0} / 1
-                                </span>
-                             </StyledProductItem>
-                          ))
-                        : t(address.concat('no ready to eat'))}
-                  </Styles.TabPanel>
-               )}
-               {!isEmpty(inventories) && (
-                  <Styles.TabPanel>
-                     {inventories.length > 0
-                        ? inventories.map(inventory => (
-                             <StyledProductItem key={inventory.id}>
-                                <div>
-                                   <ProductTitle
-                                      data={inventory}
-                                      type="INVENTORY"
-                                   />
-                                </div>
-                                <StyledServings>
-                                   <span>
-                                      <UserIcon size={16} color="#555B6E" />
-                                   </span>
-                                   <span>
-                                      {
-                                         inventory?.inventoryProductOption
-                                            ?.quantity
-                                      }
-                                      &nbsp; - &nbsp;
-                                      {inventory?.inventoryProductOption?.label}
-                                   </span>
-                                </StyledServings>
-                                <span>{inventory.isAssembled ? 1 : 0} / 1</span>
-                             </StyledProductItem>
-                          ))
-                        : t(address.concat('no inventories'))}
-                  </Styles.TabPanel>
-               )}
+               ))}
             </Styles.TabPanels>
          </Styles.Tabs>
       </Styles.Products>
-   )
-}
-
-const ProductTitle = ({ data, type }) => {
-   return (
-      <StyledProductTitle>
-         {['READY_TO_EAT', 'MEAL_KIT'].includes(type) &&
-            data?.simpleRecipeProduct?.name}
-         {type === 'INVENTORY' && data?.inventoryProduct?.name}
-         {data?.comboProduct?.name && <span>&nbsp;-&nbsp;</span>}
-         {data?.comboProduct?.name}
-         {data?.comboProductComponent?.label &&
-            `(${data?.comboProductComponent?.label})`}
-      </StyledProductTitle>
    )
 }

@@ -2,7 +2,7 @@ import React from 'react'
 import moment from 'moment'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
-import { useSubscription, useQuery } from '@apollo/react-hooks'
+import { useSubscription } from '@apollo/react-hooks'
 import {
    Flex,
    Text,
@@ -15,7 +15,7 @@ import {
 
 import { useOrder } from '../../context'
 import { MetricItem } from '../MetricItem'
-import { QUERIES } from '../../graphql'
+import { QUERIES, QUERIES2 } from '../../graphql'
 import { Wrapper, FilterSection, StyledIconButton } from './styled'
 import { logger, currencyFmt } from '../../../../shared/utils'
 import { InlineLoader, ErrorState } from '../../../../shared/components'
@@ -35,17 +35,9 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
    const {
       loading,
       error,
-      data: { orderByStatus = [] } = {},
-   } = useSubscription(QUERIES.ORDERS.AGGREGATE.BY_STATUS)
+      data: { ordersAggregate = [] } = {},
+   } = useSubscription(QUERIES2.ORDERS_AGGREGATE)
 
-   const { data: { station = {} } = {} } = useQuery(QUERIES.STATIONS.ONE, {
-      variables: {
-         id:
-            state.orders.where?._or?.length > 0 &&
-            state.orders.where?._or[0]?.orderInventoryProducts
-               ?.assemblyStationId?._eq,
-      },
-   })
    const clearFilters = () => {
       dispatch({ type: 'CLEAR_READY_BY_FILTER' })
       dispatch({ type: 'CLEAR_FULFILLMENT_FILTER' })
@@ -75,29 +67,29 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
          </Flex>
          <Spacer size="8px" />
          <MetricItem
-            title="ALL"
-            variant="ALL"
+            title="All"
+            variant="ORDER_ALL"
             count={orders?.aggregate?.count}
             amount={orders?.aggregate?.sum?.amountPaid}
             average={orders?.aggregate?.avg?.amountPaid}
             closeOrderSummaryTunnel={closeOrderSummaryTunnel}
          />
          <ul>
-            {orderByStatus.map(({ value, orders }) => (
+            {ordersAggregate.map(({ title, value, count, sum, avg }) => (
                <MetricItem
                   key={value}
+                  title={title}
                   variant={value}
-                  count={orders.aggregate.count}
-                  title={value.split('_').join(' ')}
-                  amount={orders.aggregate.sum.amount || 0}
-                  average={orders.aggregate.avg.amountPaid || 0}
+                  count={count}
+                  amount={sum}
+                  average={avg}
                   closeOrderSummaryTunnel={closeOrderSummaryTunnel}
                />
             ))}
          </ul>
          <MetricItem
-            title="REJECTED OR CANCELLED"
-            variant="REJECTED_OR_CANCELLED"
+            title="Rejected or Cancelled"
+            variant="ORDER_REJECTED_OR_CANCELLED"
             count={cancelledOrders?.aggregate?.count}
             amount={cancelledOrders?.aggregate?.sum?.amountPaid}
             average={cancelledOrders?.aggregate?.avg?.amountPaid}
@@ -197,12 +189,12 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
                </>
             )}
          {state.orders.where?.source &&
-            Object.keys(state.orders.where?.source).length > 0 && (
+            Object.keys(state.orders.where?.cart?.source).length > 0 && (
                <>
                   <FilterSection>
                      <h3>Source</h3>
                      <Flex container alignItems="center" margin="8px 0 0 0">
-                        <span>{state.orders.where?.source?._eq}</span>
+                        <span>{state.orders.where?.cart?.source?._eq}</span>
                      </Flex>
                   </FilterSection>
                   <Spacer size="16px" />
@@ -233,17 +225,6 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
                   </FilterSection>
                   <Spacer size="16px" />
                </>
-            )}
-         {state.orders.where?._or?.length > 0 &&
-            state.orders.where?._or[0]?.orderInventoryProducts &&
-            Object.keys(state.orders.where?._or[0]?.orderInventoryProducts)
-               .length > 0 && (
-               <FilterSection>
-                  <h3>Station</h3>
-                  <Flex container alignItems="center" margin="8px 0 0 0">
-                     <span>{station?.name}</span>
-                  </Flex>
-               </FilterSection>
             )}
       </Wrapper>
    )

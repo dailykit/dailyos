@@ -186,15 +186,21 @@ export const FilterTunnel = () => {
             <Spacer size="8px" />
             <RadioGroup
                options={[
-                  { id: 1, title: 'à la carte' },
+                  { id: 1, title: 'a-la-carte' },
                   { id: 2, title: 'Subscription' },
                ]}
                onChange={option =>
                   dispatch({
                      type: 'SET_FILTER',
                      payload: {
-                        source: {
-                           _eq: option.id === 1 ? 'a-la-carte' : 'subscription',
+                        cart: {
+                           ...state.orders.where?.cart,
+                           source: {
+                              _eq:
+                                 option.id === 1
+                                    ? 'a-la-carte'
+                                    : 'subscription',
+                           },
                         },
                      },
                   })

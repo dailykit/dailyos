@@ -1,64 +1,86 @@
 import React from 'react'
 import {
-   HorizontalTab,
-   HorizontalTabs,
-   HorizontalTabList,
-   HorizontalTabPanel,
-   HorizontalTabPanels,
+   Flex,
+   SectionTab as Tab,
+   SectionTabs as Tabs,
+   SectionTabList as TabList,
+   SectionTabPanel as TabPanel,
+   SectionTabPanels as TabPanels,
 } from '@dailykit/ui'
 
-import { Wrapper } from './styled'
+import { Container } from './styled'
 import { useTabs } from '../../../../shared/providers'
 import {
-   InventorySection,
-   ReadyToEatSection,
-   MealKitSection,
-   MealKitSachetSection,
+   Products,
+   ProductOptions,
+   SimpleRecipes,
+   SubRecipes,
+   Ingredients,
+   SachetItems,
 } from './sections'
 
 const Planned = () => {
    const { tab, addTab } = useTabs()
-   const [mealKitTotal, setMealKitTotal] = React.useState(0)
-   const [inventoryTotal, setInventoryTotal] = React.useState(0)
-   const [readyToEatTotal, setReadyToEatTotal] = React.useState(0)
-   const [mealKitSachetTotal, setMealKitSachetTotal] = React.useState(0)
 
    React.useEffect(() => {
       if (!tab) {
          addTab('Planned', '/order/planned')
       }
    }, [tab, addTab])
-
    return (
-      <Wrapper>
-         <HorizontalTabs>
-            <HorizontalTabList style={{ padding: '0 16px' }}>
-               <HorizontalTab>Meal Kit ({mealKitTotal})</HorizontalTab>
-               <HorizontalTab>Ready To Eat ({readyToEatTotal})</HorizontalTab>
-               <HorizontalTab>Inventory ({inventoryTotal})</HorizontalTab>
-               <HorizontalTab>
-                  Meal Kit Sachets ({mealKitSachetTotal})
-               </HorizontalTab>
-            </HorizontalTabList>
-            <HorizontalTabPanels>
-               <HorizontalTabPanel>
-                  <MealKitSection setMealKitTotal={setMealKitTotal} />
-               </HorizontalTabPanel>
-               <HorizontalTabPanel>
-                  <ReadyToEatSection setReadyToEatTotal={setReadyToEatTotal} />
-               </HorizontalTabPanel>
-               <HorizontalTabPanel>
-                  <InventorySection setInventoryTotal={setInventoryTotal} />
-               </HorizontalTabPanel>
-               <HorizontalTabPanel>
-                  <MealKitSachetSection
-                     setMealKitSachetTotal={setMealKitSachetTotal}
-                  />
-               </HorizontalTabPanel>
-            </HorizontalTabPanels>
-         </HorizontalTabs>
-      </Wrapper>
+      <Container>
+         <Tabs>
+            <TabList>
+               <Tab>
+                  <TabItem>Products</TabItem>
+               </Tab>
+               <Tab>
+                  <TabItem>Product Options</TabItem>
+               </Tab>
+               <Tab>
+                  <TabItem>Simple Recipes</TabItem>
+               </Tab>
+               <Tab>
+                  <TabItem>Sub Recipes</TabItem>
+               </Tab>
+               <Tab>
+                  <TabItem>Ingredients</TabItem>
+               </Tab>
+               <Tab>
+                  <TabItem>Sachet Items</TabItem>
+               </Tab>
+            </TabList>
+            <TabPanels>
+               <TabPanel>
+                  <Products />
+               </TabPanel>
+               <TabPanel>
+                  <ProductOptions />
+               </TabPanel>
+               <TabPanel>
+                  <SimpleRecipes />
+               </TabPanel>
+               <TabPanel>
+                  <SubRecipes />
+               </TabPanel>
+               <TabPanel>
+                  <Ingredients />
+               </TabPanel>
+               <TabPanel>
+                  <SachetItems />
+               </TabPanel>
+            </TabPanels>
+         </Tabs>
+      </Container>
    )
 }
 
 export default Planned
+
+const TabItem = ({ children }) => {
+   return (
+      <Flex container height="40px" alignItems="center" justifyContent="center">
+         {children}
+      </Flex>
+   )
+}

@@ -20,17 +20,12 @@ export const QUERIES = {
             order(id: $id) {
                id
                tax
-               source
                discount
                itemTotal
                isAccepted
                isRejected
                created_at
-               deliveryInfo
-               orderStatus
-               paymentStatus
                deliveryPrice
-               transactionId
                fulfillmentType
                thirdPartyOrderId
                thirdPartyOrder {
@@ -39,71 +34,83 @@ export const QUERIES = {
                   products: parsedData(path: "items")
                   emailContent: parsedData(path: "HtmlDocument")
                }
-               cart: orderCart {
+               cartId
+               cart {
                   id
+                  status
+                  source
                   isTest
-               }
-               pickup: deliveryInfo(path: "pickup.window")
-               restaurant: deliveryInfo(path: "pickup.pickupInfo")
-               dropoff: deliveryInfo(path: "dropoff.window")
-               customer: deliveryInfo(path: "dropoff.dropoffInfo")
-               total_mealkits: orderMealKitProducts_aggregate {
-                  aggregate {
-                     count(columns: id)
+                  paymentStatus
+                  transactionId
+                  fulfillmentInfo
+                  customer: customerInfo
+                  orderStatus {
+                     title
+                  }
+                  assembledProducts: cartItemViews_aggregate(
+                     where: {
+                        levelType: { _eq: "orderItem" }
+                        status: { _eq: "PACKED" }
+                     }
+                  ) {
+                     aggregate {
+                        count
+                     }
+                  }
+                  packedProducts: cartItemViews_aggregate(
+                     where: {
+                        levelType: { _eq: "orderItem" }
+                        status: { _in: ["READY", "PACKED"] }
+                     }
+                  ) {
+                     aggregate {
+                        count
+                     }
+                  }
+                  totalProducts: cartItemViews_aggregate(
+                     where: { levelType: { _eq: "orderItem" } }
+                  ) {
+                     aggregate {
+                        count
+                     }
                   }
                }
-               packed_mealkits: orderMealKitProducts_aggregate(
-                  where: { assemblyStatus: { _eq: "COMPLETED" } }
+            }
+         }
+      `,
+      PRODUCTS: gql`
+         subscription products($where: order_cartItemView_bool_exp!) {
+            products: order_cartItemView(
+               where: $where
+               order_by: { created_at: desc }
+            ) {
+               id
+               status
+               displayName
+               displayImage
+               operationConfigId
+               operationConfig {
+                  labelTemplateId
+                  stationId
+               }
+               productOptionType
+               totalSachets: childs_aggregate {
+                  aggregate {
+                     count
+                  }
+               }
+               packedSachets: childs_aggregate(
+                  where: { status: { _in: ["READY", "PACKED"] } }
                ) {
                   aggregate {
-                     count(columns: id)
+                     count
                   }
                }
-               assembled_mealkits: orderMealKitProducts_aggregate(
-                  where: { isAssembled: { _eq: true } }
+               assembledSachets: childs_aggregate(
+                  where: { status: { _eq: "PACKED" } }
                ) {
                   aggregate {
-                     count(columns: id)
-                  }
-               }
-
-               total_readytoeats: orderReadyToEatProducts_aggregate {
-                  aggregate {
-                     count(columns: id)
-                  }
-               }
-               packed_readytoeats: orderReadyToEatProducts_aggregate(
-                  where: { assemblyStatus: { _eq: "COMPLETED" } }
-               ) {
-                  aggregate {
-                     count(columns: id)
-                  }
-               }
-               assembled_readytoeats: orderReadyToEatProducts_aggregate(
-                  where: { isAssembled: { _eq: true } }
-               ) {
-                  aggregate {
-                     count(columns: id)
-                  }
-               }
-
-               total_inventories: orderInventoryProducts_aggregate {
-                  aggregate {
-                     count(columns: id)
-                  }
-               }
-               packed_inventories: orderInventoryProducts_aggregate(
-                  where: { assemblyStatus: { _eq: "COMPLETED" } }
-               ) {
-                  aggregate {
-                     count(columns: id)
-                  }
-               }
-               assembled_inventories: orderInventoryProducts_aggregate(
-                  where: { isAssembled: { _eq: true } }
-               ) {
-                  aggregate {
-                     count(columns: id)
+                     count
                   }
                }
             }
@@ -125,1248 +132,54 @@ export const QUERIES = {
             }
          }
       `,
-      MEALKITS: gql`
-         subscription mealkits($orderId: Int!) {
-            mealkits: orderMealKitProducts(
-               where: {
-                  orderId: { _eq: $orderId }
-                  orderModifierId: { _is_null: true }
-               }
-               order_by: { created_at: desc }
-            ) {
-               id
-               isAssembled
-               hasModifiers
-               assemblyStatus
-               labelTemplateId
-               assemblyStationId
-               order {
-                  isAccepted
-                  isRejected
-               }
-               assemblyStation {
-                  id
-                  name
-               }
-               comboProductId
-               comboProduct {
-                  id
-                  name
-               }
-               comboProductComponentId
-               comboProductComponent {
-                  id
-                  label
-               }
-               simpleRecipeProductId
-               simpleRecipeProduct {
-                  id
-                  name
-               }
-               simpleRecipeProductOptionId
-               simpleRecipeProductOption {
-                  id
-                  simpleRecipeYield {
-                     id
-                     yield
-                  }
-               }
-               orderModifiers {
-                  inventoryProducts: childOrderInventoryProducts(
-                     order_by: { created_at: desc }
-                  ) {
-                     id
-                     quantity
-                     isAssembled
-                     assemblyStatus
-                     labelTemplateId
-                     order {
-                        isAccepted
-                        isRejected
-                     }
-                     inventoryProductId
-                     inventoryProduct {
-                        id
-                        name
-                     }
-                     comboProductId
-                     comboProduct {
-                        id
-                        name
-                     }
-                     comboProductComponentId
-                     comboProductComponent {
-                        id
-                        label
-                     }
-                     assemblyStationId
-                     assemblyStation {
-                        id
-                        name
-                     }
-                     inventoryProductOptionId
-                     inventoryProductOption {
-                        id
-                        quantity
-                        label
-                     }
-                     orderSachets(order_by: { position: desc_nulls_last }) {
-                        id
-                        unit
-                        status
-                        quantity
-                        position
-                        isAssembled
-                        isLabelled
-                        isPortioned
-                        ingredientName
-                        processingName
-                        packingStationId
-                        packaging {
-                           id
-                           name
-                        }
-                        sachetItemId
-                        sachetItem {
-                           id
-                           bulkItemId
-                           bulkItem {
-                              id
-                              sop
-                              yield
-                              shelfLife
-                              bulkDensity
-                              supplierItemId
-                              supplierItem {
-                                 id
-                                 name
-                              }
-                           }
-                        }
-                        bulkItemId
-                        bulkItem {
-                           id
-                           sop
-                           yield
-                           shelfLife
-                           bulkDensity
-                           supplierItemId
-                           supplierItem {
-                              id
-                              name
-                           }
-                        }
-                     }
-                  }
-                  mealKitProducts: childOrderMealKitProducts(
-                     order_by: { created_at: desc }
-                  ) {
-                     id
-                     isAssembled
-                     assemblyStatus
-                     labelTemplateId
-                     order {
-                        isAccepted
-                        isRejected
-                     }
-                     assemblyStationId
-                     assemblyStation {
-                        id
-                        name
-                     }
-                     comboProductId
-                     comboProduct {
-                        id
-                        name
-                     }
-                     comboProductComponentId
-                     comboProductComponent {
-                        id
-                        label
-                     }
-                     simpleRecipeProductId
-                     simpleRecipeProduct {
-                        id
-                        name
-                     }
-                     simpleRecipeProductOptionId
-                     simpleRecipeProductOption {
-                        id
-                        simpleRecipeYield {
-                           id
-                           yield
-                        }
-                     }
-                     orderSachets(order_by: { position: desc_nulls_last }) {
-                        id
-                        unit
-                        status
-                        quantity
-                        position
-                        isAssembled
-                        isLabelled
-                        isPortioned
-                        ingredientName
-                        processingName
-                        packingStationId
-                        packaging {
-                           id
-                           name
-                        }
-                        sachetItemId
-                        sachetItem {
-                           id
-                           bulkItemId
-                           bulkItem {
-                              id
-                              sop
-                              yield
-                              shelfLife
-                              bulkDensity
-                              supplierItemId
-                              supplierItem {
-                                 id
-                                 name
-                              }
-                           }
-                        }
-                        bulkItemId
-                        bulkItem {
-                           id
-                           sop
-                           yield
-                           shelfLife
-                           bulkDensity
-                           supplierItemId
-                           supplierItem {
-                              id
-                              name
-                           }
-                        }
-                     }
-                  }
-                  readyToEatProducts: childOrderReadyToEatProducts(
-                     order_by: { created_at: desc }
-                  ) {
-                     id
-                     quantity
-                     isAssembled
-                     assemblyStatus
-                     labelTemplateId
-                     order {
-                        isAccepted
-                        isRejected
-                     }
-                     assemblyStationId
-                     assemblyStation {
-                        id
-                        name
-                     }
-                     comboProductId
-                     comboProduct {
-                        id
-                        name
-                     }
-                     comboProductComponentId
-                     comboProductComponent {
-                        id
-                        label
-                     }
-                     simpleRecipeProductId
-                     simpleRecipeProduct {
-                        id
-                        name
-                     }
-                     simpleRecipeProductOptionId
-                     simpleRecipeProductOption {
-                        id
-                        simpleRecipeYield {
-                           id
-                           yield
-                        }
-                     }
-                     orderSachets(order_by: { position: desc_nulls_last }) {
-                        id
-                        unit
-                        status
-                        quantity
-                        position
-                        isAssembled
-                        isLabelled
-                        isPortioned
-                        ingredientName
-                        processingName
-                        packingStationId
-                        packaging {
-                           id
-                           name
-                        }
-                        sachetItemId
-                        sachetItem {
-                           id
-                           bulkItemId
-                           bulkItem {
-                              id
-                              sop
-                              yield
-                              shelfLife
-                              bulkDensity
-                              supplierItemId
-                              supplierItem {
-                                 id
-                                 name
-                              }
-                           }
-                        }
-                        bulkItemId
-                        bulkItem {
-                           id
-                           sop
-                           yield
-                           shelfLife
-                           bulkDensity
-                           supplierItemId
-                           supplierItem {
-                              id
-                              name
-                           }
-                        }
-                     }
-                  }
-               }
-               orderSachets(order_by: { position: desc_nulls_last }) {
-                  id
-                  unit
-                  status
-                  quantity
-                  position
-                  isAssembled
-                  isLabelled
-                  isPortioned
-                  ingredientName
-                  processingName
-                  orderModifierId
-                  packingStationId
-                  packaging {
-                     id
-                     name
-                  }
-                  sachetItemId
-                  sachetItem {
-                     id
-                     bulkItemId
-                     bulkItem {
-                        id
-                        sop
-                        yield
-                        shelfLife
-                        bulkDensity
-                        supplierItemId
-                        supplierItem {
-                           id
-                           name
-                        }
-                     }
-                  }
-                  bulkItemId
-                  bulkItem {
-                     id
-                     sop
-                     yield
-                     shelfLife
-                     bulkDensity
-                     supplierItemId
-                     supplierItem {
-                        id
-                        name
-                     }
-                  }
-               }
-            }
-         }
-      `,
-      READY_TO_EAT: {
-         LIST: gql`
-            subscription readytoeats($orderId: Int!) {
-               readytoeats: orderReadyToEatProducts(
-                  where: {
-                     orderId: { _eq: $orderId }
-                     orderModifierId: { _is_null: true }
-                  }
-                  order_by: { created_at: desc }
-               ) {
-                  id
-                  isAssembled
-                  hasModifiers
-                  order {
-                     isAccepted
-                     isRejected
-                  }
-                  assemblyStatus
-                  labelTemplateId
-                  assemblyStationId
-                  assemblyStation {
-                     id
-                     name
-                  }
-                  comboProductId
-                  comboProduct {
-                     id
-                     name
-                  }
-                  comboProductComponentId
-                  comboProductComponent {
-                     id
-                     label
-                  }
-                  simpleRecipeProductId
-                  simpleRecipeProduct {
-                     id
-                     name
-                  }
-                  simpleRecipeProductOptionId
-                  simpleRecipeProductOption {
-                     id
-                     simpleRecipeYield {
-                        id
-                        yield
-                     }
-                  }
-                  orderModifiers {
-                     inventoryProducts: childOrderInventoryProducts(
-                        order_by: { created_at: desc }
-                     ) {
-                        id
-                        quantity
-                        isAssembled
-                        assemblyStatus
-                        order {
-                           isAccepted
-                           isRejected
-                        }
-                        labelTemplateId
-                        inventoryProductId
-                        inventoryProduct {
-                           id
-                           name
-                        }
-                        comboProductId
-                        comboProduct {
-                           id
-                           name
-                        }
-                        comboProductComponentId
-                        comboProductComponent {
-                           id
-                           label
-                        }
-                        assemblyStationId
-                        assemblyStation {
-                           id
-                           name
-                        }
-                        inventoryProductOptionId
-                        inventoryProductOption {
-                           id
-                           quantity
-                           label
-                        }
-                        orderSachets(order_by: { position: desc_nulls_last }) {
-                           id
-                           unit
-                           status
-                           quantity
-                           position
-                           isAssembled
-                           isLabelled
-                           isPortioned
-                           ingredientName
-                           processingName
-                           packingStationId
-                           packaging {
-                              id
-                              name
-                           }
-                           sachetItemId
-                           sachetItem {
-                              id
-                              bulkItemId
-                              bulkItem {
-                                 id
-                                 sop
-                                 yield
-                                 shelfLife
-                                 bulkDensity
-                                 supplierItemId
-                                 supplierItem {
-                                    id
-                                    name
-                                 }
-                              }
-                           }
-                           bulkItemId
-                           bulkItem {
-                              id
-                              sop
-                              yield
-                              shelfLife
-                              bulkDensity
-                              supplierItemId
-                              supplierItem {
-                                 id
-                                 name
-                              }
-                           }
-                        }
-                     }
-                     mealKitProducts: childOrderMealKitProducts(
-                        order_by: { created_at: desc }
-                     ) {
-                        id
-                        isAssembled
-                        assemblyStatus
-                        order {
-                           isAccepted
-                           isRejected
-                        }
-                        labelTemplateId
-                        assemblyStationId
-                        assemblyStation {
-                           id
-                           name
-                        }
-                        comboProductId
-                        comboProduct {
-                           id
-                           name
-                        }
-                        comboProductComponentId
-                        comboProductComponent {
-                           id
-                           label
-                        }
-                        simpleRecipeProductId
-                        simpleRecipeProduct {
-                           id
-                           name
-                        }
-                        simpleRecipeProductOptionId
-                        simpleRecipeProductOption {
-                           id
-                           simpleRecipeYield {
-                              id
-                              yield
-                           }
-                        }
-                        orderSachets(order_by: { position: desc_nulls_last }) {
-                           id
-                           unit
-                           status
-                           quantity
-                           position
-                           isAssembled
-                           isLabelled
-                           isPortioned
-                           ingredientName
-                           processingName
-                           packingStationId
-                           packaging {
-                              id
-                              name
-                           }
-                           sachetItemId
-                           sachetItem {
-                              id
-                              bulkItemId
-                              bulkItem {
-                                 id
-                                 sop
-                                 yield
-                                 shelfLife
-                                 bulkDensity
-                                 supplierItemId
-                                 supplierItem {
-                                    id
-                                    name
-                                 }
-                              }
-                           }
-                           bulkItemId
-                           bulkItem {
-                              id
-                              sop
-                              yield
-                              shelfLife
-                              bulkDensity
-                              supplierItemId
-                              supplierItem {
-                                 id
-                                 name
-                              }
-                           }
-                        }
-                     }
-                     readyToEatProducts: childOrderReadyToEatProducts(
-                        order_by: { created_at: desc }
-                     ) {
-                        id
-                        quantity
-                        isAssembled
-                        order {
-                           isAccepted
-                           isRejected
-                        }
-                        assemblyStatus
-                        labelTemplateId
-                        assemblyStationId
-                        assemblyStation {
-                           id
-                           name
-                        }
-                        comboProductId
-                        comboProduct {
-                           id
-                           name
-                        }
-                        comboProductComponentId
-                        comboProductComponent {
-                           id
-                           label
-                        }
-                        simpleRecipeProductId
-                        simpleRecipeProduct {
-                           id
-                           name
-                        }
-                        simpleRecipeProductOptionId
-                        simpleRecipeProductOption {
-                           id
-                           simpleRecipeYield {
-                              id
-                              yield
-                           }
-                        }
-                        orderSachets(order_by: { position: desc_nulls_last }) {
-                           id
-                           unit
-                           status
-                           quantity
-                           position
-                           isAssembled
-                           isLabelled
-                           isPortioned
-                           ingredientName
-                           processingName
-                           packingStationId
-                           packaging {
-                              id
-                              name
-                           }
-                           sachetItemId
-                           sachetItem {
-                              id
-                              bulkItemId
-                              bulkItem {
-                                 id
-                                 sop
-                                 yield
-                                 shelfLife
-                                 bulkDensity
-                                 supplierItemId
-                                 supplierItem {
-                                    id
-                                    name
-                                 }
-                              }
-                           }
-                           bulkItemId
-                           bulkItem {
-                              id
-                              sop
-                              yield
-                              shelfLife
-                              bulkDensity
-                              supplierItemId
-                              supplierItem {
-                                 id
-                                 name
-                              }
-                           }
-                        }
-                     }
-                  }
-                  orderSachets(order_by: { position: desc_nulls_last }) {
-                     id
-                     unit
-                     status
-                     quantity
-                     position
-                     isAssembled
-                     isLabelled
-                     isPortioned
-                     ingredientName
-                     processingName
-                     orderModifierId
-                     packingStationId
-                     packaging {
-                        id
-                        name
-                     }
-                     sachetItemId
-                     sachetItem {
-                        id
-                        bulkItemId
-                        bulkItem {
-                           id
-                           sop
-                           yield
-                           shelfLife
-                           bulkDensity
-                           supplierItemId
-                           supplierItem {
-                              id
-                              name
-                           }
-                        }
-                     }
-                     bulkItemId
-                     bulkItem {
-                        id
-                        sop
-                        yield
-                        shelfLife
-                        bulkDensity
-                        supplierItemId
-                        supplierItem {
-                           id
-                           name
-                        }
-                     }
-                  }
-               }
-            }
-         `,
-         ONE: gql`
-            subscription orderReadyToEatProduct($id: Int!) {
-               orderReadyToEatProduct(id: $id) {
-                  id
-                  hasModifiers
-                  isAssembled
-                  assemblyStatus
-                  comboProduct {
-                     id
-                     name
-                  }
-                  comboProductComponent {
-                     id
-                     label
-                  }
-                  customizableProduct {
-                     id
-                     name
-                  }
-                  simpleRecipeProduct {
-                     id
-                     name
-                  }
-                  simpleRecipeProductOption {
-                     id
-                     simpleRecipeYield {
-                        id
-                        yield
-                     }
-                  }
-               }
-            }
-         `,
-      },
-      INVENTORY: {
-         LIST: gql`
-            subscription inventories($orderId: Int!) {
-               inventories: orderInventoryProducts(
-                  where: {
-                     orderId: { _eq: $orderId }
-                     orderModifierId: { _is_null: true }
-                  }
-
-                  order_by: { created_at: desc }
-               ) {
-                  id
-                  hasModifiers
-                  isAssembled
-                  order {
-                     isAccepted
-                     isRejected
-                  }
-                  assemblyStatus
-                  labelTemplateId
-                  assemblyStationId
-                  assemblyStation {
-                     id
-                     name
-                  }
-                  comboProductId
-                  comboProduct {
-                     id
-                     name
-                  }
-                  inventoryProductId
-                  inventoryProduct {
-                     id
-                     name
-                  }
-                  comboProductComponentId
-                  comboProductComponent {
-                     id
-                     label
-                  }
-                  inventoryProductOptionId
-                  inventoryProductOption {
-                     id
-                     quantity
-                     label
-                  }
-                  orderSachets(order_by: { position: desc_nulls_last }) {
-                     id
-                     unit
-                     status
-                     quantity
-                     position
-                     isAssembled
-                     isLabelled
-                     isPortioned
-                     ingredientName
-                     processingName
-                     orderModifierId
-                     packingStationId
-                     packaging {
-                        id
-                        name
-                     }
-                     sachetItemId
-                     sachetItem {
-                        id
-                        bulkItemId
-                        bulkItem {
-                           id
-                           sop
-                           yield
-                           shelfLife
-                           bulkDensity
-                           supplierItemId
-                           supplierItem {
-                              id
-                              name
-                           }
-                        }
-                     }
-                     bulkItemId
-                     bulkItem {
-                        id
-                        sop
-                        yield
-                        shelfLife
-                        bulkDensity
-                        supplierItemId
-                        supplierItem {
-                           id
-                           name
-                        }
-                     }
-                  }
-                  orderModifiers {
-                     inventoryProducts: childOrderInventoryProducts(
-                        order_by: { created_at: desc }
-                     ) {
-                        id
-                        quantity
-                        isAssembled
-                        order {
-                           isAccepted
-                           isRejected
-                        }
-                        assemblyStatus
-                        labelTemplateId
-                        inventoryProductId
-                        inventoryProduct {
-                           id
-                           name
-                        }
-                        comboProductId
-                        comboProduct {
-                           id
-                           name
-                        }
-                        comboProductComponentId
-                        comboProductComponent {
-                           id
-                           label
-                        }
-                        assemblyStationId
-                        assemblyStation {
-                           id
-                           name
-                        }
-                        inventoryProductOptionId
-                        inventoryProductOption {
-                           id
-                           quantity
-                           label
-                        }
-                        orderSachets(order_by: { position: desc_nulls_last }) {
-                           id
-                           unit
-                           status
-                           quantity
-                           position
-                           isAssembled
-                           isLabelled
-                           isPortioned
-                           ingredientName
-                           processingName
-                           packingStationId
-                           packaging {
-                              id
-                              name
-                           }
-                           sachetItemId
-                           sachetItem {
-                              id
-                              bulkItemId
-                              bulkItem {
-                                 id
-                                 sop
-                                 yield
-                                 shelfLife
-                                 bulkDensity
-                                 supplierItemId
-                                 supplierItem {
-                                    id
-                                    name
-                                 }
-                              }
-                           }
-                           bulkItemId
-                           bulkItem {
-                              id
-                              sop
-                              yield
-                              shelfLife
-                              bulkDensity
-                              supplierItemId
-                              supplierItem {
-                                 id
-                                 name
-                              }
-                           }
-                        }
-                     }
-                     mealKitProducts: childOrderMealKitProducts(
-                        order_by: { created_at: desc }
-                     ) {
-                        id
-                        isAssembled
-                        assemblyStatus
-                        order {
-                           isAccepted
-                           isRejected
-                        }
-                        labelTemplateId
-                        assemblyStationId
-                        assemblyStation {
-                           id
-                           name
-                        }
-                        comboProductId
-                        comboProduct {
-                           id
-                           name
-                        }
-                        comboProductComponentId
-                        comboProductComponent {
-                           id
-                           label
-                        }
-                        simpleRecipeProductId
-                        simpleRecipeProduct {
-                           id
-                           name
-                        }
-                        simpleRecipeProductOptionId
-                        simpleRecipeProductOption {
-                           id
-                           simpleRecipeYield {
-                              id
-                              yield
-                           }
-                        }
-                        orderSachets(order_by: { position: desc_nulls_last }) {
-                           id
-                           unit
-                           status
-                           quantity
-                           position
-                           isAssembled
-                           isLabelled
-                           isPortioned
-                           ingredientName
-                           processingName
-                           packingStationId
-                           packaging {
-                              id
-                              name
-                           }
-                           sachetItemId
-                           sachetItem {
-                              id
-                              bulkItemId
-                              bulkItem {
-                                 id
-                                 sop
-                                 yield
-                                 shelfLife
-                                 bulkDensity
-                                 supplierItemId
-                                 supplierItem {
-                                    id
-                                    name
-                                 }
-                              }
-                           }
-                           bulkItemId
-                           bulkItem {
-                              id
-                              sop
-                              yield
-                              shelfLife
-                              bulkDensity
-                              supplierItemId
-                              supplierItem {
-                                 id
-                                 name
-                              }
-                           }
-                        }
-                     }
-                     readyToEatProducts: childOrderReadyToEatProducts(
-                        order_by: { created_at: desc }
-                     ) {
-                        id
-                        quantity
-                        isAssembled
-                        order {
-                           isAccepted
-                           isRejected
-                        }
-                        assemblyStatus
-                        labelTemplateId
-                        assemblyStationId
-                        assemblyStation {
-                           id
-                           name
-                        }
-                        comboProductId
-                        comboProduct {
-                           id
-                           name
-                        }
-                        comboProductComponentId
-                        comboProductComponent {
-                           id
-                           label
-                        }
-                        simpleRecipeProductId
-                        simpleRecipeProduct {
-                           id
-                           name
-                        }
-                        simpleRecipeProductOptionId
-                        simpleRecipeProductOption {
-                           id
-                           simpleRecipeYield {
-                              id
-                              yield
-                           }
-                        }
-                        orderSachets(order_by: { position: desc_nulls_last }) {
-                           id
-                           unit
-                           status
-                           quantity
-                           position
-                           isAssembled
-                           isLabelled
-                           isPortioned
-                           ingredientName
-                           processingName
-                           packingStationId
-                           packaging {
-                              id
-                              name
-                           }
-                           sachetItemId
-                           sachetItem {
-                              id
-                              bulkItemId
-                              bulkItem {
-                                 id
-                                 sop
-                                 yield
-                                 shelfLife
-                                 bulkDensity
-                                 supplierItemId
-                                 supplierItem {
-                                    id
-                                    name
-                                 }
-                              }
-                           }
-                           bulkItemId
-                           bulkItem {
-                              id
-                              sop
-                              yield
-                              shelfLife
-                              bulkDensity
-                              supplierItemId
-                              supplierItem {
-                                 id
-                                 name
-                              }
-                           }
-                        }
-                     }
-                  }
-               }
-            }
-         `,
-         ONE: gql`
-            subscription orderInventoryProduct($id: Int!) {
-               orderInventoryProduct(id: $id) {
-                  id
-                  quantity
-                  hasModifiers
-                  isAssembled
-                  assemblyStatus
-                  inventoryProductId
-                  inventoryProduct {
-                     id
-                     name
-                     supplierItemId
-                     supplierItem {
-                        id
-                        name
-                        unit
-                        unitSize
-                        supplierId
-                        supplier {
-                           id
-                           name
-                        }
-                     }
-                     sachetItemId
-                     sachetItem {
-                        unit
-                        unitSize
-                        bulkItemId
-                        bulkItem {
-                           supplierItemId
-                           supplierItem {
-                              unit
-                              name
-                              unitSize
-                              supplierId
-                              supplier {
-                                 id
-                                 name
-                              }
-                           }
-                        }
-                     }
-                  }
-                  comboProductId
-                  comboProduct {
-                     id
-                     name
-                  }
-                  comboProductComponentId
-                  comboProductComponent {
-                     id
-                     label
-                  }
-               }
-            }
-         `,
-      },
       SACHET: {
-         ONE: gql`
-            subscription orderSachet($id: Int!) {
-               orderSachet(id: $id) {
+         MULTIPLE: gql`
+            subscription sachets($where: order_cartItemView_bool_exp!) {
+               sachets: order_cartItemView(
+                  where: $where
+                  order_by: { position: desc, created_at: desc }
+               ) {
                   id
-                  unit
-                  status
-                  quantity
-                  isAssembled
-                  isLabelled
-                  isPortioned
-                  ingredientName
-                  processingName
-                  labelTemplateId
-                  packingStationId
-                  packagingId
-                  packaging {
+                  cart {
                      id
-                     name
-                  }
-                  sachetItemId
-                  sachetItem {
-                     id
-                     bulkItem {
+                     order {
                         id
-                        sop
-                        yield
-                        shelfLife
-                        bulkDensity
-                        supplierItem {
-                           id
-                           name
-                        }
+                        isAccepted
+                        isRejected
                      }
                   }
-                  bulkItemId
-                  bulkItem {
+                  position
+                  stationId
+                  isModifier
+                  status
+                  displayName
+                  displayUnit
+                  processingName
+                  displayBulkDensity
+                  displayUnitQuantity
+                  supplierItemId
+                  supplierItem {
                      id
-                     sop
-                     yield
-                     shelfLife
-                     bulkDensity
-                     supplierItem {
+                     supplierItemName
+                  }
+                  operationConfigId
+                  operationConfig {
+                     id
+                     stationId
+                     station {
                         id
                         name
                      }
-                  }
-                  orderMealKitProductId
-                  mealkit: orderMealKitProduct {
-                     id
-                     order {
-                        isAccepted
-                        isRejected
+                     labelTemplateId
+                     labelTemplate {
+                        id
+                        name
                      }
-                  }
-                  orderReadyToEatProductId
-                  readyToEat: orderReadyToEatProduct {
-                     id
-                     order {
-                        isAccepted
-                        isRejected
-                     }
-                  }
-                  orderInventoryProductId
-                  inventory: orderInventoryProduct {
-                     id
-                     order {
-                        isAccepted
-                        isRejected
+                     packagingId
+                     packaging {
+                        id
+                        name
+                        assets
                      }
                   }
                }
@@ -1389,211 +202,104 @@ export const QUERIES = {
             ) {
                id
                tax
-               source
                discount
                itemTotal
                amountPaid
                created_at
                isAccepted
                isRejected
-               orderStatus
                deliveryPrice
-               paymentStatus
-               transactionId
                fulfillmentType
+               thirdPartyOrderId
                thirdPartyOrder {
                   id
                   source
                   thirdPartyOrderId
                   products: parsedData(path: "items")
                }
-               thirdPartyOrderId
-               restaurant: deliveryInfo(path: "pickup.pickupInfo")
-               customer: deliveryInfo(path: "dropoff.dropoffInfo")
-               pickupWindow: deliveryInfo(path: "pickup.window")
-               dropoffWindow: deliveryInfo(path: "dropoff.window")
-               customer: deliveryInfo(path: "dropoff.dropoffInfo")
-               deliveryCompany: deliveryInfo(path: "deliveryCompany")
-               cart: orderCart {
+               cartId
+               cart {
                   id
+                  status
+                  orderStatus {
+                     title
+                  }
                   isTest
+                  source
+                  address
                   transactionId
-               }
-               brand {
-                  id
-                  onDemandName: onDemandSettings(
-                     where: {
-                        onDemandSetting: { identifier: { _eq: "Brand Name" } }
+                  paymentStatus
+                  fulfillmentInfo
+                  customer: customerInfo
+                  brand {
+                     id
+                     onDemandName: onDemandSettings(
+                        where: {
+                           onDemandSetting: {
+                              identifier: { _eq: "Brand Name" }
+                           }
+                        }
+                     ) {
+                        name: value(path: "name")
                      }
-                  ) {
-                     name: value(path: "name")
-                  }
-                  onDemandLogo: onDemandSettings(
-                     where: {
-                        onDemandSetting: { identifier: { _eq: "Brand Logo" } }
+                     onDemandLogo: onDemandSettings(
+                        where: {
+                           onDemandSetting: {
+                              identifier: { _eq: "Brand Logo" }
+                           }
+                        }
+                     ) {
+                        url: value(path: "url")
                      }
-                  ) {
-                     url: value(path: "url")
+                     subscriptionSettings: subscriptionStoreSettings(
+                        where: {
+                           subscriptionStoreSetting: {
+                              identifier: { _eq: "theme-brand" }
+                           }
+                        }
+                     ) {
+                        name: value(path: "name")
+                        logo: value(path: "logo.url")
+                     }
                   }
-                  subscriptionSettings: subscriptionStoreSettings(
-                     where: {
-                        subscriptionStoreSetting: {
-                           identifier: { _eq: "theme-brand" }
+                  cartItemViews_aggregate(
+                     where: { levelType: { _eq: "orderItem" } }
+                  ) {
+                     aggregate {
+                        count
+                     }
+                     nodes {
+                        id
+                        status
+                        displayName
+                        displayImage
+                        productOptionType
+                        totalSachets: childs_aggregate {
+                           aggregate {
+                              count
+                           }
+                        }
+                        packedSachets: childs_aggregate(
+                           where: { status: { _eq: "READY" } }
+                        ) {
+                           aggregate {
+                              count
+                           }
+                        }
+                        assembledSachets: childs_aggregate(
+                           where: { status: { _eq: "PACKED" } }
+                        ) {
+                           aggregate {
+                              count
+                           }
                         }
                      }
-                  ) {
-                     name: value(path: "name")
-                     logo: value(path: "logo.url")
-                  }
-               }
-               orderMealKitProducts(
-                  where: { orderModifierId: { _is_null: true } }
-               ) {
-                  id
-                  price
-                  isAssembled
-                  assemblyStatus
-                  assemblyStation {
-                     id
-                     name
-                  }
-                  comboProduct {
-                     id
-                     name
-                  }
-                  comboProductComponent {
-                     id
-                     label
-                  }
-                  orderSachets(where: { orderModifierId: { _is_null: true } }) {
-                     id
-                     status
-                     isAssembled
-                  }
-                  simpleRecipeProduct {
-                     id
-                     name
-                  }
-                  simpleRecipeProductOption {
-                     id
-                     simpleRecipeYield {
-                        id
-                        yield
-                     }
-                  }
-               }
-               orderReadyToEatProducts(
-                  where: { orderModifierId: { _is_null: true } }
-               ) {
-                  id
-                  price
-                  isAssembled
-                  assemblyStatus
-                  simpleRecipeProduct {
-                     id
-                     name
-                  }
-                  assemblyStation {
-                     id
-                     name
-                  }
-                  comboProduct {
-                     id
-                     name
-                  }
-                  comboProductComponent {
-                     id
-                     label
-                  }
-                  simpleRecipeProduct {
-                     id
-                     name
-                  }
-                  simpleRecipeProductOption {
-                     id
-                     simpleRecipeYield {
-                        id
-                        yield
-                     }
-                  }
-               }
-               orderInventoryProducts(
-                  where: { orderModifierId: { _is_null: true } }
-               ) {
-                  id
-                  price
-                  isAssembled
-                  inventoryProduct {
-                     id
-                     name
-                  }
-                  comboProduct {
-                     id
-                     name
-                  }
-                  comboProductComponent {
-                     id
-                     label
-                  }
-                  assemblyStation {
-                     id
-                     name
-                  }
-                  assemblyStatus
-                  customizableProduct {
-                     id
-                     name
-                  }
-                  inventoryProductOption {
-                     id
-                     quantity
-                     label
                   }
                }
             }
          }
       `,
       AGGREGATE: {
-         BY_AMOUNT: gql`
-            subscription orders {
-               orders: ordersAggregate {
-                  aggregate {
-                     count
-                     sum {
-                        amount: amountPaid
-                     }
-                     avg {
-                        amountPaid
-                     }
-                  }
-               }
-            }
-         `,
-         BY_STATUS: gql`
-            subscription orderByStatus {
-               orderByStatus: order_orderStatusEnum(order_by: { index: asc }) {
-                  value
-                  orders: orders_aggregate(
-                     where: {
-                        _or: [
-                           { isRejected: { _eq: false } }
-                           { isRejected: { _is_null: true } }
-                        ]
-                     }
-                  ) {
-                     aggregate {
-                        count
-                        sum {
-                           amount: amountPaid
-                        }
-                        avg {
-                           amountPaid
-                        }
-                     }
-                  }
-               }
-            }
-         `,
          TOTAL: gql`
             subscription orders($where: order_order_bool_exp = {}) {
                orders: ordersAggregate(where: $where) {
@@ -1752,143 +458,313 @@ export const QUERIES = {
       `,
    },
    PLANNED: {
-      PRODUCTS: {
-         INVENTORY: {
-            LIST: gql`
-               subscription inventoryProducts($order: order_order_bool_exp) {
-                  inventoryProducts: inventoryProductsAggregate(
-                     where: { orderInventoryProducts: { order: $order } }
-                  ) {
+      PRODUCTS: gql`
+         subscription plannedProducts(
+            $type: String_comparison_exp!
+            $cart: order_cart_bool_exp!
+         ) {
+            plannedProducts: productsAggregate(
+               where: { type: $type, cartItems: { cart: $cart } }
+            ) {
+               aggregate {
+                  count
+               }
+               nodes {
+                  id
+                  name
+                  cartItems_aggregate(where: { cart: $cart }) {
                      aggregate {
-                        count(columns: id)
+                        count
                      }
                      nodes {
                         id
-                        name
-                        products: orderInventoryProducts_aggregate(
-                           where: { order: $order }
+                        status
+                        cart {
+                           id
+                           orderId
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      `,
+      PRODUCT_OPTIONS: gql`
+         subscription productOptions(
+            $type: String_comparison_exp!
+            $cart: order_cart_bool_exp!
+         ) {
+            productOptions: products_productOptionView_aggregate(
+               where: {
+                  type: $type
+                  cartItemViews: { level: { _eq: 2 }, cart: $cart }
+               }
+            ) {
+               aggregate {
+                  count
+               }
+               nodes {
+                  id
+                  displayName
+                  cartItemViews_aggregate(
+                     where: { level: { _eq: 2 }, cart: $cart }
+                  ) {
+                     aggregate {
+                        count
+                     }
+                     nodes {
+                        id
+                        status
+                        cart {
+                           orderId
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      `,
+      SIMPLE_RECIPES: gql`
+         subscription simpleRecipes($cart: order_cart_bool_exp!) {
+            simpleRecipes: simpleRecipesAggregate(
+               where: {
+                  simpleRecipeYields: {
+                     simpleRecipeCartItemViews: {
+                        level: { _eq: 3 }
+                        cart: $cart
+                     }
+                  }
+               }
+            ) {
+               aggregate {
+                  count
+               }
+               nodes {
+                  id
+                  name
+                  simpleRecipeYields_aggregate(
+                     where: {
+                        simpleRecipeCartItemViews: {
+                           level: { _eq: 3 }
+                           cart: $cart
+                        }
+                     }
+                  ) {
+                     aggregate {
+                        count
+                     }
+                     nodes {
+                        id
+                        serving
+                        simpleRecipeCartItemViews_aggregate(
+                           where: { level: { _eq: 3 }, cart: $cart }
                         ) {
                            aggregate {
-                              count(columns: id)
+                              count
                               sum {
-                                 quantity
+                                 displayServing
+                                 displayUnitQuantity
                               }
                            }
-                        }
-                        options: inventoryProductOptions(
-                           where: { orderInventoryProducts: { order: $order } }
-                        ) {
-                           id
-                           label
-                           products: orderInventoryProducts_aggregate(
-                              where: { order: $order }
-                           ) {
-                              aggregate {
-                                 count(columns: id)
-                                 sum {
-                                    quantity
-                                 }
-                              }
-                           }
-                           assembledProducts: orderInventoryProducts_aggregate(
-                              where: {
-                                 order: $order
-                                 isAssembled: { _eq: true }
-                              }
-                           ) {
-                              aggregate {
-                                 count(columns: id)
-                                 sum {
-                                    quantity
-                                 }
+                           nodes {
+                              id
+                              status
+                              displayName
+                              cart {
+                                 id
+                                 orderId
                               }
                            }
                         }
                      }
                   }
                }
-            `,
-            ONE: gql`
-               subscription inventoryProduct(
-                  $id: Int!
-                  $order: order_order_bool_exp = {}
-               ) {
-                  inventoryProduct(id: $id) {
-                     id
-                     name
-                     products: orderInventoryProducts_aggregate(
-                        where: { order: $order }
-                     ) {
-                        aggregate {
-                           count(columns: id)
-                           sum {
-                              quantity
-                           }
+            }
+         }
+      `,
+      SUB_RECIPES: gql`
+         subscription subRecipes($cart: order_cart_bool_exp!) {
+            subRecipes: simpleRecipesAggregate(
+               where: {
+                  simpleRecipeYields: {
+                     subRecipeCartItemViews: { level: { _gte: 4 }, cart: $cart }
+                  }
+               }
+            ) {
+               aggregate {
+                  count
+               }
+               nodes {
+                  id
+                  name
+                  simpleRecipeYields_aggregate(
+                     where: {
+                        subRecipeCartItemViews: {
+                           level: { _gte: 4 }
+                           cart: $cart
                         }
                      }
-                     options: inventoryProductOptions(
-                        where: { orderInventoryProducts: { order: $order } }
-                     ) {
+                  ) {
+                     aggregate {
+                        count
+                     }
+                     nodes {
                         id
-                        label
-                        orderInventoryProducts: orderInventoryProducts_aggregate(
-                           where: { order: $order }
+                        serving
+                        subRecipeCartItemViews_aggregate(
+                           where: { level: { _gte: 4 }, cart: $cart }
                         ) {
                            aggregate {
-                              total: count(columns: id)
+                              count
+                              sum {
+                                 displayServing
+                                 displayUnitQuantity
+                              }
                            }
                            nodes {
                               id
-                              orderId
+                              status
+                              displayName
+                              cart {
+                                 id
+                                 orderId
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      `,
+      INGREDIENTS: gql`
+         subscription ingredients($cart: order_cart_bool_exp!) {
+            ingredients: ingredientsAggregate(
+               where: {
+                  ingredientSachetViews: {
+                     cartItemViews: {
+                        level: { _eq: 4 }
+                        orderMode: {
+                           _in: ["assembledTogether", "assembledSeparately"]
+                        }
+                        cart: $cart
+                     }
+                  }
+               }
+            ) {
+               aggregate {
+                  count
+               }
+               nodes {
+                  id
+                  name
+                  cartItemViews_aggregate(
+                     where: {
+                        level: { _eq: 4 }
+                        orderMode: {
+                           _in: ["assembledTogether", "assembledSeparately"]
+                        }
+                        cart: $cart
+                     }
+                  ) {
+                     aggregate {
+                        sum {
+                           displayUnitQuantity
+                        }
+                     }
+                  }
+                  ingredientProcessings_aggregate(
+                     where: {
+                        ingredientSachetViews: {
+                           cartItemViews: {
+                              level: { _eq: 4 }
+                              orderMode: {
+                                 _in: [
+                                    "assembledTogether"
+                                    "assembledSeparately"
+                                 ]
+                              }
+                              cart: $cart
+                           }
+                        }
+                     }
+                  ) {
+                     aggregate {
+                        count
+                     }
+                     nodes {
+                        id
+                        processingName
+                        cartItemViews_aggregate(
+                           where: {
+                              level: { _eq: 4 }
+                              orderMode: {
+                                 _in: [
+                                    "assembledTogether"
+                                    "assembledSeparately"
+                                 ]
+                              }
+                              cart: $cart
+                           }
+                        ) {
+                           aggregate {
+                              count
+                              sum {
+                                 displayUnitQuantity
+                              }
+                           }
+                        }
+                        ingredientSachets_aggregate(
+                           where: {
+                              cartItemViews: {
+                                 level: { _eq: 4 }
+                                 orderMode: {
+                                    _in: [
+                                       "assembledTogether"
+                                       "assembledSeparately"
+                                    ]
+                                 }
+                                 cart: $cart
+                              }
+                           }
+                        ) {
+                           aggregate {
+                              count
+                           }
+                           nodes {
+                              id
+                              unit
                               quantity
-                              isAssembled
-                              sachets: orderSachets(
+                              cartItemViews_aggregate(
                                  where: {
-                                    orderInventoryProduct: { order: $order }
+                                    level: { _eq: 4 }
+                                    orderMode: {
+                                       _in: [
+                                          "assembledTogether"
+                                          "assembledSeparately"
+                                       ]
+                                    }
+                                    cart: $cart
                                  }
                               ) {
-                                 id
-                                 unit
-                                 status
-                                 quantity
-                                 isAssembled
-                                 isLabelled
-                                 isPortioned
-                                 ingredientName
-                                 processingName
-                                 packaging {
-                                    id
-                                    name
-                                 }
-                                 sachetItemId
-                                 sachetItem {
-                                    id
-                                    bulkItemId
-                                    bulkItem {
-                                       id
-                                       sop
-                                       yield
-                                       shelfLife
-                                       bulkDensity
-                                       supplierItemId
-                                       supplierItem {
-                                          id
-                                          name
-                                       }
+                                 aggregate {
+                                    count
+                                    sum {
+                                       displayUnitQuantity
                                     }
                                  }
-                                 bulkItemId
-                                 bulkItem {
+                                 nodes {
                                     id
-                                    sop
-                                    yield
-                                    shelfLife
-                                    bulkDensity
-                                    supplierItemId
-                                    supplierItem {
+                                    cart {
+                                       id
+                                       orderId
+                                    }
+                                    product {
                                        id
                                        name
                                     }
+                                    displayName
+                                    status
                                  }
                               }
                            }
@@ -1896,539 +772,47 @@ export const QUERIES = {
                      }
                   }
                }
-            `,
-         },
-         READY_TO_EAT: {
-            LIST: gql`
-               subscription simpleRecipeProducts($order: order_order_bool_exp) {
-                  simpleRecipeProducts: simpleRecipeProductsAggregate(
-                     where: { orderReadyToEatProducts: { order: $order } }
+            }
+         }
+      `,
+      SACHET_ITEMS: gql`
+         subscription sachetItems($cart: order_cart_bool_exp) {
+            sachetItems: inventory_sachetItemView_aggregate(
+               where: { cartItemViews: { level: { _eq: 4 }, cart: $cart } }
+            ) {
+               aggregate {
+                  count
+               }
+               nodes {
+                  id
+                  processingName
+                  cartItemViews_aggregate(
+                     where: { level: { _eq: 4 }, cart: $cart }
                   ) {
                      aggregate {
-                        count(columns: id)
+                        count
+                        sum {
+                           displayUnitQuantity
+                        }
                      }
                      nodes {
                         id
-                        name
-                        options: simpleRecipeProductOptions(
-                           where: { orderReadyToEatProducts: { order: $order } }
-                        ) {
-                           id
-                           yield: simpleRecipeYield {
-                              id
-                              size: yield(path: "serving")
-                           }
-                           products: orderReadyToEatProducts_aggregate(
-                              where: { order: $order }
-                           ) {
-                              aggregate {
-                                 count(columns: id)
-                                 sum {
-                                    quantity
-                                 }
-                              }
-                           }
-                           assembledProducts: orderReadyToEatProducts_aggregate(
-                              where: {
-                                 order: $order
-                                 isAssembled: { _eq: true }
-                              }
-                           ) {
-                              aggregate {
-                                 count(columns: id)
-                                 sum {
-                                    quantity
-                                 }
-                              }
-                           }
-                        }
-                     }
-                  }
-               }
-            `,
-            ONE: gql`
-               subscription simpleRecipeProduct(
-                  $id: Int!
-                  $order: order_order_bool_exp = {}
-               ) {
-                  simpleRecipeProduct(id: $id) {
-                     id
-                     name
-                     products: orderReadyToEatProducts_aggregate(
-                        where: { order: $order }
-                     ) {
-                        aggregate {
-                           count
-                           sum {
-                              quantity
-                           }
-                        }
-                     }
-                     options: simpleRecipeProductOptions(
-                        where: { orderReadyToEatProducts: { order: $order } }
-                     ) {
-                        id
-                        yield: simpleRecipeYield {
-                           id
-                           size: yield(path: "serving")
-                        }
-                        orderReadyToEatProducts: orderReadyToEatProducts_aggregate(
-                           where: { order: $order }
-                        ) {
-                           aggregate {
-                              total: count(columns: id)
-                              sum {
-                                 quantity
-                              }
-                           }
-                           nodes {
-                              id
-                              orderId
-                              quantity
-                              isAssembled
-                              sachets: orderSachets(
-                                 where: {
-                                    orderReadyToEatProduct: { order: $order }
-                                 }
-                              ) {
-                                 id
-                                 unit
-                                 status
-                                 quantity
-                                 isAssembled
-                                 isLabelled
-                                 isPortioned
-                                 ingredientName
-                                 processingName
-                                 packaging {
-                                    id
-                                    name
-                                 }
-                                 sachetItemId
-                                 sachetItem {
-                                    id
-                                    bulkItemId
-                                    bulkItem {
-                                       id
-                                       sop
-                                       yield
-                                       shelfLife
-                                       bulkDensity
-                                       supplierItemId
-                                       supplierItem {
-                                          id
-                                          name
-                                       }
-                                    }
-                                 }
-                                 bulkItemId
-                                 bulkItem {
-                                    id
-                                    sop
-                                    yield
-                                    shelfLife
-                                    bulkDensity
-                                    supplierItemId
-                                    supplierItem {
-                                       id
-                                       name
-                                    }
-                                 }
-                              }
-                           }
-                        }
-                     }
-                  }
-               }
-            `,
-            SACHET: {
-               LIST: gql`
-                  subscription ingredients($order: order_order_bool_exp = {}) {
-                     ingredients: ingredientsAggregate(
-                        where: {
-                           ingredientSachets: {
-                              orderSachets: {
-                                 orderReadyToEatProduct: { order: $order }
-                              }
-                           }
-                        }
-                     ) {
-                        aggregate {
-                           count
-                        }
-                        nodes {
-                           id
+                        status
+                        product {
                            name
-                           processings: ingredientProcessings_aggregate(
-                              where: {
-                                 ingredientSachets: {
-                                    orderSachets: {
-                                       orderReadyToEatProduct: { order: $order }
-                                    }
-                                 }
-                              }
-                           ) {
-                              aggregate {
-                                 count(columns: processingName)
-                              }
-                              nodes {
-                                 id
-                                 name: processingName
-                                 sachets: ingredientSachets_aggregate(
-                                    where: {
-                                       orderSachets: {
-                                          orderReadyToEatProduct: {
-                                             order: $order
-                                          }
-                                       }
-                                    }
-                                 ) {
-                                    aggregate {
-                                       count(columns: id)
-                                    }
-                                    nodes {
-                                       id
-                                       unit
-                                       quantity
-                                       allOrderSachets: orderSachets_aggregate(
-                                          where: {
-                                             orderReadyToEatProduct: {
-                                                order: $order
-                                             }
-                                          }
-                                       ) {
-                                          aggregate {
-                                             count(columns: id)
-                                             sum {
-                                                quantity
-                                             }
-                                          }
-                                          nodes {
-                                             id
-                                             isAssembled
-                                             orderReadyToEatProduct {
-                                                id
-                                                orderId
-                                                simpleRecipeProduct {
-                                                   id
-                                                   name
-                                                }
-                                             }
-                                          }
-                                       }
-                                       completedOrderSachets: orderSachets_aggregate(
-                                          where: {
-                                             orderReadyToEatProduct: {
-                                                order: $order
-                                             }
-                                             status: { _eq: "PACKED" }
-                                          }
-                                       ) {
-                                          aggregate {
-                                             count(columns: id)
-                                             sum {
-                                                quantity
-                                             }
-                                          }
-                                       }
-                                    }
-                                 }
-                              }
-                           }
                         }
-                     }
-                  }
-               `,
-            },
-         },
-         MEAL_KIT: {
-            LIST: gql`
-               subscription simpleRecipeProducts($order: order_order_bool_exp) {
-                  simpleRecipeProducts: simpleRecipeProductsAggregate(
-                     where: { orderMealKitProducts: { order: $order } }
-                  ) {
-                     aggregate {
-                        count(columns: id)
-                     }
-                     nodes {
-                        id
-                        name
-                        options: simpleRecipeProductOptions(
-                           where: { orderMealKitProducts: { order: $order } }
-                        ) {
+                        cart {
                            id
-                           yield: simpleRecipeYield {
-                              id
-                              size: yield(path: "serving")
-                           }
-                           products: orderMealKitProducts_aggregate(
-                              where: { order: $order }
-                           ) {
-                              aggregate {
-                                 count(columns: id)
-                                 sum {
-                                    quantity
-                                 }
-                              }
-                           }
-                           assembledProducts: orderMealKitProducts_aggregate(
-                              where: {
-                                 order: $order
-                                 isAssembled: { _eq: true }
-                              }
-                           ) {
-                              aggregate {
-                                 count(columns: id)
-                                 sum {
-                                    quantity
-                                 }
-                              }
-                           }
+                           orderId
                         }
+                        displayName
+                        displayUnitQuantity
                      }
                   }
                }
-            `,
-            ONE: gql`
-               subscription simpleRecipeProduct(
-                  $id: Int!
-                  $order: order_order_bool_exp = {}
-               ) {
-                  simpleRecipeProduct(id: $id) {
-                     id
-                     name
-                     products: orderMealKitProducts_aggregate(
-                        where: { order: $order }
-                     ) {
-                        aggregate {
-                           count
-                           sum {
-                              quantity
-                           }
-                        }
-                     }
-                     options: simpleRecipeProductOptions(
-                        where: { orderMealKitProducts: { order: $order } }
-                     ) {
-                        id
-                        yield: simpleRecipeYield {
-                           id
-                           size: yield(path: "serving")
-                        }
-                        orderMealKitProducts: orderMealKitProducts_aggregate(
-                           where: { order: $order }
-                        ) {
-                           aggregate {
-                              total: count(columns: id)
-                              sum {
-                                 quantity
-                              }
-                           }
-                           nodes {
-                              id
-                              orderId
-                              quantity
-                              isAssembled
-                           }
-                        }
-                     }
-                  }
-               }
-            `,
-            SACHET: {
-               LIST: gql`
-                  subscription ingredients($order: order_order_bool_exp = {}) {
-                     ingredients: ingredientsAggregate(
-                        where: {
-                           ingredientSachets: {
-                              orderSachets: {
-                                 orderMealKitProduct: { order: $order }
-                              }
-                           }
-                        }
-                     ) {
-                        aggregate {
-                           count
-                        }
-                        nodes {
-                           id
-                           name
-                           processings: ingredientProcessings_aggregate(
-                              where: {
-                                 ingredientSachets: {
-                                    orderSachets: {
-                                       orderMealKitProduct: { order: $order }
-                                    }
-                                 }
-                              }
-                           ) {
-                              aggregate {
-                                 count(columns: processingName)
-                              }
-                              nodes {
-                                 id
-                                 name: processingName
-                                 sachets: ingredientSachets_aggregate(
-                                    where: {
-                                       orderSachets: {
-                                          orderMealKitProduct: { order: $order }
-                                       }
-                                    }
-                                 ) {
-                                    aggregate {
-                                       count(columns: id)
-                                    }
-                                    nodes {
-                                       id
-                                       quantity
-                                       allOrderSachets: orderSachets_aggregate(
-                                          where: {
-                                             orderMealKitProduct: {
-                                                order: $order
-                                             }
-                                          }
-                                       ) {
-                                          aggregate {
-                                             count(columns: id)
-                                             sum {
-                                                quantity
-                                             }
-                                          }
-                                          nodes {
-                                             id
-                                             quantity
-                                             isAssembled
-                                             orderMealKitProduct {
-                                                id
-                                                orderId
-                                                simpleRecipeProduct {
-                                                   id
-                                                   name
-                                                }
-                                             }
-                                          }
-                                       }
-                                       completedOrderSachets: orderSachets_aggregate(
-                                          where: {
-                                             orderMealKitProduct: {
-                                                order: $order
-                                             }
-                                             status: { _eq: "COMPLETED" }
-                                          }
-                                       ) {
-                                          aggregate {
-                                             count(columns: id)
-                                             sum {
-                                                quantity
-                                             }
-                                          }
-                                       }
-                                    }
-                                 }
-                              }
-                           }
-                        }
-                     }
-                  }
-               `,
-               ONE: gql`
-                  subscription ingredients($order: order_order_bool_exp = {}) {
-                     ingredients: ingredientsAggregate(
-                        where: {
-                           ingredientSachets: {
-                              orderSachets: {
-                                 orderMealKitProduct: { order: $order }
-                              }
-                           }
-                        }
-                     ) {
-                        aggregate {
-                           count
-                        }
-                        nodes {
-                           id
-                           name
-                           processings: ingredientProcessings_aggregate(
-                              where: {
-                                 ingredientSachets: {
-                                    orderSachets: {
-                                       orderMealKitProduct: { order: $order }
-                                    }
-                                 }
-                              }
-                           ) {
-                              aggregate {
-                                 count(columns: processingName)
-                              }
-                              nodes {
-                                 id
-                                 name: processingName
-                                 sachets: ingredientSachets_aggregate(
-                                    where: {
-                                       orderSachets: {
-                                          orderMealKitProduct: { order: $order }
-                                       }
-                                    }
-                                 ) {
-                                    aggregate {
-                                       count(columns: id)
-                                    }
-                                    nodes {
-                                       id
-                                       unit
-                                       quantity
-                                       allOrderSachets: orderSachets_aggregate(
-                                          where: {
-                                             orderMealKitProduct: {
-                                                order: $order
-                                             }
-                                          }
-                                       ) {
-                                          aggregate {
-                                             count(columns: id)
-                                             sum {
-                                                quantity
-                                             }
-                                          }
-                                          nodes {
-                                             id
-                                             isAssembled
-                                             orderMealKitProduct {
-                                                id
-                                                orderId
-                                                simpleRecipeProduct {
-                                                   id
-                                                   name
-                                                }
-                                             }
-                                          }
-                                       }
-                                       completedOrderSachets: orderSachets_aggregate(
-                                          where: {
-                                             orderMealKitProduct: {
-                                                order: $order
-                                             }
-                                             status: { _eq: "PACKED" }
-                                          }
-                                       ) {
-                                          aggregate {
-                                             count(columns: id)
-                                             sum {
-                                                quantity
-                                             }
-                                          }
-                                       }
-                                    }
-                                 }
-                              }
-                           }
-                        }
-                     }
-                  }
-               `,
-            },
-         },
-      },
+            }
+         }
+      `,
    },
    SETTINGS: {
       LIST: gql`
@@ -2453,6 +837,21 @@ export const QUERIES = {
          }
       `,
    },
+   PRODUCT_OPTION_TYPES: gql`
+      query productOptionTypes {
+         productOptionTypes {
+            title
+         }
+      }
+   `,
+   PRODUCT_TYPES: gql`
+      query productTypes {
+         productTypes: products_productType {
+            title
+            displayName
+         }
+      }
+   `,
 }
 
 export const DEVICES = {
@@ -2461,6 +860,20 @@ export const DEVICES = {
          printers(where: { printerType: $type }) {
             name
             printNodeId
+         }
+      }
+   `,
+}
+
+export const QUERIES2 = {
+   ORDERS_AGGREGATE: gql`
+      subscription ordersAggregate {
+         ordersAggregate: order_ordersAggregate {
+            title
+            value
+            count: totalOrders
+            sum: totalOrderSum
+            avg: totalOrderAverage
          }
       }
    `,
