@@ -91,6 +91,11 @@ const Styles = {
          inset -1px -1px 2px rgba(255, 255, 255, 0.3),
          inset 1px 1px 2px rgba(219, 219, 219, 0.5);
    `,
+   AppIcon: styled.img`
+      height: 32px;
+      width: 32px;
+      display: inline-block;
+   `,
 }
 
 export default Styles

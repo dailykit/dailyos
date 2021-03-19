@@ -26,6 +26,7 @@ export const Sidebar = ({ links, toggle, open }) => {
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
    const [isCreateNewOpen, setIsCreateNewOpen] = React.useState(false)
 
+   console.log(apps)
    return (
       <>
          {open ? (
@@ -83,7 +84,11 @@ export const Sidebar = ({ links, toggle, open }) => {
                                  down={pathname === app.route && links.length}
                               />
                            </IconButton>
-                           <RectangularIcon />
+                           {app.icon ? (
+                              <Styles.AppIcon src={app.icon} />
+                           ) : (
+                              <RectangularIcon />
+                           )}
                            <Styles.AppTitle>{app.title}</Styles.AppTitle>
                         </Flex>
                         <Styles.Pages>
