@@ -19,6 +19,7 @@ export const DataProvider = ({ children }) => {
          headers: {
             ...headers,
             'Staff-Id': `${user.sub}`,
+            'Staff-Email': `${user.email}`,
          },
       }
    })
@@ -30,6 +31,7 @@ export const DataProvider = ({ children }) => {
          connectionParams: {
             headers: {
                'Staff-Id': `${user.sub}`,
+               'Staff-Email': `${user.email}`,
             },
          },
       },
