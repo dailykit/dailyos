@@ -86,6 +86,20 @@ export const AddOnProductsTunnel = ({
          {
             width: 120,
             hozAlign: 'right',
+            title: 'Quantity',
+            headerFilter: true,
+            field: 'productOption.quantity',
+            headerTooltip: column => {
+               const identifier = 'product_listing_column_quantity'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+         },
+         {
+            width: 120,
+            hozAlign: 'right',
             title: 'Unit Price',
             headerFilter: true,
             field: 'unitPrice',
