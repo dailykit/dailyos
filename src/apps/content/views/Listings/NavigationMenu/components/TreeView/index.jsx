@@ -3,7 +3,7 @@ import { Flex } from '@dailykit/ui'
 import MenuItem from '../MenuItem'
 import NavMenuContext from '../../../../../context/NavMenu'
 
-import { Parent, Children } from './styles'
+import { Parent, Children, EmptyMsg } from './styles'
 
 const TreeView = ({
    data = [],
@@ -24,7 +24,7 @@ const TreeView = ({
       treeData = menuItems
    }
    if (treeData.length === 0) {
-      return <div>No Folders!</div>
+      return <EmptyMsg>No Menu Item! Try adding one!</EmptyMsg>
    }
    console.log('treeData', treeData)
    return treeData.map(node => {

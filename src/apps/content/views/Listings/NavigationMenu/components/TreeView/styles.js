@@ -15,3 +15,7 @@ export const Node = styled.ul`
 export const Children = styled.div`
    padding-left: 24px;
 `
+export const EmptyMsg = styled.div`
+   margin: 16px;
+   font-size: 20px;
+`

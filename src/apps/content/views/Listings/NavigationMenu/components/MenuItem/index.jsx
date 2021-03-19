@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect, useRef } from 'react'
 import { StyledWrapper } from './styles'
 import NavMenuContext from '../../../../../context/NavMenu'
 import {
@@ -20,6 +20,7 @@ export default function MenuItem({
    const [isChildVisible, setIsChildVisible] = useState(false)
    const [label, setLabel] = useState(menuItem?.label || '')
    const [url, setUrl] = useState(menuItem?.url || '')
+   const wrapperRef = useRef(null)
    const showPopup = () => {
       setIsPopupActive(prev => !prev)
    }
@@ -62,8 +63,25 @@ export default function MenuItem({
       })
    }
 
+   useEffect(() => {
+      /**
+       * Alert if clicked on outside of element
+       */
+      function handleClickOutside(event) {
+         if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+            setIsPopupActive(false)
+         }
+      }
+      // Bind the event listener
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => {
+         // Unbind the event listener on clean up
+         document.removeEventListener('mousedown', handleClickOutside)
+      }
+   }, [wrapperRef])
+
    return (
-      <StyledWrapper isPopupActive={isPopupActive}>
+      <StyledWrapper isPopupActive={isPopupActive} ref={wrapperRef}>
          <div className="menuItemDiv">
             <div className="menuContent-left">
                <span className="chevronIcon" onClick={showChild}>
