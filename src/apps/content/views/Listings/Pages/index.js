@@ -127,7 +127,7 @@ const PageListing = () => {
       addTab(internalPageName, param)
    }
 
-   //toggle handler
+   // toggle handler
    const toggleHandler = (toggle, id) => {
       const val = !toggle
       // if (val && !isvalid) {

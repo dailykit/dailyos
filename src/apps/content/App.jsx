@@ -14,6 +14,7 @@ import ErrorBoundary from '../../shared/components/ErrorBoundary'
 import BrandContext from './context/Brand'
 import ConfigContext from './context/Config'
 import FoldContext from './context/Fold'
+import NavMenuContext from './context/NavMenu'
 
 // Styled
 import { StyledWrapper } from '../../styled'
@@ -29,6 +30,7 @@ const App = () => {
    })
    const [configContext, setConfigContext] = React.useState({})
    const [foldContext, setFoldContext] = React.useState({})
+   const [navMenuContext, setNavMenuContext] = React.useState({})
    React.useEffect(() => {
       setRoutes([
          {
@@ -56,20 +58,24 @@ const App = () => {
    return (
       <ErrorBoundary rootRoute="/apps/content">
          {/* <StyledWrapper> */}
-         <FoldContext.Provider value={[foldContext, setFoldContext]}>
-         <ConfigContext.Provider value={[configContext, setConfigContext]}>
-            <BrandContext.Provider value={[context, setContext]}>
-               {/* <Router basename={process.env.PUBLIC_URL}>
+         <NavMenuContext.Provider value={[navMenuContext, setNavMenuContext]}>
+            <FoldContext.Provider value={[foldContext, setFoldContext]}>
+               <ConfigContext.Provider
+                  value={[configContext, setConfigContext]}
+               >
+                  <BrandContext.Provider value={[context, setContext]}>
+                     {/* <Router basename={process.env.PUBLIC_URL}>
                   <Header toggleSidebar={toggleSidebar} /> */}
-               <Sidebar
-                  visible={isSidebarVisible}
-                  toggleSidebar={toggleSidebar}
-               />
-               <Main />
-               {/* </Router> */}
-            </BrandContext.Provider>
-         </ConfigContext.Provider>
-         </FoldContext.Provider>
+                     <Sidebar
+                        visible={isSidebarVisible}
+                        toggleSidebar={toggleSidebar}
+                     />
+                     <Main />
+                     {/* </Router> */}
+                  </BrandContext.Provider>
+               </ConfigContext.Provider>
+            </FoldContext.Provider>
+         </NavMenuContext.Provider>
          {/* </StyledWrapper> */}
       </ErrorBoundary>
    )
