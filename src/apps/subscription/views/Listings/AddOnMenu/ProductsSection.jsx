@@ -71,6 +71,31 @@ const ProductsSection = () => {
             )
          },
       },
+
+      {
+         title: 'Label',
+         field: 'label',
+         width: 100,
+         headerTooltip: column => {
+            const identifier = 'product_listing_column_label'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+      {
+         title: 'Quantity',
+         field: 'quantity',
+         hozAlign: 'right',
+         headerHozAlign: 'right',
+         width: 100,
+         headerTooltip: column => {
+            const identifier = 'product_listing_column_quantity'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
       {
          title: 'Author',
          headerFilter: true,
@@ -272,6 +297,18 @@ const Inventory = ({ inventoryTableRef, handleRowSelection }) => {
          headerFilterPlaceholder: 'Search products...',
          headerTooltip: column => {
             const identifier = 'product_listing_column_name'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+      {
+         title: 'Label',
+         headerFilter: true,
+         field: 'label',
+         headerFilterPlaceholder: 'Search...',
+         headerTooltip: column => {
+            const identifier = 'product_listing_column_label'
             return (
                tooltip(identifier)?.description || column.getDefinition().title
             )
