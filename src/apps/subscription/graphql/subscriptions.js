@@ -366,6 +366,7 @@ export const ADDON_PRODUCTS = gql`
                id
                type
                label
+               quantity
                productId
                product {
                   id
@@ -401,6 +402,7 @@ export const PLAN_PRODUCTS = gql`
                id
                type
                label
+               quantity
                productId
                product {
                   id
