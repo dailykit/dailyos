@@ -9,6 +9,7 @@ import { PlusIcon } from '../../assets/icons'
 import { RoundedCloseIcon, RectangularIcon } from '../../assets/icons'
 import { useLocation } from 'react-router-dom'
 import CreateNewItemPanel from './CreateNewItemPanel'
+import { useAuth } from '../../providers/auth'
 
 const APPS = gql`
    subscription apps {
@@ -25,6 +26,7 @@ export const Sidebar = ({ links, toggle, open }) => {
    const { pathname } = useLocation()
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
    const [isCreateNewOpen, setIsCreateNewOpen] = React.useState(false)
+   const { user, logout } = useAuth()
 
    console.log(apps)
    return (
@@ -106,6 +108,9 @@ export const Sidebar = ({ links, toggle, open }) => {
                      </Styles.AppItem>
                   ))
                )}
+               <Styles.Logout type="button" onClick={logout}>
+                  Sign Out
+               </Styles.Logout>
             </Styles.Sidebar>
          ) : (
             <Styles.Menu
