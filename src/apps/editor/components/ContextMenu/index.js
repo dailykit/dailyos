@@ -35,7 +35,7 @@ const ContextMenu = ({ style, node }) => {
 
    const copyToClipboard = () => {
       const relativePath = node.path.replace(
-         process.env.REACT_APP_ROOT_FOLDER,
+         window._env_.REACT_APP_ROOT_FOLDER,
          ''
       )
       const fileUrl = `https://test.dailykit.org/template/files${relativePath}`

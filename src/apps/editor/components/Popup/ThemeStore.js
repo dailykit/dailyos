@@ -38,7 +38,7 @@ export default function ThemeStore({ show, closePopup, setCreateType }) {
                headers: {
                   'Content-Type': 'application/json',
                   'x-hasura-admin-secret':
-                     process.env
+                     window._env_
                         .REACT_APP_THEME_STORE_HASURA_GRAPHQL_ADMIN_SECRET,
                },
                data: {
