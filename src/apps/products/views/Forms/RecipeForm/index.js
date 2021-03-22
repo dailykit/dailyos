@@ -177,28 +177,45 @@ const RecipeForm = () => {
          notIncluded: state.notIncluded,
          cuisine: state.cuisine,
          utensils: state.utensils,
-         procedures: state.procedures,
-         ingredients: state.ingredients,
          showIngredients: state.showIngredients,
          showIngredientsQuantity: state.showIngredientsQuantity,
          showProcedures: state.showProcedures,
       }
-      const clonedRecipeYields = state.simpleRecipeYields.map(ry => {
-         const clonedSachets = ry.ingredientSachets.map(sachet => ({
-            isVisible: sachet.isVisible,
-            slipName: sachet.slipName,
-            ingredientSachetId: sachet.ingredientSachet.id,
-         }))
-
-         return {
-            yield: ry.yield,
-            ingredientSachets: {
-               data: clonedSachets,
-            },
+      const clonedRecipeYields = state.simpleRecipeYields.map(ry => ({
+         yield: ry.yield,
+      }))
+      const clonedSimpleRecipeIngredients = state.simpleRecipeIngredients.map(
+         ing => ({
+            ingredientId: ing.ingredient.id,
+            processingId: ing.processing.id,
+            position: ing.position,
+         })
+      )
+      const clonedInstructionSets = state.instructionSets.map(set => {
+         const newSet = {
+            position: set.position,
+            title: set.title,
          }
+         const newSteps = set.instructionSteps.map(step => ({
+            position: step.position,
+            description: step.description,
+            isVisible: step.isVisible,
+            title: step.title,
+            assets: step.assets,
+         }))
+         newSet.instructionSteps = {
+            data: newSteps,
+         }
+         return newSet
       })
       clonedRecipe.simpleRecipeYields = {
          data: clonedRecipeYields,
+      }
+      clonedRecipe.simpleRecipeIngredients = {
+         data: clonedSimpleRecipeIngredients,
+      }
+      clonedRecipe.instructionSets = {
+         data: clonedInstructionSets,
       }
       createRecipe({
          variables: {
