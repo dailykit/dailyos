@@ -1,7 +1,12 @@
 export const createDataTree = ({ dataset, rootIdKeyName, parentIdKeyName }) => {
    const hashTable = Object.create(null)
    dataset.forEach(
-      aData => (hashTable[aData[rootIdKeyName]] = { ...aData, childNodes: [] })
+      aData =>
+         (hashTable[aData[rootIdKeyName]] = {
+            ...aData,
+            childNodes: [],
+            isChildOpen: true,
+         })
    )
    const dataTree = []
    dataset.forEach(aData => {

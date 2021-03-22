@@ -1,31 +1,40 @@
 import React, { useState, useContext, useEffect, useRef } from 'react'
+import { Form } from '@dailykit/ui'
 import { StyledWrapper } from './styles'
+import Popup from '../Popup'
 import NavMenuContext from '../../../../../context/NavMenu'
+import { useNavbarMenu } from '../../../../../context/Mutation'
 import {
    ChevronRight,
    ChevronDown,
    DeleteIcon,
 } from '../../../../../../../shared/assets/icons'
 import { randomSuffix } from '../../../../../../../shared/utils'
+import { toggleNode } from '../../../../../utils'
 
-export default function MenuItem({
-   createMenuItem,
-   updateMenuItem,
-   deleteMenuItem,
-   menuItem,
-}) {
+export default function MenuItem({ menuItem }) {
+   const { createMenuItem, updateMenuItem, deleteMenuItem } = useNavbarMenu()
    const [navMenuContext, setNavMenuContext] = useContext(NavMenuContext)
    const { menuId } = navMenuContext
    const [isPopupActive, setIsPopupActive] = useState(false)
-   const [isChildVisible, setIsChildVisible] = useState(false)
+   const [isChildVisible, setIsChildVisible] = useState(
+      menuItem?.isChildOpen || false
+   )
    const [label, setLabel] = useState(menuItem?.label || '')
    const [url, setUrl] = useState(menuItem?.url || '')
    const wrapperRef = useRef(null)
    const showPopup = () => {
       setIsPopupActive(prev => !prev)
    }
-   const showChild = () => {
+   const onToggle = async () => {
       setIsChildVisible(prev => !prev)
+      // console.log(menuItem, navMenuContext)
+      const mutated = await toggleNode(navMenuContext.menuItems, menuItem.id)
+      console.log('mutationllll', mutated)
+      setNavMenuContext({
+         ...navMenuContext,
+         menuItems: mutated,
+      })
    }
 
    // create menu item handler
@@ -64,9 +73,7 @@ export default function MenuItem({
    }
 
    useEffect(() => {
-      /**
-       * Alert if clicked on outside of element
-       */
+      // if clicked on outside of element close popup
       function handleClickOutside(event) {
          if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
             setIsPopupActive(false)
@@ -84,14 +91,14 @@ export default function MenuItem({
       <StyledWrapper isPopupActive={isPopupActive} ref={wrapperRef}>
          <div className="menuItemDiv">
             <div className="menuContent-left">
-               <span className="chevronIcon" onClick={showChild}>
+               <span className="chevronIcon" onClick={onToggle}>
                   {isChildVisible ? (
                      <ChevronDown size="24px" color="#0091ae" />
                   ) : (
                      <ChevronRight size="24px" color="#0091ae" />
                   )}
                </span>
-               <input
+               {/* <input
                   className="menu-item-label-input"
                   name="label"
                   type="text"
@@ -99,6 +106,19 @@ export default function MenuItem({
                   value={label}
                   onChange={e => setLabel(e.target.value)}
                   onBlur={onBlurHandler}
+               /> */}
+               <Form.Text
+                  id="username"
+                  name="label"
+                  onBlur={onBlurHandler}
+                  onChange={e => setLabel(e.target.value)}
+                  value={label}
+                  placeholder="Menu item label"
+                  textAlign="center"
+                  fontSize="16px"
+                  fontWeight="500"
+                  padding="10px"
+                  height="40px"
                />
             </div>
             <div className="menuContent-right">
@@ -137,33 +157,10 @@ export default function MenuItem({
                </div>
             </div>
          </div>
-
-         {/* popup modal for action */}
-         <div className="modal">
-            <div className="pointer" />
-            <div className="modal-content">
-               <ul className="action-list">
-                  <li className="action-list-item">
-                     <button
-                        type="button"
-                        className="list-btn"
-                        onClick={() => createMenuItemHandler('childItem')}
-                     >
-                        Add child item below
-                     </button>
-                  </li>
-                  <li className="action-list-item">
-                     <button
-                        type="button"
-                        className="list-btn"
-                        onClick={() => createMenuItemHandler('rootItem')}
-                     >
-                        Add item below
-                     </button>
-                  </li>
-               </ul>
-            </div>
-         </div>
+         <Popup
+            createMenuItemHandler={createMenuItemHandler}
+            isPopupActive={isPopupActive}
+         />
       </StyledWrapper>
    )
 }

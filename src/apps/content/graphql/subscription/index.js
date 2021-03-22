@@ -230,6 +230,7 @@ export const NAVIGATION_MENU_INFO = gql`
    subscription NAVIGATION_MENU_INFO($menuId: Int!) {
       website_navigationMenuItem(
          where: { navigationMenuId: { _eq: $menuId } }
+         order_by: { position: desc_nulls_last }
       ) {
          id
          label

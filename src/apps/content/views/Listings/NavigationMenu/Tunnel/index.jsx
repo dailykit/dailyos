@@ -10,28 +10,21 @@ import {
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { TreeView } from '../components'
-import {
-   StyledWrapper,
-   InputWrapper,
-   StyledDiv,
-   TunnelBody,
-   TreeViewWrapper,
-} from './styles'
+import { StyledWrapper, InputWrapper, StyledDiv, TunnelBody } from './styles'
 import {
    NAVIGATION_MENU_INFO,
    UPDATE_NAVIGATION_MENU,
-   INSERT_NAVIGATION_MENU_ITEM,
-   UPDATE_NAVIGATION_MENU_ITEM,
-   DELETE_NAVIGATION_MENU_ITEM,
 } from '../../../../graphql'
 import BrandContext from '../../../../context/Brand'
 import NavMenuContext from '../../../../context/NavMenu'
+import { useNavbarMenu } from '../../../../context/Mutation'
 import { useTabs } from '../../../../../../shared/providers'
 import { logger, randomSuffix } from '../../../../../../shared/utils'
 import { Tooltip, InlineLoader } from '../../../../../../shared/components'
 import { createDataTree } from '../../../../utils/getTreeViewArray'
 
 const NavigationMenuTunnel = ({ close }) => {
+   const { createMenuItem } = useNavbarMenu()
    const { addTab, tab, setTabTitle, closeAllTabs } = useTabs()
    const [context, setContext] = useContext(BrandContext)
    const [navMenuContext, setNavMenuContext] = useContext(NavMenuContext)
@@ -88,14 +81,11 @@ const NavigationMenuTunnel = ({ close }) => {
                value: menuItems[0]?.navigationMenu?.title || tab?.title,
             })
             setToggle(menuItems[0]?.navigationMenu.isPublished)
-
-            console.log('subscription', menuItems)
             const treeData = await createDataTree({
                dataset: menuItems,
                rootIdKeyName: 'id',
                parentIdKeyName: 'parentNavigationMenuItemId',
             })
-            console.log('subscription treedata', treeData)
             setNavMenuContext({
                ...navMenuContext,
                menuItems: treeData,
@@ -104,37 +94,6 @@ const NavigationMenuTunnel = ({ close }) => {
          },
       }
    )
-
-   // Mutation for page publish toggle
-   const [createMenuItem] = useMutation(INSERT_NAVIGATION_MENU_ITEM, {
-      onCompleted: () => {
-         toast.success('Menu Item created!')
-      },
-      onError: error => {
-         toast.error('Something went wrong')
-         logger(error)
-      },
-   })
-   // Mutation for updating  menu item
-   const [updateMenuItem] = useMutation(UPDATE_NAVIGATION_MENU_ITEM, {
-      onCompleted: () => {
-         toast.success('Menu Item updated!')
-      },
-      onError: error => {
-         toast.error('Something went wrong')
-         logger(error)
-      },
-   })
-   // Mutation for deleting menu item
-   const [deleteMenuItem] = useMutation(DELETE_NAVIGATION_MENU_ITEM, {
-      onCompleted: () => {
-         toast.success('Menu Item deleted!')
-      },
-      onError: error => {
-         toast.error('Something went wrong')
-         logger(error)
-      },
-   })
 
    // Mutation for page publish toggle
    const [updateMenu] = useMutation(UPDATE_NAVIGATION_MENU, {
@@ -272,20 +231,6 @@ const NavigationMenuTunnel = ({ close }) => {
                         ))}
                   </Form.Group>
                   <Flex container alignItems="center" height="100%">
-                     {/* <Highlight onClick={() => openTunnel(1)}>
-                     Preview Page
-                  </Highlight> */}
-                     {/* {state.isCouponValid?.status ? (
-                        <>
-                           <TickIcon color="#00ff00" stroke={2} />
-                           <Text as="p">All good!</Text>
-                        </>
-                     ) : (
-                        <>
-                           <CloseIcon color="#ff0000" />
-                           <Text as="p">{state.isCouponValid?.error}</Text>
-                        </>
-                     )} */}
                      <Spacer xAxis size="24px" />
                      <Form.Toggle
                         name="page_published"
@@ -310,11 +255,7 @@ const NavigationMenuTunnel = ({ close }) => {
                </ComboButton>
             </InputWrapper>
             <StyledDiv>
-               <TreeView
-                  createMenuItem={createMenuItem}
-                  updateMenuItem={updateMenuItem}
-                  deleteMenuItem={deleteMenuItem}
-               />
+               <TreeView />
             </StyledDiv>
          </TunnelBody>
       </StyledWrapper>

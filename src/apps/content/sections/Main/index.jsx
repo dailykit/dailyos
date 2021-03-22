@@ -10,7 +10,6 @@ import {
    PageForm,
    SubscriptionFold,
    NavigationMenu,
-   NavigationMenuForm,
 } from '../../views'
 
 export default function Main() {
@@ -33,11 +32,6 @@ export default function Main() {
             component={SubscriptionFold}
          />
          <Route exact path="/content/navbarMenu" component={NavigationMenu} />
-         <Route
-            exact
-            path="/content/navbarMenu/:menuId"
-            component={NavigationMenuForm}
-         />
 
          <Route exact path="/content/settings">
             <h1>Setting Page</h1>
