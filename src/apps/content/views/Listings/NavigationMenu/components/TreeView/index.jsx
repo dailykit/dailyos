@@ -20,7 +20,7 @@ const TreeView = ({ data = [], onToggle }) => {
       initiatePriority({
          tablename: 'navigationMenuItem',
          schemaname: 'website',
-         data: menuItems,
+         data: treeData,
       })
    }, [menuItems])
    if (treeData.length === 0) {
@@ -28,7 +28,7 @@ const TreeView = ({ data = [], onToggle }) => {
    }
    return (
       <DragNDrop
-         list={menuItems}
+         list={treeData}
          droppableId="MenuItemDroppableId"
          tablename="navigationMenuItem"
          schemaname="website"

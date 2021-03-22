@@ -17,6 +17,7 @@ export const StyledWrapper = styled.div`
       padding: 8px;
       padding-left: 24px;
       align-items: center;
+      background: #fff;
    }
 
    .menuContent-left {
@@ -24,6 +25,10 @@ export const StyledWrapper = styled.div`
       padding-right: 8px;
       display: flex;
       align-items: center;
+   }
+
+   .menu-left-option {
+      width: 100%;
    }
 
    .chevronIcon {

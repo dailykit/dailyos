@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useRef } from 'react'
-import { Form } from '@dailykit/ui'
+import { Form, ComboButton, IconButton } from '@dailykit/ui'
 import { StyledWrapper } from './styles'
 import Popup from '../Popup'
 import NavMenuContext from '../../../../../context/NavMenu'
@@ -93,66 +93,48 @@ export default function MenuItem({ menuItem }) {
             <div className="menuContent-left">
                <span className="chevronIcon" onClick={onToggle}>
                   {isChildVisible ? (
-                     <ChevronDown size="24px" color="#0091ae" />
+                     <ChevronDown size="24px" color="#555b6e" />
                   ) : (
-                     <ChevronRight size="24px" color="#0091ae" />
+                     <ChevronRight size="24px" color="#555b6e" />
                   )}
                </span>
-               {/* <input
-                  className="menu-item-label-input"
-                  name="label"
-                  type="text"
-                  placeholder="Menu item label"
-                  value={label}
-                  onChange={e => setLabel(e.target.value)}
-                  onBlur={onBlurHandler}
-               /> */}
-               <Form.Text
-                  id="username"
-                  name="label"
-                  onBlur={onBlurHandler}
-                  onChange={e => setLabel(e.target.value)}
-                  value={label}
-                  placeholder="Menu item label"
-                  textAlign="center"
-                  fontSize="16px"
-                  fontWeight="500"
-                  padding="10px"
-                  height="40px"
-               />
+               <div className="menu-left-option">
+                  <Form.Text
+                     name="label"
+                     onBlur={onBlurHandler}
+                     onChange={e => setLabel(e.target.value)}
+                     value={label}
+                     placeholder="Menu item label"
+                     textAlign="left"
+                     fontSize="16px"
+                     padding="10px"
+                     height="40px"
+                  />
+               </div>
             </div>
             <div className="menuContent-right">
                <div className="menuContent-right-item">
                   <div className="menu-right-option">
-                     <input
-                        type="text"
+                     <Form.Text
                         name="url"
-                        className="menu-item-label-input"
-                        placeholder="URL"
-                        value={url}
-                        onChange={e => setUrl(e.target.value)}
                         onBlur={onBlurHandler}
+                        onChange={e => setUrl(e.target.value)}
+                        value={url}
+                        placeholder="URL"
+                        textAlign="left"
+                        fontSize="16px"
+                        padding="10px"
+                        height="40px"
                      />
                   </div>
                   <div className="action" id="actionOption">
-                     <button
-                        type="button"
-                        onClick={showPopup}
-                        className="action-button-option"
-                     >
+                     <ComboButton type="ghost" onClick={showPopup}>
                         Action
-                        <span>
-                           <ChevronDown size="24px" color="#0091ae" />
-                        </span>
-                     </button>
-                     <button
-                        type="button"
-                        className="delete-button-option action-button-option"
-                     >
-                        <span onClick={deleteMenuItemHandler}>
-                           <DeleteIcon size="24px" color="#0091ae" />
-                        </span>
-                     </button>
+                        <ChevronDown size="24px" color="#555b6e" />
+                     </ComboButton>
+                     <IconButton type="ghost" onClick={deleteMenuItemHandler}>
+                        <DeleteIcon size="24px" color="#555b6e" />
+                     </IconButton>
                   </div>
                </div>
             </div>
