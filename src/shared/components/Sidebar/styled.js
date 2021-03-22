@@ -21,10 +21,8 @@ const Styles = {
          width: 6px;
       }
       ::-webkit-scrollbar-thumb {
-         background-color: rgba(196, 196, 196, 0.5);
-      }
-      ::-webkit-scrollbar-button {
-         height: 50px;
+         background-color: rgba(196, 196, 196, 0.9);
+         border-radius: 4px;
       }
    `,
    AppTitle: styled.h4`
@@ -90,6 +88,21 @@ const Styles = {
          -5px -5px 13px rgba(219, 219, 219, 0.9),
          inset -1px -1px 2px rgba(255, 255, 255, 0.3),
          inset 1px 1px 2px rgba(219, 219, 219, 0.5);
+   `,
+   AppIcon: styled.img`
+      height: 32px;
+      width: 32px;
+      display: inline-block;
+   `,
+   Logout: styled.button`
+      padding: 8px 0px;
+      color: #202020;
+      font-weight: 500;
+      font-size: 16px;
+      margin: 16px;
+      background-color: #fff;
+      border-radius: 4px;
+      border: 1px solid #e5e5e5;
    `,
 }
 
