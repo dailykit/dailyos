@@ -10,7 +10,7 @@ import {
    HorizontalTabPanels,
    HorizontalTabPanel,
    HorizontalTabs,
-   ComboButton,
+   IconButton,
 } from '@dailykit/ui'
 import { isEmpty, stubTrue } from 'lodash'
 import { useParams } from 'react-router-dom'
@@ -21,7 +21,6 @@ import {
    Tooltip,
 } from '../../../../../shared/components'
 import { logger, randomSuffix } from '../../../../../shared/utils'
-import { CloseIcon, TickIcon } from '../../../assets/icons'
 import { useTabs } from '../../../../../shared/providers'
 import {
    RecipeContext,
@@ -39,7 +38,7 @@ import {
 } from './components'
 import validator from './validators'
 import { ResponsiveFlex, StyledFlex } from '../Product/styled'
-import { CloneIcon } from '../../../../../shared/assets/icons'
+import { CloneIcon, ThreeDotIcon } from '../../../../../shared/assets/icons'
 import { useDnd } from '../../../../../shared/components/DragNDrop/useDnd'
 
 const RecipeForm = () => {
@@ -229,14 +228,18 @@ const RecipeForm = () => {
                style={{ borderBottom: '1px solid #f3f3f3' }}
             >
                <Form.Group>
-                  <Form.Label htmlFor="title" title="title">
-                     Recipe Name*
-                  </Form.Label>
                   <Form.Text
                      id="title"
                      name="title"
                      value={title.value}
-                     placeholder="Enter recipe name"
+                     placeholder="enter recipe title"
+                     borderLess
+                     textAlign="center"
+                     fontSize="40px"
+                     fontWeight="500"
+                     padding="12px 12px"
+                     height="48px"
+                     hidePlaceholder
                      onChange={e =>
                         setTitle({ ...title, value: e.target.value })
                      }
@@ -246,29 +249,18 @@ const RecipeForm = () => {
                   {title.meta.isTouched &&
                      !title.meta.isValid &&
                      title.meta.errors.map((error, index) => (
-                        <Form.Error key={index}>{error}</Form.Error>
+                        <Form.Error justifyContent="center" key={index}>
+                           {error}
+                        </Form.Error>
                      ))}
                </Form.Group>
                <Flex container alignItems="center" height="100%">
-                  {state.isValid?.status ? (
-                     <>
-                        <TickIcon color="#00ff00" stroke={2} />
-                        <Text as="p">All good!</Text>
-                     </>
-                  ) : (
-                     <>
-                        <CloseIcon color="#ff0000" />
-                        <Text as="p">{state.isValid?.error}</Text>
-                     </>
-                  )}
-                  <Spacer xAxis size="16px" />
-                  <ComboButton type="ghost" size="sm" onClick={clone}>
-                     <CloneIcon color="#00A7E1" />
-                     {cloning ? 'Cloning...' : 'Clone Recipe'}
-                  </ComboButton>
-                  <Spacer xAxis size="16px" />
                   <Form.Toggle
                      name="published"
+                     size={48}
+                     variant="green"
+                     iconWithText
+                     style={{ fontWeight: '500', fontSize: '14px' }}
                      value={state.isPublished}
                      onChange={togglePublish}
                   >
@@ -278,12 +270,27 @@ const RecipeForm = () => {
                         <Tooltip identifier="recipe_publish" />
                      </Flex>
                   </Form.Toggle>
+                  <Spacer xAxis size="16px" />
+                  <IconButton
+                     type="ghost"
+                     style={{ backgroundColor: '#F4F4F4' }}
+                     onClick={clone}
+                  >
+                     <CloneIcon color="#555B6E" />
+                  </IconButton>
+                  <Spacer xAxis size="16px" />
+                  <IconButton
+                     type="ghost"
+                     style={{ backgroundColor: '#F4F4F4' }}
+                  >
+                     <ThreeDotIcon color="#555B6E" />
+                  </IconButton>
                </Flex>
             </ResponsiveFlex>
             <Flex width="calc(100vw - 64px)" margin="0 auto" padding="32px 0">
                <HorizontalTabs>
-                  <HorizontalTabList>
-                     <HorizontalTab>Basic Details</HorizontalTab>
+                  <HorizontalTabList style={{ justifyContent: 'center' }}>
+                     <HorizontalTab>Basic Information</HorizontalTab>
                      <HorizontalTab>Ingredients</HorizontalTab>
                      <HorizontalTab>Cooking Steps</HorizontalTab>
                   </HorizontalTabList>
