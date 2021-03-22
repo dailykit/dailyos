@@ -157,23 +157,121 @@ export const CREATE_WEBPAGE = gql`
    }
 `
 export const INSERT_SUBSCRIPTION_FOLD = gql`
-mutation INSERT_SUBSCRIPTION_FOLDS($fileId: Int!, $identifier: String!) {
-   insert_content_subscriptionDivIds(objects: {fileId: $fileId, id: $identifier}, on_conflict: {constraint: subscriptionDivIds_pkey, update_columns: fileId}) {
-     returning {
-       identifier: id
-       fileId
-     }
+   mutation INSERT_SUBSCRIPTION_FOLDS($fileId: Int!, $identifier: String!) {
+      insert_content_subscriptionDivIds(
+         objects: { fileId: $fileId, id: $identifier }
+         on_conflict: {
+            constraint: subscriptionDivIds_pkey
+            update_columns: fileId
+         }
+      ) {
+         returning {
+            identifier: id
+            fileId
+         }
+      }
    }
- }
 `
-export const DELETE_SUBSCRIPTION_FOLD  = gql`
-mutation DELETE_SUBSCRIPTION_FOLD($identifier: String!, $fileId: Int!) {
-   delete_content_subscriptionDivIds(where: {id: {_eq: $identifier}, fileId: {_eq: $fileId}}) {
-     returning {
-       fileId
-       id
-     }
+export const DELETE_SUBSCRIPTION_FOLD = gql`
+   mutation DELETE_SUBSCRIPTION_FOLD($identifier: String!, $fileId: Int!) {
+      delete_content_subscriptionDivIds(
+         where: { id: { _eq: $identifier }, fileId: { _eq: $fileId } }
+      ) {
+         returning {
+            fileId
+            id
+         }
+      }
    }
- }
+`
 
+export const INSERT_NAVIGATION_MENU = gql`
+   mutation INSERT_NAVIGATION_MENU($title: String!) {
+      insert_website_navigationMenu_one(object: { title: $title }) {
+         id
+         isPublished
+         title
+      }
+   }
+`
+export const DELETE_NAVIGATION_MENU = gql`
+   mutation DELETE_NAVIGATION_MENU($menuId: Int!) {
+      delete_website_navigationMenu(where: { id: { _eq: $menuId } }) {
+         returning {
+            id
+            title
+         }
+      }
+   }
+`
+export const UPDATE_NAVIGATION_MENU = gql`
+   mutation UPDATE_NAVIGATION_MENU(
+      $_set: website_navigationMenu_set_input!
+      $menuId: Int!
+   ) {
+      update_website_navigationMenu(
+         where: { id: { _eq: $menuId } }
+         _set: $_set
+      ) {
+         returning {
+            id
+            isPublished
+            title
+         }
+      }
+   }
+`
+export const INSERT_NAVIGATION_MENU_ITEM = gql`
+   mutation INSERT_NAVIGATION_MENU_ITEM(
+      $label: String!
+      $navigationMenuId: Int
+      $parentNavigationMenuItemId: Int
+   ) {
+      insert_website_navigationMenuItem_one(
+         object: {
+            label: $label
+            navigationMenuId: $navigationMenuId
+            parentNavigationMenuItemId: $parentNavigationMenuItemId
+         }
+      ) {
+         id
+         navigationMenuId
+         parentNavigationMenuItemId
+         label
+         openInNewTab
+         position
+         url
+      }
+   }
+`
+
+export const UPDATE_NAVIGATION_MENU_ITEM = gql`
+   mutation UPDATE_NAVIGATION_MENU_ITEM(
+      $menuItemId: Int!
+      $_set: website_navigationMenuItem_set_input!
+   ) {
+      update_website_navigationMenuItem_by_pk(
+         pk_columns: { id: $menuItemId }
+         _set: $_set
+      ) {
+         id
+         label
+         navigationMenuId
+         openInNewTab
+         parentNavigationMenuItemId
+         position
+         url
+      }
+   }
+`
+
+export const DELETE_NAVIGATION_MENU_ITEM = gql`
+   mutation DELETE_NAVIGATION_MENU_ITEM($menuItemId: Int!) {
+      delete_website_navigationMenuItem_by_pk(id: $menuItemId) {
+         id
+         navigationMenuId
+         parentNavigationMenuItemId
+         label
+      }
+   }
 `

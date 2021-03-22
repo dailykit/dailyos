@@ -165,22 +165,21 @@ export const GET_TEMPLATES = gql`
 `
 
 export const LINKED_COMPONENT = gql`
-   subscription LINKED_COMPONENT($pageId: Int!) {
-      website_websitePageModule(
-         where: { websitePageId: { _eq: $pageId } }
+   subscription NAVIGATION_MENU_INFO($menuId: Int!) {
+      website_navigationMenuItem(
+         where: { navigationMenuId: { _eq: $menuId } }
          order_by: { position: desc_nulls_last }
       ) {
-         fileId
          id
-         config
-         internalModuleIdentifier
-         moduleType
+         label
+         navigationMenuId
+         openInNewTab
+         parentNavigationMenuItemId
          position
-         templateId
-         visibilityConditionId
-         file {
-            fileName
-            path
+         url
+         navigationMenu {
+            isPublished
+            title
          }
       }
    }
@@ -204,6 +203,45 @@ export const FOLD_AGGREGATE = gql`
       content_subscriptionDivIds_aggregate {
          aggregate {
             count
+         }
+      }
+   }
+`
+export const MENU_AGGREGATE = gql`
+   subscription MENU_AGGREGATE {
+      website_navigationMenu_aggregate {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+
+export const NAVIGATION_MENU = gql`
+   subscription NAVIGATION_MENU {
+      website_navigationMenu {
+         id
+         title
+         isPublished
+      }
+   }
+`
+export const NAVIGATION_MENU_INFO = gql`
+   subscription NAVIGATION_MENU_INFO($menuId: Int!) {
+      website_navigationMenuItem(
+         where: { navigationMenuId: { _eq: $menuId } }
+         order_by: { position: desc_nulls_last }
+      ) {
+         id
+         label
+         navigationMenuId
+         openInNewTab
+         parentNavigationMenuItemId
+         position
+         url
+         navigationMenu {
+            isPublished
+            title
          }
       }
    }

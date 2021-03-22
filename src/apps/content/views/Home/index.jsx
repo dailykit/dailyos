@@ -2,7 +2,11 @@ import React, { useContext } from 'react'
 import { DashboardTile } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import { WEBSITE_TOTAL_PAGES, FOLD_AGGREGATE } from '../../graphql'
+import {
+   WEBSITE_TOTAL_PAGES,
+   FOLD_AGGREGATE,
+   MENU_AGGREGATE,
+} from '../../graphql'
 import BrandContext from '../../context/Brand'
 import { StyledCardList, StyledHome } from './styled'
 import { InlineLoader } from '../../../../shared/components'
@@ -13,6 +17,8 @@ export const Home = () => {
    const { addTab } = useTabs()
    const [context, setContext] = useContext(BrandContext)
    const { websiteId } = context
+
+   // page count subscription
    const {
       data: {
          website_websitePage_aggregate: {
@@ -26,6 +32,8 @@ export const Home = () => {
          websiteId,
       },
    })
+
+   // fold count subscription
    const {
       data: {
          content_subscriptionDivIds_aggregate: {
@@ -35,12 +43,24 @@ export const Home = () => {
       loading: foldLoading,
       error: foldError,
    } = useSubscription(FOLD_AGGREGATE, {})
-   if (foldLoading || pageLoading) {
+
+   // menu count subscription
+   const {
+      data: {
+         website_navigationMenu_aggregate: {
+            aggregate: { count: menuCount = 0 } = {},
+         } = {},
+      } = {},
+      loading: menuLoading,
+      error: menuError,
+   } = useSubscription(MENU_AGGREGATE, {})
+
+   if (foldLoading || pageLoading || menuLoading) {
       return <InlineLoader />
    }
-   if (foldError || pageError) {
+   if (foldError || pageError || menuError) {
       toast.error('Something Went Wrong!')
-      logger(foldError || pageError)
+      logger(foldError || pageError || menuError)
    }
 
    return (
@@ -56,6 +76,11 @@ export const Home = () => {
                title="Subscription"
                count={foldCount}
                onClick={() => addTab('Subscription', '/content/subscription')}
+            />
+            <DashboardTile
+               title="Navbar Menu"
+               count={menuCount}
+               onClick={() => addTab('Navbar Menu', '/content/navbarMenu')}
             />
             <DashboardTile
                title="Settings"
