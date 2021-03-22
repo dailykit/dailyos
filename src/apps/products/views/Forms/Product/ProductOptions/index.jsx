@@ -134,8 +134,8 @@ const ProductOptions = ({ productId, options }) => {
 
    const handleEditModifier = modifier => {
       modifiersDispatch({
-         type: 'POPULATE',
-         payload: { modifier },
+         type: 'MODIFIER_ID',
+         payload: modifier.id,
       })
       openModifiersTunnel(2)
    }

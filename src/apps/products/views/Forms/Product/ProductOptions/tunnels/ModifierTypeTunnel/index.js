@@ -9,11 +9,8 @@ const ModifierTypeTunnel = ({ open, close }) => {
 
    const select = type => {
       modifiersDispatch({
-         type: 'META',
-         payload: {
-            name: 'modifierProductType',
-            value: type,
-         },
+         type: 'OPTION_TYPE',
+         payload: type,
       })
       open(4)
    }
@@ -27,20 +24,18 @@ const ModifierTypeTunnel = ({ open, close }) => {
          />
          <TunnelBody>
             <OptionTile
-               title="Simple Product"
-               onClick={() => select('simpleProductOption')}
-            />
-            <Spacer size="16px" />
-            <OptionTile
                title="Sachet Item"
                onClick={() => select('sachetItem')}
             />
             <Spacer size="16px" />
-            <OptionTile title="Bulk Item" onClick={() => select('bulkItem')} />
+            <OptionTile
+               title="Ingredient Sachet"
+               onClick={() => select('ingredientSachet')}
+            />
             <Spacer size="16px" />
             <OptionTile
-               title="Supplier Item"
-               onClick={() => select('supplierItem')}
+               title="Simple Recipe Servings"
+               onClick={() => select('simpleRecipeYield')}
             />
          </TunnelBody>
       </>
