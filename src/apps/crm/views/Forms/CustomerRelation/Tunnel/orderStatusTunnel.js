@@ -44,7 +44,7 @@ const OrderStatus = ({ tunnels, closeTunnel }) => {
                </StyledDiv>
                <StyledDiv>
                   <Text as="h2">
-                     {`Status: ${statusData[0]?.orderStatus || 'N/A'}`}
+                     {`Status: ${statusData[0]?.cart?.status || 'N/A'}`}
                   </Text>
                </StyledDiv>
             </TunnelHeaderContainer>

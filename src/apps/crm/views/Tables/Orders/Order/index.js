@@ -8,6 +8,7 @@ import { PaymentCard } from '../../../../components'
 import { ChevronRight } from '../../../../../../shared/assets/icons'
 import { Tooltip, InlineLoader } from '../../../../../../shared/components'
 import { useTooltip, useTabs } from '../../../../../../shared/providers'
+import { combineCartItems } from '../../../../../../shared/utils'
 import { toast } from 'react-toastify'
 import {
    OrderStatusTunnel,
@@ -45,16 +46,17 @@ const OrderInfo = () => {
          brandId: context.brandId,
       },
       onCompleted: ({ brand: { brand_Orders = [] } = {} } = {}) => {
-         const result = brand_Orders[0]?.orderCart?.cartInfo?.products.map(
-            product => {
-               return {
-                  products: product?.name || 'N/A',
-                  servings: product?.quantity || 'N/A',
-                  discount: product.discount || 'N/A',
-                  discountedPrice: product?.totalPrice || 'N/A',
-               }
+         const quantity = combineCartItems(brand_Orders[0]?.cart?.cartItemViews)
+            .length
+         console.log('quantity', quantity)
+         const result = brand_Orders[0]?.cart?.cartItemViews?.map(item => {
+            return {
+               products: item?.displayName || 'N/A',
+               servings: quantity || 'N/A',
+               discount: item.discount || 'N/A',
+               discountedPrice: item?.unitPrice || 'N/A',
             }
-         )
+         })
          setProducts(result)
       },
       onError: error => {

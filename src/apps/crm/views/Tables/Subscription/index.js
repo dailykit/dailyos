@@ -14,7 +14,7 @@ import { currencyFmt, logger } from '../../../../../shared/utils'
 import { toast } from 'react-toastify'
 import BrandContext from '../../../context/Brand'
 
-const SubscriptionTable = ({ id, sid }) => {
+const SubscriptionTable = ({ id = 0, sid = 0 }) => {
    const [context, setContext] = useContext(BrandContext)
    const { dispatch, tab } = useTabs()
    const { tooltip } = useTooltip()
@@ -25,7 +25,7 @@ const SubscriptionTable = ({ id, sid }) => {
       variables: {
          keycloakId: id,
          sid,
-         brandId: context.brandId,
+         brandId: context?.brandId,
       },
       onCompleted: ({ subscriptionOccurencesAggregate = {} }) => {
          let action = ''
@@ -37,14 +37,14 @@ const SubscriptionTable = ({ id, sid }) => {
                action = 'Skipped'
             } else if (
                occurence.customers.length !== 0 &&
-               occurence.customers[0].orderCart &&
-               occurence.customers[0].orderCart.orderId
+               occurence.customers[0].cart &&
+               occurence.customers[0].cart.orderId
             ) {
                action = 'Order Placed'
             } else if (
                occurence.customers.length !== 0 &&
-               occurence.customers[0].orderCart &&
-               occurence.customers[0].orderCart.id
+               occurence.customers[0].cart &&
+               occurence.customers[0].cart.id
             ) {
                action = 'Added To Cart'
             } else {
@@ -55,9 +55,9 @@ const SubscriptionTable = ({ id, sid }) => {
                cutoffTimeStamp: occurence?.cutoffTimeStamp || 'N/A',
                date: occurence?.fulfillmentDate || 'N/A',
                action,
-               oid: occurence?.customers?.[0]?.orderCart?.orderId || 'N/A',
+               oid: occurence?.customers?.[0]?.cart?.orderId || 'N/A',
                amountPaid: `${currencyFmt(
-                  Number(occurence?.customers?.[0]?.orderCart?.amount) || 0
+                  Number(occurence?.customers?.[0]?.cart?.amount) || 0
                )}`,
             }
          })
