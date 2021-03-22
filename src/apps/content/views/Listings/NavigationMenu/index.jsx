@@ -249,7 +249,7 @@ const NavigationMenuListing = () => {
          >
             <Flex container alignItems="center">
                <Text as="title">
-                  Subscription Folds(
+                  Navigation Menu(
                   {menuList?.length})
                </Text>
                <Tooltip identifier="subscriptionFold_list_heading" />
