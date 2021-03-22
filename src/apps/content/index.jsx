@@ -10,8 +10,8 @@ import {
 } from '../../shared/providers'
 
 const keycloak = new Keycloak({
-   realm: process.env.REACT_APP_KEYCLOAK_REALM,
-   url: process.env.REACT_APP_KEYCLOAK_URL,
+   realm: window._env_.REACT_APP_KEYCLOAK_REALM,
+   url: window._env_.REACT_APP_KEYCLOAK_URL,
    clientId: 'content',
    'ssl-required': 'none',
    'public-client': true,

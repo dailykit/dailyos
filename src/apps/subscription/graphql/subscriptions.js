@@ -111,6 +111,8 @@ export const SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
             id
             price
             type
+            label
+            quantity
             recipeYield: simpleRecipeYield {
                size: yield(path: "serving")
                recipe: simpleRecipe {
@@ -330,6 +332,7 @@ export const INVENTORY_PRODUCT_OPTIONS = gql`
          nodes {
             id
             type
+            label
             product {
                id
                name
@@ -363,6 +366,7 @@ export const ADDON_PRODUCTS = gql`
                id
                type
                label
+               quantity
                productId
                product {
                   id
@@ -398,6 +402,7 @@ export const PLAN_PRODUCTS = gql`
                id
                type
                label
+               quantity
                productId
                product {
                   id

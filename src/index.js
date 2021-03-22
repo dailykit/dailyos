@@ -11,20 +11,10 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
-// Apollo Client Imports
-import { ApolloProvider } from '@apollo/react-hooks'
-import { ApolloClient } from 'apollo-client'
-import { setContext } from 'apollo-link-context'
-import { InMemoryCache } from 'apollo-cache-inmemory'
-import { HttpLink } from 'apollo-link-http'
-import { split } from 'apollo-link'
-import { WebSocketLink } from 'apollo-link-ws'
-import { getMainDefinition } from 'apollo-utilities'
-
 import Backend from 'i18next-http-backend'
 
 import App from './App'
-import { AuthProvider, TabProvider } from './shared/providers'
+import { AuthProvider, TabProvider, DataProvider } from './shared/providers'
 
 import './global.css'
 
@@ -40,51 +30,9 @@ Sentry.init({
    tracesSampleRate: 1.0,
 })
 
-const authLink = setContext((_, { headers }) => {
-   return {
-      headers: {
-         ...headers,
-         'x-hasura-admin-secret': `${process.env.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET}`,
-      },
-   }
-})
-
-const wsLink = new WebSocketLink({
-   uri: process.env.REACT_APP_DATA_HUB_SUBSCRIPTIONS_URI,
-   options: {
-      reconnect: true,
-      connectionParams: {
-         headers: {
-            'x-hasura-admin-secret': `${process.env.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET}`,
-         },
-      },
-   },
-})
-
-const httpLink = new HttpLink({
-   uri: process.env.REACT_APP_DATA_HUB_URI,
-})
-
-const link = split(
-   ({ query }) => {
-      const definition = getMainDefinition(query)
-      return (
-         definition.kind === 'OperationDefinition' &&
-         definition.operation === 'subscription'
-      )
-   },
-   wsLink,
-   authLink.concat(httpLink)
-)
-
-const client = new ApolloClient({
-   link,
-   cache: new InMemoryCache(),
-})
-
 const keycloak = new Keycloak({
-   realm: process.env.REACT_APP_KEYCLOAK_REALM,
-   url: process.env.REACT_APP_KEYCLOAK_URL,
+   realm: window._env_.REACT_APP_KEYCLOAK_REALM,
+   url: window._env_.REACT_APP_KEYCLOAK_URL,
    clientId: 'apps',
    'ssl-required': 'none',
    'public-client': true,
@@ -115,9 +63,9 @@ i18n
    })
    .then(() =>
       render(
-         <ApolloProvider client={client}>
-            <AuthProvider keycloak={keycloak}>
-               <Router basename={process.env.PUBLIC_URL}>
+         <AuthProvider keycloak={keycloak}>
+            <DataProvider>
+               <Router basename={window._env_.PUBLIC_URL}>
                   <TabProvider>
                      <ToastContainer
                         position="bottom-left"
@@ -133,8 +81,8 @@ i18n
                      <App />
                   </TabProvider>
                </Router>
-            </AuthProvider>
-         </ApolloProvider>,
+            </DataProvider>
+         </AuthProvider>,
          document.getElementById('root')
       )
    )

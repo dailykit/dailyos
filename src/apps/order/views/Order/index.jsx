@@ -226,7 +226,7 @@ const Order = () => {
       )
       const data = encodeURIComponent(JSON.stringify({ id: order?.id }))
       window.open(
-         `${process.env.REACT_APP_TEMPLATE_URL}?template=${template}&data=${data}`,
+         `${window._env_.REACT_APP_TEMPLATE_URL}?template=${template}&data=${data}`,
          '_blank'
       )
    }, [order])
@@ -234,7 +234,7 @@ const Order = () => {
    const printKOT = async () => {
       try {
          const url = `${
-            new URL(process.env.REACT_APP_DATA_HUB_URI).origin
+            new URL(window._env_.REACT_APP_DATA_HUB_URI).origin
          }/datahub/v1/query`
          await axios.post(
             url,
@@ -254,7 +254,7 @@ const Order = () => {
                headers: {
                   'Content-Type': 'application/json; charset=utf-8',
                   'x-hasura-admin-secret':
-                     process.env.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
+                     window._env_.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
                },
             }
          )
@@ -267,7 +267,7 @@ const Order = () => {
       const kots = async () => {
          try {
             const { data: { data = {}, success } = {} } = await axios.get(
-               `${process.env.REACT_APP_DAILYOS_SERVER_URI}/api/kot-urls?id=${order.id}`
+               `${window._env_.REACT_APP_DAILYOS_SERVER_URI}/api/kot-urls?id=${order.id}`
             )
             if (success) {
                data.forEach(node => window.open(node.url, '_blank'))

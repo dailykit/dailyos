@@ -5,7 +5,7 @@ import { TextButton } from '@dailykit/ui'
 export const RedirectBanner = () => {
    const takeMe = () => {
       window.open(
-         new URL(process.env.REACT_APP_DATA_HUB_URI).origin + '/desktop'
+         new URL(window._env_.REACT_APP_DATA_HUB_URI).origin + '/desktop'
       )
    }
    return (

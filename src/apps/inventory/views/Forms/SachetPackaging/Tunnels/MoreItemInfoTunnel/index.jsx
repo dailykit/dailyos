@@ -142,7 +142,7 @@ export default function MoreItemInfoTunnel({ close, state }) {
                </Form.Group>
                <Form.Group>
                   <Form.Label htmlFor="unitPrice" title="unitPrice">
-                     Unit Price (in {process.env.REACT_APP_CURRENCY})
+                     Unit Price (in {window._env_.REACT_APP_CURRENCY})
                   </Form.Label>
                   <Form.Number
                      id="unitPrice"
