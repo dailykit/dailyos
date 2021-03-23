@@ -196,12 +196,12 @@ export const ORDER = gql`
             id
             itemTotal
             discount
-            channel: cart {
-               source
-            }
             amountPaid
             created_at
             cart {
+               source
+               billingDetails
+               walletAmountUsed
                cartItemViews(where: { level: { _eq: 1 } }) {
                   id
                   displayName
