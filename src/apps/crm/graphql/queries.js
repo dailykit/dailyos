@@ -82,8 +82,8 @@ export const ORDERS_LISTING = gql`
                   discount
                   amountPaid
                   created_at
-                  channel: orderCart {
-                     cartSource
+                  channel: cart {
+                     source
                   }
                }
                orders_aggregate {
@@ -174,7 +174,7 @@ export const LOYALTYPOINTS_LISTING = gql`
                         id
                         type
                         points
-                        orderCart {
+                        cart {
                            orderId
                         }
                         loyaltyPoint {
@@ -196,20 +196,30 @@ export const ORDER = gql`
             id
             itemTotal
             discount
-            channel: orderCart {
-               cartSource
-            }
             amountPaid
             created_at
-            orderCart {
-               cartInfo
-               paymentMethodId
-               paymentCard {
-                  brand
-                  last4
-                  expMonth
-                  expYear
+            cart {
+               source
+               billingDetails
+               walletAmountUsed
+               cartItemViews(where: { level: { _eq: 1 } }) {
+                  id
+                  displayName
+                  displayImage
+                  unitPrice
+                  childs {
+                     displayName
+                     displayImage
+                     unitPrice
+                  }
                }
+               paymentMethodId
+               #  paymentCart {
+               #   brand
+               #   last4
+               #   expMonth
+               #   expYear
+               # }
             }
             deliveryService {
                logo
@@ -255,10 +265,10 @@ export const STATUS = gql`
       brand(id: $brandId) {
          brand_Orders(where: { id: { _eq: $oid } }) {
             id
-            orderStatus
-            transactionId
-            paymentStatus
-            orderCart {
+            cart {
+               status
+               transactionId
+               paymentStatus
                transactionRemark
             }
          }
@@ -273,7 +283,7 @@ export const SUBSCRIPTION = gql`
             customer {
                subscriptionId
                ordered: subscriptionOccurences_aggregate(
-                  where: { orderCart: { orderId: { _is_null: false } } }
+                  where: { cart: { orderId: { _is_null: false } } }
                ) {
                   aggregate {
                      count
@@ -330,7 +340,7 @@ export const OCCURENCES = gql`
             cutoffTimeStamp
             customers(where: { keycloakId: { _eq: $keycloakId } }) {
                isSkipped
-               orderCart {
+               cart {
                   orderId
                   id
                   amount
