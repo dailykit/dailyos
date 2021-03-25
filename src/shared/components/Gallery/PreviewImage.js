@@ -1,6 +1,7 @@
 import React from 'react'
 import { WrapperDiv, Image, Images, Wrapper } from './styled'
-import { ButtonTile } from '@dailykit/ui'
+import { ButtonTile, ComboButton, Flex, Text } from '@dailykit/ui'
+import CameraIcon from '../../assets/icons/Camera'
 const PreviewImage = ({ images, current, openTunnel, setActive }) => {
    return (
       <Wrapper>

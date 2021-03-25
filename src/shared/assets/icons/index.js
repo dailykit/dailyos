@@ -25,6 +25,7 @@ import HomeIcon from './Home'
 import DoubleArrowRightIcon from './DoubleArrowRight'
 import CloneIcon from './Clone'
 import ThreeDotIcon from './ThreeDot'
+import CameraIcon from './Camera'
 export {
    AddIcon,
    MenuIcon,
@@ -53,6 +54,7 @@ export {
    DoubleArrowRightIcon,
    CloneIcon,
    ThreeDotIcon,
+   CameraIcon,
 }
 
 export * from './Tick'

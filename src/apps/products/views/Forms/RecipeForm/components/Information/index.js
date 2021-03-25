@@ -13,6 +13,7 @@ import { EditIcon } from '../../../../../assets/icons'
 import { Container, ContainerAction } from '../styled'
 import { InformationTunnel } from '../../tunnels'
 import { Tooltip } from '../../../../../../../shared/components'
+import BasicInformationForm from './BasicInformationForm'
 
 const Information = ({ state }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -108,12 +109,9 @@ const Information = ({ state }) => {
                   </Container>
                </Container>
             ) : (
-               <ButtonTile
-                  type="primary"
-                  size="sm"
-                  text="Add Basic Information"
-                  onClick={() => openTunnel(1)}
-               />
+               <Container width="100%">
+                  <BasicInformationForm state={state} />
+               </Container>
             )}
          </>
       </>
