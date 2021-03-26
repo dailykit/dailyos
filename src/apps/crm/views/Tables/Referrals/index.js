@@ -26,28 +26,20 @@ const ReferralTable = () => {
          keycloakId: id,
          brandId: context.brandId,
       },
-      onCompleted: ({ brand: { brand_customers = [] } = {} } = {}) => {
-         const result = brand_customers[0]?.customer?.customerReferralDetails?.customerReferrals_aggregate?.nodes.map(
-            referral => {
-               return {
-                  invitation: `${
-                     referral?.customer?.platform_customer?.firstName || ''
-                  } ${
-                     referral?.customer?.platform_customer?.lastName || 'N/A'
-                  }`,
-                  email: referral?.customer?.platform_customer?.email || 'N/A',
-                  phone:
-                     referral?.customer?.platform_customer?.phoneNumber ||
-                     'N/A',
-                  status: referral?.referralStatus || 'N/A',
-               }
+      onCompleted: ({ customerReferrals = [] } = {}) => {
+         const result = customerReferrals.map(referral => {
+            return {
+               invitation: `${
+                  referral?.customer?.platform_customer?.firstName || ''
+               } ${referral?.customer?.platform_customer?.lastName || 'N/A'}`,
+               email: referral?.customer?.platform_customer?.email || 'N/A',
+               phone:
+                  referral?.customer?.platform_customer?.phoneNumber || 'N/A',
+               status: referral?.referralStatus || 'N/A',
             }
-         )
+         })
          setReferralList(result)
-         setReferralCount(
-            brand_customers[0]?.customer?.customerReferralDetails
-               ?.customerReferrals_aggregate?.aggregate?.count || 0
-         )
+         setReferralCount(customerReferrals.length)
       },
       onError: error => {
          toast.error('Something went wrong referral !')

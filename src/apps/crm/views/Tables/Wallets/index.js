@@ -26,25 +26,25 @@ const WalletTable = () => {
          keycloakId: id,
          brandId: context.brandId,
       },
-      onCompleted: ({ brand: { brand_customers = [] } = {} } = {}) => {
-         const result = brand_customers[0]?.customer?.wallet?.walletTransactions_aggregate?.nodes.map(
-            wallet => {
-               return {
-                  date: wallet?.created_at || 'N/A',
-                  reference: wallet?.id || 'N/A',
-                  oid: wallet?.orderCart?.orderId || 'N/A',
-                  debit: wallet?.type === 'DEBIT' ? `$${wallet?.amount}` : '$0',
-                  credit:
-                     wallet?.type === 'CREDIT' ? `$${wallet?.amount}` : '$0',
-                  balance: wallet?.wallet?.balanceAmount || 'N/A',
-               }
+      onCompleted: ({ walletTransactions = [] } = {}) => {
+         const result = walletTransactions.map(transaction => {
+            return {
+               date: transaction?.created_at || 'N/A',
+               reference: transaction?.id || 'N/A',
+               oid: transaction?.orderCart?.orderId || 'N/A',
+               debit:
+                  transaction?.type === 'DEBIT'
+                     ? `$${transaction?.amount}`
+                     : '$0',
+               credit:
+                  transaction?.type === 'CREDIT'
+                     ? `$${transaction?.amount}`
+                     : '$0',
+               balance: transaction?.wallet?.amount || 'N/A',
             }
-         )
+         })
          setWalletTxn(result)
-         setTxnCount(
-            brand_customers[0]?.customer?.wallet?.walletTransactions_aggregate
-               ?.aggregate?.count || 0
-         )
+         setTxnCount(walletTransactions.length)
       },
       onError: error => {
          toast.error('Something went wrong wallet!')

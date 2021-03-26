@@ -25,30 +25,23 @@ const LoyaltyPointTable = () => {
          keycloakId: id,
          brandId: context.brandId,
       },
-      onCompleted: ({ brand: { brand_customers = [] } = {} } = {}) => {
-         const result = brand_customers[0]?.customer?.loyaltyPoint?.loyaltyPointTransactions_aggregate?.nodes.map(
-            loyaltyPnt => {
-               return {
-                  date: loyaltyPnt?.created_at || 'N/A',
-                  reference: loyaltyPnt?.id || 'N/A',
-                  oid: loyaltyPnt?.orderCart?.orderId || 'N/A',
-                  debit:
-                     loyaltyPnt.type === 'DEBIT'
-                        ? `$${loyaltyPnt?.points}`
-                        : '$0',
-                  credit:
-                     loyaltyPnt.type === 'CREDIT'
-                        ? `$${loyaltyPnt?.points}`
-                        : '$0',
-                  balance: loyaltyPnt?.loyaltyPoint?.balanceAmount || 'N/A',
-               }
+      onCompleted: ({ loyaltyPointsTransactions = [] } = {}) => {
+         const result = loyaltyPointsTransactions.map(loyaltyPnt => {
+            return {
+               date: loyaltyPnt?.created_at || 'N/A',
+               reference: loyaltyPnt?.id || 'N/A',
+               oid: loyaltyPnt?.orderCart?.orderId || 'N/A',
+               debit:
+                  loyaltyPnt.type === 'DEBIT' ? `$${loyaltyPnt?.points}` : '$0',
+               credit:
+                  loyaltyPnt.type === 'CREDIT'
+                     ? `$${loyaltyPnt?.points}`
+                     : '$0',
+               balance: loyaltyPnt?.loyaltyPoint?.balanceAmount || 'N/A',
             }
-         )
+         })
          setLoyaltyPointTxn(result)
-         setTxnCount(
-            brand_customers[0]?.customer?.loyaltyPoint
-               ?.loyaltyPointTransactions_aggregate?.aggregate?.count || 0
-         )
+         setTxnCount(loyaltyPointsTransactions.length)
       },
       onError: error => {
          toast.error('Something went wrong LoyaltyPointCard !')

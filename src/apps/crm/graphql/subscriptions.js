@@ -198,7 +198,7 @@ export const WALLET_N_REFERRAL = gql`
       brand(id: $brandId) {
          brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
             customer {
-               wallet {
+               wallets {
                   amount
                }
                customerReferralDetails {
@@ -219,7 +219,7 @@ export const LOYALTYPOINT_COUNT = gql`
       brand(id: $brandId) {
          brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
             customer {
-               loyaltyPoint {
+               loyaltyPoints {
                   points
                }
             }
