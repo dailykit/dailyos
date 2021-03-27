@@ -1,6 +1,25 @@
 import gql from 'graphql-tag'
 
 export const QUERIES = {
+   CART: {
+      ONE: gql`
+         subscription cart($id: Int!) {
+            cart(id: $id) {
+               id
+               status
+               paymentStatus
+               stripeInvoiceId
+               stripeCustomerId
+               invoiceSendAttempt
+               stripeInvoiceDetails
+               stripeInvoiceHistory
+               transactionId
+               transactionRemark
+               transactionRemarkHistory
+            }
+         }
+      `,
+   },
    ORDER: {
       SOURCE: gql`
          query orderSource($orderId: oid!) {

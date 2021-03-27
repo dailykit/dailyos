@@ -7,6 +7,7 @@ import { MUTATIONS } from '../../graphql'
 const Context = React.createContext()
 
 const initialState = {
+   cart: { id: null },
    filter: { tunnel: false },
    delivery_config: { orderId: null },
    current_view: 'SUMMARY',
@@ -172,6 +173,8 @@ const reducers = (state, { type, payload }) => {
             orders: { ...state.orders, loading: payload },
          }
       }
+      case 'SET_CART_ID':
+         return { ...state, cart: { id: payload } }
       default:
          return state
    }

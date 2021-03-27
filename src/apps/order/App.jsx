@@ -16,6 +16,7 @@ import {
    ProcessSachet,
    DeliveryConfig,
    Notifications,
+   ManagePayment,
 } from './components'
 
 import { useTabs } from '../../shared/providers'
@@ -35,6 +36,7 @@ const App = () => {
    const [filterTunnels, openFilterTunnel, closeFilterTunnel] = useTunnel(1)
    const [configTunnels, openConfigTunnel, closeConfigTunnel] = useTunnel(1)
    const [notifTunnels, openNotifTunnel, closeNotifTunnel] = useTunnel(1)
+   const [paymentTunnels, openPaymentTunnel, closePaymentTunnel] = useTunnel(1)
    const [position, setPosition] = React.useState('left')
 
    React.useEffect(() => {
@@ -88,6 +90,12 @@ const App = () => {
          openTunnel(1)
       }
    }, [state.delivery_config])
+
+   React.useEffect(() => {
+      if (state.cart?.id) {
+         openPaymentTunnel(1)
+      }
+   }, [state.cart.id])
 
    React.useEffect(() => {
       if (configState.tunnel.visible) {
@@ -156,6 +164,13 @@ const App = () => {
             <Tunnels tunnels={configTunnels}>
                <Tunnel layer="1" size="full">
                   <ConfigTunnel />
+               </Tunnel>
+            </Tunnels>
+         </ErrorBoundary>
+         <ErrorBoundary rootRoute="/apps/order">
+            <Tunnels tunnels={paymentTunnels}>
+               <Tunnel layer="1" size="md">
+                  <ManagePayment closeTunnel={closePaymentTunnel} />
                </Tunnel>
             </Tunnels>
          </ErrorBoundary>
