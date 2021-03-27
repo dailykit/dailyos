@@ -2,13 +2,16 @@ import React from 'react'
 import { toast } from 'react-toastify'
 import usePortal from 'react-useportal'
 import { useMutation } from '@apollo/react-hooks'
-import { Flex, TextButton, Popup, ButtonGroup } from '@dailykit/ui'
+import { Flex, TextButton, ComboButton, Popup, ButtonGroup } from '@dailykit/ui'
 
 import { MUTATIONS } from '../../../graphql'
+import { useOrder } from '../../../context'
+import { CardIcon } from '../../../assets/icons'
 import { logger } from '../../../../../shared/utils'
 import { ResponsiveFlex, StyledText } from './styled'
 
 export const Actions = ({ order }) => {
+   const { dispatch } = useOrder()
    const { openPortal, closePortal, isOpen, Portal } = usePortal({
       bindTo: document && document.getElementById('popups'),
    })
@@ -53,7 +56,16 @@ export const Actions = ({ order }) => {
                {order.isRejected ? 'Un Reject' : 'Reject'}
             </TextButton>
          </ResponsiveFlex>
-
+         <ComboButton
+            type="outline"
+            size="sm"
+            onClick={() =>
+               dispatch({ type: 'SET_CART_ID', payload: order.cart.id })
+            }
+         >
+            <CardIcon />
+            {order.cart.paymentStatus}
+         </ComboButton>
          <Portal>
             <Popup show={isOpen}>
                <Popup.Text type="danger">
