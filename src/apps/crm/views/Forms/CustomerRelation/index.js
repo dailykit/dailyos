@@ -250,7 +250,7 @@ const CustomerRelation = ({ match }) => {
                   />
                   <WalletCard
                      data={currencyFmt(
-                        walletNreferral[0]?.customer?.wallet || 0
+                        walletNreferral[0]?.customer?.wallets || 0
                      )}
                      click={() => setActiveCard('Wallet')}
                      active={tab.data.activeCard}
@@ -258,7 +258,7 @@ const CustomerRelation = ({ match }) => {
                   />
                   <LoyaltyCard
                      data={
-                        data.brand.brand_customers[0]?.customer?.loyaltyPoint
+                        data.brand.brand_customers[0]?.customer?.loyaltyPoints
                      }
                      click={() => setActiveCard('LoyaltyPoints')}
                      active={tab.data.activeCard}

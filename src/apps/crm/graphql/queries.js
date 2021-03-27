@@ -99,60 +99,44 @@ export const ORDERS_LISTING = gql`
 
 export const REFERRAL_LISTING = gql`
    query REFERRAL_LISTING($keycloakId: String!, $brandId: Int!) {
-      brand(id: $brandId) {
-         brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
-            customer {
-               customerReferralDetails {
-                  customerReferrals_aggregate {
-                     aggregate {
-                        count
-                     }
-                     nodes {
-                        keycloakId
-                        customer {
-                           platform_customer {
-                              firstName
-                              lastName
-                              phoneNumber
-                              email
-                           }
-                        }
-                        referralStatus
-                     }
-                  }
-               }
+      customerReferrals(
+         where: {
+            customerReferrer: { keycloakId: { _eq: $keycloakId } }
+            brandId: { _eq: $brandId }
+         }
+      ) {
+         customer {
+            platform_customer {
+               firstName
+               lastName
+               phoneNumber
+               email
             }
          }
+         referralStatus
       }
    }
 `
 
 export const WALLET_LISTING = gql`
    query WALLET_LISTING($keycloakId: String!, $brandId: Int!) {
-      brand(id: $brandId) {
-         brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
-            customer {
-               wallet {
-                  amount
-                  walletTransactions_aggregate {
-                     aggregate {
-                        count
-                     }
-                     nodes {
-                        created_at
-                        id
-                        orderCart {
-                           orderId
-                        }
-                        type
-                        amount
-                        wallet {
-                           balanceAmount: amount
-                        }
-                     }
-                  }
-               }
+      walletTransactions(
+         where: {
+            wallet: {
+               keycloakId: { _eq: $keycloakId }
+               brandId: { _eq: $brandId }
             }
+         }
+      ) {
+         created_at
+         id
+         orderCart {
+            orderId
+         }
+         type
+         amount
+         wallet {
+            amount
          }
       }
    }
@@ -160,30 +144,23 @@ export const WALLET_LISTING = gql`
 
 export const LOYALTYPOINTS_LISTING = gql`
    query LOYALTYPOINTS_LISTING($keycloakId: String!, $brandId: Int!) {
-      brand(id: $brandId) {
-         brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
-            customer {
-               loyaltyPoint {
-                  points
-                  loyaltyPointTransactions_aggregate {
-                     aggregate {
-                        count
-                     }
-                     nodes {
-                        created_at
-                        id
-                        type
-                        points
-                        cart {
-                           orderId
-                        }
-                        loyaltyPoint {
-                           balanceAmount: points
-                        }
-                     }
-                  }
-               }
+      loyaltyPointsTransactions(
+         where: {
+            loyaltyPoint: {
+               keycloakId: { _eq: $keycloakId }
+               brandId: { _eq: $brandId }
             }
+         }
+      ) {
+         created_at
+         id
+         type
+         points
+         cart {
+            orderId
+         }
+         loyaltyPoint {
+            balanceAmount: points
          }
       }
    }
