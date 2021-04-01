@@ -13,6 +13,7 @@ export default function RewardTypeTunnel({
    tunnels,
    openRewardTunnel,
    getRewardId,
+   getConditionId,
 }) {
    const context = useContext(CampaignContext)
 
@@ -44,6 +45,7 @@ export default function RewardTypeTunnel({
       onCompleted: data => {
          openRewardTunnel(1)
          getRewardId(data.insert_crm_reward.returning[0].id)
+         getConditionId(data.insert_crm_reward.returning[0].conditionId)
          toast.success('Reward created!')
       },
       onError: error => {
@@ -55,8 +57,15 @@ export default function RewardTypeTunnel({
    const createRewardHandler = type => {
       createReward({
          variables: {
-            rewardType: type,
-            campaignId: context.state?.id,
+            objects: [
+               {
+                  type,
+                  campaignId: context.state?.id,
+                  condition: {
+                     data: {},
+                  },
+               },
+            ],
          },
       })
    }

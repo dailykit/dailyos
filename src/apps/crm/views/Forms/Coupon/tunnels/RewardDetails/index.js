@@ -32,7 +32,7 @@ export default function RewardDetailsunnel({
    const [priority, setPriority] = useState({
       value: 1,
       meta: {
-         isValid: false,
+         isValid: true,
          isTouched: false,
          errors: [],
       },
@@ -68,6 +68,7 @@ export default function RewardDetailsunnel({
 
    // Handlers
    const saveInfo = () => {
+      console.log({ priority, rewardValue })
       if (priority.meta.isValid && rewardValue.meta.isValid) {
          updateReward({
             variables: {
@@ -85,7 +86,7 @@ export default function RewardDetailsunnel({
          setPriority({
             value: 1,
             meta: {
-               isValid: false,
+               isValid: true,
                isTouched: false,
                errors: [],
             },
@@ -110,7 +111,7 @@ export default function RewardDetailsunnel({
       setPriority({
          value: 1,
          meta: {
-            isValid: false,
+            isValid: true,
             isTouched: false,
             errors: [],
          },
@@ -131,6 +132,7 @@ export default function RewardDetailsunnel({
 
    //reward priority value validation
    const onBlur = (e, name) => {
+      console.log('🚀 ~ file: index.js ~ line 135 ~ onBlur ~ e, name', e, name)
       switch (name) {
          case 'priority':
             return setPriority({
@@ -185,7 +187,7 @@ export default function RewardDetailsunnel({
       setPriority({
          value: rewardInfo?.priority || 1,
          meta: {
-            isValid: rewardInfo.priority ? true : false,
+            isValid: true,
             isTouched: false,
             errors: [],
          },

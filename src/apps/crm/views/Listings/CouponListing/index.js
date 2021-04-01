@@ -65,7 +65,12 @@ const CouponListing = () => {
    })
    const [createCoupon] = useMutation(CREATE_COUPON, {
       variables: {
-         couponCode: `coupon-${randomSuffix()}`,
+         object: {
+            code: `coupon-${randomSuffix()}`,
+            visibilityCondition: {
+               data: {},
+            },
+         },
       },
       onCompleted: data => {
          addTab(data.createCoupon.code, `/crm/coupons/${data.createCoupon.id}`)
