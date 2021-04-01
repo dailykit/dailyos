@@ -120,6 +120,7 @@ const Rewards = () => {
             tunnels={typeTunnels}
             openRewardTunnel={openRewardTunnel}
             getRewardId={id => setRewardId(id)}
+            getConditionId={id => setConditionId(id)}
          />
          <RewardDetailsTunnel
             closeTunnel={closeRewardTunnel}
