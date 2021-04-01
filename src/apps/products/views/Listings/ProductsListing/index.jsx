@@ -57,6 +57,7 @@ const ProductsListing = () => {
          variables: {
             where: {
                type: { _eq: view },
+               isArchived: { _eq: false },
             },
          },
       }
@@ -81,7 +82,7 @@ const ProductsListing = () => {
       ) {
          deleteProduct({
             variables: {
-               ids: product.id,
+               id: product.id,
             },
          })
       }
