@@ -18,6 +18,7 @@ export const QUERIES = {
                   id
                   details: transactionRemark
                }
+               stripeInvoiceDetails
                stripeInvoiceHistory: paymentHistories(
                   where: { type: { _eq: "INVOICE" } }
                   order_by: { created_at: desc }

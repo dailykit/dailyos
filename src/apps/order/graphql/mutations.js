@@ -62,3 +62,12 @@ export const MUTATIONS = {
       `,
    },
 }
+
+export const SEND_STRIPE_INVOICE = gql`
+   mutation sendStripeInvoice($id: String!) {
+      sendStripeInvoice(id: $id) {
+         success
+         message
+      }
+   }
+`

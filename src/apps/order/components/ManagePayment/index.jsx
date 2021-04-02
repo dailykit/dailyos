@@ -1,6 +1,7 @@
 import React from 'react'
 import { isEmpty } from 'lodash'
-import { useSubscription } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Flex,
    Filler,
@@ -15,12 +16,22 @@ import {
 } from '@dailykit/ui'
 
 import { Wrapper } from './styled'
-import { QUERIES } from '../../graphql'
 import { useOrder } from '../../context'
+import { logger } from '../../../../shared/utils'
+import { QUERIES, SEND_STRIPE_INVOICE } from '../../graphql'
 import { InlineLoader } from '../../../../shared/components'
 
 export const ManagePayment = ({ closeTunnel }) => {
    const { state, dispatch } = useOrder()
+   const [sendStripeInvoice] = useMutation(SEND_STRIPE_INVOICE, {
+      onCompleted: () => {
+         toast.success('Invoice sent successfully!')
+      },
+      onError: error => {
+         logger(error)
+         toast.error('Failed to send stripe invoice')
+      },
+   })
    const { loading, data: { cart = {} } = {} } = useSubscription(
       QUERIES.CART.ONE,
       {
@@ -49,6 +60,11 @@ export const ManagePayment = ({ closeTunnel }) => {
                <TextButton
                   size="sm"
                   type="solid"
+                  onClick={() =>
+                     sendStripeInvoice({
+                        variables: { id: cart.stripeInvoiceDetails.id },
+                     })
+                  }
                   disabled={cart.paymentStatus === 'SUCCEEDED'}
                >
                   Send Invoice
