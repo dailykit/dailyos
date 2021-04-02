@@ -10,12 +10,21 @@ export const QUERIES = {
                paymentStatus
                stripeInvoiceId
                stripeCustomerId
-               invoiceSendAttempt
-               stripeInvoiceDetails
-               stripeInvoiceHistory
                transactionId
-               transactionRemark
-               transactionRemarkHistory
+               transactionRemarkHistory: paymentHistories(
+                  where: { type: { _eq: "PAYMENT_INTENT" } }
+                  order_by: { created_at: desc }
+               ) {
+                  id
+                  details: transactionRemark
+               }
+               stripeInvoiceHistory: paymentHistories(
+                  where: { type: { _eq: "INVOICE" } }
+                  order_by: { created_at: desc }
+               ) {
+                  id
+                  details: stripeInvoiceDetails
+               }
             }
          }
       `,

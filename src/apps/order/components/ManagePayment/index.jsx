@@ -85,7 +85,9 @@ export const ManagePayment = ({ closeTunnel }) => {
                      ) : (
                         cart.stripeInvoiceHistory.map((node, index) => (
                            <pre key={index}>
-                              <code>{JSON.stringify(node, null, 3)}</code>
+                              <code>
+                                 {JSON.stringify(node.details, null, 3)}
+                              </code>
                            </pre>
                         ))
                      )}
@@ -96,7 +98,9 @@ export const ManagePayment = ({ closeTunnel }) => {
                      ) : (
                         cart.transactionRemarkHistory.map((node, index) => (
                            <pre key={index}>
-                              <code>{JSON.stringify(node, null, 3)}</code>
+                              <code>
+                                 {JSON.stringify(node.details, null, 3)}
+                              </code>
                            </pre>
                         ))
                      )}
