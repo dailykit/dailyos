@@ -246,6 +246,7 @@ export const QUERIES = {
                   isTest
                   source
                   address
+                  paymentId
                   transactionId
                   paymentStatus
                   fulfillmentInfo
