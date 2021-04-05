@@ -1,8 +1,8 @@
 import React from 'react'
-import { DailykitIcon } from '../../assets/icons'
-import { useOnClickOutside } from '../../hooks'
-import { Sidebar } from '../Sidebar'
-import Styles from './styled'
+import { useOnClickOutside } from '@dailykit/ui'
+import { DailykitIcon } from '../../../assets/icons'
+import { Sidebar } from '../../Sidebar'
+import Styles from '../styled'
 
 const Logo = () => {
    const [open, setOpen] = React.useState(false)
@@ -10,9 +10,9 @@ const Logo = () => {
    useOnClickOutside(menuRef, () => setOpen(false))
 
    return (
-      <div ref={menuRef}>
+      <div ref={menuRef} style={{ padding: '0px 14px 0px 20px' }}>
          {open && <Sidebar />}
-         <Styles.Logo onClick={() => setOpen(!open)}>
+         <Styles.Logo open={open} onClick={() => setOpen(!open)}>
             <DailykitIcon />
          </Styles.Logo>
       </div>
