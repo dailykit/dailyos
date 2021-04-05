@@ -123,7 +123,7 @@ export const REFERRAL_LISTING = gql`
 `
 
 export const WALLET_LISTING = gql`
-   query WALLET_LISTING($keycloakId: String!, $brandId: Int!) {
+   subscription WALLET_LISTING($keycloakId: String!, $brandId: Int!) {
       walletTransactions(
          where: {
             wallet: {
@@ -131,6 +131,7 @@ export const WALLET_LISTING = gql`
                brandId: { _eq: $brandId }
             }
          }
+         order_by: { created_at: desc }
       ) {
          created_at
          id
@@ -147,7 +148,7 @@ export const WALLET_LISTING = gql`
 `
 
 export const LOYALTYPOINTS_LISTING = gql`
-   query LOYALTYPOINTS_LISTING($keycloakId: String!, $brandId: Int!) {
+   subscription LOYALTYPOINTS_LISTING($keycloakId: String!, $brandId: Int!) {
       loyaltyPointsTransactions(
          where: {
             loyaltyPoint: {
@@ -155,6 +156,7 @@ export const LOYALTYPOINTS_LISTING = gql`
                brandId: { _eq: $brandId }
             }
          }
+         order_by: { created_at: desc }
       ) {
          created_at
          id

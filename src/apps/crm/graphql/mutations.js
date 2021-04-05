@@ -164,3 +164,23 @@ export const CUSTOMER_ARCHIVED = gql`
       }
    }
 `
+
+export const CREATE_WALLET_TXN = gql`
+   mutation CreateWalletTransaction(
+      $object: crm_walletTransaction_insert_input!
+   ) {
+      createWalletTransaction(object: $object) {
+         id
+      }
+   }
+`
+
+export const CREATE_LOYALTY_POINT_TXN = gql`
+   mutation CreateLoyaltyPointTransaction(
+      $object: crm_loyaltyPointTransaction_insert_input!
+   ) {
+      createLoyaltyPointsTransaction(object: $object) {
+         id
+      }
+   }
+`
