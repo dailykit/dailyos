@@ -7,7 +7,7 @@ import Tabs from '../Tabs'
 import Logo from './Logo'
 import Styles from './styled'
 import TabStatus from './TabStatus'
-export const TabBar = ({ open }) => {
+export const TabBar = () => {
    const { tabs } = useTabs()
    const { user } = useAuth()
    const USERS = gql`
@@ -52,7 +52,7 @@ export const TabBar = ({ open }) => {
                )}
             </Flex>
          </Flex>
-         <Tabs open={open} />
+         <Tabs />
       </Styles.Header>
    )
 }

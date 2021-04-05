@@ -2,13 +2,12 @@ import React from 'react'
 import gql from 'graphql-tag'
 import Loadable from 'react-loadable'
 import { Loader } from '@dailykit/ui'
-import styled from 'styled-components'
 import { useSubscription } from '@apollo/react-hooks'
-import { Switch, Route, Link, useLocation } from 'react-router-dom'
+import { Switch, Route, Link } from 'react-router-dom'
 
-import { useTabs } from './shared/providers'
 import { isKeycloakSupported } from './shared/utils'
-import { TabBar, Lang, RedirectBanner, Sidebar } from './shared/components'
+import { TabBar, Lang, RedirectBanner } from './shared/components'
+import { AppItem, AppList, Layout } from './styled'
 
 const APPS = gql`
    subscription apps {
@@ -76,26 +75,16 @@ const Editor = Loadable({
 })
 
 const App = () => {
-   const location = useLocation()
-   const { routes, setRoutes } = useTabs()
-   const [open, toggle] = React.useState(false)
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
-
-   React.useEffect(() => {
-      if (location.pathname === '/') {
-         setRoutes([])
-      }
-   }, [location.pathname])
 
    if (loading) return <Loader />
    return (
-      <Layout open={open}>
-         <TabBar open={open} />
-         <Sidebar open={open} toggle={toggle} links={routes} />
+      <Layout>
+         <TabBar />
          <main>
             <Switch>
                <Route path="/" exact>
-                  <AppList open={open}>
+                  <AppList>
                      {apps.map(app => (
                         <AppItem key={app.id}>
                            <Link to={app.route}>
@@ -129,65 +118,3 @@ const App = () => {
 }
 
 export default App
-
-const AppList = styled.ul`
-   display: grid;
-   margin: 0 auto;
-   grid-gap: 16px;
-   max-width: 1180px;
-   padding-top: 16px;
-   width: ${({ open }) =>
-      open ? `calc(100vw - 300px)` : `calc(100vw - 40px)`};
-   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-`
-
-const AppItem = styled.li`
-   height: 48px;
-   list-style: none;
-   a {
-      width: 100%;
-      color: #2f256f;
-      height: 100%;
-      display: flex;
-      padding: 0 14px;
-      border-radius: 2px;
-      align-items: center;
-      border: 1px solid #e0e0e0;
-      text-decoration: none;
-      transition: 0.4s ease-in-out;
-      :hover {
-         background: #f8f8f8;
-      }
-      img {
-         height: 32px;
-         width: 32px;
-         margin-right: 14px;
-         display: inline-block;
-      }
-   }
-`
-
-const Layout = styled.div`
-   display: grid;
-   height: 100vh;
-   overflow: hidden;
-   grid-template-rows: 110px 1fr;
-   grid-gap: ${({ open }) => (open ? '0 28px' : '0 20px')};
-   grid-template-columns: ${({ open }) => (open ? '250px 1fr' : '48px 1fr')};
-   grid-template-areas: ${({ open }) =>
-      open ? "'aside head' 'aside main'" : "'aside head' 'main main'"};
-   > header {
-      grid-area: head;
-   }
-   > aside {
-      grid-area: aside;
-      display: ${({ open }) => (open ? 'flex' : 'none')};
-   }
-   > main {
-      grid-area: main;
-      overflow-y: auto;
-   }
-   @media only screen and (max-width: 767px) {
-      grid-template-columns: ${({ open }) => (open ? '100vw' : '48px 1fr')};
-   }
-`

@@ -4,18 +4,16 @@ import { useTabs } from '../../providers'
 import { useWindowSize } from '../../hooks'
 import { StyledTabs, StyledTab, HomeButton } from './styled'
 import { CloseIcon, DoubleArrowIcon, HomeIcon } from '../../assets/icons'
-const Tabs = ({ open }) => {
+const Tabs = () => {
    const { pathname } = useLocation()
    const view = useWindowSize()
    const { tabs } = useTabs()
    const [firstIndex, setFirstIndex] = useState(0)
    const [lastIndex, setLastIndex] = useState(8)
-   let numTabsToShow = Math.floor(
-      open ? (view.width - 300) / 100 - 1 : (view.width - 48) / 100 - 1
-   )
+   let numTabsToShow = Math.floor((view.width - 48) / 100 - 1)
    useEffect(() => {
       if (view) setLastIndex(numTabsToShow)
-   }, [view.width, open])
+   }, [view.width])
    return (
       <StyledTabs>
          <HomeButton active={pathname === '/'} to="/">

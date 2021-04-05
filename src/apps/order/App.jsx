@@ -19,13 +19,11 @@ import {
    ManagePayment,
 } from './components'
 
-import { useTabs } from '../../shared/providers'
 import { ErrorBoundary } from '../../shared/components'
 import BottomQuickInfoBar from './components/BottomQuickInfoBar'
 
 const App = () => {
    const { state, dispatch } = useOrder()
-   const { addTab, setRoutes } = useTabs()
    const { state: configState } = useConfig()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [
@@ -38,26 +36,6 @@ const App = () => {
    const [notifTunnels, openNotifTunnel, closeNotifTunnel] = useTunnel(1)
    const [paymentTunnels, openPaymentTunnel, closePaymentTunnel] = useTunnel(1)
    const [position, setPosition] = React.useState('left')
-
-   React.useEffect(() => {
-      setRoutes([
-         {
-            id: 1,
-            title: 'Home',
-            onClick: () => addTab('Home', '/order'),
-         },
-         {
-            id: 2,
-            title: 'Orders',
-            onClick: () => addTab('Orders', '/order/orders'),
-         },
-         {
-            id: 3,
-            title: 'Planned',
-            onClick: () => addTab('Planned', '/order/planned'),
-         },
-      ])
-   }, [])
 
    React.useEffect(() => {
       if (configState.current_station?.id) {
