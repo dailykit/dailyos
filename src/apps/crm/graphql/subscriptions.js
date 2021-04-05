@@ -199,9 +199,10 @@ export const WALLET_N_REFERRAL = gql`
          brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
             customer {
                wallets {
+                  id
                   amount
                }
-               customerReferralDetails {
+               customerReferrals {
                   customerReferrals_aggregate {
                      aggregate {
                         count
@@ -220,6 +221,7 @@ export const LOYALTYPOINT_COUNT = gql`
          brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
             customer {
                loyaltyPoints {
+                  id
                   points
                }
             }

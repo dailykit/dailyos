@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useRef } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
-import { useTunnel, Flex } from '@dailykit/ui'
+import { useTunnel, Flex, Tunnels, Tunnel } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import {
    CUSTOMER_DATA,
@@ -37,7 +37,12 @@ import {
    LoyaltyCard,
    SubscriptionInfoCard,
 } from '../../../components'
-import { PaymentTunnel, AddressTunnel } from './Tunnel'
+import {
+   PaymentTunnel,
+   AddressTunnel,
+   WalletTxnTunnel,
+   LoyaltyPointsTxnTunnel,
+} from './Tunnel'
 import { currencyFmt, logger } from '../../../../../shared/utils'
 import { useTabs } from '../../../../../shared/providers'
 import BrandContext from '../../../context/Brand'
@@ -51,6 +56,20 @@ const CustomerRelation = ({ match }) => {
    const prevBrandId = useRef(context.brandId)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
+
+   const [
+      walletTxnTunnels,
+      openWalletTxnTunnel,
+      closeWalletTxnTunnel,
+   ] = useTunnel(1)
+   const [walletId, setWalletId] = React.useState(null)
+   const [
+      loyaltyPointsTxnTunnels,
+      openLoyaltyPointsTxnTunnel,
+      closeLoyaltyPointsTxnTunnel,
+   ] = useTunnel(1)
+   const [loyaltyPointId, setLoyaltyPointId] = React.useState(null)
+
    const { dispatch, tab, closeAllTabs } = useTabs()
    const history = useHistory()
    const {
@@ -64,11 +83,34 @@ const CustomerRelation = ({ match }) => {
       loading: walletNreferralLoading,
    } = useSubscription(WALLET_N_REFERRAL, {
       variables: { keycloakId: match.params.id, brandId: context.brandId },
+      onSubscriptionData: data => {
+         if (data.subscriptionData.data.brand?.brand_customers?.length) {
+            const [
+               brandCustomer,
+            ] = data.subscriptionData.data.brand?.brand_customers
+            if (brandCustomer.customer?.wallets?.length) {
+               const [wallet] = brandCustomer.customer.wallets
+               console.log('Setting wallet id: ', wallet.id)
+               setWalletId(wallet.id)
+            }
+         }
+      },
    })
    const { data, loading: loyaltyPointLoading } = useSubscription(
       LOYALTYPOINT_COUNT,
       {
          variables: { keycloakId: match.params.id, brandId: context.brandId },
+         onSubscriptionData: data => {
+            if (data.subscriptionData.data.brand?.brand_customers?.length) {
+               const [
+                  brandCustomer,
+               ] = data.subscriptionData.data.brand?.brand_customers
+               if (brandCustomer.customer?.loyaltyPoints?.length) {
+                  const [loyaltyPoint] = brandCustomer.customer.loyaltyPoints
+                  setLoyaltyPointId(loyaltyPoint.id)
+               }
+            }
+         },
       }
    )
    const {
@@ -159,23 +201,32 @@ const CustomerRelation = ({ match }) => {
       closeAllTabs()
    }
 
-   let table = null
-   if (tab?.data?.activeCard === 'Orders') {
-      table = <OrdersTable id={match.params.id} />
-   } else if (tab?.data?.activeCard === 'Referrals') {
-      table = <ReferralTable />
-   } else if (tab?.data?.activeCard === 'Wallet') {
-      table = <WalletTable />
-   } else if (tab?.data?.activeCard === 'LoyaltyPoints') {
-      table = <LoyaltyPointsTable />
-   } else if (tab?.data?.activeCard === 'Subscriber') {
-      table = (
-         <SubscriptionTable
-            id={match?.params?.id || 0}
-            sid={subscriptionData[0]?.customer?.subscriptionId || 0}
-         />
-      )
-   }
+   const renderTable = React.useCallback(() => {
+      switch (tab?.data?.activeCard) {
+         case 'Orders':
+            return <OrdersTable id={match.params.id} />
+         case 'Referrals':
+            return <ReferralTable />
+         case 'Wallet':
+            return <WalletTable openWalletTxnTunnel={openWalletTxnTunnel} />
+         case 'LoyaltyPoints':
+            return (
+               <LoyaltyPointsTable
+                  openLoyaltyPointsTxnTunnel={openLoyaltyPointsTxnTunnel}
+               />
+            )
+         case 'Subscriber':
+            return (
+               <SubscriptionTable
+                  id={match?.params?.id || 0}
+                  sid={subscriptionData[0]?.customer?.subscriptionId || 0}
+               />
+            )
+         default:
+            return null
+      }
+   }, [openWalletTxnTunnel, openLoyaltyPointsTxnTunnel, tab?.data?.activeCard])
+
    if (
       listLoading ||
       list_Loading ||
@@ -194,7 +245,7 @@ const CustomerRelation = ({ match }) => {
                <CustomerCard
                   customer={customerData[0]?.customer}
                   walletAmount={currencyFmt(
-                     walletNreferral[0]?.customer?.wallet?.amount || 0
+                     walletNreferral[0]?.customer?.wallets[0].amount || 0
                   )}
                   toggle={customers[0]?.isTest}
                   toggleHandler={() => toggleHandler(!customers[0]?.isTest)}
@@ -231,11 +282,11 @@ const CustomerRelation = ({ match }) => {
                   />
                   <ReferralCard
                      referralCount={
-                        walletNreferral[0]?.customer?.customerReferralDetails
+                        walletNreferral[0]?.customer?.customerReferrals[0]
                            ?.customerReferrals_aggregate?.aggregate?.count || 0
                      }
                      signUpCount={
-                        signUpCount[0]?.customer?.customerReferralDetails
+                        signUpCount[0]?.customer?.customerReferrals
                            ?.customerReferrals_aggregate?.aggregate?.count || 0
                      }
                      click={() => setActiveCard('Referrals')}
@@ -249,16 +300,15 @@ const CustomerRelation = ({ match }) => {
                      heading="Subscriber"
                   />
                   <WalletCard
-                     data={currencyFmt(
-                        walletNreferral[0]?.customer?.wallets || 0
-                     )}
+                     data={walletNreferral[0]?.customer?.wallets[0]?.amount}
                      click={() => setActiveCard('Wallet')}
                      active={tab.data.activeCard}
                      heading="Wallet"
                   />
                   <LoyaltyCard
                      data={
-                        data.brand.brand_customers[0]?.customer?.loyaltyPoints
+                        data.brand.brand_customers[0]?.customer
+                           ?.loyaltyPoints[0]?.points ?? 0
                      }
                      click={() => setActiveCard('LoyaltyPoints')}
                      active={tab.data.activeCard}
@@ -266,7 +316,7 @@ const CustomerRelation = ({ match }) => {
                   />
                </FlexContainer>
                <StyledTable>
-                  {table}
+                  {renderTable()}
                   <InsightDashboard
                      appTitle="CRM App"
                      moduleTitle="Customer Page"
@@ -288,6 +338,22 @@ const CustomerRelation = ({ match }) => {
             closeTunnel={closeTunnel1}
             id={match.params.id}
          />
+         <Tunnels tunnels={walletTxnTunnels}>
+            <Tunnel layer={1}>
+               <WalletTxnTunnel
+                  closeWalletTxnTunnel={closeWalletTxnTunnel}
+                  walletId={walletId}
+               />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={loyaltyPointsTxnTunnels}>
+            <Tunnel layer={1}>
+               <LoyaltyPointsTxnTunnel
+                  closeLoyaltyPointsTxnTunnel={closeLoyaltyPointsTxnTunnel}
+                  loyaltyPointId={loyaltyPointId}
+               />
+            </Tunnel>
+         </Tunnels>
       </StyledWrapper>
    )
 }

@@ -77,13 +77,17 @@ export const ORDERS_LISTING = gql`
                orders {
                   id
                   itemTotal
-                  products: deliveryInfo(path: "orderInfo.products")
                   discount
                   discount
                   amountPaid
                   created_at
-                  channel: cart {
+                  cart {
                      source
+                     walletAmountUsed
+                     loyaltyPointsUsed
+                     cartItemViews(where: { levelType: { _eq: "orderItem" } }) {
+                        displayName
+                     }
                   }
                }
                orders_aggregate {
@@ -119,7 +123,7 @@ export const REFERRAL_LISTING = gql`
 `
 
 export const WALLET_LISTING = gql`
-   query WALLET_LISTING($keycloakId: String!, $brandId: Int!) {
+   subscription WALLET_LISTING($keycloakId: String!, $brandId: Int!) {
       walletTransactions(
          where: {
             wallet: {
@@ -127,6 +131,7 @@ export const WALLET_LISTING = gql`
                brandId: { _eq: $brandId }
             }
          }
+         order_by: { created_at: desc }
       ) {
          created_at
          id
@@ -143,7 +148,7 @@ export const WALLET_LISTING = gql`
 `
 
 export const LOYALTYPOINTS_LISTING = gql`
-   query LOYALTYPOINTS_LISTING($keycloakId: String!, $brandId: Int!) {
+   subscription LOYALTYPOINTS_LISTING($keycloakId: String!, $brandId: Int!) {
       loyaltyPointsTransactions(
          where: {
             loyaltyPoint: {
@@ -151,6 +156,7 @@ export const LOYALTYPOINTS_LISTING = gql`
                brandId: { _eq: $brandId }
             }
          }
+         order_by: { created_at: desc }
       ) {
          created_at
          id
@@ -179,6 +185,7 @@ export const ORDER = gql`
                source
                billingDetails
                walletAmountUsed
+               loyaltyPointsUsed
                cartItemViews(where: { level: { _eq: 1 } }) {
                   id
                   displayName
@@ -191,12 +198,12 @@ export const ORDER = gql`
                   }
                }
                paymentMethodId
-               #  paymentCart {
-               #   brand
-               #   last4
-               #   expMonth
-               #   expYear
-               # }
+               paymentCart {
+                  brand
+                  last4
+                  expMonth
+                  expYear
+               }
             }
             deliveryService {
                logo

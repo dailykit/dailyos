@@ -1,54 +1,50 @@
 import React, { useRef, useState, useContext } from 'react'
-import { Text, Flex } from '@dailykit/ui'
+import { Text, Flex, ComboButton } from '@dailykit/ui'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 import { useParams } from 'react-router-dom'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
 import options from '../../tableOptions'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { toast } from 'react-toastify'
-import { logger } from '../../../../../shared/utils'
+import { currencyFmt, logger } from '../../../../../shared/utils'
 import { WALLET_LISTING } from '../../../graphql'
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import BrandContext from '../../../context/Brand'
+import * as moment from 'moment'
+import { PlusIcon } from '../../../../../shared/assets/icons'
 
-const WalletTable = () => {
+const WalletTable = ({ openWalletTxnTunnel }) => {
    const [context, setContext] = useContext(BrandContext)
    const { addTab } = useTabs()
    const tableRef = useRef()
    const { tooltip } = useTooltip()
    const { id } = useParams()
-   const [walletTxn, setWalletTxn] = useState([])
+   const [walletTxn, setWalletTxn] = useState(null)
    const [txnCount, setTxnCount] = useState(0)
 
    // Query
-   const { loading: listloading } = useQuery(WALLET_LISTING, {
+   const { loading: listloading } = useSubscription(WALLET_LISTING, {
       variables: {
          keycloakId: id,
          brandId: context.brandId,
       },
-      onCompleted: ({ walletTransactions = [] } = {}) => {
+      onSubscriptionData: data => {
+         const { walletTransactions } = data.subscriptionData.data
          const result = walletTransactions.map(transaction => {
             return {
-               date: transaction?.created_at || 'N/A',
+               date:
+                  moment(transaction?.created_at).format(
+                     'MMMM Do YYYY, h:mm:ss a'
+                  ) || 'N/A',
                reference: transaction?.id || 'N/A',
                oid: transaction?.orderCart?.orderId || 'N/A',
-               debit:
-                  transaction?.type === 'DEBIT'
-                     ? `$${transaction?.amount}`
-                     : '$0',
-               credit:
-                  transaction?.type === 'CREDIT'
-                     ? `$${transaction?.amount}`
-                     : '$0',
-               balance: transaction?.wallet?.amount || 'N/A',
+               type: transaction?.type,
+               amount: currencyFmt(transaction?.amount),
             }
          })
+
          setWalletTxn(result)
          setTxnCount(walletTransactions.length)
-      },
-      onError: error => {
-         toast.error('Something went wrong wallet!')
-         logger(error)
       },
    })
 
@@ -101,15 +97,15 @@ const WalletTable = () => {
          width: 150,
       },
       {
-         title: 'Debit',
-         field: 'debit',
+         title: 'Type',
+         field: 'type',
          hozAlign: 'right',
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
          headerTooltip: function (column) {
-            const identifier = 'wallet_listing_debit_column'
+            const identifier = 'wallet_listing_type_column'
             return (
                tooltip(identifier)?.description || column.getDefinition().title
             )
@@ -117,46 +113,61 @@ const WalletTable = () => {
          width: 100,
       },
       {
-         title: 'Credit',
-         field: 'credit',
+         title: 'Amount',
+         field: 'amount',
          hozAlign: 'right',
          titleFormatter: function (cell, formatterParams, onRendered) {
             cell.getElement().style.textAlign = 'right'
             return '' + cell.getValue()
          },
          headerTooltip: function (column) {
-            const identifier = 'wallet_listing_credit_column'
+            const identifier = 'wallet_listing_amount_column'
             return (
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
          width: 100,
       },
-      {
-         title: 'Balance',
-         field: 'balance',
-         hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
-         },
-         headerTooltip: function (column) {
-            const identifier = 'wallet_listing_balance_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
-         },
-         width: 100,
-      },
+      // {
+      //    title: 'Balance',
+      //    field: 'balance',
+      //    hozAlign: 'right',
+      //    titleFormatter: function (cell, formatterParams, onRendered) {
+      //       cell.getElement().style.textAlign = 'right'
+      //       return '' + cell.getValue()
+      //    },
+      //    headerTooltip: function (column) {
+      //       const identifier = 'wallet_listing_balance_column'
+      //       return (
+      //          tooltip(identifier)?.description || column.getDefinition().title
+      //       )
+      //    },
+      //    width: 100,
+      // },
    ]
 
    if (listloading) return <InlineLoader />
 
    return (
       <Flex maxWidth="1280px" width="calc(100vw-64px)" margin="0 auto">
-         <Flex container height="80px" padding="16px" alignItems="center">
-            <Text as="title">Wallet Transactions({txnCount})</Text>
-            <Tooltip identifier="wallet_list_heading" />
+         <Flex
+            container
+            alignItems="center"
+            justifyContent="space-between"
+            margin="0 0 16px 0"
+         >
+            <Flex container alignItems="center">
+               <Text as="title">Wallet Transactions({txnCount})</Text>
+               <Tooltip identifier="wallet_list_heading" />
+            </Flex>
+            <ComboButton
+               type="outline"
+               size="sm"
+               onClick={() => openWalletTxnTunnel(1)}
+            >
+               <PlusIcon />
+               Create Transaction
+            </ComboButton>
          </Flex>
          {Boolean(walletTxn) && (
             <ReactTabulator
