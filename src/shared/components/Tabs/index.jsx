@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { useTabs } from '../../providers'
 import { useWindowSize } from '../../hooks'
 import { StyledTabs, StyledTab, HomeButton } from './styled'
-import { CloseIcon, DoubleArrowRightIcon, HomeIcon } from '../../assets/icons'
+import { CloseIcon, DoubleArrowIcon, HomeIcon } from '../../assets/icons'
 const Tabs = ({ open }) => {
    const { pathname } = useLocation()
    const view = useWindowSize()
@@ -34,7 +34,7 @@ const Tabs = ({ open }) => {
                   }
                }}
             >
-               <DoubleArrowRightIcon />
+               <DoubleArrowIcon />
             </button>
          )}
       </StyledTabs>

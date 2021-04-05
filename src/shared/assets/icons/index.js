@@ -22,8 +22,12 @@ import RectangularIcon from './Rectangular'
 import RoundedCloseIcon from './RoundedClose'
 import RoundedMenuIcon from './RoundedMenu'
 import HomeIcon from './Home'
-import DoubleArrowRightIcon from './DoubleArrowRight'
+import DoubleArrowIcon from './DoubleArrow'
 import CloneIcon from './Clone'
+import NotificationIcon from './Notification'
+import StoreIcon from './Store'
+import DailykitIcon from './Dailykit'
+import LogoutIcon from './Logout'
 export {
    AddIcon,
    MenuIcon,
@@ -49,8 +53,12 @@ export {
    RoundedCloseIcon,
    RoundedMenuIcon,
    HomeIcon,
-   DoubleArrowRightIcon,
+   DoubleArrowIcon,
    CloneIcon,
+   NotificationIcon,
+   StoreIcon,
+   DailykitIcon,
+   LogoutIcon,
 }
 
 export * from './Tick'
