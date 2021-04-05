@@ -71,3 +71,15 @@ export const SEND_STRIPE_INVOICE = gql`
       }
    }
 `
+
+export const RETRY_PAYMENT = gql`
+   mutation updateCart($id: Int!, $_set: order_cart_set_input!) {
+      updateCart(
+         _set: $_set
+         pk_columns: { id: $id }
+         _inc: { paymentRetryAttempt: 1 }
+      ) {
+         id
+      }
+   }
+`

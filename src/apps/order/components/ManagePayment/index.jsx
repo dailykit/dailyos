@@ -21,7 +21,7 @@ import { logger } from '../../../../shared/utils'
 import { QUERIES, SEND_STRIPE_INVOICE } from '../../graphql'
 import { InlineLoader } from '../../../../shared/components'
 
-export const ManagePayment = ({ closeTunnel }) => {
+export const ManagePayment = ({ openTunnel, closeTunnel }) => {
    const { state, dispatch } = useOrder()
    const [sendStripeInvoice] = useMutation(SEND_STRIPE_INVOICE, {
       onCompleted: () => {
@@ -73,6 +73,7 @@ export const ManagePayment = ({ closeTunnel }) => {
                <TextButton
                   size="sm"
                   type="ghost"
+                  onClick={() => openTunnel(2)}
                   disabled={cart.paymentStatus === 'SUCCEEDED'}
                >
                   Retry Payment
