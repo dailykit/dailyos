@@ -19,6 +19,7 @@ export const StyledDiv = styled.div`
    display: flex;
    flex-direction: row;
    justify-content: space-between;
+   margin-bottom: 4px;
    span {
       font-size: 16px;
    }

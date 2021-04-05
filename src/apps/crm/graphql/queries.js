@@ -296,6 +296,7 @@ export const SUBSCRIPTION_PLAN = gql`
                   subscriptionItemCount {
                      count
                      plan: subscriptionServing {
+                        servingSize
                         subscriptionTitle {
                            title
                         }

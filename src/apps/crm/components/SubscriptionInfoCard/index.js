@@ -18,28 +18,27 @@ const SubscriptionCard = ({ planData }) => (
             <StyledDiv>
                <Text as="p">
                   {planData?.subscription?.subscriptionItemCount?.plan
-                     ?.subscriptionTitle?.title || 'N/A'}
-                  &nbsp;&nbsp;&nbsp;&nbsp;
-                  <UserIcon size="16" /> 1
+                     ?.subscriptionTitle?.title || 'N/A'}{' '}
+                  <UserIcon size="16" />
+                  {planData?.subscription?.subscriptionItemCount?.plan
+                     ?.servingSize || '-'}
                </Text>
             </StyledDiv>
             <StyledDiv>
                <Text as="p">
-                  {`${
-                     planData?.subscription?.subscriptionItemCount?.count ||
-                     'N/A'
-                  } Item Count`}
+                  Item count:{' '}
+                  {planData?.subscription?.subscriptionItemCount?.count}
                </Text>
             </StyledDiv>
             <StyledDiv>
                <Text as="p">
-                  <CalendarIcon size="14" /> &nbsp;
+                  <CalendarIcon size="14" />{' '}
                   {rruleToText(planData?.subscription?.rrule)}
                </Text>
             </StyledDiv>
             <StyledDiv>
                <Text as="p">
-                  {`${planData.isSubscriber ? 'Active' : 'Inactive'} Status`}
+                  Status: {planData.isSubscriber ? 'Active' : 'Inactive'}
                </Text>
             </StyledDiv>
          </>
