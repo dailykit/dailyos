@@ -31,6 +31,7 @@ import {
 import options from '../../../tableOptions'
 import { currencyFmt, logger } from '../../../../../../shared/utils'
 import BrandContext from '../../../../context/Brand'
+import * as moment from 'moment'
 
 const OrderInfo = () => {
    const [context, setContext] = useContext(BrandContext)
@@ -104,7 +105,6 @@ const OrderInfo = () => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
-         widht: 100,
       },
       {
          title: 'Discount',
@@ -121,7 +121,6 @@ const OrderInfo = () => {
             )
          },
          formatter: cell => currencyFmt(Number(cell.getValue()) || 0),
-         widht: 100,
       },
       {
          title: 'Discounted Price',
@@ -138,7 +137,6 @@ const OrderInfo = () => {
             )
          },
          formatter: cell => currencyFmt(Number(cell.getValue()) || 0),
-         widht: 100,
       },
    ]
 
@@ -219,12 +217,14 @@ const OrderInfo = () => {
             <StyledMainBar>
                <StyledDiv>
                   <StyledSpan>
-                     Ordered on:
-                     {new Date(orderData?.created_at).toLocaleString() || 'N/A'}
+                     Ordered on:{' '}
+                     {moment(orderData?.created_at).format(
+                        'MMMM Do YYYY, h:mm:ss a'
+                     ) || 'N/A'}
                   </StyledSpan>
-                  <StyledSpan>Deliverd on: N/A</StyledSpan>
+                  <StyledSpan>Delivered on: N/A</StyledSpan>
                   <StyledSpan>
-                     Channel:
+                     Channel:{' '}
                      {capitalizeString(orderData?.cart?.source || 'N/A')}
                   </StyledSpan>
                </StyledDiv>
@@ -260,9 +260,15 @@ const OrderInfo = () => {
                      </Text>
                   </CardInfo>
                   <CardInfo>
-                     <Text as="title">Wallet Used</Text>
+                     <Text as="title">Wallet Amount Used</Text>
                      <Text as="title">
-                        {orderData?.cart?.walletAmountUsed || 0}
+                        {currencyFmt(orderData?.cart?.walletAmountUsed)}
+                     </Text>
+                  </CardInfo>
+                  <CardInfo>
+                     <Text as="title">Loyalty Points Used</Text>
+                     <Text as="title">
+                        {orderData?.cart?.loyaltyPointsUsed}
                      </Text>
                   </CardInfo>
                   <CardInfo bgColor="#f3f3f3">
@@ -275,7 +281,7 @@ const OrderInfo = () => {
             </StyledMainBar>
             <StyledSideBar>
                <PaymentCard
-                  cardData={orderData?.cart?.paymentCard || 'N/A'}
+                  cardData={orderData?.cart?.paymentCart || 'N/A'}
                   billingAddDisplay="none"
                   bgColor="rgba(243,243,243,0.4)"
                   margin="0 0 16px 0"

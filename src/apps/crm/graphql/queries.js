@@ -77,13 +77,17 @@ export const ORDERS_LISTING = gql`
                orders {
                   id
                   itemTotal
-                  products: deliveryInfo(path: "orderInfo.products")
                   discount
                   discount
                   amountPaid
                   created_at
-                  channel: cart {
+                  cart {
                      source
+                     walletAmountUsed
+                     loyaltyPointsUsed
+                     cartItemViews(where: { levelType: { _eq: "orderItem" } }) {
+                        displayName
+                     }
                   }
                }
                orders_aggregate {
@@ -179,6 +183,7 @@ export const ORDER = gql`
                source
                billingDetails
                walletAmountUsed
+               loyaltyPointsUsed
                cartItemViews(where: { level: { _eq: 1 } }) {
                   id
                   displayName
@@ -191,12 +196,12 @@ export const ORDER = gql`
                   }
                }
                paymentMethodId
-               #  paymentCart {
-               #   brand
-               #   last4
-               #   expMonth
-               #   expYear
-               # }
+               paymentCart {
+                  brand
+                  last4
+                  expMonth
+                  expYear
+               }
             }
             deliveryService {
                logo

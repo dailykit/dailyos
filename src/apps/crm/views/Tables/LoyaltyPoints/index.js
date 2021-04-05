@@ -10,6 +10,7 @@ import { logger } from '../../../../../shared/utils'
 import { LOYALTYPOINTS_LISTING } from '../../../graphql'
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import BrandContext from '../../../context/Brand'
+import * as moment from 'moment'
 
 const LoyaltyPointTable = () => {
    const [context, setContext] = useContext(BrandContext)
@@ -28,16 +29,16 @@ const LoyaltyPointTable = () => {
       onCompleted: ({ loyaltyPointsTransactions = [] } = {}) => {
          const result = loyaltyPointsTransactions.map(loyaltyPnt => {
             return {
-               date: loyaltyPnt?.created_at || 'N/A',
+               date:
+                  moment(loyaltyPnt?.created_at).format(
+                     'MMMM Do YYYY, h:mm:ss a'
+                  ) || 'N/A',
                reference: loyaltyPnt?.id || 'N/A',
                oid: loyaltyPnt?.orderCart?.orderId || 'N/A',
                debit:
-                  loyaltyPnt.type === 'DEBIT' ? `$${loyaltyPnt?.points}` : '$0',
+                  loyaltyPnt.type === 'DEBIT' ? `${loyaltyPnt?.points}` : '0',
                credit:
-                  loyaltyPnt.type === 'CREDIT'
-                     ? `$${loyaltyPnt?.points}`
-                     : '$0',
-               balance: loyaltyPnt?.loyaltyPoint?.balanceAmount || 'N/A',
+                  loyaltyPnt.type === 'CREDIT' ? `${loyaltyPnt?.points}` : '0',
             }
          })
          setLoyaltyPointTxn(result)
@@ -129,22 +130,22 @@ const LoyaltyPointTable = () => {
          },
          width: 100,
       },
-      {
-         title: 'Balance',
-         field: 'balance',
-         hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
-         },
-         headerTooltip: function (column) {
-            const identifier = 'loyaltyPoints_listing_balance_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
-         },
-         width: 100,
-      },
+      // {
+      //    title: 'Balance',
+      //    field: 'balance',
+      //    hozAlign: 'right',
+      //    titleFormatter: function (cell, formatterParams, onRendered) {
+      //       cell.getElement().style.textAlign = 'right'
+      //       return '' + cell.getValue()
+      //    },
+      //    headerTooltip: function (column) {
+      //       const identifier = 'loyaltyPoints_listing_balance_column'
+      //       return (
+      //          tooltip(identifier)?.description || column.getDefinition().title
+      //       )
+      //    },
+      //    width: 100,
+      // },
    ]
 
    if (listloading) return <InlineLoader />

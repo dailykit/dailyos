@@ -10,6 +10,7 @@ import { logger } from '../../../../../shared/utils'
 import { WALLET_LISTING } from '../../../graphql'
 import { Tooltip, InlineLoader } from '../../../../../shared/components'
 import BrandContext from '../../../context/Brand'
+import * as moment from 'moment'
 
 const WalletTable = () => {
    const [context, setContext] = useContext(BrandContext)
@@ -29,7 +30,10 @@ const WalletTable = () => {
       onCompleted: ({ walletTransactions = [] } = {}) => {
          const result = walletTransactions.map(transaction => {
             return {
-               date: transaction?.created_at || 'N/A',
+               date:
+                  moment(transaction?.created_at).format(
+                     'MMMM Do YYYY, h:mm:ss a'
+                  ) || 'N/A',
                reference: transaction?.id || 'N/A',
                oid: transaction?.orderCart?.orderId || 'N/A',
                debit:
@@ -40,7 +44,6 @@ const WalletTable = () => {
                   transaction?.type === 'CREDIT'
                      ? `$${transaction?.amount}`
                      : '$0',
-               balance: transaction?.wallet?.amount || 'N/A',
             }
          })
          setWalletTxn(result)
@@ -132,22 +135,22 @@ const WalletTable = () => {
          },
          width: 100,
       },
-      {
-         title: 'Balance',
-         field: 'balance',
-         hozAlign: 'right',
-         titleFormatter: function (cell, formatterParams, onRendered) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
-         },
-         headerTooltip: function (column) {
-            const identifier = 'wallet_listing_balance_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
-         },
-         width: 100,
-      },
+      // {
+      //    title: 'Balance',
+      //    field: 'balance',
+      //    hozAlign: 'right',
+      //    titleFormatter: function (cell, formatterParams, onRendered) {
+      //       cell.getElement().style.textAlign = 'right'
+      //       return '' + cell.getValue()
+      //    },
+      //    headerTooltip: function (column) {
+      //       const identifier = 'wallet_listing_balance_column'
+      //       return (
+      //          tooltip(identifier)?.description || column.getDefinition().title
+      //       )
+      //    },
+      //    width: 100,
+      // },
    ]
 
    if (listloading) return <InlineLoader />

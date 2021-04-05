@@ -201,7 +201,7 @@ export const WALLET_N_REFERRAL = gql`
                wallets {
                   amount
                }
-               customerReferralDetails {
+               customerReferrals {
                   customerReferrals_aggregate {
                      aggregate {
                         count

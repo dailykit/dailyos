@@ -194,7 +194,7 @@ const CustomerRelation = ({ match }) => {
                <CustomerCard
                   customer={customerData[0]?.customer}
                   walletAmount={currencyFmt(
-                     walletNreferral[0]?.customer?.wallet?.amount || 0
+                     walletNreferral[0]?.customer?.wallets[0].amount || 0
                   )}
                   toggle={customers[0]?.isTest}
                   toggleHandler={() => toggleHandler(!customers[0]?.isTest)}
@@ -231,11 +231,11 @@ const CustomerRelation = ({ match }) => {
                   />
                   <ReferralCard
                      referralCount={
-                        walletNreferral[0]?.customer?.customerReferralDetails
+                        walletNreferral[0]?.customer?.customerReferrals[0]
                            ?.customerReferrals_aggregate?.aggregate?.count || 0
                      }
                      signUpCount={
-                        signUpCount[0]?.customer?.customerReferralDetails
+                        signUpCount[0]?.customer?.customerReferrals
                            ?.customerReferrals_aggregate?.aggregate?.count || 0
                      }
                      click={() => setActiveCard('Referrals')}
@@ -249,16 +249,15 @@ const CustomerRelation = ({ match }) => {
                      heading="Subscriber"
                   />
                   <WalletCard
-                     data={currencyFmt(
-                        walletNreferral[0]?.customer?.wallets || 0
-                     )}
+                     data={walletNreferral[0]?.customer?.wallets[0]?.amount}
                      click={() => setActiveCard('Wallet')}
                      active={tab.data.activeCard}
                      heading="Wallet"
                   />
                   <LoyaltyCard
                      data={
-                        data.brand.brand_customers[0]?.customer?.loyaltyPoints
+                        data.brand.brand_customers[0]?.customer
+                           ?.loyaltyPoints[0]?.points ?? 0
                      }
                      click={() => setActiveCard('LoyaltyPoints')}
                      active={tab.data.activeCard}
