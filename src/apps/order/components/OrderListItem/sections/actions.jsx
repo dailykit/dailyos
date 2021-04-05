@@ -56,16 +56,18 @@ export const Actions = ({ order }) => {
                {order.isRejected ? 'Un Reject' : 'Reject'}
             </TextButton>
          </ResponsiveFlex>
-         <ComboButton
-            type="outline"
-            size="sm"
-            onClick={() =>
-               dispatch({ type: 'SET_CART_ID', payload: order.cart.id })
-            }
-         >
-            <CardIcon />
-            {order.cart.paymentStatus}
-         </ComboButton>
+         {!order.paymentId && (
+            <ComboButton
+               type="outline"
+               size="sm"
+               onClick={() =>
+                  dispatch({ type: 'SET_CART_ID', payload: order.cart.id })
+               }
+            >
+               <CardIcon />
+               {order.cart.paymentStatus}
+            </ComboButton>
+         )}
          <Portal>
             <Popup show={isOpen}>
                <Popup.Text type="danger">
