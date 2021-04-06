@@ -4,6 +4,9 @@ import {
    PlusIcon,
    useOnClickOutside,
    Avatar,
+   Tunnels,
+   Tunnel,
+   useTunnel,
 } from '@dailykit/ui'
 import React from 'react'
 import {
@@ -15,23 +18,31 @@ import {
    SettingsIcon,
    StoreIcon,
 } from '../../../../assets/icons'
-import { useAuth } from '../../../../providers'
+import { TooltipProvider, useAuth } from '../../../../providers'
 import { Wrapper, AddItem, Profile } from './styled'
 import CreateNewItemPanel from '../CreateNewItemPanel'
 import styled from 'styled-components'
 import gql from 'graphql-tag'
 import { useSubscription } from '@apollo/react-hooks'
-const StyledAvatar = styled(Avatar)`
-   height: 24px;
-   width: 24px;
-   font-size: 12px;
-   border: ${({ open }) => (open ? '2px solid #367BF5' : '1px solid #E3E3E3')};
-`
+import CreateBrandTunnel from '../../../../../apps/brands/views/Listings/brands/CreateBrandTunnel'
+import { ProductTypeTunnel } from '../../../../../apps/products/views/Listings/ProductsListing/tunnels'
 
 const Tools = () => {
    const [open, setOpen] = React.useState(null)
    const { user, logout } = useAuth()
    const toolbarRef = React.useRef()
+
+   const [
+      createProductTunnels,
+      openCreateProductTunnel,
+      closeCreateProductTunnel,
+   ] = useTunnel(1)
+
+   const [
+      createBrandTunnels,
+      openCreateBrandTunnel,
+      closeCreateBrandTunnel,
+   ] = useTunnel(1)
 
    const USERS = gql`
       subscription users($where: settings_user_bool_exp) {
@@ -83,96 +94,124 @@ const Tools = () => {
    }
    useOnClickOutside(toolbarRef, () => setOpen(false))
    return (
-      <div ref={toolbarRef}>
-         <Wrapper ref={toolbarRef}>
-            <IconButton
-               size="sm"
-               type="ghost"
-               onClick={() => handleOpen(addItems)}
-            >
-               <PlusIcon color={open === addItems ? '#367BF5' : '#45484C'} />
-            </IconButton>
-            <IconButton size="sm" type="ghost">
-               <SearchIcon />
-            </IconButton>
-            <IconButton size="sm" type="ghost">
-               <NotificationIcon />
-            </IconButton>
-            <IconButton size="sm" type="ghost">
-               <SettingsIcon />
-            </IconButton>
-            <IconButton size="sm" type="ghost">
-               <StoreIcon />
-            </IconButton>
-            <StyledAvatar
-               onClick={() => handleOpen(profile)}
-               url=""
-               open={open === profile}
-               title={fullName(users[0]?.firstName, users[0]?.lastName)}
-            />
-         </Wrapper>
+      <>
+         <div ref={toolbarRef}>
+            <Wrapper ref={toolbarRef}>
+               <IconButton
+                  size="sm"
+                  type="ghost"
+                  onClick={() => handleOpen(addItems)}
+               >
+                  <PlusIcon color={open === addItems ? '#367BF5' : '#45484C'} />
+               </IconButton>
+               <IconButton size="sm" type="ghost">
+                  <SearchIcon />
+               </IconButton>
+               <IconButton size="sm" type="ghost">
+                  <NotificationIcon />
+               </IconButton>
+               <IconButton size="sm" type="ghost">
+                  <SettingsIcon />
+               </IconButton>
+               <IconButton size="sm" type="ghost">
+                  <StoreIcon />
+               </IconButton>
+               <StyledAvatar
+                  onClick={() => handleOpen(profile)}
+                  url=""
+                  open={open === profile}
+                  title={fullName(users[0]?.firstName, users[0]?.lastName)}
+               />
+            </Wrapper>
 
-         {open === addItems && (
-            <AddItem>
-               <span>Create new</span>
-               <CreateNewItemPanel setOpen={setOpen} />
-            </AddItem>
-         )}
-         {open === profile && (
-            <>
-               {users[0] && (
-                  <Profile>
-                     <div>
-                        <span>Account</span>
-                        <IconButton type="ghost" size="sm">
-                           <EditIcon size={20} color="#919699" />
-                        </IconButton>
-                     </div>
-                     <div>
+            {open === addItems && (
+               <AddItem>
+                  <span>Create new</span>
+                  <CreateNewItemPanel
+                     setOpen={setOpen}
+                     openCreateBrandTunnel={openCreateBrandTunnel}
+                     openCreateProductTunnel={openCreateProductTunnel}
+                  />
+               </AddItem>
+            )}
+
+            {open === profile && (
+               <>
+                  {users[0] && (
+                     <Profile>
                         <div>
-                           <Avatar
-                              style={{
-                                 height: '60px',
-                                 width: '60px',
-                                 margin: '10px',
-                              }}
-                              url=""
-                              title={fullName(
-                                 users[0]?.firstName,
-                                 users[0]?.lastName
-                              )}
-                           />
+                           <span>Account</span>
+                           <IconButton type="ghost" size="sm">
+                              <EditIcon size={20} color="#919699" />
+                           </IconButton>
                         </div>
                         <div>
-                           <span>Admin</span>
-                           <span>{user.name}</span>
-                           <span>Designation</span>
+                           <div>
+                              <Avatar
+                                 style={{
+                                    height: '60px',
+                                    width: '60px',
+                                    margin: '10px',
+                                 }}
+                                 url=""
+                                 title={fullName(
+                                    users[0]?.firstName,
+                                    users[0]?.lastName
+                                 )}
+                              />
+                           </div>
+                           <div>
+                              <span>Admin</span>
+                              <span>{user.name}</span>
+                              <span>Designation</span>
+                           </div>
                         </div>
-                     </div>
-                     <div>
-                        <span>
-                           <MailIcon size={12} />
-                        </span>
-                        <span>{user.email}</span>
-                     </div>
-                     <div>
-                        <span>
-                           <PhoneIcon size={12} />
-                        </span>
-                        <span>{users[0]?.phoneNo}</span>
-                     </div>
-                     <div>
-                        <button onClick={logout}>
-                           <LogoutIcon />
-                           <span>Logout</span>
-                        </button>
-                     </div>
-                  </Profile>
-               )}
-            </>
-         )}
-      </div>
+                        <div>
+                           <span>
+                              <MailIcon size={12} />
+                           </span>
+                           <span>{user.email}</span>
+                        </div>
+                        <div>
+                           <span>
+                              <PhoneIcon size={12} />
+                           </span>
+                           <span>{users[0]?.phoneNo}</span>
+                        </div>
+                        <div>
+                           <button onClick={logout}>
+                              <LogoutIcon />
+                              <span>Logout</span>
+                           </button>
+                        </div>
+                     </Profile>
+                  )}
+               </>
+            )}
+            <Tunnels tunnels={createBrandTunnels}>
+               <Tunnel layer={1} size="md">
+                  <TooltipProvider app="Brand App">
+                     <CreateBrandTunnel closeTunnel={closeCreateBrandTunnel} />
+                  </TooltipProvider>
+               </Tunnel>
+            </Tunnels>
+            <Tunnels tunnels={createProductTunnels}>
+               <Tunnel layer={1}>
+                  <TooltipProvider app="Products App">
+                     <ProductTypeTunnel close={closeCreateProductTunnel} />
+                  </TooltipProvider>
+               </Tunnel>
+            </Tunnels>
+         </div>
+      </>
    )
 }
 
 export default Tools
+
+const StyledAvatar = styled(Avatar)`
+   height: 24px;
+   width: 24px;
+   font-size: 12px;
+   border: ${({ open }) => (open ? '2px solid #367BF5' : '1px solid #E3E3E3')};
+`

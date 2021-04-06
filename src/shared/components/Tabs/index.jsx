@@ -14,7 +14,7 @@ const Tabs = () => {
    const view = useWindowSize()
    const { tabs } = useTabs()
    const [firstIndex, setFirstIndex] = useState(0)
-   const [lastIndex, setLastIndex] = useState(tabs.length)
+   const [lastIndex, setLastIndex] = useState(4)
    const [open, setOpen] = useState(false)
    const buttonRef = useRef()
 

@@ -1,8 +1,6 @@
-import { useMutation } from '@apollo/react-hooks'
-import { Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
 import React from 'react'
+import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import CreateBrandTunnel from '../../../../apps/brands/views/Listings/brands/CreateBrandTunnel'
 import { GENERAL_ERROR_MESSAGE } from '../../../../apps/inventory/constants/errorMessages'
 import {
    CREATE_ITEM,
@@ -13,24 +11,15 @@ import {
    CREATE_INGREDIENT,
    CREATE_SIMPLE_RECIPE,
 } from '../../../../apps/products/graphql'
-import { ProductTypeTunnel } from '../../../../apps/products/views/Listings/ProductsListing/tunnels'
-import { useTabs, TooltipProvider } from '../../../providers'
+import { useTabs } from '../../../providers'
 import { logger, randomSuffix } from '../../../utils'
 import Styles from '../styled'
 
-const CreateNewItemPanel = ({ setOpen }) => {
-   const [
-      createProductTunnels,
-      openCreateProductTunnel,
-      closeCreateProductTunnel,
-   ] = useTunnel(1)
-
-   const [
-      createBrandTunnels,
-      openCreateBrandTunnel,
-      closeCreateBrandTunnel,
-   ] = useTunnel(1)
-
+const CreateNewItemPanel = ({
+   setOpen,
+   openCreateBrandTunnel,
+   openCreateProductTunnel,
+}) => {
    const { addTab } = useTabs()
    const [createSupplier] = useMutation(CREATE_SUPPLIER, {
       onCompleted: input => {
@@ -143,6 +132,7 @@ const CreateNewItemPanel = ({ setOpen }) => {
             title="Brands"
             onClick={() => {
                openCreateBrandTunnel(1)
+               setOpen(null)
             }}
          />
          <CreateNewBtn
@@ -151,7 +141,10 @@ const CreateNewItemPanel = ({ setOpen }) => {
          />
          <CreateNewBtn
             title="Products"
-            onClick={() => openCreateProductTunnel(1)}
+            onClick={() => {
+               openCreateProductTunnel(1)
+               setOpen(null)
+            }}
          />
          <CreateNewBtn title="Recipe" onClick={createRecipeHandler} />
          <CreateNewBtn title="Ingredient" onClick={createIngredientHandler} />
@@ -160,21 +153,6 @@ const CreateNewItemPanel = ({ setOpen }) => {
             onClick={createSupplierItemHandler}
          />
          <CreateNewBtn title="Supplier" onClick={createSupplierHandler} />
-
-         <Tunnels tunnels={createBrandTunnels}>
-            <Tunnel layer={1} size="md">
-               <TooltipProvider app="Brand App">
-                  <CreateBrandTunnel closeTunnel={closeCreateBrandTunnel} />
-               </TooltipProvider>
-            </Tunnel>
-         </Tunnels>
-         <Tunnels tunnels={createProductTunnels}>
-            <Tunnel layer={1}>
-               <TooltipProvider app="Products App">
-                  <ProductTypeTunnel close={closeCreateProductTunnel} />
-               </TooltipProvider>
-            </Tunnel>
-         </Tunnels>
       </div>
    )
 }

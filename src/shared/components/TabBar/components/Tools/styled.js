@@ -1,19 +1,5 @@
 import styled from 'styled-components'
-export const OutsideWrapper = styled.div`
-   display: flex;
-   align-items: center;
-   margin-left: auto;
-   background: ${props => (props.active ? '#fefdfc' : null)};
-   box-shadow: ${props =>
-      props.active
-         ? `1px 1px 2px rgba(255, 255, 255, 0.3),
-      -1px -1px 2px rgba(206, 205, 204, 0.5),
-      inset -3px 3px 6px rgba(206, 205, 204, 0.2),
-      inset 3px -3px 6px rgba(206, 205, 204, 0.2),
-      inset -3px -3px 6px rgba(255, 255, 255, 0.9),
-      inset 3px 3px 8px rgba(206, 205, 204, 0.9)`
-         : null};
-`
+
 export const Wrapper = styled.div`
    display: flex;
    align-items: center;
@@ -53,6 +39,7 @@ export const AddItem = styled.div`
    border: 1px solid #f2f3f3;
    backdrop-filter: blur(44.37px);
    border-radius: 10px;
+   z-index: 100;
    > span {
       font-style: normal;
       font-weight: bold;
@@ -86,7 +73,7 @@ export const Profile = styled.div`
    backdrop-filter: blur(44.37px);
    border-radius: 10px;
    color: #919699;
-   z-index: 10;
+   z-index: 100;
    > div:nth-child(1) {
       display: flex;
       align-items: center;
