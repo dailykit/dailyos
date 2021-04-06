@@ -62,3 +62,24 @@ export const MUTATIONS = {
       `,
    },
 }
+
+export const SEND_STRIPE_INVOICE = gql`
+   mutation sendStripeInvoice($id: String!) {
+      sendStripeInvoice(id: $id) {
+         success
+         message
+      }
+   }
+`
+
+export const RETRY_PAYMENT = gql`
+   mutation updateCart($id: Int!, $_set: order_cart_set_input!) {
+      updateCart(
+         _set: $_set
+         pk_columns: { id: $id }
+         _inc: { paymentRetryAttempt: 1 }
+      ) {
+         id
+      }
+   }
+`

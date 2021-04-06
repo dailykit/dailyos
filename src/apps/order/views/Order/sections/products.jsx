@@ -167,124 +167,113 @@ export const Products = ({ order, loading, error, products }) => {
                ))}
             </ProductsList>
             <TabPanels>
-               {products.map(
-                  product =>
-                     state.current_product?.id === product.id && (
-                        <TabPanel>
-                           <Spacer size="16px" />
-                           <Flex container alignItems="center">
-                              <TextButton
-                                 size="sm"
-                                 type="solid"
-                                 onClick={print}
+               {products.map(product => (
+                  <TabPanel key={product.id}>
+                     <Spacer size="16px" />
+                     <Flex container alignItems="center">
+                        <TextButton size="sm" type="solid" onClick={print}>
+                           Print label
+                        </TextButton>
+                        <Spacer size="16px" xAxis />
+                        <TextButton
+                           size="sm"
+                           type="solid"
+                           hasAccess={hasStationAccess()}
+                           disabled={['READY', 'PACKED'].includes(
+                              state.current_product?.status
+                           )}
+                           fallBackMessage={() => packFallBackMessage()}
+                           onClick={() =>
+                              updateCartItem({
+                                 variables: {
+                                    id: state.current_product?.id,
+                                    _set: {
+                                       status: 'READY',
+                                    },
+                                 },
+                              })
+                           }
+                        >
+                           {['READY', 'PACKED'].includes(
+                              state.current_product?.status
+                           )
+                              ? 'Ready'
+                              : 'Mark Ready'}
+                        </TextButton>
+                        <Spacer size="16px" xAxis />
+                        <TextButton
+                           size="sm"
+                           type="solid"
+                           hasAccess={hasStationAccess()}
+                           fallBackMessage={() => assembleFallBackMessage()}
+                           disabled={state.current_product?.status === 'PACKED'}
+                           onClick={() =>
+                              updateCartItem({
+                                 variables: {
+                                    id: state.current_product?.id,
+                                    _set: {
+                                       status: 'PACKED',
+                                    },
+                                 },
+                              })
+                           }
+                        >
+                           {state.current_product?.status === 'PACKED'
+                              ? 'Packed'
+                              : 'Mark Packed'}
+                        </TextButton>
+                     </Flex>
+                     <Spacer size="8px" />
+                     <Flex>
+                        {label && (
+                           <>
+                              <Flex
+                                 container
+                                 as="header"
+                                 width="300px"
+                                 alignItems="center"
+                                 justifyContent="space-between"
                               >
-                                 Print label
-                              </TextButton>
-                              <Spacer size="16px" xAxis />
-                              <TextButton
-                                 size="sm"
-                                 type="solid"
-                                 hasAccess={hasStationAccess()}
-                                 disabled={['READY', 'PACKED'].includes(
-                                    state.current_product?.status
-                                 )}
-                                 fallBackMessage={() => packFallBackMessage()}
-                                 onClick={() =>
-                                    updateCartItem({
-                                       variables: {
-                                          id: state.current_product?.id,
-                                          _set: {
-                                             status: 'READY',
-                                          },
-                                       },
-                                    })
-                                 }
-                              >
-                                 {['READY', 'PACKED'].includes(
-                                    state.current_product?.status
-                                 )
-                                    ? 'Ready'
-                                    : 'Mark Ready'}
-                              </TextButton>
-                              <Spacer size="16px" xAxis />
-                              <TextButton
-                                 size="sm"
-                                 type="solid"
-                                 hasAccess={hasStationAccess()}
-                                 fallBackMessage={() =>
-                                    assembleFallBackMessage()
-                                 }
-                                 disabled={
-                                    state.current_product?.status === 'PACKED'
-                                 }
-                                 onClick={() =>
-                                    updateCartItem({
-                                       variables: {
-                                          id: state.current_product?.id,
-                                          _set: {
-                                             status: 'PACKED',
-                                          },
-                                       },
-                                    })
-                                 }
-                              >
-                                 {state.current_product?.status === 'PACKED'
-                                    ? 'Packed'
-                                    : 'Mark Packed'}
-                              </TextButton>
-                           </Flex>
-                           <Spacer size="8px" />
-                           <Flex>
-                              {label && (
-                                 <>
-                                    <Flex
-                                       container
-                                       as="header"
-                                       width="300px"
-                                       alignItems="center"
-                                       justifyContent="space-between"
-                                    >
-                                       <Text as="h3">Label Preview</Text>
-                                       <IconButton
-                                          size="sm"
-                                          type="ghost"
-                                          onClick={() => setLabel('')}
-                                       >
-                                          <CloseIcon size={22} />
-                                       </IconButton>
-                                    </Flex>
-                                    <Spacer size="8px" />
-                                    <iframe
-                                       src={label}
-                                       frameBorder="0"
-                                       title="label preview"
-                                    />
-                                 </>
-                              )}
-                           </Flex>
-                           <Spacer size="24px" />
-                           <section id="sachets">
-                              <Text as="h2">Sachets</Text>
-                              <Legend>
-                                 <h2>{t(address.concat('legends'))}</h2>
-                                 <section>
-                                    <span />
-                                    <span>{t(address.concat('pending'))}</span>
-                                 </section>
-                                 <section>
-                                    <span />
-                                    <span>Ready</span>
-                                 </section>
-                                 <section>
-                                    <span />
-                                    <span>Packed</span>
-                                 </section>
-                              </Legend>
-                              {state.current_product?.id && <Sachets />}
+                                 <Text as="h3">Label Preview</Text>
+                                 <IconButton
+                                    size="sm"
+                                    type="ghost"
+                                    onClick={() => setLabel('')}
+                                 >
+                                    <CloseIcon size={22} />
+                                 </IconButton>
+                              </Flex>
+                              <Spacer size="8px" />
+                              <iframe
+                                 src={label}
+                                 frameBorder="0"
+                                 title="label preview"
+                              />
+                           </>
+                        )}
+                     </Flex>
+                     <Spacer size="24px" />
+                     <section id="sachets">
+                        <Text as="h2">Sachets</Text>
+                        <Legend>
+                           <h2>{t(address.concat('legends'))}</h2>
+                           <section>
+                              <span />
+                              <span>{t(address.concat('pending'))}</span>
                            </section>
-                        </TabPanel>
-                     )
-               )}
+                           <section>
+                              <span />
+                              <span>Ready</span>
+                           </section>
+                           <section>
+                              <span />
+                              <span>Packed</span>
+                           </section>
+                        </Legend>
+                        {state.current_product?.id && <Sachets />}
+                     </section>
+                  </TabPanel>
+               ))}
             </TabPanels>
          </Tabs>
       </>

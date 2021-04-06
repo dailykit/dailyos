@@ -7,15 +7,27 @@ export const QUERIES = {
             cart(id: $id) {
                id
                status
+               totalPrice
                paymentStatus
                stripeInvoiceId
                stripeCustomerId
-               invoiceSendAttempt
-               stripeInvoiceDetails
-               stripeInvoiceHistory
                transactionId
-               transactionRemark
-               transactionRemarkHistory
+               customerKeycloakId
+               transactionRemarkHistory: paymentHistories(
+                  where: { type: { _eq: "PAYMENT_INTENT" } }
+                  order_by: { created_at: desc }
+               ) {
+                  id
+                  details: transactionRemark
+               }
+               stripeInvoiceDetails
+               stripeInvoiceHistory: paymentHistories(
+                  where: { type: { _eq: "INVOICE" } }
+                  order_by: { created_at: desc }
+               ) {
+                  id
+                  details: stripeInvoiceDetails
+               }
             }
          }
       `,
@@ -246,6 +258,7 @@ export const QUERIES = {
                   isTest
                   source
                   address
+                  paymentId
                   transactionId
                   paymentStatus
                   fulfillmentInfo
@@ -897,3 +910,23 @@ export const QUERIES2 = {
       }
    `,
 }
+
+export const CUSTOMER_PAYMENT_METHODS = gql`
+   query customer($keycloakId: String!) {
+      customer(keycloakId: $keycloakId) {
+         id
+         platform_customer {
+            payment_methods: stripePaymentMethods {
+               brand
+               last4
+               funding
+               expYear
+               expMonth
+               country
+               name: cardHolderName
+               id: stripePaymentMethodId
+            }
+         }
+      }
+   }
+`
