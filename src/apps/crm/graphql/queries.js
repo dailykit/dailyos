@@ -289,17 +289,15 @@ export const SUBSCRIPTION_PLAN = gql`
    query SUBSCRIPTION_PLAN($keycloakId: String!, $brandId: Int!) {
       brand(id: $brandId) {
          brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
-            customer {
-               isSubscriber
-               subscription {
-                  rrule
-                  subscriptionItemCount {
-                     count
-                     plan: subscriptionServing {
-                        servingSize
-                        subscriptionTitle {
-                           title
-                        }
+            isSubscriber
+            subscription {
+               rrule
+               subscriptionItemCount {
+                  count
+                  plan: subscriptionServing {
+                     servingSize
+                     subscriptionTitle {
+                        title
                      }
                   }
                }

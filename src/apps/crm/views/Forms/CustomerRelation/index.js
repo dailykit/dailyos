@@ -250,9 +250,7 @@ const CustomerRelation = ({ match }) => {
                   toggle={customers[0]?.isTest}
                   toggleHandler={() => toggleHandler(!customers[0]?.isTest)}
                />
-               <SubscriptionInfoCard
-                  planData={subscriptionPlan[0]?.customer || {}}
-               />
+               <SubscriptionInfoCard planData={subscriptionPlan[0] || {}} />
                <ContactInfoCard
                   defaultTag2="(Default)"
                   customerData={customerData[0]?.customer?.platform_customer}
