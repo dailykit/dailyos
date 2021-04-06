@@ -114,8 +114,10 @@ export const SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
             label
             quantity
             recipeYield: simpleRecipeYield {
+               id
                size: yield(path: "serving")
                recipe: simpleRecipe {
+                  id
                   cuisine
                   cookingTime
                   author
