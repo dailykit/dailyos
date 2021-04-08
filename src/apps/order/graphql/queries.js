@@ -164,6 +164,63 @@ export const QUERIES = {
             }
          }
       `,
+      PRODUCT: gql`
+         subscription product($id: Int!) {
+            product: cartItem(id: $id) {
+               id
+               cartItemView {
+                  id
+                  cart {
+                     id
+                     order {
+                        id
+                        isAccepted
+                        isRejected
+                     }
+                  }
+                  position
+                  stationId
+                  isModifier
+                  status
+                  displayName
+                  displayUnit
+                  processingName
+                  displayBulkDensity
+                  displayUnitQuantity
+                  supplierItemId
+                  supplierItem {
+                     id
+                     supplierItemName
+                     supplierId
+                     supplier {
+                        id
+                        name
+                     }
+                  }
+                  operationConfigId
+                  operationConfig {
+                     id
+                     stationId
+                     station {
+                        id
+                        name
+                     }
+                     labelTemplateId
+                     labelTemplate {
+                        id
+                        name
+                     }
+                     packagingId
+                     packaging {
+                        id
+                        name
+                        assets
+                     }
+                  }
+               }
+            }
+         }
+      `,
       SACHET: {
          MULTIPLE: gql`
             subscription sachets($where: order_cartItemView_bool_exp!) {

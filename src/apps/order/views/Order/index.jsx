@@ -580,7 +580,6 @@ const Order = () => {
                   {Object.values(types).map((listing, index) => (
                      <HorizontalTabPanel key={index}>
                         <Products
-                           order={order}
                            products={listing}
                            loading={productsLoading}
                            error={productsError}
