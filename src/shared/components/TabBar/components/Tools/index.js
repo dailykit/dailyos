@@ -37,7 +37,10 @@ const Tools = () => {
    const handleOpen = item => {
       setOpen(open === null || open !== item ? item : null)
    }
-   useOnClickOutside(toolbarRef, () => setOpen(false))
+   useOnClickOutside(toolbarRef, () => {
+      setIsMenuOpen(false)
+      setOpen(null)
+   })
 
    return (
       <div ref={toolbarRef}>
@@ -56,7 +59,10 @@ const Tools = () => {
                setIsMenuOpen(!isMenuOpen)
             }}
          >
-            <ChevronDown size={20} color={isMenuOpen ? '#367BF5' : '#202020'} />
+            <ChevronDown
+               size={20}
+               color={isMenuOpen && open === null ? '#367BF5' : '#202020'}
+            />
          </ToolbarMenu>
 
          {/*TOOLBAR OPTIONS FOR SMALLER SCREEN*/}

@@ -6,6 +6,7 @@ export const Styles = {
       width: 254px;
       max-height: 534px;
       top: 48px;
+      right: 0;
       background: rgba(255, 255, 255, 0.13);
       border: 1px solid #f2f3f3;
       backdrop-filter: blur(44.37px);

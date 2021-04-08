@@ -12,46 +12,31 @@ import Tab from './components/Tab'
 const Tabs = () => {
    const { pathname } = useLocation()
    const view = useWindowSize()
+   const [open, setOpen] = useState(false)
    const { tabs } = useTabs()
    const [firstIndex, setFirstIndex] = useState(0)
-   const [lastIndex, setLastIndex] = useState(4)
-   const [open, setOpen] = useState(false)
-   const buttonRef = useRef()
+   const [lastIndex, setLastIndex] = useState(0)
+   const [numTabsToShow, setNumTabsToShow] = useState(0)
 
+   const buttonRef = useRef()
    useOnClickOutside(buttonRef, () => setOpen(false))
 
    useEffect(() => {
+      const tabWidth = 120
+      const toolBarWidth = view.width > 767 ? 450 : 262
+      const widthForTabs = Math.floor(view.width - toolBarWidth)
+
       if (view.width) {
          setFirstIndex(0)
+         setNumTabsToShow(Math.floor(widthForTabs / tabWidth))
          setLastIndex(numTabsToShow)
       }
+
       if (tabs.length <= numTabsToShow) {
          setFirstIndex(0)
          setLastIndex(tabs.length)
       }
-   }, [view.width, tabs.length])
-
-   const toolBarWidth = view.width > 767 ? 470 : 270
-   const widthForTabs = Math.floor(view.width - toolBarWidth)
-   const tabWidth = 120
-   let numTabsToShow = Math.floor(widthForTabs / tabWidth) + 1
-   const tabsToShow = tabs.slice(firstIndex, lastIndex)
-
-   const rightArrowOpen =
-      numTabsToShow < tabs.length && tabs.length !== lastIndex
-   const leftArrowOpen = firstIndex !== 0
-
-   const getLastTabWidth = () => {
-      let lastTabWidth = numTabsToShow * tabWidth - widthForTabs
-      if (leftArrowOpen && rightArrowOpen) {
-         lastTabWidth = numTabsToShow * tabWidth - widthForTabs
-      } else if (!leftArrowOpen && !rightArrowOpen) {
-         lastTabWidth -= 70
-      } else {
-         lastTabWidth -= 35
-      }
-      return lastTabWidth
-   }
+   }, [view.width, tabs.length, numTabsToShow])
 
    const handleTabForward = () => {
       if (lastIndex + numTabsToShow > tabs.length) {
@@ -73,6 +58,8 @@ const Tabs = () => {
       }
    }
 
+   const tabsToShow = tabs.slice(firstIndex, lastIndex)
+
    return (
       <TabsWrapper>
          <HomeButton active={pathname === '/'} to="/">
@@ -87,7 +74,7 @@ const Tabs = () => {
                )}
             </>
          )}
-         <StyledTabs lastTabWidth={getLastTabWidth()}>
+         <StyledTabs>
             {tabsToShow.map((tab, index) => (
                <Tab tab={tab} key={tab.path} index={index} />
             ))}

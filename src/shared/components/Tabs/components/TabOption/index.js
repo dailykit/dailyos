@@ -1,7 +1,8 @@
 import React from 'react'
-import { CloseIcon, Form, IconButton } from '@dailykit/ui'
+import { Form, IconButton } from '@dailykit/ui'
 import { Styles } from './styled'
 import { useTabs } from '../../../../providers'
+import { CloseIcon } from '../../../../assets/icons'
 
 const TabOption = () => {
    const { tabs, removeTab, closeAllTabs, switchTab } = useTabs()

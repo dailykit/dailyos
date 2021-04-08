@@ -16,13 +16,10 @@ export const TabsWrapper = styled.div`
    }
 `
 export const StyledTabs = styled.ul(
-   ({ lastTabWidth }) => css`
+   () => css`
       display: flex;
       align-items: center;
       border-bottom: 1px solid #ebf1f4;
-      > :last-child {
-         width: ${lastTabWidth}px;
-      }
    `
 )
 

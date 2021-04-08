@@ -125,6 +125,7 @@ const CreateNew = ({
    }
    const handleCreate = cb => {
       setOpen(null)
+      setIsMenuOpen(false)
       cb()
    }
 
