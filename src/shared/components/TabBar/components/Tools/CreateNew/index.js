@@ -1,22 +1,24 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import { GENERAL_ERROR_MESSAGE } from '../../../../apps/inventory/constants/errorMessages'
+import { GENERAL_ERROR_MESSAGE } from '../../../../../../apps/inventory/constants/errorMessages'
 import {
    CREATE_ITEM,
    CREATE_SUPPLIER,
-} from '../../../../apps/inventory/graphql'
-import { CREATE_COLLECTION } from '../../../../apps/menu/graphql'
+} from '../../../../../../apps/inventory/graphql'
+import { CREATE_COLLECTION } from '../../../../../../apps/menu/graphql'
 import {
    CREATE_INGREDIENT,
    CREATE_SIMPLE_RECIPE,
-} from '../../../../apps/products/graphql'
-import { useTabs } from '../../../providers'
-import { logger, randomSuffix } from '../../../utils'
-import Styles from '../styled'
+} from '../../../../../../apps/products/graphql'
+import { useTabs } from '../../../../../providers'
+import { logger, randomSuffix } from '../../../../../utils'
+import Styles from './styled'
+import BackButton from '../BackButton'
 
-const CreateNewItemPanel = ({
+const CreateNew = ({
    setOpen,
+   setIsMenuOpen,
    openCreateBrandTunnel,
    openCreateProductTunnel,
 }) => {
@@ -127,13 +129,12 @@ const CreateNewItemPanel = ({
    }
 
    return (
-      <div>
+      <Styles.CreateNewWrapper>
+         <BackButton setIsMenuOpen={setIsMenuOpen} setOpen={setOpen} />
+         <span>Create new</span>
          <CreateNewBtn
             title="Brands"
-            onClick={() => {
-               openCreateBrandTunnel(1)
-               setOpen(null)
-            }}
+            onClick={() => handleCreate(() => openCreateBrandTunnel(1))}
          />
          <CreateNewBtn
             title="Collection"
@@ -141,26 +142,32 @@ const CreateNewItemPanel = ({
          />
          <CreateNewBtn
             title="Products"
-            onClick={() => {
-               openCreateProductTunnel(1)
-               setOpen(null)
-            }}
+            onClick={() => handleCreate(() => openCreateProductTunnel(1))}
          />
-         <CreateNewBtn title="Recipe" onClick={createRecipeHandler} />
-         <CreateNewBtn title="Ingredient" onClick={createIngredientHandler} />
+         <CreateNewBtn
+            title="Recipe"
+            onClick={() => handleCreate(createRecipeHandler)}
+         />
+         <CreateNewBtn
+            title="Ingredient"
+            onClick={() => handleCreate(createIngredientHandler)}
+         />
          <CreateNewBtn
             title="Supplier Item"
-            onClick={createSupplierItemHandler}
+            onClick={() => handleCreate(createSupplierItemHandler)}
          />
-         <CreateNewBtn title="Supplier" onClick={createSupplierHandler} />
-      </div>
+         <CreateNewBtn
+            title="Supplier"
+            onClick={() => handleCreate(createSupplierHandler)}
+         />
+      </Styles.CreateNewWrapper>
    )
 }
 
 const CreateNewBtn = ({ title, onClick }) => (
-   <Styles.PageItem onClick={onClick}>
+   <Styles.CreateNewItem onClick={onClick}>
       <span style={{ padding: '6px 0px' }}>{title}</span>
-   </Styles.PageItem>
+   </Styles.CreateNewItem>
 )
 
-export default CreateNewItemPanel
+export default CreateNew

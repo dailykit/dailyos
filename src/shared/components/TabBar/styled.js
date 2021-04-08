@@ -58,23 +58,6 @@ const Styles = {
          background-color: #ebf1f4;
       }
    `,
-   PageItem: styled.li`
-      display: flex;
-      align-items: center;
-      margin: 8px 0px 0px 8px;
-      color: #202020;
-      font-weight: 500;
-      font-size: 12px;
-      line-height: 14px;
-      cursor: pointer;
-      > span {
-         display: block;
-         margin-left: 6px;
-      }
-      &:hover {
-         color: #367bf5;
-      }
-   `,
 }
 
 export default Styles

@@ -1,6 +1,6 @@
 import React from 'react'
 import gql from 'graphql-tag'
-import { Flex } from '@dailykit/ui'
+import { Flex, IconButton, RoundedCloseIcon } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 import Styles from './styled'
 import { InlineLoader } from '../InlineLoader'
@@ -18,13 +18,18 @@ const APPS = gql`
       }
    }
 `
-export const Sidebar = () => {
+export const Sidebar = ({ setOpen }) => {
    const { routes, addTab } = useTabs()
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
    const [isOpen, setIsOpen] = React.useState(null)
 
    return (
       <Styles.Sidebar>
+         <Styles.Close>
+            <IconButton type="ghost" onClick={() => setOpen(false)}>
+               <RoundedCloseIcon />
+            </IconButton>
+         </Styles.Close>
          {loading ? (
             <InlineLoader />
          ) : (

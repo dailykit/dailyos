@@ -11,7 +11,7 @@ const Logo = () => {
 
    return (
       <div ref={menuRef} style={{ padding: '0px 14px 0px 20px' }}>
-         {open && <Sidebar />}
+         {open && <Sidebar setOpen={setOpen} />}
          <Styles.Logo open={open} onClick={() => setOpen(!open)}>
             <DailykitIcon />
          </Styles.Logo>

@@ -1,8 +1,8 @@
 import React from 'react'
-import { useTabs } from '../../providers'
-import { StyledTab } from './styled'
+import { StyledTab } from '../../styled'
 import { useLocation } from 'react-router-dom'
-import { CloseIcon } from '../../assets/icons'
+import { useTabs } from '../../../../providers'
+import { CloseIcon } from '@dailykit/ui'
 
 const Tab = ({ index, tab, ...props }) => {
    const location = useLocation()

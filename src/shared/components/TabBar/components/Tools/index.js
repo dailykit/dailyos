@@ -1,35 +1,19 @@
-import {
-   IconButton,
-   SearchIcon,
-   PlusIcon,
-   useOnClickOutside,
-   Avatar,
-   Tunnels,
-   Tunnel,
-   useTunnel,
-} from '@dailykit/ui'
 import React from 'react'
-import {
-   EditIcon,
-   LogoutIcon,
-   MailIcon,
-   NotificationIcon,
-   PhoneIcon,
-   SettingsIcon,
-   StoreIcon,
-} from '../../../../assets/icons'
-import { TooltipProvider, useAuth } from '../../../../providers'
-import { Wrapper, AddItem, Profile } from './styled'
-import CreateNewItemPanel from '../CreateNewItemPanel'
-import styled from 'styled-components'
-import gql from 'graphql-tag'
-import { useSubscription } from '@apollo/react-hooks'
+import { useOnClickOutside, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
+import { ChevronDown } from '../../../../assets/icons'
+import { TooltipProvider } from '../../../../providers'
+import { ToolbarMenu } from './styled'
+import CreateNew from './CreateNew'
 import CreateBrandTunnel from '../../../../../apps/brands/views/Listings/brands/CreateBrandTunnel'
 import { ProductTypeTunnel } from '../../../../../apps/products/views/Listings/ProductsListing/tunnels'
+import ToolOptions from './ToolOptions'
+import ToolList from './ToolList'
+import Account from './Account'
+import Search from './Search'
 
 const Tools = () => {
    const [open, setOpen] = React.useState(null)
-   const { user, logout } = useAuth()
+   const [isMenuOpen, setIsMenuOpen] = React.useState(false)
    const toolbarRef = React.useRef()
 
    const [
@@ -37,181 +21,86 @@ const Tools = () => {
       openCreateProductTunnel,
       closeCreateProductTunnel,
    ] = useTunnel(1)
-
    const [
       createBrandTunnels,
       openCreateBrandTunnel,
       closeCreateBrandTunnel,
    ] = useTunnel(1)
-
-   const USERS = gql`
-      subscription users($where: settings_user_bool_exp) {
-         users: settings_user(where: $where) {
-            id
-            email
-            firstName
-            lastName
-            phoneNo
-            roles {
-               id
-               role {
-                  id
-                  title
-               }
-            }
-         }
-      }
-   `
-
-   const { data: { users = [] } = {} } = useSubscription(USERS, {
-      skip: !user?.email,
-      variables: {
-         where: {
-            email: { _eq: user?.email },
-         },
-      },
-   })
-
-   const fullName = (f, l) => {
-      let name = ''
-      if (f) {
-         name += f
-      }
-      if (l) {
-         name += ` ${l}`
-      }
-      return name
-   }
-
-   const buttonStrings = {
-      addItems: 'add-item',
+   const tools = {
+      createItem: 'create-item',
       profile: 'profile',
+      search: 'search',
    }
-   const { addItems, profile } = buttonStrings
+
+   const { createItem, profile, search } = tools
 
    const handleOpen = item => {
       setOpen(open === null || open !== item ? item : null)
    }
    useOnClickOutside(toolbarRef, () => setOpen(false))
+
    return (
-      <>
-         <div ref={toolbarRef}>
-            <Wrapper ref={toolbarRef}>
-               <IconButton
-                  size="sm"
-                  type="ghost"
-                  onClick={() => handleOpen(addItems)}
-               >
-                  <PlusIcon color={open === addItems ? '#367BF5' : '#45484C'} />
-               </IconButton>
-               <IconButton size="sm" type="ghost">
-                  <SearchIcon />
-               </IconButton>
-               <IconButton size="sm" type="ghost">
-                  <NotificationIcon />
-               </IconButton>
-               <IconButton size="sm" type="ghost">
-                  <SettingsIcon />
-               </IconButton>
-               <IconButton size="sm" type="ghost">
-                  <StoreIcon />
-               </IconButton>
-               <StyledAvatar
-                  onClick={() => handleOpen(profile)}
-                  url=""
-                  open={open === profile}
-                  title={fullName(users[0]?.firstName, users[0]?.lastName)}
-               />
-            </Wrapper>
+      <div ref={toolbarRef}>
+         {/* LIST OF TOOLS IN LARGE SCREEN */}
+         <ToolList
+            toolbarRef={toolbarRef}
+            tools={tools}
+            open={open}
+            handleOpen={handleOpen}
+         />
 
-            {open === addItems && (
-               <AddItem>
-                  <span>Create new</span>
-                  <CreateNewItemPanel
-                     setOpen={setOpen}
-                     openCreateBrandTunnel={openCreateBrandTunnel}
-                     openCreateProductTunnel={openCreateProductTunnel}
-                  />
-               </AddItem>
-            )}
+         {/*MENU ICON FOR SMALLER SCREEN*/}
+         <ToolbarMenu
+            onClick={() => {
+               setOpen(null)
+               setIsMenuOpen(!isMenuOpen)
+            }}
+         >
+            <ChevronDown size={20} color={isMenuOpen ? '#367BF5' : '#202020'} />
+         </ToolbarMenu>
 
-            {open === profile && (
-               <>
-                  {users[0] && (
-                     <Profile>
-                        <div>
-                           <span>Account</span>
-                           <IconButton type="ghost" size="sm">
-                              <EditIcon size={20} color="#919699" />
-                           </IconButton>
-                        </div>
-                        <div>
-                           <div>
-                              <Avatar
-                                 style={{
-                                    height: '60px',
-                                    width: '60px',
-                                    margin: '10px',
-                                 }}
-                                 url=""
-                                 title={fullName(
-                                    users[0]?.firstName,
-                                    users[0]?.lastName
-                                 )}
-                              />
-                           </div>
-                           <div>
-                              <span>Admin</span>
-                              <span>{user.name}</span>
-                              <span>Designation</span>
-                           </div>
-                        </div>
-                        <div>
-                           <span>
-                              <MailIcon size={12} />
-                           </span>
-                           <span>{user.email}</span>
-                        </div>
-                        <div>
-                           <span>
-                              <PhoneIcon size={12} />
-                           </span>
-                           <span>{users[0]?.phoneNo}</span>
-                        </div>
-                        <div>
-                           <button onClick={logout}>
-                              <LogoutIcon />
-                              <span>Logout</span>
-                           </button>
-                        </div>
-                     </Profile>
-                  )}
-               </>
-            )}
-            <Tunnels tunnels={createBrandTunnels}>
-               <Tunnel layer={1} size="md">
-                  <TooltipProvider app="Brand App">
-                     <CreateBrandTunnel closeTunnel={closeCreateBrandTunnel} />
-                  </TooltipProvider>
-               </Tunnel>
-            </Tunnels>
-            <Tunnels tunnels={createProductTunnels}>
-               <Tunnel layer={1}>
-                  <TooltipProvider app="Products App">
-                     <ProductTypeTunnel close={closeCreateProductTunnel} />
-                  </TooltipProvider>
-               </Tunnel>
-            </Tunnels>
-         </div>
-      </>
+         {/*TOOLBAR OPTIONS FOR SMALLER SCREEN*/}
+         {isMenuOpen && open === null && (
+            <ToolOptions
+               setIsMenuOpen={setIsMenuOpen}
+               tools={tools}
+               open={open}
+               handleOpen={handleOpen}
+               setOpen={setOpen}
+            />
+         )}
+
+         {/*TOOLBAR OPTIONS FOR BOTH SCREEN*/}
+         {open === createItem && (
+            <CreateNew
+               setOpen={setOpen}
+               setIsMenuOpen={setIsMenuOpen}
+               openCreateBrandTunnel={openCreateBrandTunnel}
+               openCreateProductTunnel={openCreateProductTunnel}
+            />
+         )}
+         {open === profile && (
+            <Account setIsMenuOpen={setIsMenuOpen} setOpen={setOpen} />
+         )}
+         {open === search && <Search setOpen={setOpen} />}
+
+         {/* Tunnels */}
+         <Tunnels tunnels={createBrandTunnels}>
+            <Tunnel layer={1} size="md">
+               <TooltipProvider app="Brand App">
+                  <CreateBrandTunnel closeTunnel={closeCreateBrandTunnel} />
+               </TooltipProvider>
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={createProductTunnels}>
+            <Tunnel layer={1}>
+               <TooltipProvider app="Products App">
+                  <ProductTypeTunnel close={closeCreateProductTunnel} />
+               </TooltipProvider>
+            </Tunnel>
+         </Tunnels>
+      </div>
    )
 }
 
 export default Tools
-
-const StyledAvatar = styled(Avatar)`
-   height: 24px;
-   width: 24px;
-   font-size: 12px;
-   border: ${({ open }) => (open ? '2px solid #367BF5' : '1px solid #E3E3E3')};
-`

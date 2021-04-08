@@ -2,18 +2,26 @@ import { IconButton } from '@dailykit/ui'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
+export const TabsWrapper = styled.div`
+   display: flex;
+   align-items: center;
+   border-bottom: 1px solid #ebf1f4;
+   > button {
+      border: none;
+      width: 35px;
+      height: 42px;
+      background: #fefdfc;
+      outline: none;
+      cursor: pointer;
+   }
+`
 export const StyledTabs = styled.ul(
-   () => css`
+   ({ lastTabWidth }) => css`
       display: flex;
       align-items: center;
       border-bottom: 1px solid #ebf1f4;
-      > button {
-         border: none;
-         width: 35px;
-         height: 42px;
-         background: #fefdfc;
-         outline: none;
-         cursor: pointer;
+      > :last-child {
+         width: ${lastTabWidth}px;
       }
    `
 )

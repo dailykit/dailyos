@@ -1,5 +1,5 @@
-import { Flex } from '@dailykit/ui'
 import React from 'react'
+import { Flex } from '@dailykit/ui'
 import Tabs from '../Tabs'
 import Logo from './components/Logo'
 import Styles from './styled'

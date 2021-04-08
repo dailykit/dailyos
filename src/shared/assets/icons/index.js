@@ -28,11 +28,13 @@ import NotificationIcon from './Notification'
 import StoreIcon from './Store'
 import DailykitIcon from './Dailykit'
 import LogoutIcon from './Logout'
+import ChevronLeft from './ChevronLeft'
 export {
    AddIcon,
    MenuIcon,
    CloseIcon,
    ChevronRight,
+   ChevronLeft,
    EditIcon,
    DeleteIcon,
    LeftIcon,

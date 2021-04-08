@@ -29,6 +29,9 @@ const Styles = {
             background-color: rgba(196, 196, 196, 0.9);
             border-radius: 4px;
          }
+         @media only screen and (max-width: 767px) {
+            width: 100vw;
+         }
       `
    ),
    AppTitle: styled(Link)`
@@ -128,6 +131,13 @@ const Styles = {
             : `-4px 4px 8px rgba(216, 216, 216, 0.2), 4px -4px 8px rgba(216, 216, 216, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.9), 4px 4px 10px rgba(216, 216, 216, 0.9), inset 1px 1px 2px rgba(255, 255, 255, 0.3), inset -1px -1px 2px rgba(216, 216, 216, 0.5);`};
       > svg {
          stroke: #75787a;
+      }
+   `,
+   Close: styled.div`
+      margin-left: auto;
+      display: none;
+      @media only screen and (max-width: 767px) {
+         display: block;
       }
    `,
 }
