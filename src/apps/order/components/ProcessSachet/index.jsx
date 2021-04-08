@@ -99,8 +99,8 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
       }
    }, [weight, sachet])
 
-   const print = React.useCallback(() => {
-      updateCartItem({
+   const print = React.useCallback(async () => {
+      await updateCartItem({
          variables: {
             id: sachet.id,
             _set: {
@@ -126,36 +126,6 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
          )
          const url = `${window._env_.REACT_APP_TEMPLATE_URL}?template=${template}&data=${data}`
          setLabelPreview(url)
-      } else {
-         const url = `${
-            new URL(window._env_.REACT_APP_DATA_HUB_URI).origin
-         }/datahub/v1/query`
-
-         const data = {
-            id: sachet.id,
-            isPortioned: true,
-            processingName: sachet.processingName,
-            packingStationId: sachet?.operationConfig?.stationId,
-            ingredientName: sachet.displayName.split('->').pop().trim(),
-            labelTemplateId: sachet?.operationConfig?.labelTemplate?.name,
-         }
-         axios.post(
-            url,
-            {
-               type: 'invoke_event_trigger',
-               args: {
-                  name: 'printOrderSachet',
-                  payload: { new: data },
-               },
-            },
-            {
-               headers: {
-                  'Content-Type': 'application/json; charset=utf-8',
-                  'x-hasura-admin-secret':
-                     window._env_.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
-               },
-            }
-         )
       }
    }, [sachet])
 
