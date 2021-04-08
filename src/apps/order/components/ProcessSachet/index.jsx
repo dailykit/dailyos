@@ -104,7 +104,7 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
          variables: {
             id: sachet.id,
             _set: {
-               isPortioned: true,
+               status: 'READY',
             },
          },
       })
