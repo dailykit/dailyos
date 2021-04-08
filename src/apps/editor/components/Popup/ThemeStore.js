@@ -54,7 +54,7 @@ export default function ThemeStore({ show, closePopup, setCreateType }) {
         `,
                },
             })
-            setTemplates(data?.data?.editor_template)
+            setTemplates(data?.data?.editor_template || [])
          } catch (error) {
             toast.error('Failed to load templates!')
             logger(error)
