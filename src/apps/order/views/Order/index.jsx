@@ -322,7 +322,7 @@ const Order = () => {
    )
    */
 
-   if (loading) return <InlineLoader />
+   if (loading || productsLoading) return <InlineLoader />
    if (error) {
       logger(error)
       toast.error('Failed to fetch order details!')
