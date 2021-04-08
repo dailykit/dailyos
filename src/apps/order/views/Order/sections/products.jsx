@@ -303,6 +303,7 @@ const ProductCard = ({ product, isActive, onClick }) => {
          )}
          <main>
             <div>
+               {product?.isAddOn && <span>[Add On] </span>}
                <StyledProductTitle>
                   {product?.displayName.split('->').pop().trim()}
                </StyledProductTitle>

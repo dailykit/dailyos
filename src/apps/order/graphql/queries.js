@@ -117,6 +117,7 @@ export const QUERIES = {
             ) {
                id
                status
+               isAddOn
                displayName
                displayImage
                operationConfigId
