@@ -9,11 +9,12 @@ import { CloseIcon } from '../../assets/icons'
 import { logger } from '../../../../shared/utils'
 import { QUERIES, MUTATIONS } from '../../graphql'
 import { useConfig, useOrder } from '../../context'
-import { useAccess } from '../../../../shared/providers'
+import { useAccess, useAuth } from '../../../../shared/providers'
 import { Tooltip, InlineLoader } from '../../../../shared/components'
 import { Wrapper, StyledStat, StyledMode, StyledHeader } from './styled'
 
 export const ProcessProduct = () => {
+   const { user } = useAuth()
    const { isSuperUser } = useAccess()
    const { state: config } = useConfig()
    const { state, switchView } = useOrder()
@@ -32,6 +33,41 @@ export const ProcessProduct = () => {
          variables: { id: state.current_product?.id },
       }
    )
+
+   const print = React.useCallback(async () => {
+      if (isNull(product?.cartItemView?.operationConfig?.labelTemplateId)) {
+         toast.error('No template assigned!')
+         return
+      }
+
+      if (config.print.print_simulation.value.isActive) {
+         const url = `${window._env_.REACT_APP_TEMPLATE_URL}?template={"name":"${product?.cartItemView?.operationConfig?.labelTemplate?.name}","type":"label","format":"html"}&data={"id":${product?.id}}`
+         setLabel(url)
+      } else {
+         const url = `${
+            new URL(window._env_.REACT_APP_DATA_HUB_URI).origin
+         }/datahub/v1/query`
+
+         const data = { id: product?.id, status: 'READY' }
+         await axios.post(
+            url,
+            {
+               type: 'invoke_event_trigger',
+               args: {
+                  name: 'printLabel',
+                  payload: { new: data },
+               },
+            },
+            {
+               headers: {
+                  'Content-Type': 'application/json; charset=utf-8',
+                  'Staff-Id': user.sub,
+                  'Staff-Email': user.email,
+               },
+            }
+         )
+      }
+   }, [product])
 
    if (!state.current_product.id) {
       return (
@@ -55,17 +91,6 @@ export const ProcessProduct = () => {
          </Wrapper>
       )
 
-   const print = () => {
-      if (isNull(product?.cartItemView?.operationConfig?.labelTemplateId)) {
-         toast.error('No template assigned!')
-         return
-      }
-      const url = `${window._env_.REACT_APP_TEMPLATE_URL}?template={"name":"${product?.cartItemView?.operationConfig?.labelTemplate?.name}","type":"label","format":"html"}&data={"id":${product?.id}}`
-
-      if (config.print.print_simulation.value.isActive) {
-         setLabel(url)
-      }
-   }
    const isOrderConfirmed = Boolean(
       product?.cartItemView?.cart?.order?.isAccepted &&
          !product?.cartItemView?.cart?.order?.isRejected

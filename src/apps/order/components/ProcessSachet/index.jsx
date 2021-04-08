@@ -17,6 +17,8 @@ import { QUERIES, MUTATIONS } from '../../graphql'
 import { ScaleIcon } from '../../assets/icons'
 import { logger } from '../../../../shared/utils'
 import { useOrder, useConfig } from '../../context'
+import { useAuth } from '../../../../shared/providers'
+import { StyledIconButton } from '../OrderSummary/styled'
 import {
    Tooltip,
    ErrorState,
@@ -32,9 +34,9 @@ import {
    StyledPackaging,
    StyledSOP,
 } from './styled'
-import { StyledIconButton } from '../OrderSummary/styled'
 
 export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
+   const { user } = useAuth()
    const {
       state: {
          current_view: currentView,
@@ -100,16 +102,7 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
    }, [weight, sachet])
 
    const print = React.useCallback(async () => {
-      await updateCartItem({
-         variables: {
-            id: sachet.id,
-            _set: {
-               status: 'READY',
-            },
-         },
-      })
       if (isNull(sachet?.operationConfig?.labelTemplateId)) return
-
       if (state.print.print_simulation.value.isActive) {
          const template = encodeURIComponent(
             JSON.stringify({
@@ -126,6 +119,29 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
          )
          const url = `${window._env_.REACT_APP_TEMPLATE_URL}?template=${template}&data=${data}`
          setLabelPreview(url)
+      } else {
+         const url = `${
+            new URL(window._env_.REACT_APP_DATA_HUB_URI).origin
+         }/datahub/v1/query`
+
+         const data = { id: sachet.id, status: 'READY' }
+         await axios.post(
+            url,
+            {
+               type: 'invoke_event_trigger',
+               args: {
+                  name: 'printLabel',
+                  payload: { new: data },
+               },
+            },
+            {
+               headers: {
+                  'Content-Type': 'application/json; charset=utf-8',
+                  'Staff-Id': user.sub,
+                  'Staff-Email': user.email,
+               },
+            }
+         )
       }
    }, [sachet])
 
