@@ -1,6 +1,6 @@
 import React from 'react'
 import { Text, Flex } from '@dailykit/ui'
-import { StyleContainer, StyledDiv, StyledHeading } from './styled'
+import { StyleContainer, StyledDiv, StyledHeading, Label } from './styled'
 import { UserIcon, CalendarIcon } from '../../../../shared/assets/icons'
 import { rruleToText } from '../../Utils'
 import { Tooltip } from '../../../../shared/components'
@@ -19,7 +19,7 @@ const SubscriptionCard = ({ planData }) => (
                <Text as="p">
                   {planData?.subscription?.subscriptionItemCount?.plan
                      ?.subscriptionTitle?.title || 'N/A'}{' '}
-                  <UserIcon size="16" />
+                  <UserIcon size="16" />{' '}
                   {planData?.subscription?.subscriptionItemCount?.plan
                      ?.servingSize || '-'}
                </Text>
@@ -36,11 +36,23 @@ const SubscriptionCard = ({ planData }) => (
                   {rruleToText(planData?.subscription?.rrule)}
                </Text>
             </StyledDiv>
-            <StyledDiv>
-               <Text as="p">
-                  Status: {planData.isSubscriber ? 'Active' : 'Inactive'}
-               </Text>
-            </StyledDiv>
+            {Object.keys(planData.pausePeriod).length && (
+               <StyledDiv col>
+                  <Text as="subtitle">Pause Period</Text>
+                  <Text as="p">
+                     {`${planData.pausePeriod.startDate} - ${planData.pausePeriod.endDate}`}
+                  </Text>
+               </StyledDiv>
+            )}
+            {planData.isSubscriptionCancelled && (
+               <StyledDiv col>
+                  <Label>Subscription Cancelled</Label>
+                  <Text as="subtitle">Reason</Text>
+                  <Text as="p">
+                     {planData.subscriptionCancellationReason || '-'}
+                  </Text>
+               </StyledDiv>
+            )}
          </>
       ) : (
          <Text as="p">

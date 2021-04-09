@@ -16,11 +16,17 @@ export const StyledHeading = styled.div`
    justify-content: space-between;
 `
 export const StyledDiv = styled.div`
-   display: flex;
+   display: ${props => (props.col ? 'block' : 'flex')};
    flex-direction: row;
    justify-content: space-between;
    margin-bottom: 4px;
    span {
       font-size: 16px;
    }
+`
+
+export const Label = styled.span`
+   background: #fecaca;
+   color: #ef4444;
+   padding: 2px;
 `

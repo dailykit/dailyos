@@ -242,6 +242,45 @@ const OrderInfo = () => {
                   )}
                   <CardInfo>
                      <Text as="title">
+                        {orderData?.cart?.billingDetails?.itemTotal?.label}
+                     </Text>
+                     <Text as="title">
+                        {currencyFmt(
+                           Number(
+                              orderData?.cart?.billingDetails?.itemTotal
+                                 ?.value || 0
+                           )
+                        )}
+                     </Text>
+                  </CardInfo>
+                  <CardInfo>
+                     <Text as="title">
+                        {orderData?.cart?.billingDetails?.deliveryPrice?.label}
+                     </Text>
+                     <Text as="title">
+                        {currencyFmt(
+                           Number(
+                              orderData?.cart?.billingDetails?.deliveryPrice
+                                 ?.value || 0
+                           )
+                        )}
+                     </Text>
+                  </CardInfo>
+                  <CardInfo>
+                     <Text as="title">
+                        {orderData?.cart?.billingDetails?.discount?.label}
+                     </Text>
+                     <Text as="title">
+                        {currencyFmt(
+                           Number(
+                              orderData?.cart?.billingDetails?.discount
+                                 ?.value || 0
+                           )
+                        )}
+                     </Text>
+                  </CardInfo>
+                  <CardInfo>
+                     <Text as="title">
                         {orderData?.cart?.billingDetails?.totalPrice?.label}
                      </Text>
                      <Text as="title">
@@ -251,12 +290,6 @@ const OrderInfo = () => {
                                  ?.value || 0
                            )
                         )}
-                     </Text>
-                  </CardInfo>
-                  <CardInfo>
-                     <Text as="title">Overall Discount</Text>
-                     <Text as="title">
-                        {currencyFmt(Number(orderData?.discount || 0))}
                      </Text>
                   </CardInfo>
                   <CardInfo>
