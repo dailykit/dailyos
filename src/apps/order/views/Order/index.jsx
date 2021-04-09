@@ -29,7 +29,7 @@ import { QUERIES, MUTATIONS } from '../../graphql'
 import { PrintIcon, UserIcon } from '../../assets/icons'
 import { useConfig, useOrder } from '../../context'
 import { currencyFmt, logger } from '../../../../shared/utils'
-import { useAccess, useTabs } from '../../../../shared/providers'
+import { useAccess, useAuth, useTabs } from '../../../../shared/providers'
 import {
    Tooltip,
    ErrorState,
@@ -44,6 +44,7 @@ const parser = new htmlToReact.Parser(React)
 
 const Order = () => {
    const params = useParams()
+   const { user } = useAuth()
    const { t } = useTranslation()
    const { isSuperUser } = useAccess()
    const { tab, addTab } = useTabs()
@@ -245,7 +246,7 @@ const Order = () => {
                   payload: {
                      new: {
                         id: order.id,
-                        orderStatus: 'ORDER_UNDER_PROCESSING',
+                        status: 'ORDER_UNDER_PROCESSING',
                      },
                   },
                },
@@ -253,8 +254,8 @@ const Order = () => {
             {
                headers: {
                   'Content-Type': 'application/json; charset=utf-8',
-                  'x-hasura-admin-secret':
-                     window._env_.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
+                  'Staff-Id': user?.sub,
+                  'Staff-Email': user?.email,
                },
             }
          )
