@@ -183,6 +183,8 @@ export const ORDER = gql`
             created_at
             cart {
                source
+               itemTotal
+               deliveryPrice
                billingDetails
                walletAmountUsed
                loyaltyPointsUsed
