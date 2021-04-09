@@ -39,6 +39,7 @@ const reducers = (state, { type, payload }) => {
       case 'SELECT_PRODUCT':
          return {
             ...state,
+            current_view: 'PRODUCT',
             current_product: payload,
          }
       case 'SWITCH_VIEW': {
