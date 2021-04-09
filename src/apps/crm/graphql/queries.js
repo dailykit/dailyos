@@ -342,7 +342,7 @@ export const REWARD_DATA = gql`
          id
          rewardValue
          type
-         priority
+         position
       }
    }
 `
