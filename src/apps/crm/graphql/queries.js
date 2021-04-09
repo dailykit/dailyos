@@ -290,6 +290,9 @@ export const SUBSCRIPTION_PLAN = gql`
       brand(id: $brandId) {
          brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
             isSubscriber
+            pausePeriod
+            isSubscriptionCancelled
+            subscriptionCancellationReason
             subscription {
                rrule
                subscriptionItemCount {
