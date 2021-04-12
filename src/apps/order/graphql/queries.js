@@ -122,6 +122,7 @@ export const QUERIES = {
                displayImage
                operationConfigId
                operationConfig {
+                  id
                   labelTemplateId
                   stationId
                }
