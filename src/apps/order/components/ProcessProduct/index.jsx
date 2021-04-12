@@ -154,7 +154,7 @@ export const ProcessProduct = () => {
                   size="sm"
                   type="solid"
                   hasAccess={hasStationAccess()}
-                  dsiabled={product?.cartItemView?.status === 'PACKED'}
+                  disabled={product?.cartItemView?.status === 'PACKED'}
                   onClick={() =>
                      updateCartItem({
                         variables: {
