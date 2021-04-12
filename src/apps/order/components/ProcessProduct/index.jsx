@@ -2,6 +2,7 @@ import React from 'react'
 import { isNull } from 'lodash'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import styled from 'styled-components'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Text, IconButton, Flex, TextButton, Spacer } from '@dailykit/ui'
 
@@ -9,12 +10,11 @@ import { CloseIcon } from '../../assets/icons'
 import { logger } from '../../../../shared/utils'
 import { QUERIES, MUTATIONS } from '../../graphql'
 import { useConfig, useOrder } from '../../context'
-import { useAccess, useAuth } from '../../../../shared/providers'
+import { useAccess } from '../../../../shared/providers'
 import { Tooltip, InlineLoader } from '../../../../shared/components'
 import { Wrapper, StyledStat, StyledMode, StyledHeader } from './styled'
 
 export const ProcessProduct = () => {
-   const { user } = useAuth()
    const { isSuperUser } = useAccess()
    const { state: config } = useConfig()
    const { state, switchView } = useOrder()
@@ -35,7 +35,7 @@ export const ProcessProduct = () => {
    )
 
    const print = React.useCallback(async () => {
-      if (isNull(product?.cartItemView?.operationConfig?.labelTemplateId)) {
+      if (!product?.cartItemView?.operationConfig?.labelTemplateId) {
          toast.error('No template assigned!')
          return
       }
@@ -61,8 +61,8 @@ export const ProcessProduct = () => {
             {
                headers: {
                   'Content-Type': 'application/json; charset=utf-8',
-                  'Staff-Id': user.sub,
-                  'Staff-Email': user.email,
+                  'x-hasura-admin-secret':
+                     window._env_.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
                },
             }
          )
@@ -102,6 +102,7 @@ export const ProcessProduct = () => {
 
       if (isSuperUser) {
          access = true
+         return access
       } else if (
          product?.cartItemView?.operationConfig?.stationId ===
          config.current_station?.id
@@ -125,18 +126,13 @@ export const ProcessProduct = () => {
                <span>Status</span>
                <span>{product.cartItemView?.status}</span>
             </StyledStat>
-            <Flex container alignItems="center">
-               <TextButton size="sm" type="solid" onClick={print}>
-                  Print label
-               </TextButton>
-               <Spacer size="16px" xAxis />
+            <ActionsWrapper container alignItems="center">
                <TextButton
                   size="sm"
                   type="solid"
                   disabled={['READY', 'PACKED'].includes(
                      product?.cartItemView?.status
                   )}
-                  fallBackMessage="Pending order confirmation!"
                   hasAccess={hasStationAccess()}
                   onClick={() =>
                      updateCartItem({
@@ -158,7 +154,7 @@ export const ProcessProduct = () => {
                   size="sm"
                   type="solid"
                   hasAccess={hasStationAccess()}
-                  disabled={product?.cartItemView?.status === 'PACKED'}
+                  dsiabled={product?.cartItemView?.status === 'PACKED'}
                   onClick={() =>
                      updateCartItem({
                         variables: {
@@ -174,7 +170,11 @@ export const ProcessProduct = () => {
                      ? 'Packed'
                      : 'Mark Packed'}
                </TextButton>
-            </Flex>
+            </ActionsWrapper>
+            <Spacer size="16px" />
+            <PrintButton size="sm" type="outline" onClick={print}>
+               Print label
+            </PrintButton>
             <Spacer size="8px" />
             <Flex>
                {label && (
@@ -229,3 +229,14 @@ const ViewSwitcher = ({ view, setView }) => {
       </StyledMode>
    )
 }
+
+const ActionsWrapper = styled(Flex)`
+   display: flex;
+   > button {
+      flex: 1;
+   }
+`
+
+const PrintButton = styled(TextButton)`
+   width: 100%;
+`

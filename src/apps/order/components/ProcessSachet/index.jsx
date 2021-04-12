@@ -2,6 +2,7 @@ import React from 'react'
 import { isEmpty, isNull } from 'lodash'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import styled from 'styled-components'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import {
    Form,
@@ -17,7 +18,6 @@ import { QUERIES, MUTATIONS } from '../../graphql'
 import { ScaleIcon } from '../../assets/icons'
 import { logger } from '../../../../shared/utils'
 import { useOrder, useConfig } from '../../context'
-import { useAuth } from '../../../../shared/providers'
 import { StyledIconButton } from '../OrderSummary/styled'
 import {
    Tooltip,
@@ -36,7 +36,6 @@ import {
 } from './styled'
 
 export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
-   const { user } = useAuth()
    const {
       state: {
          current_view: currentView,
@@ -102,7 +101,10 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
    }, [weight, sachet])
 
    const print = React.useCallback(async () => {
-      if (isNull(sachet?.operationConfig?.labelTemplateId)) return
+      if (!sachet?.operationConfig?.labelTemplateId) {
+         toast.error('No template assigned!')
+         return
+      }
       if (state.print.print_simulation.value.isActive) {
          const template = encodeURIComponent(
             JSON.stringify({
@@ -137,8 +139,8 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
             {
                headers: {
                   'Content-Type': 'application/json; charset=utf-8',
-                  'Staff-Id': user.sub,
-                  'Staff-Email': user.email,
+                  'x-hasura-admin-secret':
+                     window._env_.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
                },
             }
          )
@@ -271,9 +273,6 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
                   <span>
                      <ScaleIcon size={24} color="#fff" />
                   </span>
-                  {!isNull(sachet.operationConfig?.labelTemplateId) && (
-                     <button onClick={() => print()}>Print Label</button>
-                  )}
                </header>
                <h2>
                   {weight}
@@ -414,7 +413,7 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
                <Spacer size="16px" />
             </>
          )}
-         <Flex container alignItems="center">
+         <ActionsWrapper container alignItems="center">
             <TextButton
                size="sm"
                type="solid"
@@ -460,7 +459,26 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
             >
                {sachet.status === 'PACKED' ? 'Packed' : 'Mark Packed'}
             </TextButton>
-         </Flex>
+         </ActionsWrapper>
+         {!isNull(sachet.operationConfig?.labelTemplateId) && (
+            <>
+               <Spacer size="16px" />
+               <PrintButton size="sm" type="outline" onClick={print}>
+                  Print Label
+               </PrintButton>
+            </>
+         )}
       </Wrapper>
    )
 }
+
+const ActionsWrapper = styled(Flex)`
+   display: flex;
+   > button {
+      flex: 1;
+   }
+`
+
+const PrintButton = styled(TextButton)`
+   width: 100%;
+`
