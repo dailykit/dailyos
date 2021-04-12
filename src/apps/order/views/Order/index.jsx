@@ -254,8 +254,8 @@ const Order = () => {
             {
                headers: {
                   'Content-Type': 'application/json; charset=utf-8',
-                  'Staff-Id': user?.sub,
-                  'Staff-Email': user?.email,
+                  'x-hasura-admin-secret':
+                     window._env_.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
                },
             }
          )
@@ -330,6 +330,7 @@ const Order = () => {
       return <ErrorState message="Failed to fetch order details!" />
    }
    const types = groupBy(products, 'productOptionType')
+   console.log('🚀 ~ file: index.jsx ~ line 333 ~ Order ~ types', types)
    return (
       <Flex>
          <Spacer size="16px" />
@@ -572,7 +573,7 @@ const Order = () => {
                <HorizontalTabList style={{ padding: '0 16px' }}>
                   {Object.keys(types).map(key => (
                      <HorizontalTab key={key}>
-                        {key}
+                        {key === 'null' ? 'Others' : key}
                         <span> ({types[key].length})</span>
                      </HorizontalTab>
                   ))}
