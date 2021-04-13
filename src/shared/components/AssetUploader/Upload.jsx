@@ -1,113 +1,123 @@
 import React from 'react'
-import styled, { css } from 'styled-components'
-import { Input, TextButton, IconButton, Spacer, Text } from '@dailykit/ui'
+import styled from 'styled-components'
+import { TextButton, IconButton, Spacer, Text } from '@dailykit/ui'
 
 import useAssets from './useAssets'
+import { toast } from 'react-toastify'
 
 const Upload = ({ onAssetUpload }) => {
    const { upload } = useAssets()
    const inputRef = React.useRef(null)
-   const [file, setFile] = React.useState({
-      title: '',
-      preview: null,
-      raw: null,
-      description: '',
-   })
+   const [files, setFiles] = React.useState([])
+   const [uploading, setUploading] = React.useState(false)
 
    const handleChange = e => {
-      setFile({
-         ...file,
-         raw: e.target.files[0],
-         preview: URL.createObjectURL(e.target.files[0]),
-      })
+      const nodes = Array.from(e.target.files).map(file => file)
+      if (!Array.isArray(nodes) && nodes.length === 0) return
+
+      const files = nodes.map(file => ({
+         raw: file,
+         preview: URL.createObjectURL(file),
+      }))
+      setFiles(existing => [...existing, ...files])
    }
 
    const clearSelected = () => {
-      setFile({ preview: null, raw: null, title: '', description: '' })
-      inputRef.current.value = null
+      setFiles([])
+      if (inputRef.current?.value) {
+         inputRef.current.value = null
+      }
    }
 
    const handleSubmit = async () => {
-      const data = await upload({
-         clearSelected,
-         file: file.raw,
-         title: file.title,
-         description: file.description,
-      })
-      onAssetUpload(data)
+      try {
+         setUploading(true)
+         const list = await upload({ files })
+         if (Array.isArray(list) && list.length === 1) {
+            const [file] = list
+            onAssetUpload({ url: file.Location })
+         }
+         setUploading(false)
+         clearSelected()
+         toast.success('Successfully uploaded the image/s.')
+      } catch (error) {
+         setUploading(false)
+         toast.error('Failed to upload image/s, please try again.')
+      }
    }
 
-   const handleMetaChange = e => {
-      const { name, value } = e.target
-
-      setFile({
-         ...file,
-         [name]: value,
-      })
+   const removeSelection = index => {
+      setFiles(existing => [...existing.filter((_, i) => i !== index)])
    }
 
    return (
       <div>
-         <Text as="title">Title</Text>
-         <Input
-            label=""
-            type="text"
-            name="title"
-            value={file.title}
-            placeholder="Enter the image title"
-            onChange={e => handleMetaChange(e)}
-         />
-         <Spacer size="24px" />
-         <Text as="title">Description</Text>
-         <Input
-            row={5}
-            label=""
-            type="textarea"
-            name="description"
-            value={file.description}
-            onChange={e => handleMetaChange(e)}
-            placeholder="Enter the image description"
-         />
-         <Spacer size="24px" />
          <FileInput
+            multiple
             type="file"
-            ref={inputRef}
             name="file"
+            ref={inputRef}
             onChange={handleChange}
          />
          <Spacer size="16px" />
-         <TextButton type="solid" onClick={() => handleSubmit()}>
+         <TextButton
+            type="solid"
+            isLoading={uploading}
+            onClick={() => handleSubmit()}
+         >
             Upload
          </TextButton>
          <Spacer size="24px" />
-         <Text as="title">Selected Images</Text>
-         <Spacer size="8px" />
-         {file.preview ? (
-            <StyledSection>
-               {file.raw.type && (
-                  <StyledImage src={file.preview} alt={file.raw.name} />
+         {!uploading && (
+            <>
+               <Text as="title">Selected Images</Text>
+               <Spacer size="8px" />
+               {files.length > 0 ? (
+                  <StyledImages>
+                     {files.map((file, index) => {
+                        if (!file.preview) return null
+
+                        return (
+                           <StyledImage key={index}>
+                              {file.raw.type && (
+                                 <StyledThumb
+                                    src={file.preview}
+                                    alt={file.raw.name}
+                                 />
+                              )}
+                              <span>
+                                 <IconButton
+                                    size="sm"
+                                    type="solid"
+                                    onClick={() => removeSelection(index)}
+                                 >
+                                    <Trash />
+                                 </IconButton>
+                              </span>
+                              <Spacer size="4px" />
+                              <Text as="p">{file.raw.name}</Text>
+                           </StyledImage>
+                        )
+                     })}
+                  </StyledImages>
+               ) : (
+                  <span>No images selected!</span>
                )}
-               <span>
-                  <IconButton
-                     size="sm"
-                     type="solid"
-                     onClick={() => clearSelected()}
-                  >
-                     <Trash />
-                  </IconButton>
-               </span>
-               <Spacer size="4px" />
-               <Text as="p">{file.raw.name}</Text>
-            </StyledSection>
-         ) : (
-            <span>No images selected!</span>
+            </>
          )}
       </div>
    )
 }
 
-const StyledSection = styled.section`
+const StyledImages = styled.ul`
+   display: grid;
+   grid-gap: 24px;
+   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+`
+
+const StyledImage = styled.li`
    width: 120px;
+   list-style: none;
    position: relative;
    span {
       position: absolute;
@@ -123,8 +133,9 @@ const FileInput = styled.input`
    border: 1px solid #e3e3e3;
 `
 
-const StyledImage = styled.img`
+const StyledThumb = styled.img`
    height: 120px;
+   width: 120px;
    object-fit: cover;
    border-radius: 8px;
    border: 1px solid #e3e3e3;
