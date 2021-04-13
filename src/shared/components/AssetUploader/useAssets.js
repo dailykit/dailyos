@@ -32,29 +32,20 @@ const useAssets = type => {
       })()
    }, [type])
 
-   const upload = async ({ title, description, file, clearSelected }) => {
+   const upload = async ({ files }) => {
       const formData = new FormData()
-      formData.append('file', file)
-      formData.append(
-         'metadata',
-         JSON.stringify({
-            ...(title && { title }),
-            ...(description && { description }),
-         })
-      )
+      files.forEach(({ raw }, index) => {
+         formData.append(index, raw)
+      })
       const { data } = await axios.post(url, formData, {
          headers: {
             'Content-Type': 'multipart/form-data',
          },
       })
-      if (Object.keys(data).length > 0 && data.constructor === Object) {
-         clearSelected()
-         return {
-            url: data.Location,
-            ...(title && { title }),
-            ...(description && { description }),
-         }
+      if (Array.isArray(data) && data.length > 0) {
+         return data
       }
+      return []
    }
 
    const remove = async key => {

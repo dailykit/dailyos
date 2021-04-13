@@ -23,11 +23,11 @@ const Images = ({ onImageSelect }) => {
             {images.map(image => (
                <StyledListItem
                   key={image.key}
-                  title={image.metadata.title}
+                  title={image.name}
                   onClick={() => onImageSelect(image)}
                   isHidden={!image.url.toLowerCase().includes(keyword)}
                >
-                  <StyledImage src={image.url} alt={image.metadata.title} />
+                  <StyledImage src={image.url} alt={image.name} />
                   <span>
                      <IconButton
                         size="sm"
