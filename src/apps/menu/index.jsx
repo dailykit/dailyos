@@ -5,7 +5,7 @@ import { AccessProvider, TooltipProvider } from '../../shared/providers'
 
 const OnlineStore = () => (
    <TooltipProvider app="Menu App">
-      <AccessProvider app="Menu App">
+      <AccessProvider app="Menu">
          <App />
       </AccessProvider>
    </TooltipProvider>

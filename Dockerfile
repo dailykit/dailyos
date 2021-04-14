@@ -10,7 +10,7 @@ ENV PATH /app/node_modules/.bin:$PATH
 ENV SKIP_PREFLIGHT_CHECK true
 ENV PUBLIC_URL /apps
 ENV REACT_APP_ROOT_FOLDER ./templates
-
+ENV NODE_ENV development
 RUN yarn build
 
 # => Run container

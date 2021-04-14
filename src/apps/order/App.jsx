@@ -16,6 +16,9 @@ import {
    ProcessSachet,
    DeliveryConfig,
    Notifications,
+   ManagePayment,
+   RetryPayment,
+   ProcessProduct,
 } from './components'
 
 import { useTabs } from '../../shared/providers'
@@ -35,6 +38,7 @@ const App = () => {
    const [filterTunnels, openFilterTunnel, closeFilterTunnel] = useTunnel(1)
    const [configTunnels, openConfigTunnel, closeConfigTunnel] = useTunnel(1)
    const [notifTunnels, openNotifTunnel, closeNotifTunnel] = useTunnel(1)
+   const [paymentTunnels, openPaymentTunnel, closePaymentTunnel] = useTunnel(2)
    const [position, setPosition] = React.useState('left')
 
    React.useEffect(() => {
@@ -90,6 +94,12 @@ const App = () => {
    }, [state.delivery_config])
 
    React.useEffect(() => {
+      if (state.cart?.id) {
+         openPaymentTunnel(1)
+      }
+   }, [state.cart.id])
+
+   React.useEffect(() => {
       if (configState.tunnel.visible) {
          openConfigTunnel(1)
       } else {
@@ -110,6 +120,7 @@ const App = () => {
          <ErrorBoundary rootRoute="/apps/order">
             {state.current_view === 'SUMMARY' && <OrderSummary />}
             {state.current_view === 'SACHET_ITEM' && <ProcessSachet />}
+            {state.current_view === 'PRODUCT' && <ProcessProduct />}
          </ErrorBoundary>
          <Main />
          <Footer openTunnel={openNotifTunnel} setPosition={setPosition} />
@@ -131,31 +142,34 @@ const App = () => {
                   </OrderSummaryTunnel>
                </StyledTunnel>
             </Tunnels>
-         </ErrorBoundary>
-         <ErrorBoundary rootRoute="/apps/order">
             <Notifications
                tunnels={notifTunnels}
                closeTunnel={closeNotifTunnel}
             />
-         </ErrorBoundary>
-         <ErrorBoundary rootRoute="/apps/order">
             <Tunnels tunnels={tunnels}>
                <Tunnel layer="1" size="md">
                   <DeliveryConfig closeTunnel={closeTunnel} />
                </Tunnel>
             </Tunnels>
-         </ErrorBoundary>
-         <ErrorBoundary rootRoute="/apps/order">
             <Tunnels tunnels={filterTunnels}>
                <Tunnel layer="1" size="sm">
                   <FilterTunnel />
                </Tunnel>
             </Tunnels>
-         </ErrorBoundary>
-         <ErrorBoundary rootRoute="/apps/order">
             <Tunnels tunnels={configTunnels}>
                <Tunnel layer="1" size="full">
                   <ConfigTunnel />
+               </Tunnel>
+            </Tunnels>
+            <Tunnels tunnels={paymentTunnels}>
+               <Tunnel layer="1" size="md">
+                  <ManagePayment
+                     openTunnel={openPaymentTunnel}
+                     closeTunnel={closePaymentTunnel}
+                  />
+               </Tunnel>
+               <Tunnel layer="2" size="md">
+                  <RetryPayment closeTunnel={closePaymentTunnel} />
                </Tunnel>
             </Tunnels>
          </ErrorBoundary>

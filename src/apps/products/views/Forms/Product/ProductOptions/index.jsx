@@ -122,20 +122,21 @@ const ProductOptions = ({ productId, options }) => {
    }
 
    const handleAddModifier = optionId => {
+      console.log(
+         '🚀 ~ file: index.jsx ~ line 125 ~ ProductOptions ~ optionId',
+         optionId
+      )
       modifiersDispatch({
-         type: 'META',
-         payload: {
-            name: 'optionId',
-            value: optionId,
-         },
+         type: 'OPTION_ID',
+         payload: optionId,
       })
       openModifiersTunnel(1)
    }
 
    const handleEditModifier = modifier => {
       modifiersDispatch({
-         type: 'POPULATE',
-         payload: { modifier },
+         type: 'MODIFIER_ID',
+         payload: modifier.id,
       })
       openModifiersTunnel(2)
    }

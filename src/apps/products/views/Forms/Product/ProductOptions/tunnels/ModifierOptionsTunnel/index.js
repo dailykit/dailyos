@@ -1,5 +1,5 @@
 import React from 'react'
-import { useLazyQuery } from '@apollo/react-hooks'
+import { useLazyQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Filler,
    List,
@@ -18,188 +18,88 @@ import {
 import { logger } from '../../../../../../../../shared/utils'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
 import {
-   BULK_ITEMS,
-   INVENTORY_PRODUCT_OPTIONS,
-   PRODUCT_OPTION,
-   SACHET_ITEMS,
-   SIMPLE_RECIPE_PRODUCT_OPTIONS,
-   SUPPLIER_ITEMS,
+   S_SACHETS,
+   S_SACHET_ITEMS,
+   MODIFIER_OPTION,
+   S_SIMPLE_RECIPE_YIELDS,
 } from '../../../../../../graphql'
 import { TunnelBody } from '../../../tunnels/styled'
 
 const ModifierOptionsTunnel = ({ close }) => {
-   const { modifiersState, modifiersDispatch } = React.useContext(
-      ModifiersContext
-   )
+   const {
+      modifiersState: { optionType, categoryId },
+   } = React.useContext(ModifiersContext)
    const [search, setSearch] = React.useState('')
    const [options, setOptions] = React.useState([])
    const [list, current, selectOption] = useSingleList(options)
 
-   // Queries
-   // TODO: switch queries with subscription
-   const [productsOptions, { loading: productsLoading }] = useLazyQuery(
-      PRODUCT_OPTION.LIST_QUERY,
-      {
-         variables: {
-            where: {
-               isArchived: { _eq: false },
-            },
-         },
-         onCompleted: data => {
-            const updatedOptions = data.productOptions.map(item => ({
-               ...item,
-               title: `${item.product.name} - ${item.label}`,
-            }))
-            setOptions([...updatedOptions])
-         },
-         onError: error => {
-            toast.error('Failed to fetch Product Options!')
-            logger(error)
-         },
-         fetchPolicy: 'cache-and-network',
-      }
-   )
-
-   const [sachetItems, { loading: sachetItemsLoading }] = useLazyQuery(
-      SACHET_ITEMS,
-      {
-         onCompleted: data => {
-            const updatedOptions = data.sachetItems.map(item => ({
+   // Subscription
+   const { loading: sachetItemsLoading } = useSubscription(S_SACHET_ITEMS, {
+      skip: optionType !== 'sachetItem',
+      onSubscriptionData: data => {
+         const updatedOptions = data.subscriptionData.data.sachetItems.map(
+            item => ({
                ...item,
                title: `${item.bulkItem.supplierItem.name} - ${item.bulkItem.processingName}`,
                unit: `${item.unitSize} ${item.unit}`,
-            }))
-            setOptions([...updatedOptions])
-         },
-         onError: error => {
-            toast.error('Failed to fetch Sachet Items!')
-            logger(error)
-         },
-         fetchPolicy: 'cache-and-network',
-      }
-   )
-
-   const [bulkItems, { loading: bulkItemsLoading }] = useLazyQuery(BULK_ITEMS, {
-      onCompleted: data => {
-         const updatedOptions = data.bulkItems.map(item => ({
-            ...item,
-            title: `${item.supplierItem.name} - ${item.processingName}`,
-         }))
+            })
+         )
          setOptions([...updatedOptions])
       },
-      onError: error => {
-         toast.error('Failed to fetch Bulk Items!')
-         logger(error)
+   })
+   const { loading: sachetsLoading } = useSubscription(S_SACHETS, {
+      skip: optionType !== 'ingredientSachet',
+      variables: {
+         where: {
+            isArchived: { _eq: false },
+         },
       },
-      fetchPolicy: 'cache-and-network',
+      onSubscriptionData: data => {
+         const updatedOptions = data.subscriptionData.data.ingredientSachets.map(
+            item => ({
+               ...item,
+               title: `${item.quantity + item.unit} - ${item.ingredient.name}`,
+            })
+         )
+         setOptions([...updatedOptions])
+      },
+   })
+   const { loading: yieldsLoading } = useSubscription(S_SIMPLE_RECIPE_YIELDS, {
+      skip: optionType !== 'simpleRecipeYield',
+      onSubscriptionData: data => {
+         const updatedOptions = data.subscriptionData.data.simpleRecipeYields.map(
+            item => ({
+               ...item,
+               title: `${item.simpleRecipe.name} - ${item.yield.serving} servings`,
+            })
+         )
+         setOptions([...updatedOptions])
+      },
    })
 
-   const [supplierItems, { loading: supplierItemsLoading }] = useLazyQuery(
-      SUPPLIER_ITEMS,
-      {
-         onCompleted: data => {
-            const updatedOptions = data.supplierItems.map(item => ({
-               ...item,
-               unit: `${item.unitSize} ${item.unit}`,
-            }))
-            setOptions([...updatedOptions])
-         },
-         onError: error => {
-            toast.error('Failed to fetch Supplier Items!')
-            logger(error)
-         },
-         fetchPolicy: 'cache-and-network',
-      }
-   )
-
-   React.useEffect(() => {
-      if (modifiersState.meta.modifierProductType === 'simpleProductOption') {
-         productsOptions()
-      } else if (modifiersState.meta.modifierProductType === 'sachetItem') {
-         sachetItems()
-      } else if (modifiersState.meta.modifierProductType === 'bulkItem') {
-         bulkItems()
-      } else {
-         supplierItems()
-      }
-   }, [])
+   const [createOption] = useMutation(MODIFIER_OPTION.CREATE, {
+      onCompleted: () => toast.success('Option created!'),
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
 
    const select = option => {
-      console.log(option)
       selectOption('id', option.id)
       const object = {
-         productId: option.id,
-         productType: modifiersState.meta.modifierProductType,
-         name: {
-            value: option.title,
-            meta: { isValid: true, isTouched: false, errors: [] },
-         },
+         modifierCategoryId: categoryId,
+         name: option.title,
          originalName: option.title,
-         image: {
-            value: option.Product?.assets?.images[0] || '',
-         },
-         isActive: { value: true },
-         isVisible: { value: true },
-         productQuantity: {
-            value: 1,
-            meta: { isValid: true, isTouched: false, errors: [] },
-         },
-         discount: {
-            value: 10,
-            meta: { isValid: true, isTouched: false, errors: [] },
-         },
-         isAlwaysCharged: { value: false },
-         unit: option.unit || null,
-         operationConfig: { value: null },
+         sachetItemId: optionType === 'sachetItem' ? option.id : null,
+         ingredientSachetId:
+            optionType === 'ingredientSachet' ? option.id : null,
+         simpleRecipeYieldId:
+            optionType === 'simpleRecipeYield' ? option.id : null,
       }
-      switch (modifiersState.meta.modifierProductType) {
-         case 'simpleProductOption':
-            object.price = {
-               value: option.price,
-               meta: { isValid: true, isTouched: false, errors: [] },
-            }
-            break
-         case 'sachetItem':
-            object.price = {
-               value:
-                  option.bulkItem?.supplierItem?.prices[0]?.unitPrice?.value,
-               meta: { isValid: true, isTouched: false, errors: [] },
-            }
-            break
-         case 'bulkItem':
-            object.price = {
-               value: option?.supplierItem?.prices[0]?.unitPrice?.value,
-               meta: {
-                  isValid: true,
-                  isTouched: false,
-                  errors: [],
-               },
-            }
-            break
-         case 'supplierItem':
-            object.price = {
-               value: option?.prices[0]?.unitPrice?.value,
-               meta: {
-                  isValid: true,
-                  isTouched: false,
-                  errors: [],
-               },
-            }
-            break
-         default:
-            object.price = {
-               value: 1,
-               meta: {
-                  isValid: true,
-                  isTouched: false,
-                  errors: [],
-               },
-            }
-      }
-      modifiersDispatch({
-         type: 'ADD_CATEGORY_OPTION',
-         payload: {
-            option: object,
+      createOption({
+         variables: {
+            object,
          },
       })
       close(4)
@@ -214,12 +114,9 @@ const ModifierOptionsTunnel = ({ close }) => {
             tooltip={<Tooltip identifier="modifiers_options_tunnel" />}
          />
          <TunnelBody>
-            {[
-               productsLoading,
-               sachetItemsLoading,
-               bulkItemsLoading,
-               supplierItemsLoading,
-            ].some(loading => loading) ? (
+            {[sachetItemsLoading, sachetsLoading, yieldsLoading].some(
+               loading => loading
+            ) ? (
                <InlineLoader />
             ) : (
                <>

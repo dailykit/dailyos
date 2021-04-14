@@ -1,6 +1,37 @@
 import gql from 'graphql-tag'
 
 export const QUERIES = {
+   CART: {
+      ONE: gql`
+         subscription cart($id: Int!) {
+            cart(id: $id) {
+               id
+               status
+               totalPrice
+               paymentStatus
+               stripeInvoiceId
+               stripeCustomerId
+               transactionId
+               customerKeycloakId
+               transactionRemarkHistory: paymentHistories(
+                  where: { type: { _eq: "PAYMENT_INTENT" } }
+                  order_by: { created_at: desc }
+               ) {
+                  id
+                  details: transactionRemark
+               }
+               stripeInvoiceDetails
+               stripeInvoiceHistory: paymentHistories(
+                  where: { type: { _eq: "INVOICE" } }
+                  order_by: { created_at: desc }
+               ) {
+                  id
+                  details: stripeInvoiceDetails
+               }
+            }
+         }
+      `,
+   },
    ORDER: {
       SOURCE: gql`
          query orderSource($orderId: oid!) {
@@ -86,10 +117,12 @@ export const QUERIES = {
             ) {
                id
                status
+               isAddOn
                displayName
                displayImage
                operationConfigId
                operationConfig {
+                  id
                   labelTemplateId
                   stationId
                }
@@ -129,6 +162,63 @@ export const QUERIES = {
          subscription orderStatuses {
             order_orderStatusEnum(order_by: { index: asc }) {
                value
+            }
+         }
+      `,
+      PRODUCT: gql`
+         subscription product($id: Int!) {
+            product: cartItem(id: $id) {
+               id
+               cartItemView {
+                  id
+                  cart {
+                     id
+                     order {
+                        id
+                        isAccepted
+                        isRejected
+                     }
+                  }
+                  position
+                  stationId
+                  isModifier
+                  status
+                  displayName
+                  displayUnit
+                  processingName
+                  displayBulkDensity
+                  displayUnitQuantity
+                  supplierItemId
+                  supplierItem {
+                     id
+                     supplierItemName
+                     supplierId
+                     supplier {
+                        id
+                        name
+                     }
+                  }
+                  operationConfigId
+                  operationConfig {
+                     id
+                     stationId
+                     station {
+                        id
+                        name
+                     }
+                     labelTemplateId
+                     labelTemplate {
+                        id
+                        name
+                     }
+                     packagingId
+                     packaging {
+                        id
+                        name
+                        assets
+                     }
+                  }
+               }
             }
          }
       `,
@@ -227,6 +317,7 @@ export const QUERIES = {
                   isTest
                   source
                   address
+                  paymentId
                   transactionId
                   paymentStatus
                   fulfillmentInfo
@@ -878,3 +969,23 @@ export const QUERIES2 = {
       }
    `,
 }
+
+export const CUSTOMER_PAYMENT_METHODS = gql`
+   query customer($keycloakId: String!) {
+      customer(keycloakId: $keycloakId) {
+         id
+         platform_customer {
+            payment_methods: stripePaymentMethods {
+               brand
+               last4
+               funding
+               expYear
+               expMonth
+               country
+               name: cardHolderName
+               id: stripePaymentMethodId
+            }
+         }
+      }
+   }
+`

@@ -96,7 +96,7 @@ export const SUBSCRIPTION_OCCURENCES = gql`
 `
 
 export const SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
-   query productOptions($type: String_comparison_exp!) {
+   subscription productOptions($type: String_comparison_exp!) {
       productOptions: productOptionsAggregate(
          where: {
             type: $type
@@ -114,8 +114,10 @@ export const SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
             label
             quantity
             recipeYield: simpleRecipeYield {
+               id
                size: yield(path: "serving")
                recipe: simpleRecipe {
+                  id
                   cuisine
                   cookingTime
                   author
@@ -319,7 +321,7 @@ export const SUBSCRIPTION = gql`
 `
 
 export const INVENTORY_PRODUCT_OPTIONS = gql`
-   query productOptions($type: String_comparison_exp!) {
+   subscription productOptions($type: String_comparison_exp!) {
       productOptions: productOptionsAggregate(
          where: {
             product: { isArchived: { _eq: false }, isPublished: { _eq: true } }

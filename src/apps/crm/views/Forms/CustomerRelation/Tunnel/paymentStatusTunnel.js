@@ -40,13 +40,13 @@ const PaymentStatus = ({ tunnels, closeTunnel }) => {
                <StyledDiv>
                   <Text as="h2">
                      {`Transaction Id: ${
-                        statusData[0]?.transactionId || 'N/A'
+                        statusData[0]?.cart?.transactionId || 'N/A'
                      }`}
                   </Text>
                </StyledDiv>
                <StyledDiv>
                   <Text as="h2">
-                     {`Status: ${statusData[0]?.paymentStatus || 'N/A'}`}
+                     {`Status: ${statusData[0]?.cart?.paymentStatus || 'N/A'}`}
                   </Text>
                </StyledDiv>
             </TunnelHeaderContainer>

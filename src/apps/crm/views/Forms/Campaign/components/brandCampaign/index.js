@@ -121,7 +121,7 @@ const ToggleCampaign = ({ cell, campaignId, onChange }) => {
    return (
       <Form.Group>
          <Form.Toggle
-            name="brand_campaign_active"
+            name={`brand_campaign_active-${brand.current.id}`}
             onChange={toggleHandler}
             value={active}
          />

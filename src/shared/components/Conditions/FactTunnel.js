@@ -18,7 +18,10 @@ const FactTunnel = ({ closeTunnel }) => {
    const DATA_QUERY = React.useRef('')
 
    const [valueData, setValueData] = React.useState([])
-   const [duration, setDuration] = React.useState({ typed: '', selected: '' })
+   const [duration, setDuration] = React.useState({
+      typed: '',
+      selected: 'year',
+   })
 
    const { addFact } = useConditions()
 

@@ -5,6 +5,7 @@ import '@dailykit/react-tabulator/lib/styles.css'
 import './views/tableStyle.css'
 
 import Main from './sections/Main'
+import Sidebar from './sections/Sidebar'
 import BrandContext from './context/Brand'
 import { useTabs } from '../../shared/providers'
 import { ErrorBoundary } from '../../shared/components'
@@ -40,6 +41,7 @@ const App = () => {
    return (
       <ErrorBoundary rootRoute="/apps/crm">
          <BrandContext.Provider value={[context, setContext]}>
+            <Sidebar />
             <Main />
          </BrandContext.Provider>
       </ErrorBoundary>

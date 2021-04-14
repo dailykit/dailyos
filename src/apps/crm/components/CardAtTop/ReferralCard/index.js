@@ -15,7 +15,7 @@ const StyleCard = ({ active, heading, click, referralCount, signUpCount }) => {
             className="cardContent"
          >
             <Flex container flexDirection="column">
-               <Text as="p">Referrals Sent</Text>
+               <Text as="p">Customers Referred</Text>
                <Text as="p">{referralCount}</Text>
             </Flex>
             <Flex container flexDirection="column">

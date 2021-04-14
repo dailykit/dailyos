@@ -77,13 +77,17 @@ export const ORDERS_LISTING = gql`
                orders {
                   id
                   itemTotal
-                  products: deliveryInfo(path: "orderInfo.products")
                   discount
                   discount
                   amountPaid
                   created_at
-                  channel: orderCart {
-                     cartSource
+                  cart {
+                     source
+                     walletAmountUsed
+                     loyaltyPointsUsed
+                     cartItemViews(where: { levelType: { _eq: "orderItem" } }) {
+                        displayName
+                     }
                   }
                }
                orders_aggregate {
@@ -99,91 +103,70 @@ export const ORDERS_LISTING = gql`
 
 export const REFERRAL_LISTING = gql`
    query REFERRAL_LISTING($keycloakId: String!, $brandId: Int!) {
-      brand(id: $brandId) {
-         brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
-            customer {
-               customerReferralDetails {
-                  customerReferrals_aggregate {
-                     aggregate {
-                        count
-                     }
-                     nodes {
-                        keycloakId
-                        customer {
-                           platform_customer {
-                              firstName
-                              lastName
-                              phoneNumber
-                              email
-                           }
-                        }
-                        referralStatus
-                     }
-                  }
-               }
+      customerReferrals(
+         where: {
+            customerReferrer: { keycloakId: { _eq: $keycloakId } }
+            brandId: { _eq: $brandId }
+         }
+      ) {
+         customer {
+            platform_customer {
+               firstName
+               lastName
+               phoneNumber
+               email
             }
          }
+         referralStatus
       }
    }
 `
 
 export const WALLET_LISTING = gql`
-   query WALLET_LISTING($keycloakId: String!, $brandId: Int!) {
-      brand(id: $brandId) {
-         brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
-            customer {
-               wallet {
-                  amount
-                  walletTransactions_aggregate {
-                     aggregate {
-                        count
-                     }
-                     nodes {
-                        created_at
-                        id
-                        orderCart {
-                           orderId
-                        }
-                        type
-                        amount
-                        wallet {
-                           balanceAmount: amount
-                        }
-                     }
-                  }
-               }
+   subscription WALLET_LISTING($keycloakId: String!, $brandId: Int!) {
+      walletTransactions(
+         where: {
+            wallet: {
+               keycloakId: { _eq: $keycloakId }
+               brandId: { _eq: $brandId }
             }
+         }
+         order_by: { created_at: desc }
+      ) {
+         created_at
+         id
+         orderCart {
+            orderId
+         }
+         type
+         amount
+         wallet {
+            amount
          }
       }
    }
 `
 
 export const LOYALTYPOINTS_LISTING = gql`
-   query LOYALTYPOINTS_LISTING($keycloakId: String!, $brandId: Int!) {
-      brand(id: $brandId) {
-         brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
-            customer {
-               loyaltyPoint {
-                  points
-                  loyaltyPointTransactions_aggregate {
-                     aggregate {
-                        count
-                     }
-                     nodes {
-                        created_at
-                        id
-                        type
-                        points
-                        orderCart {
-                           orderId
-                        }
-                        loyaltyPoint {
-                           balanceAmount: points
-                        }
-                     }
-                  }
-               }
+   subscription LOYALTYPOINTS_LISTING($keycloakId: String!, $brandId: Int!) {
+      loyaltyPointsTransactions(
+         where: {
+            loyaltyPoint: {
+               keycloakId: { _eq: $keycloakId }
+               brandId: { _eq: $brandId }
             }
+         }
+         order_by: { created_at: desc }
+      ) {
+         created_at
+         id
+         type
+         points
+         cart {
+            orderId
+         }
+         loyaltyPoint {
+            balanceAmount: points
          }
       }
    }
@@ -196,15 +179,28 @@ export const ORDER = gql`
             id
             itemTotal
             discount
-            channel: orderCart {
-               cartSource
-            }
             amountPaid
             created_at
-            orderCart {
-               cartInfo
+            cart {
+               source
+               itemTotal
+               deliveryPrice
+               billingDetails
+               walletAmountUsed
+               loyaltyPointsUsed
+               cartItemViews(where: { level: { _eq: 1 } }) {
+                  id
+                  displayName
+                  displayImage
+                  unitPrice
+                  childs {
+                     displayName
+                     displayImage
+                     unitPrice
+                  }
+               }
                paymentMethodId
-               paymentCard {
+               paymentCart {
                   brand
                   last4
                   expMonth
@@ -255,10 +251,10 @@ export const STATUS = gql`
       brand(id: $brandId) {
          brand_Orders(where: { id: { _eq: $oid } }) {
             id
-            orderStatus
-            transactionId
-            paymentStatus
-            orderCart {
+            cart {
+               status
+               transactionId
+               paymentStatus
                transactionRemark
             }
          }
@@ -273,7 +269,7 @@ export const SUBSCRIPTION = gql`
             customer {
                subscriptionId
                ordered: subscriptionOccurences_aggregate(
-                  where: { orderCart: { orderId: { _is_null: false } } }
+                  where: { cart: { orderId: { _is_null: false } } }
                ) {
                   aggregate {
                      count
@@ -295,16 +291,18 @@ export const SUBSCRIPTION_PLAN = gql`
    query SUBSCRIPTION_PLAN($keycloakId: String!, $brandId: Int!) {
       brand(id: $brandId) {
          brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
-            customer {
-               isSubscriber
-               subscription {
-                  rrule
-                  subscriptionItemCount {
-                     count
-                     plan: subscriptionServing {
-                        subscriptionTitle {
-                           title
-                        }
+            isSubscriber
+            pausePeriod
+            isSubscriptionCancelled
+            subscriptionCancellationReason
+            subscription {
+               rrule
+               subscriptionItemCount {
+                  count
+                  plan: subscriptionServing {
+                     servingSize
+                     subscriptionTitle {
+                        title
                      }
                   }
                }
@@ -330,7 +328,7 @@ export const OCCURENCES = gql`
             cutoffTimeStamp
             customers(where: { keycloakId: { _eq: $keycloakId } }) {
                isSkipped
-               orderCart {
+               cart {
                   orderId
                   id
                   amount
@@ -349,7 +347,7 @@ export const REWARD_DATA = gql`
          id
          rewardValue
          type
-         priority
+         position
       }
    }
 `

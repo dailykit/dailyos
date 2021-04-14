@@ -7,7 +7,7 @@
       "@ant-design/icons": "4.0.0",
       "@apollo/react-hooks": "3.1.5",
       "@dailykit/react-tabulator": "0.13.6",
-      "@dailykit/ui": "0.8.22",
+      "@dailykit/ui": "^0.8.26",
       "@monaco-editor/react": "^4.0.11",
       "@reach/tabs": "0.11.2",
       "@react-google-maps/api": "1.9.7",
@@ -67,7 +67,8 @@
       "uuid": "8.1.0"
    },
    "scripts": {
-      "start": "SET SKIP_PREFLIGHT_CHECK=true&&react-scripts start && chmod +x ./env.sh && ./env.sh && cp env-config.js ./public",
+      "start": "SET SKIP_PREFLIGHT_CHECK=true&&react-scripts start",
+      "init:config": "chmod +x ./env.sh && ./env.sh && cp env-config.js ./public",
       "build": "react-scripts build",
       "test": "react-scripts test",
       "eject": "react-scripts eject",

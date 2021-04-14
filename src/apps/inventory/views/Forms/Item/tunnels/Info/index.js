@@ -86,7 +86,7 @@ export default function InfoTunnel({ close, formState }) {
    const isObjectValid = () => {
       if (!itemName.value || !itemName.meta.isValid) return 'invalid item name'
       if (!sku.value || !sku.meta.isValid) return 'invalid sku'
-      if (!unitSize.value || unitSize.value === ' ')
+      if (!unitSize.value || !unitSize.meta.isValid)
          return 'invalid unit quantity'
       if (!unit.value) return 'unit is required'
       if (!unitPrice.value || !unitPrice.meta.isValid)

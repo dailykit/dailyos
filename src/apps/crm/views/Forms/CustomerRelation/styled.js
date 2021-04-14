@@ -12,7 +12,7 @@ export const StyledContainer = styled.div`
 export const StyledTable = styled.div`
    padding: 16px;
    background: #ffffff;
-   width: 98%;
+   width: 100%;
 `
 export const StyledSideBar = styled.div`
    width: 20%;

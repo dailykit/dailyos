@@ -47,3 +47,4 @@ export {
 }
 
 export * from './Notes'
+export * from './Card'

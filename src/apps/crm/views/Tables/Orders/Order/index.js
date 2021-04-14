@@ -8,6 +8,7 @@ import { PaymentCard } from '../../../../components'
 import { ChevronRight } from '../../../../../../shared/assets/icons'
 import { Tooltip, InlineLoader } from '../../../../../../shared/components'
 import { useTooltip, useTabs } from '../../../../../../shared/providers'
+import { combineCartItems } from '../../../../../../shared/utils'
 import { toast } from 'react-toastify'
 import {
    OrderStatusTunnel,
@@ -30,6 +31,7 @@ import {
 import options from '../../../tableOptions'
 import { currencyFmt, logger } from '../../../../../../shared/utils'
 import BrandContext from '../../../../context/Brand'
+import * as moment from 'moment'
 
 const OrderInfo = () => {
    const [context, setContext] = useContext(BrandContext)
@@ -38,23 +40,26 @@ const OrderInfo = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
    const [products, setProducts] = useState(undefined)
+   const [orderData, setOrderData] = useState({})
    const tableRef = useRef()
-   const { data: orderData, loading } = useQuery(ORDER, {
+   const { loading } = useQuery(ORDER, {
       variables: {
          orderId: tab.data.oid,
          brandId: context.brandId,
       },
       onCompleted: ({ brand: { brand_Orders = [] } = {} } = {}) => {
-         const result = brand_Orders[0]?.orderCart?.cartInfo?.products.map(
-            product => {
-               return {
-                  products: product?.name || 'N/A',
-                  servings: product?.quantity || 'N/A',
-                  discount: product.discount || 'N/A',
-                  discountedPrice: product?.totalPrice || 'N/A',
-               }
+         const quantity = combineCartItems(brand_Orders[0]?.cart?.cartItemViews)
+            .length
+         console.log('quantity', quantity)
+         setOrderData(brand_Orders[0])
+         const result = brand_Orders[0]?.cart?.cartItemViews?.map(item => {
+            return {
+               products: item?.displayName || 'N/A',
+               servings: quantity || 'N/A',
+               discount: item.discount || 'N/A',
+               discountedPrice: item?.unitPrice || 'N/A',
             }
-         )
+         })
          setProducts(result)
       },
       onError: error => {
@@ -100,7 +105,6 @@ const OrderInfo = () => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
-         widht: 100,
       },
       {
          title: 'Discount',
@@ -117,7 +121,6 @@ const OrderInfo = () => {
             )
          },
          formatter: cell => currencyFmt(Number(cell.getValue()) || 0),
-         widht: 100,
       },
       {
          title: 'Discounted Price',
@@ -134,13 +137,12 @@ const OrderInfo = () => {
             )
          },
          formatter: cell => currencyFmt(Number(cell.getValue()) || 0),
-         widht: 100,
       },
    ]
 
    let deliveryPartner = null
    let deliveryAgent = null
-   if (orderData?.order?.deliveryService !== null) {
+   if (orderData?.deliveryService !== null) {
       deliveryPartner = (
          <>
             <Text as="subtitle">Delivery Partner: </Text>
@@ -148,16 +150,14 @@ const OrderInfo = () => {
                <Avatar
                   withName
                   type="round"
-                  title={
-                     orderData?.order?.deliveryService?.companyName || 'N/A'
-                  }
-                  url={orderData?.order?.deliveryService?.logo || ''}
+                  title={orderData?.deliveryService?.companyName || 'N/A'}
+                  url={orderData?.deliveryService?.logo || ''}
                />
             </Card>
          </>
       )
    }
-   if (orderData?.order?.driverInfo !== null) {
+   if (orderData?.driverInfo !== null) {
       deliveryAgent = (
          <>
             <Flex container alignItems="center">
@@ -168,17 +168,15 @@ const OrderInfo = () => {
                <Avatar
                   withName
                   type="round"
-                  title={`${
-                     orderData?.order?.driverInfo?.driverFirstName || ''
-                  } ${orderData?.order?.driverInfo?.driverLastName || 'N/A'}`}
-                  url={orderData?.order?.driverInfo?.driverPicture || ''}
+                  title={`${orderData?.driverInfo?.driverFirstName || ''} ${
+                     orderData?.driverInfo?.driverLastName || 'N/A'
+                  }`}
+                  url={orderData?.driverInfo?.driverPicture || ''}
                />
                <CardInfo bgColor="rgba(243, 243, 243, 0.4)">
                   <Text as="p">Total Paid:</Text>
                   <Text as="p">
-                     {currencyFmt(
-                        Number(orderData?.order?.deliveryFee?.value || 0)
-                     )}
+                     {currencyFmt(Number(orderData?.deliveryFee?.value || 0))}
                   </Text>
                </CardInfo>
             </Card>
@@ -219,15 +217,15 @@ const OrderInfo = () => {
             <StyledMainBar>
                <StyledDiv>
                   <StyledSpan>
-                     Ordered on:
-                     {orderData?.order?.created_at.substr(0, 16) || 'N/A'}
+                     Ordered on:{' '}
+                     {moment(orderData?.created_at).format(
+                        'MMMM Do YYYY, h:mm:ss a'
+                     ) || 'N/A'}
                   </StyledSpan>
-                  <StyledSpan>Deliverd on: N/A</StyledSpan>
+                  <StyledSpan>Delivered on: N/A</StyledSpan>
                   <StyledSpan>
-                     Channel:
-                     {capitalizeString(
-                        orderData?.order?.channel?.cartSource || 'N/A'
-                     )}
+                     Channel:{' '}
+                     {capitalizeString(orderData?.cart?.source || 'N/A')}
                   </StyledSpan>
                </StyledDiv>
                <StyledTable>
@@ -243,36 +241,80 @@ const OrderInfo = () => {
                      />
                   )}
                   <CardInfo>
-                     <Text as="title">Total</Text>
+                     <Text as="title">
+                        {orderData?.cart?.billingDetails?.itemTotal?.label}
+                     </Text>
                      <Text as="title">
                         {currencyFmt(
                            Number(
-                              orderData?.order?.orderCart?.cartInfo?.total || 0
+                              orderData?.cart?.billingDetails?.itemTotal
+                                 ?.value || 0
                            )
                         )}
                      </Text>
                   </CardInfo>
                   <CardInfo>
-                     <Text as="title">Overall Discount</Text>
                      <Text as="title">
-                        {currencyFmt(Number(orderData?.order?.discount || 0))}
+                        {orderData?.cart?.billingDetails?.deliveryPrice?.label}
+                     </Text>
+                     <Text as="title">
+                        {currencyFmt(
+                           Number(
+                              orderData?.cart?.billingDetails?.deliveryPrice
+                                 ?.value || 0
+                           )
+                        )}
                      </Text>
                   </CardInfo>
                   <CardInfo>
-                     <Text as="title">Wallet Used</Text>
-                     <Text as="title">N/A</Text>
+                     <Text as="title">
+                        {orderData?.cart?.billingDetails?.discount?.label}
+                     </Text>
+                     <Text as="title">
+                        {currencyFmt(
+                           Number(
+                              orderData?.cart?.billingDetails?.discount
+                                 ?.value || 0
+                           )
+                        )}
+                     </Text>
+                  </CardInfo>
+                  <CardInfo>
+                     <Text as="title">
+                        {orderData?.cart?.billingDetails?.totalPrice?.label}
+                     </Text>
+                     <Text as="title">
+                        {currencyFmt(
+                           Number(
+                              orderData?.cart?.billingDetails?.totalPrice
+                                 ?.value || 0
+                           )
+                        )}
+                     </Text>
+                  </CardInfo>
+                  <CardInfo>
+                     <Text as="title">Wallet Amount Used</Text>
+                     <Text as="title">
+                        {currencyFmt(orderData?.cart?.walletAmountUsed)}
+                     </Text>
+                  </CardInfo>
+                  <CardInfo>
+                     <Text as="title">Loyalty Points Used</Text>
+                     <Text as="title">
+                        {orderData?.cart?.loyaltyPointsUsed}
+                     </Text>
                   </CardInfo>
                   <CardInfo bgColor="#f3f3f3">
                      <Text as="h2">Total Paid</Text>
                      <Text as="h2">
-                        {currencyFmt(Number(orderData?.order?.amountPaid || 0))}
+                        {currencyFmt(Number(orderData?.amountPaid || 0))}
                      </Text>
                   </CardInfo>
                </StyledTable>
             </StyledMainBar>
             <StyledSideBar>
                <PaymentCard
-                  cardData={orderData?.order?.orderCart?.paymentCard || 'N/A'}
+                  cardData={orderData?.cart?.paymentCart || 'N/A'}
                   billingAddDisplay="none"
                   bgColor="rgba(243,243,243,0.4)"
                   margin="0 0 16px 0"

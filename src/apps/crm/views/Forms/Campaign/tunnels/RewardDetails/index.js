@@ -29,14 +29,6 @@ export default function RewardDetailsunnel({
    closeRewardTypeTunnel,
    updateConditionId,
 }) {
-   const [priority, setPriority] = useState({
-      value: 1,
-      meta: {
-         isValid: false,
-         isTouched: false,
-         errors: [],
-      },
-   })
    const [rewardValue, setRewardValue] = useState({
       type: 'absolute',
       value: '',
@@ -68,26 +60,18 @@ export default function RewardDetailsunnel({
 
    // Handlers
    const saveInfo = () => {
-      if (priority.meta.isValid && rewardValue.meta.isValid) {
+      console.log({ rewardValue })
+      if (rewardValue.meta.isValid) {
          updateReward({
             variables: {
                id: rewardId,
                set: {
                   conditionId,
-                  priority: priority.value,
                   rewardValue: {
                      type: rewardValue.type,
                      value: rewardValue.value,
                   },
                },
-            },
-         })
-         setPriority({
-            value: 1,
-            meta: {
-               isValid: false,
-               isTouched: false,
-               errors: [],
             },
          })
          setRewardValue({
@@ -107,14 +91,6 @@ export default function RewardDetailsunnel({
    }
 
    const closeFunc = () => {
-      setPriority({
-         value: 1,
-         meta: {
-            isValid: false,
-            isTouched: false,
-            errors: [],
-         },
-      })
       setRewardValue({
          type: 'absolute',
          value: '',
@@ -132,17 +108,6 @@ export default function RewardDetailsunnel({
    //reward priority value validation
    const onBlur = (e, name) => {
       switch (name) {
-         case 'priority':
-            return setPriority({
-               ...priority,
-               meta: {
-                  ...priority.meta,
-                  isTouched: true,
-                  errors: validatorFunc.priority(e.target.value).errors,
-                  isValid: validatorFunc.priority(e.target.value).isValid,
-               },
-            })
-
          case 'absoluteRewardVal':
             return setRewardValue({
                ...rewardValue,
@@ -182,14 +147,6 @@ export default function RewardDetailsunnel({
    }
 
    useEffect(() => {
-      setPriority({
-         value: rewardInfo?.priority || 1,
-         meta: {
-            isValid: rewardInfo.priority ? true : false,
-            isTouched: false,
-            errors: [],
-         },
-      })
       setRewardValue({
          ...(rewardInfo?.rewardValue || {
             type: 'absolute',
@@ -255,29 +212,6 @@ export default function RewardDetailsunnel({
                         onClick={() => openConditionTunnel(1)}
                      />
                   )}
-                  <Form.Group>
-                     <Flex container alignItems="flex-end">
-                        <Form.Label htmlFor="priority" title="priority">
-                           Priority
-                        </Form.Label>
-                        <Tooltip identifier="campaign_reward_priority" />
-                     </Flex>
-                     <Form.Number
-                        id="priority"
-                        name="priority"
-                        value={priority?.value || null}
-                        placeholder="Enter Priority "
-                        onBlur={e => onBlur(e, 'priority')}
-                        onChange={e =>
-                           setPriority({ ...priority, value: +e.target.value })
-                        }
-                     />
-                     {priority.meta.isTouched &&
-                        !priority.meta.isValid &&
-                        priority.meta.errors.map((error, index) => (
-                           <Form.Error key={index}>{error}</Form.Error>
-                        ))}
-                  </Form.Group>
                   <Spacer size="24px" />
                   <InputWrap>
                      <Flex container alignItems="flex-end">

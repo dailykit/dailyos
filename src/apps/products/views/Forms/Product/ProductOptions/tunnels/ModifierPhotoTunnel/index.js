@@ -6,24 +6,38 @@ import {
 } from '../../../../../../../../shared/components'
 import { ModifiersContext } from '../../../../../../context/product/modifiers'
 import { TunnelBody } from '../../../tunnels/styled'
+import { useMutation } from '@apollo/react-hooks'
+import { MODIFIER_OPTION } from '../../../../../../graphql/modifiers'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../../shared/utils'
 
 const ModifierPhotoTunnel = ({ close }) => {
    const {
-      modifiersState: { meta },
-      modifiersDispatch,
+      modifiersState: { optionId },
    } = React.useContext(ModifiersContext)
 
+   const [updateOption] = useMutation(MODIFIER_OPTION.UPDATE, {
+      onCompleted: () => {
+         toast.success('Updated!')
+         close(5)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
    const addImage = image => {
-      modifiersDispatch({
-         type: 'OPTION_VALUE',
-         payload: {
-            field: 'image',
-            index: meta.selectedCategoryIndex,
-            optionIndex: meta.selectedOptionIndex,
-            value: image.url,
-         },
-      })
-      close(5)
+      if (image?.url) {
+         updateOption({
+            variables: {
+               id: optionId,
+               _set: {
+                  image: image.url,
+               },
+            },
+         })
+      }
    }
 
    return (

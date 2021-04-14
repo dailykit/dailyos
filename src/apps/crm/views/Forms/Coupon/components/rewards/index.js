@@ -19,12 +19,18 @@ import {
    REWARD_DATA,
 } from '../../../../../graphql'
 import Conditions from '../../../../../../../shared/components/Conditions'
-import { Tooltip, InlineLoader } from '../../../../../../../shared/components'
+import {
+   Tooltip,
+   InlineLoader,
+   DragNDrop,
+} from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { StyledContainer, StyledRow, RewardDiv, StyledDiv } from './styled'
 import CouponContext from '../../../../../context/Coupon/CouponForm'
+import { useDnd } from '../../../../../../../shared/components/DragNDrop/useDnd'
 
 const Rewards = () => {
+   const { initiatePriority } = useDnd()
    const context = useContext(CouponContext)
    const [typeTunnels, openTypeTunnel, closeTypeTunnel] = useTunnel(1)
    const [rewardTunnels, openRewardTunnel, closeRewardTunnel] = useTunnel(1)
@@ -45,6 +51,13 @@ const Rewards = () => {
          couponId: context.state.id,
       },
       onSubscriptionData: data => {
+         if (data.subscriptionData.data?.crm_reward?.length) {
+            initiatePriority({
+               tablename: 'reward',
+               schemaname: 'crm',
+               data: data.subscriptionData.data.crm_reward,
+            })
+         }
          setRewardInfoArray(data.subscriptionData.data.crm_reward)
       },
    })
@@ -120,6 +133,7 @@ const Rewards = () => {
             tunnels={typeTunnels}
             openRewardTunnel={openRewardTunnel}
             getRewardId={id => setRewardId(id)}
+            getConditionId={id => setConditionId(id)}
          />
          <RewardDetailsTunnel
             closeTunnel={closeRewardTunnel}
@@ -157,27 +171,36 @@ const Rewards = () => {
                   )}
                </StyledRow>
 
-               {rewardInfoArray.map(rewardInfo => {
-                  return (
-                     <RewardDiv key={rewardInfo.id}>
-                        <Text as="subtitle">{rewardInfo.type} </Text>
-                        <StyledRow>
-                           <IconButton
-                              type="ghost"
-                              onClick={() => EditRewardDetails(rewardInfo.id)}
-                           >
-                              <EditIcon color="#555B6E" />
-                           </IconButton>
-                           <IconButton
-                              type="ghost"
-                              onClick={() => deleteHandler(rewardInfo)}
-                           >
-                              <DeleteIcon color="#555B6E" />
-                           </IconButton>
-                        </StyledRow>
-                     </RewardDiv>
-                  )
-               })}
+               <DragNDrop
+                  list={rewardInfoArray}
+                  droppableId="couponRewardsId"
+                  tablename="reward"
+                  schemaname="crm"
+               >
+                  {rewardInfoArray.map(rewardInfo => {
+                     return (
+                        <RewardDiv key={rewardInfo.id}>
+                           <Text as="subtitle">{rewardInfo.type} </Text>
+                           <StyledRow>
+                              <IconButton
+                                 type="ghost"
+                                 onClick={() =>
+                                    EditRewardDetails(rewardInfo.id)
+                                 }
+                              >
+                                 <EditIcon color="#555B6E" />
+                              </IconButton>
+                              <IconButton
+                                 type="ghost"
+                                 onClick={() => deleteHandler(rewardInfo)}
+                              >
+                                 <DeleteIcon color="#555B6E" />
+                              </IconButton>
+                           </StyledRow>
+                        </RewardDiv>
+                     )
+                  })}
+               </DragNDrop>
 
                <StyledRow>
                   <ComboButton type="ghost" onClick={() => openTypeTunnel(1)}>

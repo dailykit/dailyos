@@ -142,12 +142,15 @@ export const REWARD_TYPE = gql`
 
 export const REWARD_DATA_BY_COUPON_ID = gql`
    subscription REWARD_DATA_BY_COUPON_ID($couponId: Int!) {
-      crm_reward(where: { couponId: { _eq: $couponId } }) {
+      crm_reward(
+         where: { couponId: { _eq: $couponId } }
+         order_by: { position: desc_nulls_last }
+      ) {
          conditionId
          id
          couponId
          campaignId
-         priority
+         position
          rewardValue
          type
       }
@@ -155,12 +158,15 @@ export const REWARD_DATA_BY_COUPON_ID = gql`
 `
 export const REWARD_DATA_BY_CAMPAIGN_ID = gql`
    subscription REWARD_DATA_BY_CAMPAIGN_ID($campaignId: Int!) {
-      crm_reward(where: { campaignId: { _eq: $campaignId } }) {
+      crm_reward(
+         where: { campaignId: { _eq: $campaignId } }
+         order_by: { position: desc_nulls_last }
+      ) {
          conditionId
          id
          couponId
          campaignId
-         priority
+         position
          rewardValue
          type
       }
@@ -198,10 +204,11 @@ export const WALLET_N_REFERRAL = gql`
       brand(id: $brandId) {
          brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
             customer {
-               wallet {
+               wallets {
+                  id
                   amount
                }
-               customerReferralDetails {
+               customerReferrals {
                   customerReferrals_aggregate {
                      aggregate {
                         count
@@ -219,7 +226,8 @@ export const LOYALTYPOINT_COUNT = gql`
       brand(id: $brandId) {
          brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
             customer {
-               loyaltyPoint {
+               loyaltyPoints {
+                  id
                   points
                }
             }

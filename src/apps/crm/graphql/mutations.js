@@ -36,8 +36,8 @@ export const CAMPAIGN_ACTIVE = gql`
 `
 
 export const CREATE_CAMPAIGN = gql`
-   mutation CREATE_CAMPAIGN($type: String!, $metaDetails: jsonb!) {
-      createCampaign(object: { type: $type, metaDetails: $metaDetails }) {
+   mutation CREATE_CAMPAIGN($object: crm_campaign_insert_input!) {
+      createCampaign(object: $object) {
          id
          type
          isActive
@@ -47,28 +47,19 @@ export const CREATE_CAMPAIGN = gql`
 `
 
 export const CREATE_COUPON = gql`
-   mutation CREATE_COUPON($couponCode: String!) {
-      createCoupon(object: { code: $couponCode }) {
+   mutation CREATE_COUPON($object: crm_coupon_insert_input!) {
+      createCoupon(object: $object) {
          id
          code
       }
    }
 `
 export const CREATE_REWARD = gql`
-   mutation CREATE_REWARD(
-      $rewardType: String!
-      $couponId: Int
-      $campaignId: Int
-   ) {
-      insert_crm_reward(
-         objects: {
-            type: $rewardType
-            couponId: $couponId
-            campaignId: $campaignId
-         }
-      ) {
+   mutation CREATE_REWARD($objects: [crm_reward_insert_input!]!) {
+      insert_crm_reward(objects: $objects) {
          returning {
             id
+            conditionId
          }
       }
    }
@@ -170,6 +161,26 @@ export const CUSTOMER_ARCHIVED = gql`
       ) {
          keycloakId
          isArchived
+      }
+   }
+`
+
+export const CREATE_WALLET_TXN = gql`
+   mutation CreateWalletTransaction(
+      $object: crm_walletTransaction_insert_input!
+   ) {
+      createWalletTransaction(object: $object) {
+         id
+      }
+   }
+`
+
+export const CREATE_LOYALTY_POINT_TXN = gql`
+   mutation CreateLoyaltyPointTransaction(
+      $object: crm_loyaltyPointTransaction_insert_input!
+   ) {
+      createLoyaltyPointsTransaction(object: $object) {
+         id
       }
    }
 `

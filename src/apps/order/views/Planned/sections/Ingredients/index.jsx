@@ -266,7 +266,7 @@ const StyledButton = styled.button`
 export const StyledTabs = styled(Tabs)(
    () => css`
       display: grid;
-      grid-template-columns: 280px 1fr;
+      grid-template-columns: 180px 1fr;
    `
 )
 
