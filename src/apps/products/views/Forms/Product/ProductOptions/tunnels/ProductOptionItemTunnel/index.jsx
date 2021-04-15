@@ -67,6 +67,9 @@ const ProductOptionItemTunnel = ({ closeTunnel }) => {
       S_SIMPLE_RECIPE_YIELDS,
       {
          skip: productState.productOptionType !== 'serving',
+         variables: {
+            where: { isArchived: { _eq: false } },
+         },
          onSubscriptionData: data => {
             const { simpleRecipeYields } = data.subscriptionData.data
             const updatedItems = simpleRecipeYields.map(y => {

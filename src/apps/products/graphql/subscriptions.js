@@ -243,6 +243,7 @@ export const S_RECIPE = gql`
                simpleRecipeYield {
                   id
                   yield
+                  baseYieldId
                }
                slipName
                isVisible
@@ -254,6 +255,7 @@ export const S_RECIPE = gql`
          ) {
             id
             yield
+            baseYieldId
             cost
             nutritionalInfo
          }
@@ -367,8 +369,10 @@ export const S_SACHET_ITEMS = gql`
 `
 
 export const S_SIMPLE_RECIPE_YIELDS = gql`
-   subscription {
-      simpleRecipeYields(where: { isArchived: { _eq: false } }) {
+   subscription SimpleRecipeYields(
+      $where: simpleRecipe_simpleRecipeYield_bool_exp
+   ) {
+      simpleRecipeYields(where: $where) {
          id
          yield
          simpleRecipe {

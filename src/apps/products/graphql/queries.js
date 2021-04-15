@@ -107,3 +107,14 @@ export const SIMPLE_RECIPES = gql`
       }
    }
 `
+
+export const DERIVE_SACHETS_FROM_BASE_YIELD = gql`
+   query DeriveSachetsFromBaseYield(
+      $args: simpleRecipe_deriveIngredientSachets_args!
+   ) {
+      simpleRecipe_deriveIngredientSachets(args: $args) {
+         success
+         message
+      }
+   }
+`
