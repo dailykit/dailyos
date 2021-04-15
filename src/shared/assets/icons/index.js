@@ -24,6 +24,8 @@ import RoundedMenuIcon from './RoundedMenu'
 import HomeIcon from './Home'
 import DoubleArrowRightIcon from './DoubleArrowRight'
 import CloneIcon from './Clone'
+import RefreshIcon from './Refresh'
+
 export {
    AddIcon,
    MenuIcon,
@@ -51,6 +53,7 @@ export {
    HomeIcon,
    DoubleArrowRightIcon,
    CloneIcon,
+   RefreshIcon,
 }
 
 export * from './Tick'
