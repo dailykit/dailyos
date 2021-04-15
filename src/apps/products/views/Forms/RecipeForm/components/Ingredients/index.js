@@ -273,10 +273,10 @@ const CollapsibleBody = ({
    simpleRecipeYields,
    upsertSachet,
 }) => {
+   console.log(linkedSachets)
    const findSachet = recipeYield => {
       const found = linkedSachets.find(
-         ({ simpleRecipeYield }) =>
-            simpleRecipeYield.yield.serving === recipeYield.yield.serving
+         ({ simpleRecipeYield }) => simpleRecipeYield.id === recipeYield.id
       )
       return found
    }
