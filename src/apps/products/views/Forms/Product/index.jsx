@@ -1,6 +1,7 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   ComboButton,
    Flex,
    Form,
    HorizontalTab,
@@ -20,17 +21,18 @@ import {
    Tooltip,
 } from '../../../../../shared/components'
 import { useTabs } from '../../../../../shared/providers'
-import { logger } from '../../../../../shared/utils'
+import { logger, randomSuffix } from '../../../../../shared/utils'
 import { CloseIcon, TickIcon } from '../../../assets/icons'
 import { ProductProvider } from '../../../context/product'
 import { ModifiersProvider } from '../../../context/product/modifiers'
-import { PRODUCT } from '../../../graphql'
+import { PRODUCT, PRODUCTS } from '../../../graphql'
 import { Assets, Description, Pricing } from './components'
 import CustomizableProductComponents from './CustomizableProductComponents'
 import ProductOptions from './ProductOptions'
 import { ResponsiveFlex, StyledFlex } from './styled'
 import validator from './validators'
 import ComboProductComponents from './ComboProductComponents'
+import { CloneIcon } from '../../../../../shared/assets/icons'
 
 const Product = () => {
    const { id: productId } = useParams()
@@ -63,6 +65,19 @@ const Product = () => {
    })
 
    // Mutation
+   const [createProduct, { loading: cloning }] = useMutation(PRODUCTS.CREATE, {
+      onCompleted: data => {
+         toast.success('Product cloned!')
+         addTab(
+            data.createProduct.name,
+            `/products/products/${data.createProduct.id}`
+         )
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
    const [updateProduct] = useMutation(PRODUCT.UPDATE, {
       onCompleted: () => {
          toast.success('Updated!')
@@ -163,6 +178,42 @@ const Product = () => {
       }
    }
 
+   const clone = () => {
+      const generatedProductOptions = state.productOptions.map(op => ({
+         position: op.position,
+         type: op.type,
+         label: op.label,
+         price: op.price,
+         discount: op.discount,
+         quantity: op.quantity,
+         simpleRecipeYieldId: op.simpleRecipeYield?.id || null,
+         supplierItemId: op.supplierItem?.id || null,
+         sachetItemId: op.sachetItem?.id || null,
+         modifierId: op.modifier?.id || null,
+         operationConfigId: op.operationConfig?.id || null,
+      }))
+      const object = {
+         type: state.type,
+         name: `${state.name}-${randomSuffix()}`,
+         assets: state.assets,
+         tags: state.tags,
+         additionalText: state.additionalText,
+         description: state.description,
+         price: state.price,
+         discount: state.discount,
+         isPopupAllowed: state.isPopupAllowed,
+         isPublished: state.isPublished,
+         productOptions: {
+            data: generatedProductOptions,
+         },
+      }
+      createProduct({
+         variables: {
+            object,
+         },
+      })
+   }
+
    if (loading) return <InlineLoader />
    if (!loading && error) {
       toast.error('Failed to fetch Product!')
@@ -223,7 +274,20 @@ const Product = () => {
                         <Tooltip identifier="simple_recipe_product_popup_checkbox" />
                      </Flex>
                   </Form.Checkbox>
-
+                  {state.type === 'simple' && (
+                     <>
+                        <Spacer xAxis size="16px" />
+                        <ComboButton
+                           type="ghost"
+                           size="sm"
+                           onClick={clone}
+                           isLoading={cloning}
+                        >
+                           <CloneIcon color="#00A7E1" />
+                           Clone Product
+                        </ComboButton>
+                     </>
+                  )}
                   <Spacer xAxis size="16px" />
                   <Form.Toggle
                      name="published"

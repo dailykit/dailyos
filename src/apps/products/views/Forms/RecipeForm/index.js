@@ -11,6 +11,9 @@ import {
    HorizontalTabPanel,
    HorizontalTabs,
    ComboButton,
+   Tunnel,
+   useTunnel,
+   Tunnels,
 } from '@dailykit/ui'
 import { isEmpty, stubTrue } from 'lodash'
 import { useParams } from 'react-router-dom'
@@ -28,7 +31,12 @@ import {
    reducers,
    state as initialState,
 } from '../../../context/recipe'
-import { CREATE_SIMPLE_RECIPE, S_RECIPE, UPDATE_RECIPE } from '../../../graphql'
+import {
+   CREATE_SIMPLE_RECIPE,
+   PRODUCTS,
+   S_RECIPE,
+   UPDATE_RECIPE,
+} from '../../../graphql'
 import {
    Information,
    Ingredients,
@@ -41,6 +49,7 @@ import validator from './validators'
 import { ResponsiveFlex, StyledFlex } from '../Product/styled'
 import { CloneIcon } from '../../../../../shared/assets/icons'
 import { useDnd } from '../../../../../shared/components/DragNDrop/useDnd'
+import { CreateProductTunnel } from './tunnels'
 
 const RecipeForm = () => {
    // Context
@@ -50,6 +59,10 @@ const RecipeForm = () => {
    const [recipeState, recipeDispatch] = React.useReducer(
       reducers,
       initialState
+   )
+
+   const [productTunnels, openProductsTunnel, closeProductsTunnel] = useTunnel(
+      1
    )
 
    // States
@@ -235,6 +248,14 @@ const RecipeForm = () => {
       <RecipeContext.Provider value={{ recipeState, recipeDispatch }}>
          <>
             {/* View */}
+            <Tunnels tunnels={productTunnels}>
+               <Tunnel layer={1}>
+                  <CreateProductTunnel
+                     state={state}
+                     closeTunnel={closeProductsTunnel}
+                  />
+               </Tunnel>
+            </Tunnels>
             <ResponsiveFlex
                container
                justifyContent="space-between"
@@ -279,9 +300,23 @@ const RecipeForm = () => {
                      </>
                   )}
                   <Spacer xAxis size="16px" />
-                  <ComboButton type="ghost" size="sm" onClick={clone}>
+                  <ComboButton
+                     type="ghost"
+                     size="sm"
+                     onClick={() => openProductsTunnel(1)}
+                  >
                      <CloneIcon color="#00A7E1" />
-                     {cloning ? 'Cloning...' : 'Clone Recipe'}
+                     Create Product
+                  </ComboButton>
+                  <Spacer xAxis size="16px" />
+                  <ComboButton
+                     type="ghost"
+                     size="sm"
+                     onClick={clone}
+                     isLoading={cloning}
+                  >
+                     <CloneIcon color="#00A7E1" />
+                     Clone Recipe
                   </ComboButton>
                   <Spacer xAxis size="16px" />
                   <Form.Toggle
