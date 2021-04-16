@@ -309,9 +309,14 @@ const RecipeForm = () => {
                      Create Product
                   </ComboButton>
                   <Spacer xAxis size="16px" />
-                  <ComboButton type="ghost" size="sm" onClick={clone}>
+                  <ComboButton
+                     type="ghost"
+                     size="sm"
+                     onClick={clone}
+                     isLoading={cloning}
+                  >
                      <CloneIcon color="#00A7E1" />
-                     {cloning ? 'Cloning...' : 'Clone Recipe'}
+                     Clone Recipe
                   </ComboButton>
                   <Spacer xAxis size="16px" />
                   <Form.Toggle
