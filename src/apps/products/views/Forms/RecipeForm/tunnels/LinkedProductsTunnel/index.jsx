@@ -6,6 +6,7 @@ import { useTabs } from '../../../../../../../shared/providers'
 import { S_SIMPLE_PRODUCTS_FROM_RECIPE } from '../../../../../graphql'
 import { TunnelBody } from '../styled'
 import { ProductContent, ProductImage, StyledProductWrapper } from './styled'
+import { LinkIcon } from '../../../../../../../shared/assets/icons'
 
 const LinkedProductsTunnel = ({ state, closeTunnel }) => {
    const { addTab } = useTabs()
@@ -32,7 +33,7 @@ const LinkedProductsTunnel = ({ state, closeTunnel }) => {
    return (
       <>
          <TunnelHeader
-            title="Linked Products"
+            title={`Linked Products (${options.length})`}
             close={() => closeTunnel(1)}
             tooltip={<Tooltip identifier="recipe_create_product_tunnel" />}
          />
@@ -72,6 +73,9 @@ export default LinkedProductsTunnel
 const ProductTile = ({ assets, title, onClick }) => {
    return (
       <StyledProductWrapper onClick={onClick}>
+         <span>
+            <LinkIcon size={16} color="#333" />
+         </span>
          <ProductContent>
             {Boolean(assets && assets?.images?.length) && (
                <ProductImage src={assets.images[0]} />

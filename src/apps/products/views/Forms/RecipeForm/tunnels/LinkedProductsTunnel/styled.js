@@ -9,9 +9,21 @@ export const StyledProductWrapper = styled.div`
    padding: 0 8px;
    cursor: pointer;
    margin-bottom: 16px;
+   position: relative;
+
+   span {
+      display: none;
+      position: absolute;
+      top: 8px;
+      right: 8px;
+   }
 
    &:hover {
       background: #efefef;
+
+      span {
+         display: inline;
+      }
    }
 `
 
