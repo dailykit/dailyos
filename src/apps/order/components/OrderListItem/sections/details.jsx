@@ -155,8 +155,7 @@ export const Details = ({ order }) => {
                   </span>
                   <Spacer size="4px" xAxis />
                   <Text as="subtitle">
-                     {parseAddress(order.cart.customer?.customerAddress) ||
-                        'N/A'}
+                     {parseAddress(order.cart.address) || 'N/A'}
                   </Text>
                </Flex>
                <Spacer size="8px" />
@@ -166,7 +165,7 @@ export const Details = ({ order }) => {
                   </span>
                   <Spacer size="4px" xAxis />
                   <Text as="subtitle">
-                     {order.cart.customer?.customerAddress?.notes || 'N/A'}
+                     {order.cart.address?.notes || 'N/A'}
                   </Text>
                </Flex>
                <Spacer size="8px" />
