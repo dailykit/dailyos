@@ -397,3 +397,17 @@ export const S_SIMPLE_PRODUCTS_FROM_RECIPE = gql`
       }
    }
 `
+
+export const S_SIMPLE_RECIPES_FROM_INGREDIENT = gql`
+   subscription SimpleRecipesFromIngredients(
+      $where: simpleRecipe_simpleRecipe_ingredient_processing_bool_exp
+   ) {
+      simpleRecipeIngredientProcessings(where: $where) {
+         simpleRecipe {
+            id
+            name
+            assets
+         }
+      }
+   }
+`

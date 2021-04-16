@@ -1,11 +1,20 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Flex, Form, Spacer, Text } from '@dailykit/ui'
+import {
+   ComboButton,
+   Flex,
+   Form,
+   Spacer,
+   Text,
+   Tunnel,
+   Tunnels,
+   useTunnel,
+} from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../shared/utils'
-import { CloseIcon, TickIcon } from '../../../assets/icons'
+import { CloseIcon, EyeIcon, TickIcon } from '../../../assets/icons'
 import {
    IngredientContext,
    reducers,
@@ -21,6 +30,7 @@ import {
 } from '../../../../../shared/components'
 import { useTabs } from '../../../../../shared/providers'
 import { HeaderWrapper, InputTextWrapper } from './styled'
+import { LinkedRecipesTunnel } from './tunnels'
 
 const IngredientForm = () => {
    const { setTabTitle, tab, addTab } = useTabs()
@@ -29,6 +39,12 @@ const IngredientForm = () => {
       reducers,
       initialState
    )
+
+   const [
+      linkedRecipesTunnels,
+      openLinkedRecipesTunnel,
+      closeLinkedRecipesTunnel,
+   ] = useTunnel(1)
 
    const [title, setTitle] = React.useState({
       value: '',
@@ -157,6 +173,14 @@ const IngredientForm = () => {
       <IngredientContext.Provider
          value={{ ingredientState, ingredientDispatch }}
       >
+         <Tunnels tunnels={linkedRecipesTunnels}>
+            <Tunnel layer={1} size="sm">
+               <LinkedRecipesTunnel
+                  state={state}
+                  closeTunnel={closeLinkedRecipesTunnel}
+               />
+            </Tunnel>
+         </Tunnels>
          <HeaderWrapper>
             <InputTextWrapper>
                <Form.Group>
@@ -208,7 +232,7 @@ const IngredientForm = () => {
             <Flex
                container
                alignItems="center"
-               justifyContent="space-between"
+               justifyContent="flex-end"
                width="100%"
             >
                <div>
@@ -224,7 +248,16 @@ const IngredientForm = () => {
                      </Flex>
                   )}
                </div>
-               {/* <Spacer xAxis size="16px" /> */}
+               <Spacer xAxis size="16px" />
+               <ComboButton
+                  type="ghost"
+                  size="sm"
+                  onClick={() => openLinkedRecipesTunnel(1)}
+               >
+                  <EyeIcon color="#00A7E1" />
+                  Linked Recipes
+               </ComboButton>
+               <Spacer xAxis size="16px" />
                <Form.Toggle
                   name="published"
                   value={state.isPublished}
