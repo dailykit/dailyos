@@ -24,7 +24,7 @@ import {
    Tooltip,
 } from '../../../../../shared/components'
 import { logger, randomSuffix } from '../../../../../shared/utils'
-import { CloseIcon, TickIcon } from '../../../assets/icons'
+import { CloseIcon, EyeIcon, TickIcon } from '../../../assets/icons'
 import { useTabs } from '../../../../../shared/providers'
 import {
    RecipeContext,
@@ -35,6 +35,7 @@ import {
    CREATE_SIMPLE_RECIPE,
    PRODUCTS,
    S_RECIPE,
+   S_SIMPLE_PRODUCTS_FROM_RECIPE_AGGREGATE,
    UPDATE_RECIPE,
 } from '../../../graphql'
 import {
@@ -47,9 +48,9 @@ import {
 } from './components'
 import validator from './validators'
 import { ResponsiveFlex, StyledFlex } from '../Product/styled'
-import { CloneIcon } from '../../../../../shared/assets/icons'
+import { CloneIcon, PlusIcon } from '../../../../../shared/assets/icons'
 import { useDnd } from '../../../../../shared/components/DragNDrop/useDnd'
-import { CreateProductTunnel } from './tunnels'
+import { CreateProductTunnel, LinkedProductsTunnel } from './tunnels'
 
 const RecipeForm = () => {
    // Context
@@ -64,9 +65,15 @@ const RecipeForm = () => {
    const [productTunnels, openProductsTunnel, closeProductsTunnel] = useTunnel(
       1
    )
+   const [
+      linkedProductsTunnels,
+      openLinkedProductsTunnel,
+      closeLinkedProductsTunnel,
+   ] = useTunnel(1)
 
    // States
    const [state, setState] = React.useState({})
+   const [linkedProductsCount, setLinkedProductsCount] = React.useState(0)
 
    const [title, setTitle] = React.useState({
       value: '',
@@ -100,6 +107,26 @@ const RecipeForm = () => {
                data: recipe.simpleRecipeIngredients,
             })
          }
+      },
+   })
+   useSubscription(S_SIMPLE_PRODUCTS_FROM_RECIPE_AGGREGATE, {
+      skip: !state.simpleRecipeYields,
+      variables: {
+         where: {
+            simpleRecipeYieldId: {
+               _in: state.simpleRecipeYields?.map(y => y.id),
+            },
+            isArchived: { _eq: false },
+            product: {
+               isArchived: { _eq: false },
+            },
+         },
+         distinct_on: ['productId'],
+      },
+      onSubscriptionData: data => {
+         setLinkedProductsCount(
+            data.subscriptionData.data.productOptionsAggregate.aggregate.count
+         )
       },
    })
 
@@ -256,6 +283,14 @@ const RecipeForm = () => {
                   />
                </Tunnel>
             </Tunnels>
+            <Tunnels tunnels={linkedProductsTunnels}>
+               <Tunnel layer={1} size="sm">
+                  <LinkedProductsTunnel
+                     state={state}
+                     closeTunnel={closeLinkedProductsTunnel}
+                  />
+               </Tunnel>
+            </Tunnels>
             <ResponsiveFlex
                container
                justifyContent="space-between"
@@ -303,9 +338,18 @@ const RecipeForm = () => {
                   <ComboButton
                      type="ghost"
                      size="sm"
+                     onClick={() => openLinkedProductsTunnel(1)}
+                  >
+                     <EyeIcon color="#00A7E1" />
+                     {`Linked Products (${linkedProductsCount})`}
+                  </ComboButton>
+                  <Spacer xAxis size="16px" />
+                  <ComboButton
+                     type="ghost"
+                     size="sm"
                      onClick={() => openProductsTunnel(1)}
                   >
-                     <CloneIcon color="#00A7E1" />
+                     <PlusIcon color="#00A7E1" />
                      Create Product
                   </ComboButton>
                   <Spacer xAxis size="16px" />

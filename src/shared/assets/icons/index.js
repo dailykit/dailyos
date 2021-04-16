@@ -25,6 +25,7 @@ import HomeIcon from './Home'
 import DoubleArrowRightIcon from './DoubleArrowRight'
 import CloneIcon from './Clone'
 import RefreshIcon from './Refresh'
+import LinkIcon from './Link'
 
 export {
    AddIcon,
@@ -54,6 +55,7 @@ export {
    DoubleArrowRightIcon,
    CloneIcon,
    RefreshIcon,
+   LinkIcon,
 }
 
 export * from './Tick'

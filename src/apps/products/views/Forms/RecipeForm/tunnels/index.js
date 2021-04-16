@@ -8,6 +8,7 @@ import CardPreviewTunnel from './CardPreviewTunnel'
 import StepPhotoTunnel from './StepPhotoTunnel'
 import YieldInfoTunnel from './YieldInfoTunnel'
 import CreateProductTunnel from './CreateProductTunnel'
+import LinkedProductsTunnel from './LinkedProductsTunnel'
 
 export {
    InformationTunnel,
@@ -20,4 +21,5 @@ export {
    StepPhotoTunnel,
    YieldInfoTunnel,
    CreateProductTunnel,
+   LinkedProductsTunnel,
 }
