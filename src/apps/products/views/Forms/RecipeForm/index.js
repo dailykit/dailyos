@@ -35,6 +35,7 @@ import {
    CREATE_SIMPLE_RECIPE,
    PRODUCTS,
    S_RECIPE,
+   S_SIMPLE_PRODUCTS_FROM_RECIPE_AGGREGATE,
    UPDATE_RECIPE,
 } from '../../../graphql'
 import {
@@ -72,6 +73,7 @@ const RecipeForm = () => {
 
    // States
    const [state, setState] = React.useState({})
+   const [linkedProductsCount, setLinkedProductsCount] = React.useState(0)
 
    const [title, setTitle] = React.useState({
       value: '',
@@ -105,6 +107,26 @@ const RecipeForm = () => {
                data: recipe.simpleRecipeIngredients,
             })
          }
+      },
+   })
+   useSubscription(S_SIMPLE_PRODUCTS_FROM_RECIPE_AGGREGATE, {
+      skip: !state.simpleRecipeYields,
+      variables: {
+         where: {
+            simpleRecipeYieldId: {
+               _in: state.simpleRecipeYields?.map(y => y.id),
+            },
+            isArchived: { _eq: false },
+            product: {
+               isArchived: { _eq: false },
+            },
+         },
+         distinct_on: ['productId'],
+      },
+      onSubscriptionData: data => {
+         setLinkedProductsCount(
+            data.subscriptionData.data.productOptionsAggregate.aggregate.count
+         )
       },
    })
 
@@ -319,7 +341,7 @@ const RecipeForm = () => {
                      onClick={() => openLinkedProductsTunnel(1)}
                   >
                      <EyeIcon color="#00A7E1" />
-                     Linked Products
+                     {`Linked Products (${linkedProductsCount})`}
                   </ComboButton>
                   <Spacer xAxis size="16px" />
                   <ComboButton

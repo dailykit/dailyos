@@ -20,7 +20,11 @@ import {
    reducers,
    state as initialState,
 } from '../../../context/ingredient'
-import { S_INGREDIENT, UPDATE_INGREDIENT } from '../../../graphql'
+import {
+   S_INGREDIENT,
+   S_SIMPLE_RECIPES_FROM_INGREDIENT_AGGREGATE,
+   UPDATE_INGREDIENT,
+} from '../../../graphql'
 import { Processings, Stats } from './components'
 import validator from './validators'
 import {
@@ -63,6 +67,7 @@ const IngredientForm = () => {
       },
    })
    const [state, setState] = React.useState({})
+   const [linkedRecipesCount, setLinkedRecipesCount] = React.useState(0)
 
    // Subscriptions
    const { loading, error } = useSubscription(S_INGREDIENT, {
@@ -80,6 +85,25 @@ const IngredientForm = () => {
             ...category,
             value: data.subscriptionData.data.ingredient.category || '',
          })
+      },
+   })
+   useSubscription(S_SIMPLE_RECIPES_FROM_INGREDIENT_AGGREGATE, {
+      variables: {
+         where: {
+            ingredientId: {
+               _eq: state.id,
+            },
+            isArchived: { _eq: false },
+            simpleRecipe: {
+               isArchived: { _eq: false },
+            },
+         },
+      },
+      onSubscriptionData: data => {
+         setLinkedRecipesCount(
+            data.subscriptionData.data
+               .simpleRecipeIngredientProcessingsAggregate.aggregate.count
+         )
       },
    })
 
@@ -255,7 +279,7 @@ const IngredientForm = () => {
                   onClick={() => openLinkedRecipesTunnel(1)}
                >
                   <EyeIcon color="#00A7E1" />
-                  Linked Recipes
+                  {`Linked Recipes (${linkedRecipesCount})`}
                </ComboButton>
                <Spacer xAxis size="16px" />
                <Form.Toggle

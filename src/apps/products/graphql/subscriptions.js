@@ -384,7 +384,7 @@ export const S_SIMPLE_RECIPE_YIELDS = gql`
 `
 
 export const S_SIMPLE_PRODUCTS_FROM_RECIPE = gql`
-   subscription(
+   subscription SimpleProductsFromRecipe(
       $where: products_productOption_bool_exp
       $distinct_on: [products_productOption_select_column!]
    ) {
@@ -393,6 +393,19 @@ export const S_SIMPLE_PRODUCTS_FROM_RECIPE = gql`
             id
             name
             assets
+         }
+      }
+   }
+`
+
+export const S_SIMPLE_PRODUCTS_FROM_RECIPE_AGGREGATE = gql`
+   subscription SimpleProductsFromRecipeAggregate(
+      $where: products_productOption_bool_exp
+      $distinct_on: [products_productOption_select_column!]
+   ) {
+      productOptionsAggregate(where: $where, distinct_on: $distinct_on) {
+         aggregate {
+            count
          }
       }
    }
@@ -407,6 +420,18 @@ export const S_SIMPLE_RECIPES_FROM_INGREDIENT = gql`
             id
             name
             assets
+         }
+      }
+   }
+`
+
+export const S_SIMPLE_RECIPES_FROM_INGREDIENT_AGGREGATE = gql`
+   subscription SimpleRecipesFromIngredientsAggregate(
+      $where: simpleRecipe_simpleRecipe_ingredient_processing_bool_exp
+   ) {
+      simpleRecipeIngredientProcessingsAggregate(where: $where) {
+         aggregate {
+            count
          }
       }
    }
