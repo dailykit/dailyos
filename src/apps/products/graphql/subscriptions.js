@@ -382,3 +382,18 @@ export const S_SIMPLE_RECIPE_YIELDS = gql`
       }
    }
 `
+
+export const S_SIMPLE_PRODUCTS_FROM_RECIPE = gql`
+   subscription(
+      $where: products_productOption_bool_exp
+      $distinct_on: [products_productOption_select_column!]
+   ) {
+      productOptions(where: $where, distinct_on: $distinct_on) {
+         product {
+            id
+            name
+            assets
+         }
+      }
+   }
+`
