@@ -13,6 +13,7 @@ import WebBuilder from './WebBuilder'
 import DragNDrop from './DragNDrop'
 import Popup from './Popup'
 import RichTextEditor from './RichTextEditor'
+import UpdatingSpinner from './UpdatingSpinner'
 
 export {
    Lang,
@@ -30,6 +31,7 @@ export {
    DragNDrop,
    Popup,
    RichTextEditor,
+   UpdatingSpinner,
 }
 export * from './AssetUploader'
 export * from './InlineLoader'

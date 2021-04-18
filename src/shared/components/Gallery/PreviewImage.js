@@ -1,7 +1,7 @@
 import React from 'react'
 import { WrapperDiv, Image, Images, Wrapper } from './styled'
-import { ButtonTile, ComboButton, Flex, Text } from '@dailykit/ui'
-import CameraIcon from '../../assets/icons/Camera'
+import { ButtonTile } from '@dailykit/ui'
+
 const PreviewImage = ({ images, current, openTunnel, setActive }) => {
    return (
       <Wrapper>
@@ -19,7 +19,7 @@ const PreviewImage = ({ images, current, openTunnel, setActive }) => {
             ))}
          </Images>
          <ButtonTile
-            type="primary"
+            type="uploadImage"
             size="sm"
             text={!images.length ? 'Add a Photo' : null}
             onClick={() => openTunnel(1)}

@@ -7,7 +7,6 @@ import { PRODUCT } from '../../../../../graphql'
 import validator from '../../validators'
 
 const Pricing = ({ state }) => {
-   console.log('🚀 ~ file: index.jsx ~ line 10 ~ Pricing ~ state', state)
    const [history, setHistory] = React.useState({
       price: state.price,
       discount: state.discount,
@@ -109,7 +108,7 @@ const Pricing = ({ state }) => {
    }
 
    return (
-      <Flex width="50%">
+      <Flex>
          <Flex>
             <Form.Label htmlFor="price" title="price">
                Price*

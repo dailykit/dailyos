@@ -95,7 +95,7 @@ export const ResponsiveFlex = styled.header`
    }
 `
 export const StyledFlex = styled(Flex)`
-   @media screen and (max-width: 767px) {
+   @media screen and (max-width: 1023px) {
       flex-direction: column;
       button {
          margin-bottom: 16px;

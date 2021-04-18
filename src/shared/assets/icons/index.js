@@ -26,6 +26,7 @@ import DoubleArrowRightIcon from './DoubleArrowRight'
 import CloneIcon from './Clone'
 import ThreeDotIcon from './ThreeDot'
 import CameraIcon from './Camera'
+import CheckCircleIcon from './CheckCircle'
 export {
    AddIcon,
    MenuIcon,
@@ -55,6 +56,7 @@ export {
    CloneIcon,
    ThreeDotIcon,
    CameraIcon,
+   CheckCircleIcon,
 }
 
 export * from './Tick'

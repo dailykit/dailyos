@@ -89,12 +89,10 @@ const DescriptionTunnel = ({ state, close }) => {
          />
          <TunnelBody>
             <Form.Group>
-               <Form.Label htmlFor="text" title="text">
-                  Additional Text (shown with Name)
-               </Form.Label>
                <Form.Text
                   id="text"
                   name="text"
+                  variant="revamp-sm"
                   onChange={e => {
                      setAdditionalText({
                         ...additionalText,
@@ -102,16 +100,14 @@ const DescriptionTunnel = ({ state, close }) => {
                      })
                   }}
                   value={additionalText.value}
-                  placeholder="Enter text"
+                  placeholder="enter text"
                />
             </Form.Group>
-            <Spacer size="16px" />
+            <Spacer size="48px" />
             <Form.Group>
-               <Form.Label htmlFor="tags" title="tags">
-                  Tags
-               </Form.Label>
                <Form.Text
                   id="tags"
+                  variant="revamp-sm"
                   name="tags"
                   onBlur={() => {
                      const { isValid, errors } = validator.csv(tags.value)
@@ -126,7 +122,7 @@ const DescriptionTunnel = ({ state, close }) => {
                   }}
                   onChange={e => setTags({ ...tags, value: e.target.value })}
                   value={tags.value}
-                  placeholder="Enter tags"
+                  placeholder="enter tags"
                   hasError={tags.meta.isTouched && !tags.meta.isValid}
                />
                {tags.meta.isTouched &&
@@ -139,12 +135,10 @@ const DescriptionTunnel = ({ state, close }) => {
                type="hint"
                message="Enter comma separated values, for example: New, Hot, Spicy"
             />
-            <Spacer size="16px" />
+            <Spacer size="48px" />
             <Form.Group>
-               <Form.Label htmlFor="description" title="description">
-                  Description
-               </Form.Label>
                <Form.TextArea
+                  noBorder
                   id="description"
                   name="description"
                   onChange={e => {
@@ -154,7 +148,7 @@ const DescriptionTunnel = ({ state, close }) => {
                      })
                   }}
                   value={description.value}
-                  placeholder="Write product description"
+                  placeholder="Add product description in 120 words. "
                />
             </Form.Group>
          </TunnelBody>

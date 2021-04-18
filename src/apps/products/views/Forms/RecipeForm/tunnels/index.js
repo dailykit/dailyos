@@ -1,4 +1,3 @@
-import InformationTunnel from './InformationTunnel'
 import ServingsTunnel from './ServingsTunnel'
 import IngredientsTunnel from './IngredientsTunnel'
 import ProcessingsTunnel from './ProcessingsTunnel'
@@ -9,7 +8,6 @@ import StepPhotoTunnel from './StepPhotoTunnel'
 import YieldInfoTunnel from './YieldInfoTunnel'
 
 export {
-   InformationTunnel,
    ServingsTunnel,
    IngredientsTunnel,
    ProcessingsTunnel,

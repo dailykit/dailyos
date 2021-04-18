@@ -1,6 +1,6 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { useTunnel, Flex } from '@dailykit/ui'
+import { Flex } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../shared/utils'
 import { PRODUCT } from '../../../../../graphql'
@@ -32,7 +32,7 @@ const Assets = ({ state }) => {
    }
 
    return (
-      <Flex width="100%">
+      <Flex>
          {state?.assets?.images != null && state?.assets?.images?.length ? (
             <Gallery
                list={state.assets.images}
