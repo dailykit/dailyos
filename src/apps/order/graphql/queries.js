@@ -141,6 +141,9 @@ export const QUERIES = {
                   labelTemplateId
                   stationId
                }
+               productOption {
+                  label
+               }
                productOptionType
                totalSachets: childs_aggregate {
                   aggregate {
