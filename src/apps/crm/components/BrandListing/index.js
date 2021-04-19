@@ -18,16 +18,24 @@ export default function BrandListing() {
          result.map(brand => {
             if (brand.isDefault) {
                setViewingFor(brand.id)
-               setContext({ brandId: brand.id, brandName: brand.title })
+               setContext({
+                  brandId: brand.id,
+                  brandName: brand.title,
+                  domain: brand.domain,
+               })
             }
          })
       },
    })
 
-   const brandHandler = (brandId, title) => {
-      toast.info(`Showing information for "${title}" brand`)
-      setViewingFor(brandId)
-      setContext({ brandId: brandId, brandName: title })
+   const brandHandler = brand => {
+      toast.info(`Showing information for "${brand.title}" brand`)
+      setViewingFor(brand.id)
+      setContext({
+         brandId: brand.id,
+         brandName: brand.title,
+         domain: brand.domain,
+      })
    }
 
    if (error) {
@@ -44,7 +52,7 @@ export default function BrandListing() {
                   <StyledListItem
                      key={brand.id}
                      default={brand.id === viewingFor}
-                     onClick={() => brandHandler(brand.id, brand.title)}
+                     onClick={() => brandHandler(brand)}
                   >
                      {brand.title}
                   </StyledListItem>
