@@ -516,7 +516,18 @@ const Order = () => {
                </Flex>
             </ResponsiveFlex>
          </ResponsiveFlex>
-
+         <Flex margin="16px 0" padding="0 16px">
+            {order.cart.source === 'subscription' && (
+               <>
+                  <Text as="text1">Details: </Text>
+                  <span>
+                     {order.cart.subscriptionOccurence?.title?.title}, serves{' '}
+                     {order.cart.subscriptionOccurence?.serving?.size}, count{' '}
+                     {order.cart.subscriptionOccurence?.itemCount?.count}
+                  </span>
+               </>
+            )}
+         </Flex>
          <Spacer size="8px" />
          {isThirdParty ? (
             <HorizontalTabs>

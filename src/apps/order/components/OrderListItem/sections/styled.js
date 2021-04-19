@@ -154,6 +154,9 @@ export const StyledServings = styled.div`
       :first-child {
          margin-right: 6px;
       }
+      :last-child {
+         text-align: right;
+      }
    }
 `
 

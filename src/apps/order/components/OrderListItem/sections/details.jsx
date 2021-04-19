@@ -98,6 +98,21 @@ export const Details = ({ order }) => {
                   <span>{order.cart.source}</span>
                </StyledStat>
                <Spacer size="8px" />
+               {order.cart.source === 'subscription' && (
+                  <>
+                     <StyledStat>
+                        <span>Details</span>
+                        <span>
+                           {order.cart.subscriptionOccurence?.title?.title},
+                           serves{' '}
+                           {order.cart.subscriptionOccurence?.serving?.size},
+                           count{' '}
+                           {order.cart.subscriptionOccurence?.itemCount?.count}
+                        </span>
+                     </StyledStat>
+                     <Spacer size="8px" />
+                  </>
+               )}
                {order.thirdPartyOrderId && (
                   <StyledStat>
                      <span>Third Party</span>
