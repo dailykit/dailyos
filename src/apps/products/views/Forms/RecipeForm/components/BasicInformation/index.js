@@ -1,10 +1,10 @@
 import React from 'react'
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/react-hooks'
 import { Filler, Flex, Spacer, Text } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { InlineLoader } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
-import { CUISINES, UPDATE_RECIPE } from '../../../../../graphql'
+import { CUISINES } from '../../../../../graphql'
 import SelectCuisine from './SelectCuisine'
 import RecipeType from './RecipeType'
 import CookingTime from './CookingTime'
@@ -18,6 +18,8 @@ const BasicInformation = ({ state }) => {
    // State
    const [updated, setUpdated] = React.useState(null)
    const [_state, _dispatch] = React.useReducer(reducer, initialState)
+
+   console.log(_state)
    console.log(_state)
    // Subscription
    const { data: { cuisineNames = [] } = {}, loading } = useQuery(CUISINES, {
@@ -56,11 +58,6 @@ const BasicInformation = ({ state }) => {
       }
    }
 
-   const [updateCuisine, { loading: updatingCuisine }] = useMutation(
-      UPDATE_RECIPE,
-      getMutationOptions({ cuisine: _state.cuisine.value }, 'cuisine')
-   )
-
    React.useEffect(() => {
       _dispatch({
          type: 'SEED',
@@ -90,12 +87,11 @@ const BasicInformation = ({ state }) => {
                      />
                      <Spacer yAxis size="48px" />
                      <SelectCuisine
+                        state={state}
+                        _dispatch={_dispatch}
                         updated={updated}
                         setUpdated={setUpdated}
-                        _dispatch={_dispatch}
                         cuisineNames={cuisineNames}
-                        updateCuisine={updateCuisine}
-                        updatingCuisine={updatingCuisine}
                      />
                      <Spacer yAxis size="48px" />
 

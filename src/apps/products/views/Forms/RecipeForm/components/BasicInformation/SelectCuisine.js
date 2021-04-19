@@ -1,15 +1,31 @@
-import { Dropdown, Flex, Spacer } from '@dailykit/ui'
 import React from 'react'
+import { Dropdown, Flex, Spacer } from '@dailykit/ui'
 import { UpdatingSpinner } from '../../../../../../../shared/components'
+import { UPDATE_RECIPE } from '../../../../../graphql'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../shared/utils'
+import { useMutation } from '@apollo/react-hooks'
 
 const SelectCuisine = ({
+   state,
    _dispatch,
    cuisineNames,
-   updateCuisine,
-   updatingCuisine,
    updated,
    setUpdated,
 }) => {
+   const [updateCuisine, { loading: updatingCuisine }] = useMutation(
+      UPDATE_RECIPE,
+      {
+         onCompleted: () => {
+            setUpdated('cuisine')
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
+
    return (
       <Flex container alignItems="center">
          <Dropdown
@@ -26,7 +42,12 @@ const SelectCuisine = ({
                      value: option.title,
                   },
                })
-               updateCuisine()
+               updateCuisine({
+                  variables: {
+                     id: state.id,
+                     set: { cuisine: option.title },
+                  },
+               })
             }}
             typeName="cuisine"
          />

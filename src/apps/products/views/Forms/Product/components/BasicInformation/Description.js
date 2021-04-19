@@ -30,7 +30,7 @@ const Description = ({ state }) => {
       return {
          variables: {
             id: state.id,
-            set,
+            _set: set,
          },
          onCompleted: () => {
             setUpdated(updatedField)
