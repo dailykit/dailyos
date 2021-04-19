@@ -53,6 +53,7 @@ import {
 
 const CustomerRelation = ({ match }) => {
    const [context, setContext] = useContext(BrandContext)
+   console.log({ context })
    const prevBrandId = useRef(context.brandId)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
@@ -243,6 +244,7 @@ const CustomerRelation = ({ match }) => {
          <Flex container>
             <StyledSideBar>
                <CustomerCard
+                  brand={context}
                   customer={customerData[0]?.customer}
                   walletAmount={currencyFmt(
                      walletNreferral[0]?.customer?.wallets[0].amount || 0

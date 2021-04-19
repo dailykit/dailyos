@@ -35,6 +35,8 @@ export const CUSTOMER_DATA = gql`
             customer {
                source
                isTest
+               email
+               keycloakId
                platform_customer {
                   firstName
                   lastName
