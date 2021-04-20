@@ -36,7 +36,7 @@ const SubscriptionCard = ({ planData }) => (
                   {rruleToText(planData?.subscription?.rrule)}
                </Text>
             </StyledDiv>
-            {Object.keys(planData.pausePeriod).length && (
+            {!!Object.keys(planData.pausePeriod).length && (
                <StyledDiv col>
                   <Text as="subtitle">Pause Period</Text>
                   <Text as="p">

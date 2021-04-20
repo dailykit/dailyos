@@ -223,6 +223,8 @@ const OrdersTable = ({ id }) => {
       setOrder(orderId, true)
    }
 
+   console.log(orders)
+
    if (listLoading) return <InlineLoader />
    return (
       <Flex maxWidth="1280px" width="calc(100vw-64px)" margin="0 auto">

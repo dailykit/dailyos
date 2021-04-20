@@ -82,6 +82,16 @@ const CustomerListing = () => {
                phone: customer?.platform_customer?.phoneNumber || 'N/A',
                email: customer?.platform_customer?.email || 'N/A',
                source: customer.source || 'N/A',
+               planTitle:
+                  customer?.brandCustomers[0].subscription
+                     ?.subscriptionItemCount?.plan?.subscriptionTitle?.title ??
+                  '-',
+               servings:
+                  customer?.brandCustomers[0].subscription
+                     ?.subscriptionItemCount?.plan?.servingSize ?? '-',
+               itemCount:
+                  customer?.brandCustomers[0].subscription
+                     ?.subscriptionItemCount?.count ?? '-',
                refSent: '20',
                paid:
                   customer?.orders_aggregate?.aggregate?.sum?.amountPaid ||
@@ -189,6 +199,42 @@ const CustomerListing = () => {
          width: '150',
          headerTooltip: function (column) {
             const identifier = 'customer_listing_source_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+      {
+         title: 'Plan',
+         field: 'planTitle',
+         hozAlign: 'left',
+         width: '150',
+         headerTooltip: function (column) {
+            const identifier = 'customer_listing_plan_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+      {
+         title: 'Serving Size',
+         field: 'servings',
+         hozAlign: 'left',
+         width: '60',
+         headerTooltip: function (column) {
+            const identifier = 'customer_listing_serving_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+      {
+         title: 'Item Count',
+         field: 'itemCount',
+         hozAlign: 'left',
+         width: '60',
+         headerTooltip: function (column) {
+            const identifier = 'customer_listing_item_count_column'
             return (
                tooltip(identifier)?.description || column.getDefinition().title
             )

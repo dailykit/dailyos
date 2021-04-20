@@ -217,12 +217,11 @@ const CustomerRelation = ({ match }) => {
                />
             )
          case 'Subscriber':
-            return (
-               <SubscriptionTable
-                  id={match?.params?.id || 0}
-                  sid={subscriptionData[0]?.customer?.subscriptionId || 0}
-               />
-            )
+            console.log({
+               id: match?.params?.id,
+               sid: subscriptionData[0]?.subscriptionId,
+            })
+            return <SubscriptionTable brandCustomerId={customerData[0]?.id} />
          default:
             return null
       }
