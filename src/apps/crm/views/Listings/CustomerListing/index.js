@@ -148,14 +148,29 @@ const CustomerListing = () => {
 
    const columns = [
       {
-         title: 'Customer Name',
-         field: 'name',
+         title: 'Email',
+         field: 'email',
          headerFilter: true,
+         frozen: true,
          hozAlign: 'left',
+         width: 150,
          cssClass: 'rowClick',
          cellClick: (e, cell) => {
             rowClick(e, cell)
          },
+         headerTooltip: function (column) {
+            const identifier = 'customer_listing_email_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+      {
+         title: 'Customer Name',
+         field: 'name',
+         headerFilter: true,
+         hozAlign: 'left',
+         width: 150,
          headerTooltip: function (column) {
             const identifier = 'customer_listing_name_column'
             return (
@@ -181,22 +196,10 @@ const CustomerListing = () => {
          width: 150,
       },
       {
-         title: 'Email',
-         field: 'email',
-         headerFilter: true,
-         hozAlign: 'left',
-         headerTooltip: function (column) {
-            const identifier = 'customer_listing_email_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
-         },
-      },
-      {
          title: 'Source',
          field: 'source',
          hozAlign: 'left',
-         width: '150',
+         width: 150,
          headerTooltip: function (column) {
             const identifier = 'customer_listing_source_column'
             return (
@@ -208,7 +211,7 @@ const CustomerListing = () => {
          title: 'Plan',
          field: 'planTitle',
          hozAlign: 'left',
-         width: '150',
+         width: 150,
          headerTooltip: function (column) {
             const identifier = 'customer_listing_plan_column'
             return (
@@ -219,8 +222,8 @@ const CustomerListing = () => {
       {
          title: 'Serving Size',
          field: 'servings',
-         hozAlign: 'left',
-         width: '60',
+         hozAlign: 'right',
+         width: 120,
          headerTooltip: function (column) {
             const identifier = 'customer_listing_serving_column'
             return (
@@ -231,8 +234,8 @@ const CustomerListing = () => {
       {
          title: 'Item Count',
          field: 'itemCount',
-         hozAlign: 'left',
-         width: '60',
+         hozAlign: 'right',
+         width: 120,
          headerTooltip: function (column) {
             const identifier = 'customer_listing_item_count_column'
             return (
@@ -254,10 +257,10 @@ const CustomerListing = () => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
-         width: 150,
+         width: 120,
       },
       {
-         width: 150,
+         width: 80,
          title: 'Total Paid',
          field: 'paid',
          hozAlign: 'right',
@@ -286,7 +289,7 @@ const CustomerListing = () => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
-         width: 150,
+         width: 80,
       },
       {
          title: 'Discounts availed',
@@ -302,7 +305,7 @@ const CustomerListing = () => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
-         width: 150,
+         width: 80,
          formatter: cell => currencyFmt(Number(cell.getValue()) || 0),
       },
       {
