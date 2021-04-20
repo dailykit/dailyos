@@ -6,21 +6,22 @@ import {
    UpdatingSpinner,
 } from '../../../../../../../shared/components'
 import { useMutation } from '@apollo/react-hooks'
-import validator from '../../validators'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../shared/utils'
 
-const Descriptions = ({
-   _state,
-   _dispatch,
-   getMutationOptions,
-   updated,
-   setUpdated,
-}) => {
+const Descriptions = ({ state, updated, setUpdated }) => {
+   const [description, setDescription] = React.useState(state.description)
    const [updateDescription, { loading: updatingDescription }] = useMutation(
       UPDATE_RECIPE,
-      getMutationOptions(
-         { description: _state.description.value },
-         'description'
-      )
+      {
+         onCompleted: () => {
+            setUpdated('description')
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
    )
 
    return (
@@ -32,17 +33,20 @@ const Descriptions = ({
                   variant="revamp-sm"
                   id="description"
                   name="description"
-                  onChange={e =>
-                     _dispatch({
-                        type: 'SET_VALUE',
-                        payload: {
-                           field: 'description',
-                           value: e.target.value,
+                  onChange={e => setDescription(e.target.value)}
+                  onBlur={() =>
+                     updateDescription({
+                        variables: {
+                           id: state.id,
+                           set: {
+                              description: description.length
+                                 ? description
+                                 : null,
+                           },
                         },
                      })
                   }
-                  onBlur={updateDescription}
-                  value={_state.description.value}
+                  value={description}
                   placeholder="Add recipe description within 120 words"
                />
             </Form.Group>

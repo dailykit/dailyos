@@ -33,6 +33,7 @@ const SelectCuisine = ({
             title="cuisine"
             variant="revamp"
             addOption={() => console.log('Item added')}
+            searchedOption={e => console.log('Searched for ', e)}
             options={cuisineNames}
             selectedOption={option => {
                _dispatch({

@@ -19,8 +19,6 @@ const BasicInformation = ({ state }) => {
    const [updated, setUpdated] = React.useState(null)
    const [_state, _dispatch] = React.useReducer(reducer, initialState)
 
-   console.log(_state)
-   console.log(_state)
    // Subscription
    const { data: { cuisineNames = [] } = {}, loading } = useQuery(CUISINES, {
       onCompleted: data => {
@@ -79,11 +77,9 @@ const BasicInformation = ({ state }) => {
                         <Text as="h2">Basic Information</Text>
                      </Flex>
                      <RecipeType
+                        state={state}
                         updated={updated}
                         setUpdated={setUpdated}
-                        _state={_state}
-                        _dispatch={_dispatch}
-                        getMutationOptions={getMutationOptions}
                      />
                      <Spacer yAxis size="48px" />
                      <SelectCuisine
@@ -96,47 +92,37 @@ const BasicInformation = ({ state }) => {
                      <Spacer yAxis size="48px" />
 
                      <CookingTime
+                        state={state}
                         updated={updated}
                         setUpdated={setUpdated}
-                        _state={_state}
-                        _dispatch={_dispatch}
-                        getMutationOptions={getMutationOptions}
                      />
                      <Spacer yAxis size="48px" />
 
                      <Author
+                        state={state}
                         updated={updated}
                         setUpdated={setUpdated}
-                        _state={_state}
-                        _dispatch={_dispatch}
-                        getMutationOptions={getMutationOptions}
                      />
                      <Spacer yAxis size="48px" />
 
                      <Utensils
                         updated={updated}
                         setUpdated={setUpdated}
-                        _state={_state}
-                        _dispatch={_dispatch}
-                        getMutationOptions={getMutationOptions}
+                        state={state}
                      />
                      <Spacer yAxis size="48px" />
 
                      <NotIncluded
                         updated={updated}
                         setUpdated={setUpdated}
-                        _state={_state}
-                        _dispatch={_dispatch}
-                        getMutationOptions={getMutationOptions}
+                        state={state}
                      />
                      <Spacer yAxis size="48px" />
 
                      <Description
+                        state={state}
                         updated={updated}
                         setUpdated={setUpdated}
-                        _state={_state}
-                        _dispatch={_dispatch}
-                        getMutationOptions={getMutationOptions}
                      />
                      <Spacer yAxis size="48px" />
                   </div>

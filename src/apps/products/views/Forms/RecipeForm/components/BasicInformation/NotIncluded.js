@@ -7,25 +7,27 @@ import {
 } from '../../../../../../../shared/components'
 import { useMutation } from '@apollo/react-hooks'
 import validator from '../../validators'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../shared/utils'
+import { isArray } from 'lodash'
 
-const NotIncluded = ({
-   _state,
-   _dispatch,
-   getMutationOptions,
-   updated,
-   setUpdated,
-}) => {
+const NotIncluded = ({ state, updated, setUpdated }) => {
+   const [notIncluded, setNotIncluded] = React.useState(state.notIncluded)
+   const [errors, setErrors] = React.useState([])
+
    const [updateNotIncluded, { loading: updatingNotIncluded }] = useMutation(
       UPDATE_RECIPE,
-      getMutationOptions(
-         {
-            notIncluded: _state.notIncluded.value
-               ? _state.notIncluded.value.split(',').map(tag => tag.trim())
-               : [],
+      {
+         onCompleted: () => {
+            setUpdated('not-included')
          },
-         'not-included'
-      )
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
    )
+
    return (
       <>
          <Flex container alignItems="center">
@@ -35,46 +37,38 @@ const NotIncluded = ({
                   variant="revamp-sm"
                   id="notIncluded"
                   name="notIncluded"
-                  onChange={e =>
-                     _dispatch({
-                        type: 'SET_VALUE',
-                        payload: {
-                           field: 'notIncluded',
-                           value: e.target.value,
-                        },
-                     })
-                  }
+                  onChange={e => setNotIncluded(e.target.value)}
                   onBlur={() => {
                      const { isValid, errors } = validator.csv(
-                        _state.notIncluded.value
+                        isArray(notIncluded)
+                           ? notIncluded.join(',')
+                           : notIncluded
                      )
-                     _dispatch({
-                        type: 'SET_ERRORS',
-                        payload: {
-                           field: 'notIncluded',
-                           meta: {
-                              isTouched: true,
-                              isValid,
-                              errors,
-                           },
-                        },
-                     })
+                     setErrors(errors)
                      if (isValid) {
-                        updateNotIncluded()
+                        updateNotIncluded({
+                           variables: {
+                              id: state.id,
+                              set: {
+                                 notIncluded: notIncluded
+                                    ? notIncluded
+                                         .split(',')
+                                         .map(tag => tag.trim())
+                                    : [],
+                              },
+                           },
+                        })
                      }
                   }}
-                  value={_state.notIncluded.value}
-                  placeholder="enter what's not included"
-                  hasError={
-                     _state.notIncluded.meta.isTouched &&
-                     !_state.notIncluded.meta.isValid
+                  value={
+                     isArray(notIncluded) ? notIncluded.join(',') : notIncluded
                   }
+                  placeholder="enter what's not included"
+                  hasError={errors.length}
                />
-               {_state.notIncluded.meta.isTouched &&
-                  !_state.notIncluded.meta.isValid &&
-                  _state.notIncluded.meta.errors.map((error, index) => (
-                     <Form.Error key={index}>{error}</Form.Error>
-                  ))}
+               {errors.map((error, index) => (
+                  <Form.Error key={index}>{error}</Form.Error>
+               ))}
             </Form.Group>
             <Spacer xAxis size="16px" />
             <UpdatingSpinner

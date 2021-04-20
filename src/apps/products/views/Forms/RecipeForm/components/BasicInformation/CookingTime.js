@@ -1,81 +1,57 @@
 import React from 'react'
 import { Flex, Form, Spacer } from '@dailykit/ui'
 import { UPDATE_RECIPE } from '../../../../../graphql'
-import {
-   Tooltip,
-   UpdatingSpinner,
-} from '../../../../../../../shared/components'
+import { UpdatingSpinner } from '../../../../../../../shared/components'
 import { useMutation } from '@apollo/react-hooks'
-import validator from '../../validators'
+import { logger } from '../../../../../../../shared/utils'
+import { toast } from 'react-toastify'
 
-const CookingTime = ({
-   _state,
-   _dispatch,
-   getMutationOptions,
-   updated,
-   setUpdated,
-}) => {
+const CookingTime = ({ state, updated, setUpdated }) => {
    const [updateCookingTime, { loading: updatingCookingTime }] = useMutation(
       UPDATE_RECIPE,
-      getMutationOptions(
-         { cookingTime: _state.cookingTime.value || null },
-         'cooking-time'
-      )
+      {
+         onCompleted: () => {
+            setUpdated('cooking-time')
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
+   const [cookingTime, setCookingTime] = React.useState(
+      Number(state.cookingTime)
    )
 
    return (
       <Flex container alignItems="center">
          <Flex width="100%">
             <Form.Group>
-               <Form.Label htmlFor="cookingTime" title="cookingTime">
-                  <Flex container alignItems="center">
-                     Cooking Time(mins)
-                     <Tooltip identifier="recipe_cooking_time" />
-                  </Flex>
-               </Form.Label>
-               <Form.Number
+               <Form.Stepper
                   id="cookingTime"
                   name="cookingTime"
-                  value={_state.cookingTime.value}
-                  placeholder="Enter cooking time"
-                  onChange={e =>
-                     _dispatch({
-                        type: 'SET_VALUE',
-                        payload: {
-                           field: 'cookingTime',
-                           value: e.target.value,
-                        },
-                     })
-                  }
+                  unitText="min"
+                  width="100px"
+                  fieldName="Cooking time:"
+                  value={cookingTime}
+                  placeholder="0"
+                  onChange={value => {
+                     setCookingTime(value)
+                  }}
                   onBlur={() => {
-                     const { isValid, errors } = validator.cookingTime(
-                        _state.cookingTime.value
-                     )
-                     _dispatch({
-                        type: 'SET_ERRORS',
-                        payload: {
-                           field: 'cookingTime',
-                           meta: {
-                              isTouched: true,
-                              isValid,
-                              errors,
+                     const isValid = cookingTime && cookingTime > 0
+                     updateCookingTime({
+                        variables: {
+                           id: state.id,
+                           set: {
+                              cookingTime: isValid
+                                 ? cookingTime.toString()
+                                 : null,
                            },
                         },
                      })
-                     if (isValid) {
-                        updateCookingTime()
-                     }
                   }}
-                  hasError={
-                     _state.cookingTime.meta.isTouched &&
-                     !_state.cookingTime.meta.isValid
-                  }
                />
-               {_state.cookingTime.meta.isTouched &&
-                  !_state.cookingTime.meta.isValid &&
-                  _state.cookingTime.meta.errors.map((error, index) => (
-                     <Form.Error key={index}>{error}</Form.Error>
-                  ))}
             </Form.Group>
          </Flex>
          <Spacer xAxis size="16px" />

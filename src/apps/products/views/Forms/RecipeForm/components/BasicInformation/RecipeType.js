@@ -3,14 +3,10 @@ import { Flex, RadioGroup, Spacer } from '@dailykit/ui'
 import { UPDATE_RECIPE } from '../../../../../graphql'
 import { UpdatingSpinner } from '../../../../../../../shared/components'
 import { useMutation } from '@apollo/react-hooks'
+import { toast } from 'react-toastify'
+import { logger } from '../../../../../../../shared/utils'
 
-const RecipeType = ({
-   _state,
-   _dispatch,
-   getMutationOptions,
-   updated,
-   setUpdated,
-}) => {
+const RecipeType = ({ state, updated, setUpdated }) => {
    const options = [
       { id: 'Non-vegetarian', title: 'Non-vegetarian' },
       { id: 'Vegetarian', title: 'Vegetarian' },
@@ -19,23 +15,28 @@ const RecipeType = ({
 
    const [updateRecipeType, { loading: updatingRecipeType }] = useMutation(
       UPDATE_RECIPE,
-      getMutationOptions({ type: _state.type.value }, 'type')
+      {
+         onCompleted: () => {
+            setUpdated('type')
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
    )
-
    return (
       <Flex container alignItems="center">
          <RadioGroup
             options={options}
-            active={_state.type.value}
+            active={state.type}
             onChange={option => {
-               _dispatch({
-                  type: 'SET_VALUE',
-                  payload: {
-                     field: 'type',
-                     value: option.title,
+               updateRecipeType({
+                  variables: {
+                     id: state.id,
+                     set: { type: option.title },
                   },
                })
-               updateRecipeType()
             }}
          />
          <Spacer xAxis size="16px" />

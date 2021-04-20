@@ -16,7 +16,6 @@ import validator from '../../validators'
 const Statusbar = ({ state, setTitle, title }) => {
    const [updated, setUpdated] = React.useState(null)
    const { addTab, setTabTitle } = useTabs()
-
    //Mutations
    const [createRecipe, { loading: cloning }] = useMutation(
       CREATE_SIMPLE_RECIPE,

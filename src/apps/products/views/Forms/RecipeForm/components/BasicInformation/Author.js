@@ -6,17 +6,22 @@ import {
    UpdatingSpinner,
 } from '../../../../../../../shared/components'
 import { useMutation } from '@apollo/react-hooks'
+import { logger } from '../../../../../../../shared/utils'
+import { toast } from 'react-toastify'
 
-const Author = ({
-   _state,
-   _dispatch,
-   getMutationOptions,
-   updated,
-   setUpdated,
-}) => {
+const Author = ({ state, updated, setUpdated }) => {
+   const [author, setAuthor] = React.useState(state.author)
    const [updateAuthor, { loading: updatingAuthor }] = useMutation(
       UPDATE_RECIPE,
-      getMutationOptions({ author: _state.author.value }, 'author')
+      {
+         onCompleted: () => {
+            setUpdated('author')
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
    )
 
    return (
@@ -27,27 +32,18 @@ const Author = ({
                id="author"
                name="author"
                variant="revamp-sm"
-               onChange={e =>
-                  _dispatch({
-                     type: 'SET_VALUE',
-                     payload: {
-                        field: 'author',
-                        value: e.target.value,
+               onChange={e => setAuthor(e.target.value)}
+               onBlur={() =>
+                  updateAuthor({
+                     variables: {
+                        id: state.id,
+                        set: { author: author ? author : null },
                      },
                   })
                }
-               onBlur={updateAuthor}
-               value={_state.author.value}
+               value={author}
                placeholder="enter author name"
-               hasError={
-                  _state.author.meta.isTouched && !_state.author.meta.isValid
-               }
             />
-            {_state.author.meta.isTouched &&
-               !_state.author.meta.isValid &&
-               _state.author.meta.errors.map((error, index) => (
-                  <Form.Error key={index}>{error}</Form.Error>
-               ))}
          </Form.Group>
          <Spacer xAxis size="16px" />
          <UpdatingSpinner
