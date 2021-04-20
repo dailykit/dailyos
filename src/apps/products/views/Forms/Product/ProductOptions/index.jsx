@@ -46,6 +46,8 @@ import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
 import { from } from 'apollo-link'
 
 const ProductOptions = ({ productId, options }) => {
+   const SERVING_TUNNEL_TYPES = ['mealKit', 'readyToEat', 'Meal Kit']
+
    const { initiatePriority } = useDnd()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
    const [
@@ -113,19 +115,23 @@ const ProductOptions = ({ productId, options }) => {
       })
    }
 
-   const handleAddOptionItem = optionId => {
+   const handleAddOptionItem = option => {
       productDispatch({
-         type: 'OPTION',
-         payload: optionId,
+         type: 'OPTION_ID',
+         payload: option.id,
       })
-      openTunnel(1)
+      if (SERVING_TUNNEL_TYPES.includes(option.type)) {
+         productDispatch({
+            type: 'PRODUCT_OPTION_TYPE',
+            payload: 'serving',
+         })
+         openTunnel(2)
+      } else {
+         openTunnel(1)
+      }
    }
 
    const handleAddModifier = optionId => {
-      console.log(
-         '🚀 ~ file: index.jsx ~ line 125 ~ ProductOptions ~ optionId',
-         optionId
-      )
       modifiersDispatch({
          type: 'OPTION_ID',
          payload: optionId,
@@ -143,7 +149,7 @@ const ProductOptions = ({ productId, options }) => {
 
    const handleAddOpConfig = optionId => {
       productDispatch({
-         type: 'OPTION',
+         type: 'OPTION_ID',
          payload: optionId,
       })
       opConfigInvokedBy.current = 'option'
@@ -234,9 +240,7 @@ const ProductOptions = ({ productId, options }) => {
                         key={option.id}
                         option={option}
                         productOptionTypes={productOptionTypes}
-                        handleAddOptionItem={() =>
-                           handleAddOptionItem(option.id)
-                        }
+                        handleAddOptionItem={() => handleAddOptionItem(option)}
                         handleAddModifier={() => handleAddModifier(option.id)}
                         handleEditModifier={() =>
                            handleEditModifier(option.modifier)
@@ -490,6 +494,8 @@ const Option = ({
    }
 
    const renderLinkedItem = () => {
+      if (!option.type) return null
+
       const renderItemName = () => {
          if (option.simpleRecipeYield) {
             return `${option.simpleRecipeYield.simpleRecipe.name} - ${option.simpleRecipeYield.yield.serving} serving`

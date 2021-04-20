@@ -24,8 +24,8 @@ const ProductOptionTypeTunnel = ({ closeTunnel, openTunnel }) => {
             tooltip={<Tooltip identifier="product_option_type_tunnel" />}
          />
          <TunnelBody>
-            <SolidTile onClick={() => select('inventory')}>
-               <Text as="h1">Inventory Item</Text>
+            <SolidTile onClick={() => select('supplier')}>
+               <Text as="h1">Supplier Item</Text>
                <Text as="subtitle">Items bought directly from a supplier.</Text>
             </SolidTile>
             <br />
@@ -36,9 +36,8 @@ const ProductOptionTypeTunnel = ({ closeTunnel, openTunnel }) => {
                </Text>
             </SolidTile>
             <br />
-            <SolidTile onClick={() => select('serving')}>
-               <Text as="h1">Recipe Serving</Text>
-               <Text as="subtitle">Servings from recipes created.</Text>
+            <SolidTile onClick={() => select('bulk')}>
+               <Text as="h1">Bulk Item</Text>
             </SolidTile>
          </TunnelBody>
       </>
