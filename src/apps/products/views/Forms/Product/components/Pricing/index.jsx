@@ -2,11 +2,13 @@ import { useMutation } from '@apollo/react-hooks'
 import { Flex, Form, Spacer } from '@dailykit/ui'
 import React from 'react'
 import { toast } from 'react-toastify'
+import { UpdatingSpinner } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { PRODUCT } from '../../../../../graphql'
 import validator from '../../validators'
 
 const Pricing = ({ state }) => {
+   const [updated, setUpdated] = React.useState(null)
    const [history, setHistory] = React.useState({
       price: state.price,
       discount: state.discount,
@@ -37,15 +39,30 @@ const Pricing = ({ state }) => {
       })
    }, [state.price, state.discount])
 
-   const [updateProduct] = useMutation(PRODUCT.UPDATE, {
-      onCompleted: () => {
-         toast.success('Updated!')
-      },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-   })
+   const [updatePrice, { loading: updatingPrice }] = useMutation(
+      PRODUCT.UPDATE,
+      {
+         onCompleted: () => {
+            setUpdated('price')
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
+   const [updateDiscount, { loading: updatingDiscount }] = useMutation(
+      PRODUCT.UPDATE,
+      {
+         onCompleted: () => {
+            setUpdated('discount')
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
 
    const isActuallyUpdated = (field, value) => {
       if (history[field] !== value) {
@@ -60,11 +77,11 @@ const Pricing = ({ state }) => {
             const val = price.value
             const { isValid, errors } = validator.price(val)
             if (isValid && isActuallyUpdated(field, val)) {
-               updateProduct({
+               updatePrice({
                   variables: {
                      id: state.id,
                      _set: {
-                        price: val,
+                        price: val ? val : 0,
                      },
                   },
                })
@@ -83,11 +100,11 @@ const Pricing = ({ state }) => {
             const val = discount.value
             const { isValid, errors } = validator.discount(val)
             if (isValid && isActuallyUpdated(field, val)) {
-               updateProduct({
+               updateDiscount({
                   variables: {
                      id: state.id,
                      _set: {
-                        discount: val,
+                        discount: val ? val : 0,
                      },
                   },
                })
@@ -109,37 +126,51 @@ const Pricing = ({ state }) => {
 
    return (
       <Flex>
-         <Flex>
-            <Form.Label htmlFor="price" title="price">
-               Price*
-            </Form.Label>
-            <Form.Number
+         <Flex container alignItems="center">
+            <Form.Stepper
                id="price"
                name="price"
+               width="100px"
+               fieldName="Price:"
+               textBefore="$"
                onBlur={() => handleBlur('price')}
-               onChange={e => setPrice({ ...price, value: e.target.value })}
+               onChange={val => setPrice({ ...price, value: val })}
                value={price.value}
-               placeholder="Enter price"
+               placeholder="0"
                hasError={price.meta.isTouched && !price.meta.isValid}
             />
+            <Spacer xAxis size="16px" />
+
+            <UpdatingSpinner
+               updated={updated}
+               setUpdated={setUpdated}
+               updatedField="price"
+               loading={updatingPrice}
+            />
          </Flex>
-         <Spacer size="16px" />
-         <Flex>
-            <Form.Label htmlFor="discount" title="discount">
-               Discount*
-            </Form.Label>
-            <Form.Number
+         <Spacer yAxis size="48px" />
+         <Flex container alignItems="center">
+            <Form.Stepper
                id="discount"
                name="discount"
+               width="100px"
+               fieldName="Discount:"
+               unitText="%"
                onBlur={() => handleBlur('discount')}
-               onChange={e =>
-                  setDiscount({ ...discount, value: e.target.value })
-               }
+               onChange={value => setDiscount({ ...discount, value })}
                value={discount.value}
                placeholder="Enter discount"
                hasError={discount.meta.isTouched && !discount.meta.isValid}
             />
+            <Spacer xAxis size="16px" />
+            <UpdatingSpinner
+               updated={updated}
+               setUpdated={setUpdated}
+               updatedField="discount"
+               loading={updatingDiscount}
+            />
          </Flex>
+         <Spacer yAxis size="48px" />
       </Flex>
    )
 }

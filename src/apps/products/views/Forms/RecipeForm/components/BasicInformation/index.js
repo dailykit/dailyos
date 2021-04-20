@@ -1,7 +1,6 @@
 import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { Filler, Flex, Spacer, Text } from '@dailykit/ui'
-import { toast } from 'react-toastify'
 import { InlineLoader } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { CUISINES } from '../../../../../graphql'
@@ -38,23 +37,6 @@ const BasicInformation = ({ state }) => {
       },
       fetchPolicy: 'cache-and-network',
    })
-
-   //Mutations
-   const getMutationOptions = (set, updatedField) => {
-      return {
-         variables: {
-            id: state.id,
-            set,
-         },
-         onCompleted: () => {
-            setUpdated(updatedField)
-         },
-         onError: error => {
-            toast.error('Something went wrong!')
-            logger(error)
-         },
-      }
-   }
 
    React.useEffect(() => {
       _dispatch({

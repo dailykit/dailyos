@@ -51,9 +51,11 @@ const NotIncluded = ({ state, updated, setUpdated }) => {
                               id: state.id,
                               set: {
                                  notIncluded: notIncluded
-                                    ? notIncluded
-                                         .split(',')
-                                         .map(tag => tag.trim())
+                                    ? isArray(notIncluded)
+                                       ? notIncluded
+                                       : notIncluded
+                                            .split(',')
+                                            .map(tag => tag.trim())
                                     : [],
                               },
                            },

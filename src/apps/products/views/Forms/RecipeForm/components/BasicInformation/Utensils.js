@@ -50,7 +50,11 @@ const Utensils = ({ state, updated, setUpdated }) => {
                               id: state.id,
                               set: {
                                  utensils: utensils
-                                    ? utensils.split(',').map(tag => tag.trim())
+                                    ? isArray(utensils)
+                                       ? utensils
+                                       : utensils
+                                            .split(',')
+                                            .map(tag => tag.trim())
                                     : [],
                               },
                            },

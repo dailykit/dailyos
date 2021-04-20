@@ -14,21 +14,14 @@ import {
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import {
-   ErrorState,
-   InlineLoader,
-   Tooltip,
-} from '../../../../../shared/components'
+import { ErrorState, InlineLoader } from '../../../../../shared/components'
 import { useTabs } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import { ProductProvider } from '../../../context/product'
 import { ModifiersProvider } from '../../../context/product/modifiers'
 import { PRODUCT } from '../../../graphql'
-import { Assets, Description, Pricing } from './components'
 import CustomizableProductComponents from './CustomizableProductComponents'
 import ProductOptions from './ProductOptions'
-import { ResponsiveFlex, StyledFlex } from './styled'
-import validator from './validators'
 import ComboProductComponents from './ComboProductComponents'
 import BasicInformation from './components/BasicInformation'
 import Statusbar from './components/Statusbar'
@@ -36,7 +29,7 @@ import Statusbar from './components/Statusbar'
 const Product = () => {
    const { id: productId } = useParams()
 
-   const { setTabTitle, tab, addTab } = useTabs()
+   const { tab, addTab } = useTabs()
 
    const [title, setTitle] = React.useState({
       value: '',

@@ -12,14 +12,7 @@ import { UpdatingSpinner } from '../../../../../../../shared/components'
 
 const BasicInformation = ({ state }) => {
    const [updated, setUpdated] = React.useState(null)
-   const [additionalText, setAdditionalText] = React.useState({
-      value: state.additionalText || '',
-      meta: {
-         isTouched: false,
-         isValid: true,
-         errors: [],
-      },
-   })
+   const [additionalText, setAdditionalText] = React.useState(null)
 
    // Mutations
    const [
@@ -29,7 +22,7 @@ const BasicInformation = ({ state }) => {
       variables: {
          id: state.id,
          _set: {
-            additionalText: additionalText.value,
+            additionalText: additionalText,
          },
       },
       onCompleted: () => {
@@ -42,13 +35,8 @@ const BasicInformation = ({ state }) => {
    })
 
    React.useEffect(() => {
-      const timeId = setTimeout(() => {
-         setUpdated(null)
-      }, 1800)
-      return () => {
-         clearTimeout(timeId)
-      }
-   }, [updated])
+      setAdditionalText(state.additionalText)
+   }, [state])
 
    return (
       <Flex padding="40px 0px 0px 0px">
@@ -61,14 +49,9 @@ const BasicInformation = ({ state }) => {
                      id="text"
                      name="text"
                      variant="revamp-sm"
-                     onChange={e => {
-                        setAdditionalText({
-                           ...additionalText,
-                           value: e.target.value,
-                        })
-                     }}
+                     onChange={e => setAdditionalText(e.target.value)}
                      onBlur={updateAdditionalText}
-                     value={additionalText.value}
+                     value={additionalText}
                      placeholder="enter additional text, this will be shown with name on store"
                   />
                </Form.Group>

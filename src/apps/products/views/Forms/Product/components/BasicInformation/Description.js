@@ -6,113 +6,91 @@ import { PRODUCT } from '../../../../../graphql'
 import { logger } from '../../../../../../../shared/utils'
 import validator from '../../validators'
 import { UpdatingSpinner } from '../../../../../../../shared/components'
+import { isArray } from 'lodash'
 
 const Description = ({ state }) => {
    const [updated, setUpdated] = React.useState(null)
+   const [description, setDescription] = React.useState(state.description)
+   const [tags, setTags] = React.useState(state.tags)
+   const [errors, setErrors] = React.useState([])
 
-   const [tags, setTags] = React.useState({
-      value: state.tags ? state.tags.join(', ') : '',
-      meta: {
-         isTouched: false,
-         isValid: true,
-         errors: [],
-      },
-   })
-   const [description, setDescription] = React.useState({
-      value: state.description || '',
-      meta: {
-         isTouched: false,
-         isValid: true,
-         errors: [],
-      },
-   })
-   const getMutationOptions = (set, updatedField) => {
-      return {
-         variables: {
-            id: state.id,
-            _set: set,
-         },
+   const [updateDescription, { loading: updatingDescription }] = useMutation(
+      PRODUCT.UPDATE,
+      {
          onCompleted: () => {
-            setUpdated(updatedField)
+            setUpdated('description')
          },
          onError: error => {
             toast.error('Something went wrong!')
             logger(error)
          },
       }
-   }
-   // Mutations
-   const [updateTags, { loading: updatingTags }] = useMutation(
-      PRODUCT.UPDATE,
-      getMutationOptions(
-         {
-            tags: tags.value.trim().length
-               ? tags.value.split(',').map(tag => tag.trim())
-               : [],
-         },
-         'tags'
-      )
    )
 
-   const [updateDescription, { loading: updatingDescription }] = useMutation(
-      PRODUCT.UPDATE,
-      getMutationOptions({ description: description.value }, 'description')
-   )
+   const [updateTags, { loading: updatingTags }] = useMutation(PRODUCT.UPDATE, {
+      onCompleted: () => {
+         setUpdated('tags')
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
 
-   // Handlers
-   const handleUpdateTags = () => {
-      const { isValid, errors } = validator.csv(tags.value)
-      setTags({
-         ...tags,
-         meta: {
-            isTouched: true,
-            isValid,
-            errors,
-         },
-      })
-      if (updatingTags) return
-      if (tags.meta.isValid) {
-         updateTags()
-      } else {
-         toast.error('Invalid values!')
-      }
-   }
-
+   React.useEffect(() => {
+      setTags(state.tags)
+      setDescription(state.description)
+   }, [state.description])
    return (
       <>
-         <Flex container alignItems="center" margin="32px 0px 0px 0px">
+         <Flex container alignItems="center">
             <Form.Group>
                <Form.Text
-                  id="tags"
                   variant="revamp-sm"
+                  id="tags"
                   name="tags"
+                  onChange={e => setTags(e.target.value)}
                   onBlur={() => {
-                     handleUpdateTags()
+                     const { isValid, errors } = validator.csv(
+                        isArray(tags) ? tags.join(',') : tags
+                     )
+                     setErrors(errors)
+                     if (isValid) {
+                        updateTags({
+                           variables: {
+                              id: state.id,
+                              _set: {
+                                 tags: tags
+                                    ? isArray(tags)
+                                       ? tags
+                                       : tags.split(',').map(tag => tag.trim())
+                                    : [],
+                              },
+                           },
+                        })
+                     }
                   }}
-                  onChange={e => setTags({ ...tags, value: e.target.value })}
-                  value={tags.value}
+                  value={isArray(tags) ? tags.join(',') : tags}
                   placeholder="enter tags"
-                  hasError={tags.meta.isTouched && !tags.meta.isValid}
+                  hasError={Boolean(errors.length)}
                />
-               {tags.meta.isTouched &&
-                  !tags.meta.isValid &&
-                  tags.meta.errors.map((error, index) => (
-                     <Form.Error key={index}>{error}</Form.Error>
-                  ))}
+               {errors.map((error, index) => (
+                  <Form.Error key={index}>{error}</Form.Error>
+               ))}
             </Form.Group>
             <Spacer xAxis size="16px" />
             <UpdatingSpinner
-               loading={updatingTags}
-               updatedField="tags"
                updated={updated}
                setUpdated={setUpdated}
+               updatedField="tags"
+               loading={updatingTags}
             />
          </Flex>
          <HelperText
             type="hint"
-            message="Enter comma separated values, for example: New, Hot, Spicy"
+            message="enter comma separated values, for example: No-gluten, sugarless"
          />
-         <Spacer size="48px" />
+         <Spacer yAxis size="48px" />
          <Flex container alignItems="center">
             <Flex width="100%">
                <Form.Group>
@@ -120,15 +98,21 @@ const Description = ({ state }) => {
                      variant="revamp-sm"
                      id="description"
                      name="description"
-                     onChange={e => {
-                        setDescription({
-                           ...description,
-                           value: e.target.value,
+                     onChange={e => setDescription(e.target.value)}
+                     onBlur={() =>
+                        updateDescription({
+                           variables: {
+                              id: state.id,
+                              _set: {
+                                 description: description.length
+                                    ? description
+                                    : null,
+                              },
+                           },
                         })
-                     }}
-                     value={description.value}
-                     onBlur={updateDescription}
-                     placeholder="Add product description in 120 words. "
+                     }
+                     value={description}
+                     placeholder="Add recipe description within 120 words"
                   />
                </Form.Group>
             </Flex>
