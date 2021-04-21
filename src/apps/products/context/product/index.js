@@ -16,7 +16,7 @@ export const reducer = (state = initialState, { type, payload }) => {
             productOptionType: payload,
          }
       }
-      case 'OPTION': {
+      case 'OPTION_ID': {
          return {
             ...state,
             optionId: payload,

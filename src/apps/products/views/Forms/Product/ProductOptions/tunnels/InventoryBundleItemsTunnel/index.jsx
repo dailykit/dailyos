@@ -22,15 +22,19 @@ import {
 } from '../../../../../../../inventory/graphql/mutations/item'
 import { ProductContext } from '../../../../../../context/product'
 import {
+   INVENTORY_BUNDLE_SACHETS,
    PRODUCT_OPTION,
+   S_BULK_ITEMS,
    S_SACHET_ITEMS,
    S_SIMPLE_RECIPE_YIELDS,
    S_SUPPLIER_ITEMS,
 } from '../../../../../../graphql'
 import { TunnelBody } from '../../../tunnels/styled'
+import { InventoryBundleContext } from '../../../../../../context/product/inventoryBundle'
 
-const ProductOptionItemTunnel = ({ closeTunnel }) => {
-   const { productState } = React.useContext(ProductContext)
+const InventoryBundleItemsTunnel = ({ close }) => {
+   const { bundleState } = React.useContext(InventoryBundleContext)
+   console.log(bundleState)
 
    const [search, setSearch] = React.useState('')
    const [items, setItems] = React.useState([])
@@ -38,7 +42,7 @@ const ProductOptionItemTunnel = ({ closeTunnel }) => {
 
    // Subscription for fetching items
    const { loading: supplierItemsLoading } = useSubscription(S_SUPPLIER_ITEMS, {
-      skip: productState.productOptionType !== 'inventory',
+      skip: bundleState.bundleItemType !== 'supplier',
       onSubscriptionData: data => {
          const { supplierItems } = data.subscriptionData.data
          const updatedItems = supplierItems.map(item => {
@@ -51,7 +55,7 @@ const ProductOptionItemTunnel = ({ closeTunnel }) => {
       },
    })
    const { loading: sachetItemsLoading } = useSubscription(S_SACHET_ITEMS, {
-      skip: productState.productOptionType !== 'sachet',
+      skip: bundleState.bundleItemType !== 'sachet',
       onSubscriptionData: data => {
          const { sachetItems } = data.subscriptionData.data
          const updatedItems = sachetItems.map(item => {
@@ -63,31 +67,25 @@ const ProductOptionItemTunnel = ({ closeTunnel }) => {
          setItems([...updatedItems])
       },
    })
-   const { loading: servingsLoading } = useSubscription(
-      S_SIMPLE_RECIPE_YIELDS,
-      {
-         skip: productState.productOptionType !== 'serving',
-         variables: {
-            where: { isArchived: { _eq: false } },
-         },
-         onSubscriptionData: data => {
-            const { simpleRecipeYields } = data.subscriptionData.data
-            const updatedItems = simpleRecipeYields.map(y => {
-               return {
-                  id: y.id,
-                  title: `${y.yield.serving} serving - ${y.simpleRecipe.name}`,
-               }
-            })
-            setItems([...updatedItems])
-         },
-      }
-   )
+   const { loading: bulkItemsLoading } = useSubscription(S_BULK_ITEMS, {
+      skip: bundleState.bundleItemType !== 'bulk',
+      onSubscriptionData: data => {
+         const { bulkItems } = data.subscriptionData.data
+         const updatedItems = bulkItems.map(item => {
+            return {
+               id: item.id,
+               title: `${item.supplierItem.name} ${item.processingName}`,
+            }
+         })
+         setItems([...updatedItems])
+      },
+   })
 
-   const [updateProductOption] = useMutation(PRODUCT_OPTION.UPDATE, {
+   const [createBundleSachet] = useMutation(INVENTORY_BUNDLE_SACHETS.CREATE, {
       onCompleted: () => {
-         toast.success('Item linked.')
-         closeTunnel(2)
-         closeTunnel(1)
+         toast.success('Item added!')
+         close(4)
+         close(3)
       },
       onError: error => {
          toast.error('Something went wrong!')
@@ -111,7 +109,7 @@ const ProductOptionItemTunnel = ({ closeTunnel }) => {
    // Handlers
    const quickCreateItem = () => {
       const itemName = search.slice(0, 1).toUpperCase() + search.slice(1)
-      switch (productState.meta.itemType) {
+      switch (bundleState.bundleItemType) {
          case 'inventory':
             return createSupplierItem({
                variables: {
@@ -136,37 +134,53 @@ const ProductOptionItemTunnel = ({ closeTunnel }) => {
 
    React.useEffect(() => {
       if (current.id) {
-         updateProductOption({
-            variables: {
-               id: productState.optionId,
-               _set: {
-                  supplierItemId:
-                     productState.productOptionType === 'inventory'
-                        ? current.id
-                        : null,
-                  sachetItemId:
-                     productState.productOptionType === 'sachet'
-                        ? current.id
-                        : null,
-                  simpleRecipeYieldId:
-                     productState.productOptionType === 'serving'
-                        ? current.id
-                        : null,
+         if (bundleState.bundleItemType === 'bulk') {
+            const qty = parseInt(
+               window.prompt("What's the quantity for this bulk item?")
+            )
+            if (!isNaN(qty) && qty > 0) {
+               createBundleSachet({
+                  variables: {
+                     object: {
+                        inventoryProductBundleId: bundleState.bundleId,
+                        bulkItemId: current.id,
+                        bulkItemQuantity: qty,
+                     },
+                  },
+               })
+            } else {
+               toast.error('Invalid quantity!')
+            }
+         } else {
+            createBundleSachet({
+               variables: {
+                  object: {
+                     inventoryProductBundleId: bundleState.bundleId,
+                     sachetItemId:
+                        bundleState.bundleItemType === 'sachet'
+                           ? current.id
+                           : null,
+                     supplierItemId:
+                        bundleState.bundleItemType === 'supplier'
+                           ? current.id
+                           : null,
+                     bulkItemId: null,
+                  },
                },
-            },
-         })
+            })
+         }
       }
    }, [current])
 
    return (
       <>
          <TunnelHeader
-            title="Select an item"
-            close={() => closeTunnel(2)}
-            tooltip={<Tooltip identifier="product_option_item_tunnel" />}
+            title="Select an Item"
+            close={() => close(4)}
+            tooltip={<Tooltip identifier="inventory_bundle_item_tunnel" />}
          />
          <TunnelBody>
-            {sachetItemsLoading || supplierItemsLoading || servingsLoading ? (
+            {sachetItemsLoading || supplierItemsLoading || bulkItemsLoading ? (
                <InlineLoader />
             ) : (
                <List>
@@ -182,7 +196,7 @@ const ProductOptionItemTunnel = ({ closeTunnel }) => {
                   <ListOptions
                      search={search}
                      handleOnCreate={
-                        productState.productOptionType === 'inventory'
+                        bundleState.bundleItemType === 'inventory'
                            ? quickCreateItem
                            : null
                      }
@@ -208,4 +222,4 @@ const ProductOptionItemTunnel = ({ closeTunnel }) => {
    )
 }
 
-export default ProductOptionItemTunnel
+export default InventoryBundleItemsTunnel

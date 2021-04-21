@@ -79,22 +79,9 @@ export const PRODUCT = {
                      name
                   }
                }
-               supplierItem {
+               inventoryProductBundle {
                   id
-                  name
-                  unit
-                  unitSize
-               }
-               sachetItem {
-                  id
-                  bulkItem {
-                     processingName
-                     supplierItem {
-                        name
-                     }
-                  }
-                  unit
-                  unitSize
+                  label
                }
                modifier {
                   id

@@ -368,6 +368,21 @@ export const S_SACHET_ITEMS = gql`
    }
 `
 
+export const S_BULK_ITEMS = gql`
+   subscription BulkItems {
+      bulkItems(where: { isArchived: { _eq: false } }) {
+         id
+         unit
+         processingName
+         supplierItem {
+            id
+            name
+            prices
+         }
+      }
+   }
+`
+
 export const S_SIMPLE_RECIPE_YIELDS = gql`
    subscription SimpleRecipeYields(
       $where: simpleRecipe_simpleRecipeYield_bool_exp
