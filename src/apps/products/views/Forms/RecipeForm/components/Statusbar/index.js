@@ -1,7 +1,11 @@
 import React from 'react'
-import { Form, Spacer, IconButton, Flex } from '@dailykit/ui'
+import { Form, Spacer, IconButton, Flex, Text } from '@dailykit/ui'
 import { ResponsiveFlex } from '../../../Product/styled'
-import { CloneIcon } from '../../../../../../../shared/assets/icons'
+import {
+   CloneIcon,
+   CloseIcon,
+   TickIcon,
+} from '../../../../../../../shared/assets/icons'
 import {
    Tooltip,
    UpdatingSpinner,
@@ -158,77 +162,95 @@ const Statusbar = ({ state, setTitle, title }) => {
    }
 
    return (
-      <ResponsiveFlex
-         container
-         justifyContent="space-between"
-         alignItems="start"
-         padding="16px 0"
-         maxWidth="1280px"
-         width="calc(100vw - 64px)"
-         margin="0 auto"
-         style={{ borderBottom: '1px solid #f3f3f3' }}
-      >
-         <Flex container alignItems="center">
-            <Form.Group>
-               <Form.Text
-                  id="title"
-                  name="title"
-                  value={title.value}
-                  placeholder="enter recipe title"
-                  variant="revamp"
-                  onChange={e => setTitle({ ...title, value: e.target.value })}
-                  onBlur={handleUpdateName}
-                  hasError={!title.meta.isValid && title.meta.isTouched}
+      <>
+         <ResponsiveFlex
+            container
+            justifyContent="space-between"
+            alignItems="start"
+            padding="16px 0"
+            maxWidth="1280px"
+            width="calc(100vw - 64px)"
+            margin="0 auto"
+            style={{ borderBottom: '1px solid #f3f3f3' }}
+         >
+            <Flex container alignItems="center">
+               <Form.Group>
+                  <Form.Text
+                     id="title"
+                     name="title"
+                     value={title.value}
+                     placeholder="enter recipe title"
+                     variant="revamp"
+                     onChange={e =>
+                        setTitle({ ...title, value: e.target.value })
+                     }
+                     onBlur={handleUpdateName}
+                     hasError={!title.meta.isValid && title.meta.isTouched}
+                  />
+                  {title.meta.isTouched &&
+                     !title.meta.isValid &&
+                     title.meta.errors.map((error, index) => (
+                        <Form.Error justifyContent="center" key={index}>
+                           {error}
+                        </Form.Error>
+                     ))}
+               </Form.Group>
+               <Spacer xAxis size="16px" />
+               <UpdatingSpinner
+                  updated={updated}
+                  setUpdated={setUpdated}
+                  updatedField="name"
+                  loading={updatingName}
                />
-               {title.meta.isTouched &&
-                  !title.meta.isValid &&
-                  title.meta.errors.map((error, index) => (
-                     <Form.Error justifyContent="center" key={index}>
-                        {error}
-                     </Form.Error>
-                  ))}
-            </Form.Group>
+            </Flex>
+            <Flex container alignItems="center">
+               {state.isValid?.status ? (
+                  <>
+                     <TickIcon color="#00ff00" stroke={2} />
+                     <Text as="p">All good!</Text>
+                  </>
+               ) : (
+                  <>
+                     <CloseIcon color="#ff0000" />
+                     <Text as="p">{state.isValid?.error}</Text>
+                  </>
+               )}
+            </Flex>
             <Spacer xAxis size="16px" />
-            <UpdatingSpinner
-               updated={updated}
-               setUpdated={setUpdated}
-               updatedField="name"
-               loading={updatingName}
-            />
-         </Flex>
-         <Flex container alignItems="center" height="100%">
-            <Form.Toggle
-               name="published"
-               size={48}
-               variant="green"
-               iconWithText
-               style={{ fontWeight: '500', fontSize: '14px' }}
-               value={state.isPublished}
-               onChange={handleTogglePublish}
-            >
-               <Flex container alignItems="center">
-                  Published
-                  <Spacer xAxis size="16px" />
-                  <Tooltip identifier="recipe_publish" />
-               </Flex>
-            </Form.Toggle>
-            <Spacer xAxis size="16px" />
-            <UpdatingSpinner
-               updated={updated}
-               setUpdated={setUpdated}
-               updatedField="published"
-               loading={updatingPublish}
-            />
-            <Spacer xAxis size="16px" />
-            <IconButton
-               type="ghost"
-               style={{ backgroundColor: '#F4F4F4' }}
-               onClick={clone}
-            >
-               <CloneIcon color="#555B6E" />
-            </IconButton>
-         </Flex>
-      </ResponsiveFlex>
+            <Flex container alignItems="center" height="100%">
+               <Form.Toggle
+                  name="published"
+                  size={48}
+                  variant="green"
+                  iconWithText
+                  style={{ fontWeight: '500', fontSize: '14px' }}
+                  value={state.isPublished}
+                  onChange={handleTogglePublish}
+               >
+                  <Flex container alignItems="center">
+                     Published
+                     <Spacer xAxis size="16px" />
+                     <Tooltip identifier="recipe_publish" />
+                  </Flex>
+               </Form.Toggle>
+               <Spacer xAxis size="16px" />
+               <UpdatingSpinner
+                  updated={updated}
+                  setUpdated={setUpdated}
+                  updatedField="published"
+                  loading={updatingPublish}
+               />
+               <Spacer xAxis size="16px" />
+               <IconButton
+                  type="ghost"
+                  style={{ backgroundColor: '#F4F4F4' }}
+                  onClick={clone}
+               >
+                  <CloneIcon color="#555B6E" />
+               </IconButton>
+            </Flex>
+         </ResponsiveFlex>
+      </>
    )
 }
 
