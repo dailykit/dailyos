@@ -36,6 +36,11 @@ import {
    ModifierPhotoTunnel,
    ModifierTemplatesTunnel,
    ModifierTypeTunnel,
+   InventoryBundleModeTunnel,
+   InventoryBundleFormTunnel,
+   InventoryBundleItemTypeTunnel,
+   InventoryBundleItemsTunnel,
+   InventoryBundleListingTunnel,
 } from './tunnels'
 import {
    DragNDrop,
@@ -44,12 +49,18 @@ import {
 } from '../../../../../../shared/components'
 import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
 import { from } from 'apollo-link'
+import { InventoryBundleContext } from '../../../../context/product/inventoryBundle'
 
 const ProductOptions = ({ productId, options }) => {
    const SERVING_TUNNEL_TYPES = ['mealKit', 'readyToEat', 'Meal Kit']
 
    const { initiatePriority } = useDnd()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
+   const [
+      inventoryTunnels,
+      openInventoryTunnel,
+      closeInventoryTunnel,
+   ] = useTunnel(5)
    const [
       modifiersTunnel,
       openModifiersTunnel,
@@ -63,6 +74,7 @@ const ProductOptions = ({ productId, options }) => {
 
    const { productState, productDispatch } = React.useContext(ProductContext)
    const { modifiersDispatch } = React.useContext(ModifiersContext)
+   const { bundleDispatch } = React.useContext(InventoryBundleContext)
 
    const [productOptionTypes, setProductOptionTypes] = React.useState([])
 
@@ -125,9 +137,29 @@ const ProductOptions = ({ productId, options }) => {
             type: 'PRODUCT_OPTION_TYPE',
             payload: 'serving',
          })
-         openTunnel(2)
-      } else {
          openTunnel(1)
+      } else {
+         openInventoryTunnel(1)
+      }
+   }
+
+   const handleEditOptionItem = option => {
+      productDispatch({
+         type: 'OPTION_ID',
+         payload: option.id,
+      })
+      if (option.simpleRecipeYield) {
+         productDispatch({
+            type: 'PRODUCT_OPTION_TYPE',
+            payload: 'serving',
+         })
+         openTunnel(1)
+      } else {
+         bundleDispatch({
+            type: 'BUNDLE_ID',
+            payload: option.inventoryProductBundle.id,
+         })
+         openInventoryTunnel(2)
       }
    }
 
@@ -178,13 +210,33 @@ const ProductOptions = ({ productId, options }) => {
       <>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               <ProductOptionTypeTunnel
-                  openTunnel={openTunnel}
-                  closeTunnel={closeTunnel}
+               <ProductOptionItemTunnel closeTunnel={closeTunnel} />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={inventoryTunnels}>
+            <Tunnel layer={1}>
+               <InventoryBundleModeTunnel
+                  open={openInventoryTunnel}
+                  close={closeInventoryTunnel}
                />
             </Tunnel>
             <Tunnel layer={2}>
-               <ProductOptionItemTunnel closeTunnel={closeTunnel} />
+               <InventoryBundleFormTunnel
+                  open={openInventoryTunnel}
+                  close={closeInventoryTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={3}>
+               <InventoryBundleItemTypeTunnel
+                  open={openInventoryTunnel}
+                  close={closeInventoryTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={4}>
+               <InventoryBundleItemsTunnel close={closeInventoryTunnel} />
+            </Tunnel>
+            <Tunnel layer={5}>
+               <InventoryBundleListingTunnel close={closeInventoryTunnel} />
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={modifiersTunnel}>
@@ -241,6 +293,9 @@ const ProductOptions = ({ productId, options }) => {
                         option={option}
                         productOptionTypes={productOptionTypes}
                         handleAddOptionItem={() => handleAddOptionItem(option)}
+                        handleEditOptionItem={() =>
+                           handleEditOptionItem(option)
+                        }
                         handleAddModifier={() => handleAddModifier(option.id)}
                         handleEditModifier={() =>
                            handleEditModifier(option.modifier)
@@ -268,6 +323,7 @@ const Option = ({
    handleAddOptionItem,
    handleAddModifier,
    handleEditModifier,
+   handleEditOptionItem,
    handleAddOpConfig,
 }) => {
    const [history, setHistory] = React.useState({
@@ -355,6 +411,7 @@ const Option = ({
                simpleRecipeYieldId: null,
                supplierItemId: null,
                sachetItemId: null,
+               inventoryProductBundleId: null,
             },
          },
       })
@@ -500,23 +557,18 @@ const Option = ({
          if (option.simpleRecipeYield) {
             return `${option.simpleRecipeYield.simpleRecipe.name} - ${option.simpleRecipeYield.yield.serving} serving`
          }
-         if (option.supplierItem) {
-            return `${option.supplierItem.name} - ${option.supplierItem.unitSize} ${option.supplierItem.unit}`
-         }
-         if (option.sachetItem) {
-            return `${option.sachetItem.bulkItem.supplierItem.name} ${option.sachetItem.bulkItem.processingName} - ${option.sachetItem.unitSize} ${option.sachetItem.unit}`
+         if (option.inventoryProductBundle) {
+            return `${option.inventoryProductBundle.label}`
          }
       }
 
       return (
          <>
-            {option.simpleRecipeYield ||
-            option.supplierItem ||
-            option.sachetItem ? (
+            {option.simpleRecipeYield || option.inventoryProductBundle ? (
                <Flex container alignItems="center">
                   <Text as="title">{renderItemName()}</Text>
                   <Spacer xAxis size="16px" />
-                  <IconButton type="ghost" onClick={handleAddOptionItem}>
+                  <IconButton type="ghost" onClick={handleEditOptionItem}>
                      <EditIcon color="#00A7E1" />
                   </IconButton>
                   <Spacer xAxis size="8px" />

@@ -33,6 +33,7 @@ import { ResponsiveFlex, StyledFlex } from './styled'
 import validator from './validators'
 import ComboProductComponents from './ComboProductComponents'
 import { CloneIcon } from '../../../../../shared/assets/icons'
+import { InventoryBundleProvider } from '../../../context/product/inventoryBundle'
 
 const Product = () => {
    const { id: productId } = useParams()
@@ -224,109 +225,117 @@ const Product = () => {
    return (
       <ProductProvider>
          <ModifiersProvider>
-            <ResponsiveFlex>
-               <Form.Group>
-                  <Form.Label htmlFor="title" title="title">
-                     Product Name*
-                  </Form.Label>
-                  <Form.Text
-                     id="title"
-                     name="title"
-                     value={title.value}
-                     placeholder="Enter product name"
-                     onChange={e =>
-                        setTitle({ ...title, value: e.target.value })
-                     }
-                     onBlur={updateName}
-                     hasError={!title.meta.isValid && title.meta.isTouched}
-                  />
-                  {title.meta.isTouched &&
-                     !title.meta.isValid &&
-                     title.meta.errors.map((error, index) => (
-                        <Form.Error key={index}>{error}</Form.Error>
-                     ))}
-               </Form.Group>
-               <Spacer xAxis size="16px" />
-
-               <div>
-                  {state.isValid?.status ? (
-                     <Flex container alignItems="center">
-                        <TickIcon color="#00ff00" stroke={2} />
-                        <Text as="p">All good!</Text>
-                     </Flex>
-                  ) : (
-                     <Flex container alignItems="center">
-                        <CloseIcon color="#ff0000" />
-                        <Text as="p">{state.isValid?.error}</Text>
-                     </Flex>
-                  )}
-               </div>
-               <Spacer size="16px" />
-
-               <Flex container alignItems="center">
-                  <Form.Checkbox
-                     name="popup"
-                     value={state.isPopupAllowed}
-                     onChange={togglePopup}
-                  >
-                     <Flex container alignItems="center">
-                        Popup Allowed
-                        <Tooltip identifier="simple_recipe_product_popup_checkbox" />
-                     </Flex>
-                  </Form.Checkbox>
-                  {state.type === 'simple' && (
-                     <>
-                        <Spacer xAxis size="16px" />
-                        <ComboButton
-                           type="ghost"
-                           size="sm"
-                           onClick={clone}
-                           isLoading={cloning}
-                        >
-                           <CloneIcon color="#00A7E1" />
-                           Clone Product
-                        </ComboButton>
-                     </>
-                  )}
+            <InventoryBundleProvider>
+               <ResponsiveFlex>
+                  <Form.Group>
+                     <Form.Label htmlFor="title" title="title">
+                        Product Name*
+                     </Form.Label>
+                     <Form.Text
+                        id="title"
+                        name="title"
+                        value={title.value}
+                        placeholder="Enter product name"
+                        onChange={e =>
+                           setTitle({ ...title, value: e.target.value })
+                        }
+                        onBlur={updateName}
+                        hasError={!title.meta.isValid && title.meta.isTouched}
+                     />
+                     {title.meta.isTouched &&
+                        !title.meta.isValid &&
+                        title.meta.errors.map((error, index) => (
+                           <Form.Error key={index}>{error}</Form.Error>
+                        ))}
+                  </Form.Group>
                   <Spacer xAxis size="16px" />
-                  <Form.Toggle
-                     name="published"
-                     value={state.isPublished}
-                     onChange={togglePublish}
-                  >
-                     <Flex container alignItems="center">
-                        Published
-                        <Spacer xAxis size="16px" />
-                        <Tooltip identifier="simple_recipe_product_publish" />
-                     </Flex>
-                  </Form.Toggle>
-               </Flex>
-            </ResponsiveFlex>
-            <Flex as="main" padding="8px 32px" minHeight="calc(100vh - 130px)">
-               <HorizontalTabs>
-                  <HorizontalTabList>
-                     <HorizontalTab>Basic Details</HorizontalTab>
-                     <HorizontalTab>Options</HorizontalTab>
-                  </HorizontalTabList>
-                  <HorizontalTabPanels>
-                     <HorizontalTabPanel>
-                        <StyledFlex
-                           as="section"
-                           container
-                           alignItems="start"
-                           justifyContent="space-between"
-                        >
-                           <Pricing state={state} />
+
+                  <div>
+                     {state.isValid?.status ? (
+                        <Flex container alignItems="center">
+                           <TickIcon color="#00ff00" stroke={2} />
+                           <Text as="p">All good!</Text>
+                        </Flex>
+                     ) : (
+                        <Flex container alignItems="center">
+                           <CloseIcon color="#ff0000" />
+                           <Text as="p">{state.isValid?.error}</Text>
+                        </Flex>
+                     )}
+                  </div>
+                  <Spacer size="16px" />
+
+                  <Flex container alignItems="center">
+                     <Form.Checkbox
+                        name="popup"
+                        value={state.isPopupAllowed}
+                        onChange={togglePopup}
+                     >
+                        <Flex container alignItems="center">
+                           Popup Allowed
+                           <Tooltip identifier="simple_recipe_product_popup_checkbox" />
+                        </Flex>
+                     </Form.Checkbox>
+                     {state.type === 'simple' && (
+                        <>
                            <Spacer xAxis size="16px" />
-                           <Assets state={state} />
-                        </StyledFlex>
-                        <Spacer size="32px" />
-                        <Description state={state} />
-                     </HorizontalTabPanel>
-                     <HorizontalTabPanel>{renderOptions()}</HorizontalTabPanel>
-                  </HorizontalTabPanels>
-               </HorizontalTabs>
-            </Flex>
+                           <ComboButton
+                              type="ghost"
+                              size="sm"
+                              onClick={clone}
+                              isLoading={cloning}
+                           >
+                              <CloneIcon color="#00A7E1" />
+                              Clone Product
+                           </ComboButton>
+                        </>
+                     )}
+                     <Spacer xAxis size="16px" />
+                     <Form.Toggle
+                        name="published"
+                        value={state.isPublished}
+                        onChange={togglePublish}
+                     >
+                        <Flex container alignItems="center">
+                           Published
+                           <Spacer xAxis size="16px" />
+                           <Tooltip identifier="simple_recipe_product_publish" />
+                        </Flex>
+                     </Form.Toggle>
+                  </Flex>
+               </ResponsiveFlex>
+               <Flex
+                  as="main"
+                  padding="8px 32px"
+                  minHeight="calc(100vh - 130px)"
+               >
+                  <HorizontalTabs>
+                     <HorizontalTabList>
+                        <HorizontalTab>Basic Details</HorizontalTab>
+                        <HorizontalTab>Options</HorizontalTab>
+                     </HorizontalTabList>
+                     <HorizontalTabPanels>
+                        <HorizontalTabPanel>
+                           <StyledFlex
+                              as="section"
+                              container
+                              alignItems="start"
+                              justifyContent="space-between"
+                           >
+                              <Pricing state={state} />
+                              <Spacer xAxis size="16px" />
+                              <Assets state={state} />
+                           </StyledFlex>
+                           <Spacer size="32px" />
+                           <Description state={state} />
+                        </HorizontalTabPanel>
+                        <HorizontalTabPanel>
+                           {renderOptions()}
+                        </HorizontalTabPanel>
+                     </HorizontalTabPanels>
+                  </HorizontalTabs>
+               </Flex>
+            </InventoryBundleProvider>
          </ModifiersProvider>
       </ProductProvider>
    )
