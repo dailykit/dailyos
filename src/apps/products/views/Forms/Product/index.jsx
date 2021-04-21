@@ -154,6 +154,7 @@ const Product = () => {
             return (
                <ProductOptions
                   productId={state.id}
+                  productName={state.name}
                   options={state.productOptions || []}
                />
             )

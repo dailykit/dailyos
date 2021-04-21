@@ -5,6 +5,7 @@ export const InventoryBundleContext = React.createContext()
 export const initialState = {
    bundleId: null,
    bundleItemType: null,
+   label: null,
 }
 
 export const reducers = (state = initialState, { type, payload }) => {
@@ -14,6 +15,9 @@ export const reducers = (state = initialState, { type, payload }) => {
       }
       case 'BUNDLE_ITEM_TYPE': {
          return { ...state, bundleItemType: payload }
+      }
+      case 'LABEL': {
+         return { ...state, label: payload }
       }
       default:
          return state

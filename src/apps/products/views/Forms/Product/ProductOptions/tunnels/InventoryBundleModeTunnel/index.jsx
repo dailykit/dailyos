@@ -9,7 +9,9 @@ import { logger, randomSuffix } from '../../../../../../../../shared/utils'
 import { InventoryBundleContext } from '../../../../../../context/product/inventoryBundle'
 
 const InventoryBundleModeTunnel = ({ open, close }) => {
-   const { bundleDispatch } = React.useContext(InventoryBundleContext)
+   const { bundleState, bundleDispatch } = React.useContext(
+      InventoryBundleContext
+   )
 
    const [createBundle] = useMutation(INVENTORY_BUNDLES.CREATE, {
       onCompleted: data => {
@@ -44,7 +46,8 @@ const InventoryBundleModeTunnel = ({ open, close }) => {
                   createBundle({
                      variables: {
                         object: {
-                           label: `bundle-${randomSuffix()}`,
+                           label:
+                              bundleState.label ?? `bundle-${randomSuffix()}`,
                         },
                      },
                   })

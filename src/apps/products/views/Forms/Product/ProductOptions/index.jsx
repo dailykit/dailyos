@@ -50,7 +50,7 @@ import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
 import { from } from 'apollo-link'
 import { InventoryBundleContext } from '../../../../context/product/inventoryBundle'
 
-const ProductOptions = ({ productId, options }) => {
+const ProductOptions = ({ productId, productName, options }) => {
    const SERVING_TUNNEL_TYPES = ['mealKit', 'readyToEat', 'Meal Kit']
 
    const { initiatePriority } = useDnd()
@@ -134,6 +134,10 @@ const ProductOptions = ({ productId, options }) => {
       if (SERVING_TUNNEL_TYPES.includes(option.type)) {
          openTunnel(1)
       } else {
+         bundleDispatch({
+            type: 'LABEL',
+            payload: `${productName} - ${option.label}`,
+         })
          openInventoryTunnel(1)
       }
    }
