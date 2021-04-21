@@ -1,5 +1,4 @@
-import ProductOptionTypeTunnel from './ProductOptionTypeTunnel'
-import ProductOptionItemTunnel from './ProductOptionItemTunnel'
+import ServingsTunnel from './ServingsTunnel'
 import ModifierFormTunnel from './ModifierFormTunnel'
 import ModifierModeTunnel from './ModifierModeTunnel'
 import ModifierOptionsTunnel from './ModifierOptionsTunnel'
@@ -13,8 +12,7 @@ import InventoryBundleItemsTunnel from './InventoryBundleItemsTunnel'
 import InventoryBundleListingTunnel from './InventoryBundleListingTunnel'
 
 export {
-   ProductOptionTypeTunnel,
-   ProductOptionItemTunnel,
+   ServingsTunnel,
    ModifierFormTunnel,
    ModifierModeTunnel,
    ModifierOptionsTunnel,

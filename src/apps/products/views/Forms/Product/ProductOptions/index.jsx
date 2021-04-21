@@ -28,8 +28,7 @@ import { ModifiersContext } from '../../../../context/product/modifiers'
 import { ProductContext } from '../../../../context/product'
 import validator from '../validators'
 import {
-   ProductOptionTypeTunnel,
-   ProductOptionItemTunnel,
+   ServingsTunnel,
    ModifierFormTunnel,
    ModifierModeTunnel,
    ModifierOptionsTunnel,
@@ -133,10 +132,6 @@ const ProductOptions = ({ productId, options }) => {
          payload: option.id,
       })
       if (SERVING_TUNNEL_TYPES.includes(option.type)) {
-         productDispatch({
-            type: 'PRODUCT_OPTION_TYPE',
-            payload: 'serving',
-         })
          openTunnel(1)
       } else {
          openInventoryTunnel(1)
@@ -149,10 +144,6 @@ const ProductOptions = ({ productId, options }) => {
          payload: option.id,
       })
       if (option.simpleRecipeYield) {
-         productDispatch({
-            type: 'PRODUCT_OPTION_TYPE',
-            payload: 'serving',
-         })
          openTunnel(1)
       } else {
          bundleDispatch({
@@ -210,7 +201,7 @@ const ProductOptions = ({ productId, options }) => {
       <>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               <ProductOptionItemTunnel closeTunnel={closeTunnel} />
+               <ServingsTunnel closeTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={inventoryTunnels}>
