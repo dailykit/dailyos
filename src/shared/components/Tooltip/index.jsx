@@ -31,6 +31,8 @@ export const Tooltip = ({
             type={type || 'info'}
             place={position || 'top'}
             effect={effect || 'solid'}
+            textColor="#fff"
+            backgroundColor="#555B6E"
             overridePosition={({ left, top }, _e, _t, node) => {
                return {
                   top,
@@ -73,7 +75,12 @@ const Styles = {
       > div {
          max-width: 250px;
          &.__react_component_tooltip {
-            padding: 8px 16px;
+            opacity: 1;
+            padding: 6px 8px;
+            border-radius: 2px;
+            box-shadow: 0px 9px 28px 8px rgba(0, 0, 0, 0.05),
+               0px 3px 6px -4px rgba(0, 0, 0, 0.12);
+            filter: drop-shadow(0px 6px 16px rgba(0, 0, 0, 0.08));
          }
          a {
             color: white;
