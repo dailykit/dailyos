@@ -184,3 +184,13 @@ export const CREATE_LOYALTY_POINT_TXN = gql`
       }
    }
 `
+
+export const IMPERSONATE_USER_TOKEN = gql`
+   mutation ImpersonateUser($keycloakId: String!, $clientId: String!) {
+      impersonateUser(keycloakId: $keycloakId, clientId: $clientId) {
+         success
+         message
+         token
+      }
+   }
+`

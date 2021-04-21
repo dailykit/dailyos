@@ -98,6 +98,21 @@ export const Details = ({ order }) => {
                   <span>{order.cart.source}</span>
                </StyledStat>
                <Spacer size="8px" />
+               {order.cart.source === 'subscription' && (
+                  <>
+                     <StyledStat>
+                        <span>Details</span>
+                        <span>
+                           {order.cart.subscriptionOccurence?.title?.title},
+                           serves{' '}
+                           {order.cart.subscriptionOccurence?.serving?.size},
+                           count{' '}
+                           {order.cart.subscriptionOccurence?.itemCount?.count}
+                        </span>
+                     </StyledStat>
+                     <Spacer size="8px" />
+                  </>
+               )}
                {order.thirdPartyOrderId && (
                   <StyledStat>
                      <span>Third Party</span>
@@ -155,8 +170,7 @@ export const Details = ({ order }) => {
                   </span>
                   <Spacer size="4px" xAxis />
                   <Text as="subtitle">
-                     {parseAddress(order.cart.customer?.customerAddress) ||
-                        'N/A'}
+                     {parseAddress(order.cart.address) || 'N/A'}
                   </Text>
                </Flex>
                <Spacer size="8px" />
@@ -166,7 +180,7 @@ export const Details = ({ order }) => {
                   </span>
                   <Spacer size="4px" xAxis />
                   <Text as="subtitle">
-                     {order.cart.customer?.customerAddress?.notes || 'N/A'}
+                     {order.cart.address?.notes || 'N/A'}
                   </Text>
                </Flex>
                <Spacer size="8px" />

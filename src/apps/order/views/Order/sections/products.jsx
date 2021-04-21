@@ -98,8 +98,9 @@ const ProductCard = ({ product, isActive, onClick }) => {
          <main>
             <div>
                {product?.isAddOn && <span>[Add On] </span>}
-               <StyledProductTitle>
-                  {product?.displayName.split('->').pop().trim()}
+               <StyledProductTitle title={product?.displayName}>
+                  {product?.displayName.split('->').pop().trim()} -{' '}
+                  {product?.productOption?.label}
                </StyledProductTitle>
             </div>
             <Spacer size="14px" />

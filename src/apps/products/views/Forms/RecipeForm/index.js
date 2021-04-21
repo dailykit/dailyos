@@ -8,19 +8,29 @@ import {
    HorizontalTabPanels,
    HorizontalTabPanel,
    HorizontalTabs,
+   ComboButton,
+   Tunnel,
+   useTunnel,
+   Tunnels,
+   Text,
 } from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
+
 import { ErrorState, InlineLoader } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils'
+import { EyeIcon } from '../../../assets/icons'
 import { useTabs } from '../../../../../shared/providers'
 import {
    RecipeContext,
    reducers,
    state as initialState,
 } from '../../../context/recipe'
-import { S_RECIPE } from '../../../graphql'
+import {
+   S_RECIPE,
+   S_SIMPLE_PRODUCTS_FROM_RECIPE_AGGREGATE,
+} from '../../../graphql'
 import {
    BasicInformation,
    Ingredients,
@@ -29,11 +39,13 @@ import {
    Servings,
    Statusbar,
 } from './components'
+
 import { StyledFlex } from '../Product/styled'
+import { PlusIcon } from '../../../../../shared/assets/icons'
 import { useDnd } from '../../../../../shared/components/DragNDrop/useDnd'
+import { CreateProductTunnel, LinkedProductsTunnel } from './tunnels'
 
 const RecipeForm = () => {
-   // Context
    const { tab, addTab } = useTabs()
    const { initiatePriority } = useDnd()
    const { id: recipeId } = useParams()
@@ -42,8 +54,18 @@ const RecipeForm = () => {
       initialState
    )
 
+   const [productTunnels, openProductsTunnel, closeProductsTunnel] = useTunnel(
+      1
+   )
+   const [
+      linkedProductsTunnels,
+      openLinkedProductsTunnel,
+      closeLinkedProductsTunnel,
+   ] = useTunnel(1)
+
    // States
    const [state, setState] = React.useState({})
+   const [linkedProductsCount, setLinkedProductsCount] = React.useState(0)
 
    const [title, setTitle] = React.useState({
       value: '',
@@ -79,6 +101,26 @@ const RecipeForm = () => {
          }
       },
    })
+   useSubscription(S_SIMPLE_PRODUCTS_FROM_RECIPE_AGGREGATE, {
+      skip: !state.simpleRecipeYields,
+      variables: {
+         where: {
+            simpleRecipeYieldId: {
+               _in: state.simpleRecipeYields?.map(y => y.id),
+            },
+            isArchived: { _eq: false },
+            product: {
+               isArchived: { _eq: false },
+            },
+         },
+         distinct_on: ['productId'],
+      },
+      onSubscriptionData: data => {
+         setLinkedProductsCount(
+            data.subscriptionData.data.productOptionsAggregate.aggregate.count
+         )
+      },
+   })
 
    React.useEffect(() => {
       if (!tab && !loading && !isEmpty(title.value)) {
@@ -95,35 +137,67 @@ const RecipeForm = () => {
 
    return (
       <RecipeContext.Provider value={{ recipeState, recipeDispatch }}>
-         <>
-            {/* View */}
-            <Statusbar state={state} title={title} setTitle={setTitle} />
-            <Flex width="calc(100vw - 64px)" margin="0 auto" padding="32px 0">
-               <HorizontalTabs>
-                  <HorizontalTabList style={{ justifyContent: 'center' }}>
-                     <HorizontalTab>Basic Information</HorizontalTab>
-                     <HorizontalTab>Ingredients</HorizontalTab>
-                     <HorizontalTab>Cooking Steps</HorizontalTab>
-                  </HorizontalTabList>
-                  <HorizontalTabPanels>
-                     <HorizontalTabPanel>
-                        <StyledFlex container justifyContent="space-between">
-                           <BasicInformation state={state} />
-                           <Photo state={state} />
-                        </StyledFlex>
-                     </HorizontalTabPanel>
-                     <HorizontalTabPanel>
-                        <Servings state={state} />
-                        <Spacer size="32px" />
-                        <Ingredients state={state} />
-                     </HorizontalTabPanel>
-                     <HorizontalTabPanel>
-                        <Procedures state={state} />
-                     </HorizontalTabPanel>
-                  </HorizontalTabPanels>
-               </HorizontalTabs>
-            </Flex>
-         </>
+         <Statusbar state={state} title={title} setTitle={setTitle} />
+         <Flex container justifyContent="center">
+            <ComboButton
+               type="ghost"
+               size="sm"
+               onClick={() => openLinkedProductsTunnel(1)}
+            >
+               <EyeIcon color="#00A7E1" />
+               {`Linked Products (${linkedProductsCount})`}
+            </ComboButton>
+            <Spacer xAxis size="16px" />
+            <ComboButton
+               type="ghost"
+               size="sm"
+               onClick={() => openProductsTunnel(1)}
+            >
+               <PlusIcon color="#00A7E1" />
+               Create Product
+            </ComboButton>
+         </Flex>
+         <Flex width="calc(100vw - 64px)" margin="0 auto" padding="32px 0">
+            <HorizontalTabs>
+               <HorizontalTabList style={{ justifyContent: 'center' }}>
+                  <HorizontalTab>Basic Information</HorizontalTab>
+                  <HorizontalTab>Ingredients</HorizontalTab>
+                  <HorizontalTab>Cooking Steps</HorizontalTab>
+               </HorizontalTabList>
+               <HorizontalTabPanels>
+                  <HorizontalTabPanel>
+                     <StyledFlex container justifyContent="space-between">
+                        <BasicInformation state={state} />
+                        <Photo state={state} />
+                     </StyledFlex>
+                  </HorizontalTabPanel>
+                  <HorizontalTabPanel>
+                     <Servings state={state} />
+                     <Spacer size="32px" />
+                     <Ingredients state={state} />
+                  </HorizontalTabPanel>
+                  <HorizontalTabPanel>
+                     <Procedures state={state} />
+                  </HorizontalTabPanel>
+               </HorizontalTabPanels>
+            </HorizontalTabs>
+         </Flex>
+         <Tunnels tunnels={productTunnels}>
+            <Tunnel layer={1}>
+               <CreateProductTunnel
+                  state={state}
+                  closeTunnel={closeProductsTunnel}
+               />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={linkedProductsTunnels}>
+            <Tunnel layer={1} size="sm">
+               <LinkedProductsTunnel
+                  state={state}
+                  closeTunnel={closeLinkedProductsTunnel}
+               />
+            </Tunnel>
+         </Tunnels>
       </RecipeContext.Provider>
    )
 }

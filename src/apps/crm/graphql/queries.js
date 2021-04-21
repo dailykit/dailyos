@@ -10,6 +10,19 @@ export const CUSTOMERS_LISTING = gql`
       ) {
          keycloakId
          source
+         brandCustomers(where: { brandId: { _eq: $brandId } }) {
+            subscription {
+               subscriptionItemCount {
+                  count
+                  plan: subscriptionServing {
+                     servingSize
+                     subscriptionTitle {
+                        title
+                     }
+                  }
+               }
+            }
+         }
          platform_customer {
             firstName
             lastName
@@ -32,9 +45,12 @@ export const CUSTOMER_DATA = gql`
    query CUSTOMER_DATA($keycloakId: String!, $brandId: Int!) {
       brand(id: $brandId) {
          brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
+            id
             customer {
                source
                isTest
+               email
+               keycloakId
                platform_customer {
                   firstName
                   lastName
@@ -266,8 +282,8 @@ export const SUBSCRIPTION = gql`
    query SUBSCRIPTION($keycloakId: String!, $brandId: Int!) {
       brand(id: $brandId) {
          brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
+            subscriptionId
             customer {
-               subscriptionId
                ordered: subscriptionOccurences_aggregate(
                   where: { cart: { orderId: { _is_null: false } } }
                ) {
@@ -338,6 +354,42 @@ export const OCCURENCES = gql`
       }
    }
 `
+
+export const OCCURENCES_REPORT = gql`
+   query MyQuery($brand_customerId: Int_comparison_exp!) {
+      report: subscription_view_full_occurence_report_aggregate(
+         where: { brand_customerId: $brand_customerId }
+         order_by: { fulfillmentDate: desc }
+      ) {
+         aggregate {
+            count
+         }
+         nodes {
+            subscriptionOccurenceId
+            totalProductsToBeAdded
+            fulfillmentDate
+            cutoffTimeStamp
+            cartId
+            betweenPause
+            allTimeRank
+            addedProductsCount
+            paymentStatus
+            percentageSkipped
+            skippedAtThisStage
+            isSkipped
+            isPaused
+            isItemCountValid
+            isAuto
+            cart {
+               paymentStatus
+               status
+               amount
+            }
+         }
+      }
+   }
+`
+
 export const REWARD_DATA = gql`
    query REWARD_DATA($id: Int!) {
       crm_reward_by_pk(id: $id) {

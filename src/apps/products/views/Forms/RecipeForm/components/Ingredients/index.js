@@ -1,8 +1,9 @@
 import React from 'react'
-import { useMutation } from '@apollo/react-hooks'
+import { useLazyQuery, useMutation } from '@apollo/react-hooks'
 import {
    ButtonTile,
    Collapsible,
+   ComboButton,
    Flex,
    Form,
    IconButton,
@@ -31,6 +32,7 @@ import { RecipeContext } from '../../../../../context/recipe'
 import {
    DELETE_SIMPLE_RECIPE_INGREDIENT_PROCESSINGS,
    DELETE_SIMPLE_RECIPE_YIELD_SACHETS,
+   DERIVE_SACHETS_FROM_BASE_YIELD,
    UPDATE_RECIPE,
    UPDATE_SIMPLE_RECIPE_YIELD_SACHET,
 } from '../../../../../graphql'
@@ -42,6 +44,7 @@ import {
 } from '../../tunnels'
 import validator from '../../validators'
 import styled from 'styled-components'
+import { RefreshIcon } from '../../../../../../../shared/assets/icons'
 
 const Ingredients = ({ state }) => {
    console.log(state.simpleRecipeIngredients)
@@ -273,10 +276,69 @@ const CollapsibleBody = ({
    simpleRecipeYields,
    upsertSachet,
 }) => {
+   const retryInfo = React.useRef(null)
+
+   const [
+      deriveSachetsFromBaseYield,
+      { loading: generating, refetch },
+   ] = useLazyQuery(DERIVE_SACHETS_FROM_BASE_YIELD, {
+      onCompleted: data => {
+         const [response] = data.simpleRecipe_deriveIngredientSachets
+         console.log({ response })
+         if (response && response.success) {
+            toast.success(response.message)
+         } else {
+            toast.warn('Something is not right!')
+         }
+      },
+      onError: error => {
+         retryInfo.current = {
+            ...retryInfo.current,
+            tries: 1 + retryInfo.current.tries,
+         }
+         if (
+            error.message ===
+               'GraphQL error: invalid input syntax for type json' &&
+            retryInfo.current.tries < 15
+         ) {
+            console.log('Retrying...')
+            refetch({
+               variables: {
+                  args: {
+                     sourceyieldid: retryInfo.current.recipeYield.baseYieldId,
+                     targetyieldid: retryInfo.current.recipeYield.id,
+                  },
+               },
+            })
+         } else {
+            toast.error('Failed to generate sachets!')
+            console.log(error)
+         }
+      },
+      fetchPolicy: 'cache-and-network',
+   })
+
+   const autoGenerate = recipeYield => {
+      console.log({ recipeYield })
+      if (recipeYield.id && recipeYield.baseYieldId) {
+         retryInfo.current = {
+            recipeYield,
+            tries: 1,
+         }
+         deriveSachetsFromBaseYield({
+            variables: {
+               args: {
+                  sourceyieldid: recipeYield.baseYieldId,
+                  targetyieldid: recipeYield.id,
+               },
+            },
+         })
+      }
+   }
+
    const findSachet = recipeYield => {
       const found = linkedSachets.find(
-         ({ simpleRecipeYield }) =>
-            simpleRecipeYield.yield.serving === recipeYield.yield.serving
+         ({ simpleRecipeYield }) => simpleRecipeYield.id === recipeYield.id
       )
       return found
    }
@@ -320,6 +382,22 @@ const CollapsibleBody = ({
                isVisible={foundSachet.isVisible}
             />
          )
+      if (recipeYield.baseYieldId) {
+         return (
+            <ComboButton
+               type="ghost"
+               size="sm"
+               onClick={() => autoGenerate(recipeYield)}
+               isLoading={
+                  generating &&
+                  recipeYield.id === retryInfo.current.recipeYield.id
+               }
+            >
+               <RefreshIcon color="#00A7E1" size={16} />
+               Auto-generate
+            </ComboButton>
+         )
+      }
 
       return null
    }
@@ -327,7 +405,7 @@ const CollapsibleBody = ({
    return (
       <>
          {simpleRecipeYields.map(recipeYield => (
-            <Flex container margin="8px 0 0 0">
+            <Flex container margin="8px 0 0 0" alignItems="center">
                <Flex>
                   <Text as="subtitle"> Serving </Text>
                   <Text as="title"> {recipeYield.yield.serving} </Text>

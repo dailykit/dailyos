@@ -66,6 +66,9 @@ const ModifierOptionsTunnel = ({ close }) => {
    })
    const { loading: yieldsLoading } = useSubscription(S_SIMPLE_RECIPE_YIELDS, {
       skip: optionType !== 'simpleRecipeYield',
+      variables: {
+         where: { isArchived: { _eq: false } },
+      },
       onSubscriptionData: data => {
          const updatedOptions = data.subscriptionData.data.simpleRecipeYields.map(
             item => ({

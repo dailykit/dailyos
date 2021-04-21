@@ -78,6 +78,21 @@ export const QUERIES = {
                   orderStatus {
                      title
                   }
+                  subscriptionOccurence {
+                     id
+                     itemCount: subscriptionItemCount {
+                        id
+                        count
+                     }
+                     serving: subscriptionServing {
+                        id
+                        size: servingSize
+                     }
+                     title: subscriptionTitle {
+                        id
+                        title
+                     }
+                  }
                   assembledProducts: cartItemViews_aggregate(
                      where: {
                         levelType: { _eq: "orderItem" }
@@ -125,6 +140,9 @@ export const QUERIES = {
                   id
                   labelTemplateId
                   stationId
+               }
+               productOption {
+                  label
                }
                productOptionType
                totalSachets: childs_aggregate {
@@ -322,6 +340,21 @@ export const QUERIES = {
                   paymentStatus
                   fulfillmentInfo
                   customer: customerInfo
+                  subscriptionOccurence {
+                     id
+                     itemCount: subscriptionItemCount {
+                        id
+                        count
+                     }
+                     serving: subscriptionServing {
+                        id
+                        size: servingSize
+                     }
+                     title: subscriptionTitle {
+                        id
+                        title
+                     }
+                  }
                   brand {
                      id
                      onDemandName: onDemandSettings(

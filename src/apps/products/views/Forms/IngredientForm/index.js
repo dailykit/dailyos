@@ -1,17 +1,30 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Flex, Form, Spacer, Text } from '@dailykit/ui'
+import {
+   ComboButton,
+   Flex,
+   Form,
+   Spacer,
+   Text,
+   Tunnel,
+   Tunnels,
+   useTunnel,
+} from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../shared/utils'
-import { CloseIcon, TickIcon } from '../../../assets/icons'
+import { CloseIcon, EyeIcon, TickIcon } from '../../../assets/icons'
 import {
    IngredientContext,
    reducers,
    state as initialState,
 } from '../../../context/ingredient'
-import { S_INGREDIENT, UPDATE_INGREDIENT } from '../../../graphql'
+import {
+   S_INGREDIENT,
+   S_SIMPLE_RECIPES_FROM_INGREDIENT_AGGREGATE,
+   UPDATE_INGREDIENT,
+} from '../../../graphql'
 import { Processings, Stats } from './components'
 import validator from './validators'
 import {
@@ -21,6 +34,7 @@ import {
 } from '../../../../../shared/components'
 import { useTabs } from '../../../../../shared/providers'
 import { HeaderWrapper, InputTextWrapper } from './styled'
+import { LinkedRecipesTunnel } from './tunnels'
 
 const IngredientForm = () => {
    const { setTabTitle, tab, addTab } = useTabs()
@@ -29,6 +43,12 @@ const IngredientForm = () => {
       reducers,
       initialState
    )
+
+   const [
+      linkedRecipesTunnels,
+      openLinkedRecipesTunnel,
+      closeLinkedRecipesTunnel,
+   ] = useTunnel(1)
 
    const [title, setTitle] = React.useState({
       value: '',
@@ -47,6 +67,7 @@ const IngredientForm = () => {
       },
    })
    const [state, setState] = React.useState({})
+   const [linkedRecipesCount, setLinkedRecipesCount] = React.useState(0)
 
    // Subscriptions
    const { loading, error } = useSubscription(S_INGREDIENT, {
@@ -64,6 +85,25 @@ const IngredientForm = () => {
             ...category,
             value: data.subscriptionData.data.ingredient.category || '',
          })
+      },
+   })
+   useSubscription(S_SIMPLE_RECIPES_FROM_INGREDIENT_AGGREGATE, {
+      variables: {
+         where: {
+            ingredientId: {
+               _eq: state.id,
+            },
+            isArchived: { _eq: false },
+            simpleRecipe: {
+               isArchived: { _eq: false },
+            },
+         },
+      },
+      onSubscriptionData: data => {
+         setLinkedRecipesCount(
+            data.subscriptionData.data
+               .simpleRecipeIngredientProcessingsAggregate.aggregate.count
+         )
       },
    })
 
@@ -157,6 +197,14 @@ const IngredientForm = () => {
       <IngredientContext.Provider
          value={{ ingredientState, ingredientDispatch }}
       >
+         <Tunnels tunnels={linkedRecipesTunnels}>
+            <Tunnel layer={1} size="sm">
+               <LinkedRecipesTunnel
+                  state={state}
+                  closeTunnel={closeLinkedRecipesTunnel}
+               />
+            </Tunnel>
+         </Tunnels>
          <HeaderWrapper>
             <InputTextWrapper>
                <Form.Group>
@@ -208,7 +256,7 @@ const IngredientForm = () => {
             <Flex
                container
                alignItems="center"
-               justifyContent="space-between"
+               justifyContent="flex-end"
                width="100%"
             >
                <div>
@@ -224,7 +272,16 @@ const IngredientForm = () => {
                      </Flex>
                   )}
                </div>
-               {/* <Spacer xAxis size="16px" /> */}
+               <Spacer xAxis size="16px" />
+               <ComboButton
+                  type="ghost"
+                  size="sm"
+                  onClick={() => openLinkedRecipesTunnel(1)}
+               >
+                  <EyeIcon color="#00A7E1" />
+                  {`Linked Recipes (${linkedRecipesCount})`}
+               </ComboButton>
+               <Spacer xAxis size="16px" />
                <Form.Toggle
                   name="published"
                   value={state.isPublished}

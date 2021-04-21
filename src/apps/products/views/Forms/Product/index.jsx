@@ -1,15 +1,12 @@
 import React from 'react'
-import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { useSubscription } from '@apollo/react-hooks'
 import {
    Flex,
-   Form,
    HorizontalTab,
    HorizontalTabList,
    HorizontalTabPanel,
    HorizontalTabPanels,
    HorizontalTabs,
-   Spacer,
-   Text,
 } from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
@@ -53,17 +50,6 @@ const Product = () => {
             ...title,
             value: data.subscriptionData.data.product.name,
          })
-      },
-   })
-
-   // Mutation
-   const [updateProduct] = useMutation(PRODUCT.UPDATE, {
-      onCompleted: () => {
-         toast.success('Updated!')
-      },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
       },
    })
 

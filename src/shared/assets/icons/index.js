@@ -27,6 +27,9 @@ import CloneIcon from './Clone'
 import ThreeDotIcon from './ThreeDot'
 import CameraIcon from './Camera'
 import CheckCircleIcon from './CheckCircle'
+import RefreshIcon from './Refresh'
+import LinkIcon from './Link'
+
 export {
    AddIcon,
    MenuIcon,
@@ -57,6 +60,8 @@ export {
    ThreeDotIcon,
    CameraIcon,
    CheckCircleIcon,
+   RefreshIcon,
+   LinkIcon,
 }
 
 export * from './Tick'
