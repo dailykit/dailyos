@@ -88,7 +88,7 @@ const Information = ({ state }) => {
                   </Container>
                   <Container top="16">
                      <Flex container alignItems="center">
-                        <Text as="subtitle">What's not included?</Text>
+                        <Text as="subtitle">What you'll need</Text>
                         <Tooltip identifier="recipe_not_included" />
                      </Flex>
                      {state.notIncluded?.length ? (
