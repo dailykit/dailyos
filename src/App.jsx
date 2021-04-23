@@ -6,9 +6,15 @@ import styled from 'styled-components'
 import { useSubscription } from '@apollo/react-hooks'
 import { Switch, Route, Link, useLocation } from 'react-router-dom'
 
-import { useTabs } from './shared/providers'
+import { useTabs, useBottomBar } from './shared/providers'
 import { isKeycloakSupported } from './shared/utils'
-import { TabBar, Lang, RedirectBanner, Sidebar } from './shared/components'
+import {
+   TabBar,
+   Lang,
+   RedirectBanner,
+   Sidebar,
+   Modal,
+} from './shared/components'
 
 const APPS = gql`
    subscription apps {
@@ -78,8 +84,17 @@ const Editor = Loadable({
 const App = () => {
    const location = useLocation()
    const { routes, setRoutes } = useTabs()
+   const { state, addInfo } = useBottomBar()
    const [open, toggle] = React.useState(false)
+   const [isModalOpen, setIsModalOpen] = React.useState(false)
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
+
+   const handleBottomBarOptionClick = async option => {
+      console.log(option)
+      await addInfo(option)
+      console.log(option)
+      setIsModalOpen(true)
+   }
 
    React.useEffect(() => {
       if (location.pathname === '/') {
@@ -124,6 +139,21 @@ const App = () => {
          </main>
          {!isKeycloakSupported() && <RedirectBanner />}
          <Lang />
+         <BottomBar>
+            {state?.bottomBarOptions.map(option => {
+               return (
+                  <p
+                     key={option.id}
+                     onClick={() => handleBottomBarOptionClick(option)}
+                  >
+                     {option?.title || ''}
+                  </p>
+               )
+            })}
+         </BottomBar>
+         {state?.clickedOption && (
+            <Modal isOpen={isModalOpen} close={() => setIsModalOpen(false)} />
+         )}
       </Layout>
    )
 }
@@ -189,5 +219,20 @@ const Layout = styled.div`
    }
    @media only screen and (max-width: 767px) {
       grid-template-columns: ${({ open }) => (open ? '100vw' : '48px 1fr')};
+   }
+`
+const BottomBar = styled.div`
+   width: 100%;
+   height: 40px;
+   position: fixed;
+   z-index: 4;
+   bottom: 0;
+   left: 0;
+   background: #111;
+   color: #fff;
+   display: flex;
+   p {
+      cursor: pointer;
+      margin-right: 8px;
    }
 `
