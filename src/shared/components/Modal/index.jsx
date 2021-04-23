@@ -2,18 +2,23 @@ import React, { useEffect, useState } from 'react'
 import { ComboButton, ClearIcon } from '@dailykit/ui'
 import { webRenderer } from '@dailykit/web-renderer'
 import { ModalWrapper } from './styles'
+import TreeView from './treeView'
 import { useBottomBar } from '../../providers'
+import { getTreeViewArray } from '../../utils'
 
 export default function Modal({ isOpen, close }) {
-   console.log('ENVV', process.env.REACT_EXPRESS_URL)
    const { state = {} } = useBottomBar()
+   const [optionMenu, setOptionMenu] = useState({})
    const [filePaths, setfilePaths] = useState([])
    const [cssPaths, setCssPaths] = useState([])
    const [jsPaths, setJsPaths] = useState([])
    console.log(state)
-   const { clickedOption = {} } = state
-   const { navigationMenu = {} } = clickedOption
-   const { navigationMenuItems = [] } = navigationMenu
+
+   useEffect(() => {
+      if (state?.clickedOptionMenu) {
+         setOptionMenu(state?.clickedOptionMenu)
+      }
+   }, [state?.clickedOptionMenu])
 
    const handleMenuItemClick = menuItem => {
       console.log(menuItem, 'kkk')
@@ -33,6 +38,21 @@ export default function Modal({ isOpen, close }) {
          document.getElementById('content_area').innerHTML = ''
       }
    }
+
+   // useEffect(() => {
+   //    const getTreeData = async () => {
+   //       if (navigationMenuItems.length) {
+   //          const treeData = await getTreeViewArray({
+   //             dataset: navigationMenuItems,
+   //             rootIdKeyName: 'id',
+   //             parentIdKeyName: 'parentNavigationMenuItemId',
+   //          })
+   //          console.log('check', treeData)
+   //          setMenuItems(treeData)
+   //       }
+   //    }
+   //    getTreeData()
+   // }, [navigationMenuItems])
 
    useEffect(() => {
       document.getElementById('content_area').innerHTML = ''
@@ -71,22 +91,20 @@ export default function Modal({ isOpen, close }) {
             </ComboButton>
          </div>
          <div className="modal_body">
-            <div className="menu_area">
-               <h1>{navigationMenu?.title || 'Title'}</h1>
-               <ul>
-                  {navigationMenuItems.map(menuItem => {
-                     return (
-                        <li
-                           key={menuItem?.id}
-                           onClick={() => handleMenuItemClick(menuItem)}
-                        >
-                           {menuItem?.label}
-                        </li>
-                     )
-                  })}
-               </ul>
+            <div className="menu_area_wrapper">
+               <h1 className="heading_h1">Menu Area</h1>
+               <div className="menu_area">
+                  <h1>{optionMenu?.title || 'Title'}</h1>
+                  <TreeView
+                     data={optionMenu?.navigationMenuItems}
+                     clickHandler={handleMenuItemClick}
+                  />
+               </div>
             </div>
-            <div className="content_area" id="content_area"></div>
+            <div className="content_area">
+               <h1 className="heading_h1">Content Area</h1>
+               <div id="content_area" />
+            </div>
          </div>
       </ModalWrapper>
    )

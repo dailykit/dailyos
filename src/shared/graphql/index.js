@@ -130,6 +130,7 @@ export const GET_BOTTOM_BAR_OPTIONS = gql`
                id
                label
                position
+               parentNavigationMenuItemId
                url
                actionId
                action {

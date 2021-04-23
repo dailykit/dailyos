@@ -12,13 +12,14 @@ const BottomBarContext = React.createContext()
 const initialState = {
    bottomBarOptions: [],
    clickedOption: null,
+   clickedOptionMenu: null,
 }
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
       case 'SET_BOTTOM_BAR_OPTIONS':
          return { ...state, bottomBarOptions: payload }
-      case 'ADD_INFO':
+      case 'ADD_CLICKED_OPTION_INFO':
          const optionIndex = state.bottomBarOptions.findIndex(
             option => option.id === payload.id
          )
@@ -29,16 +30,24 @@ const reducers = (state, { type, payload }) => {
             }
          }
          return state
+
+      case 'ADD_CLICKED_OPTION_MENU_INFO':
+         console.log('dissss', payload)
+         return {
+            ...state,
+            clickedOptionMenu: payload,
+         }
    }
 }
 
-export const BottomBarProvider = ({ children }) => {
+export const BottomBarProvider = ({ app, children }) => {
    const [state, dispatch] = React.useReducer(reducers, initialState)
    const { loading, error } = useSubscription(GET_BOTTOM_BAR_OPTIONS, {
       variables: { app: ['global'] },
       onSubscriptionData: ({
          subscriptionData: { data: { ux_bottomBarOption = [] } = {} } = {},
-      }) => {
+      } = {}) => {
+         console.log(ux_bottomBarOption, 'subsciptionsss')
          dispatch({
             type: 'SET_BOTTOM_BAR_OPTIONS',
             payload: ux_bottomBarOption,
@@ -51,7 +60,8 @@ export const BottomBarProvider = ({ children }) => {
    }
    if (error) {
       logger(error)
-      toast.error('Something went wrong with bottomBar!')
+      toast.error(error?.message)
+      console.error(error)
    }
    return (
       <BottomBarContext.Provider value={{ state, dispatch }}>
@@ -62,16 +72,26 @@ export const BottomBarProvider = ({ children }) => {
 
 export const useBottomBar = () => {
    const { state, dispatch } = React.useContext(BottomBarContext)
-   const addInfo = React.useCallback(
+   const addClickedOptionInfo = React.useCallback(
       data => {
          console.log('from provider', data)
          dispatch({
-            type: 'ADD_INFO',
+            type: 'ADD_CLICKED_OPTION_INFO',
+            payload: data,
+         })
+      },
+      [dispatch]
+   )
+   const addClickedOptionMenuInfo = React.useCallback(
+      data => {
+         console.log('from provider menu', data)
+         dispatch({
+            type: 'ADD_CLICKED_OPTION_MENU_INFO',
             payload: data,
          })
       },
       [dispatch]
    )
 
-   return { state, addInfo }
+   return { state, addClickedOptionInfo, addClickedOptionMenuInfo }
 }

@@ -7,7 +7,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import { Switch, Route, Link, useLocation } from 'react-router-dom'
 
 import { useTabs, useBottomBar } from './shared/providers'
-import { isKeycloakSupported } from './shared/utils'
+import { isKeycloakSupported, getTreeViewArray } from './shared/utils'
 import {
    TabBar,
    Lang,
@@ -84,15 +84,27 @@ const Editor = Loadable({
 const App = () => {
    const location = useLocation()
    const { routes, setRoutes } = useTabs()
-   const { state, addInfo } = useBottomBar()
+   const {
+      state,
+      addClickedOptionInfo,
+      addClickedOptionMenuInfo,
+   } = useBottomBar()
    const [open, toggle] = React.useState(false)
    const [isModalOpen, setIsModalOpen] = React.useState(false)
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
 
    const handleBottomBarOptionClick = async option => {
-      console.log(option)
-      await addInfo(option)
-      console.log(option)
+      console.log('opptioon', option)
+      await addClickedOptionInfo(option)
+      const treeData = await getTreeViewArray({
+         dataset: option?.navigationMenu?.navigationMenuItems,
+         rootIdKeyName: 'id',
+         parentIdKeyName: 'parentNavigationMenuItemId',
+      })
+      await addClickedOptionMenuInfo({
+         ...option?.navigationMenu,
+         navigationMenuItems: treeData,
+      })
       setIsModalOpen(true)
    }
 
@@ -142,12 +154,15 @@ const App = () => {
          <BottomBar>
             {state?.bottomBarOptions.map(option => {
                return (
-                  <p
-                     key={option.id}
-                     onClick={() => handleBottomBarOptionClick(option)}
-                  >
-                     {option?.title || ''}
-                  </p>
+                  <div className="option">
+                     <img src={option?.icon} alt="option-icon" />
+                     <p
+                        key={option.id}
+                        onClick={() => handleBottomBarOptionClick(option)}
+                     >
+                        {option?.title || ''}
+                     </p>
+                  </div>
                )
             })}
          </BottomBar>
@@ -231,8 +246,21 @@ const BottomBar = styled.div`
    background: #111;
    color: #fff;
    display: flex;
+   padding: 8px;
    p {
       cursor: pointer;
-      margin-right: 8px;
+      margin-right: 2rem;
+   }
+   .option {
+      display: flex;
+      align-items: center;
+      img {
+         width: 24px;
+         height: 24px;
+         background: #fff;
+         object-fit: contain;
+         border-radius: 50%;
+         margin-right: 4px;
+      }
    }
 `

@@ -14,9 +14,18 @@ export const ModalWrapper = styled.div`
    .modal_body {
       display: flex;
       padding: 1rem;
-      .menu_area {
+      .heading_h1 {
+         font-size: 24px;
+         color: #55b6e;
+         text-align: center;
+      }
+      .menu_area_wrapper {
          width: 30%;
          height: 560px;
+      }
+      .menu_area {
+         width: 100%;
+         height: 100%;
          background: #111;
          border-radius: 4px;
          color: #fff;
