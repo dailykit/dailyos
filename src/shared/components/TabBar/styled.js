@@ -4,7 +4,7 @@ import styled from 'styled-components'
 const Styles = {
    Header: styled.header`
       display: flex;
-      justify-content: space-between;
+      width: 100vw;
    `,
    Logo: styled(IconButton)`
       position: relative;

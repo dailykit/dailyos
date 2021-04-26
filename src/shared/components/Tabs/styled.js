@@ -5,7 +5,6 @@ import styled, { css } from 'styled-components'
 export const TabsWrapper = styled.div`
    display: flex;
    align-items: center;
-   border-bottom: 1px solid #ebf1f4;
    > button {
       border: none;
       width: 35px;
@@ -16,16 +15,17 @@ export const TabsWrapper = styled.div`
    }
 `
 export const StyledTabs = styled.ul(
-   () => css`
+   ({ width, numTabs }) => css`
+      width: ${`calc(100vw - ${width})`};
       display: flex;
       align-items: center;
-      border-bottom: 1px solid #ebf1f4;
+      border-bottom: ${numTabs > 0 && `1px solid #ebf1f4`};
    `
 )
 
 export const StyledTab = styled.li(
    ({ active }) => css`
-      width: 120px;
+      width: 100%;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -41,7 +41,6 @@ export const StyledTab = styled.li(
       span {
          color: ${active ? '#367BF5' : '#919699'};
          display: inline-block;
-         width: 80px;
          font-size: 14px;
          font-weight: 700;
          padding: 6px;

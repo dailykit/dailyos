@@ -59,6 +59,53 @@ const Tabs = () => {
    }
 
    const tabsToShow = tabs.slice(firstIndex, lastIndex)
+   const getWidth = () => {
+      if (view.width && view.width <= 767) {
+         if (tabs.length <= 0) return '156px'
+         if (
+            firstIndex !== 0 &&
+            numTabsToShow < tabs.length &&
+            tabs.length !== lastIndex
+         )
+            return '262px'
+         if (
+            firstIndex !== 0 ||
+            (numTabsToShow < tabs.length && tabs.length !== lastIndex)
+         )
+            return '227px'
+         return '192px'
+      } else {
+         if (tabs.length <= 0) return '344px'
+         if (
+            firstIndex !== 0 &&
+            numTabsToShow < tabs.length &&
+            tabs.length !== lastIndex
+         )
+            return '450px'
+         if (
+            firstIndex !== 0 ||
+            (numTabsToShow < tabs.length && tabs.length !== lastIndex)
+         )
+            return '415px'
+         return '380px'
+      }
+   }
+
+   const getWidthSm = () => {
+      if (tabs.length <= 0) return '156px'
+      if (
+         firstIndex !== 0 &&
+         numTabsToShow < tabs.length &&
+         tabs.length !== lastIndex
+      )
+         return '262px'
+      if (
+         firstIndex !== 0 ||
+         (numTabsToShow < tabs.length && tabs.length !== lastIndex)
+      )
+         return '227px'
+      return '192px'
+   }
 
    return (
       <TabsWrapper>
@@ -74,7 +121,7 @@ const Tabs = () => {
                )}
             </>
          )}
-         <StyledTabs>
+         <StyledTabs numTabs={tabs.length} width={getWidth()}>
             {tabsToShow.map((tab, index) => (
                <Tab tab={tab} key={tab.path} index={index} />
             ))}
