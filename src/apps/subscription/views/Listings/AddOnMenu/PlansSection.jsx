@@ -26,7 +26,7 @@ const PlansSection = () => {
    } = useSubscription(SUBSCRIPTION_OCCURENCES, {
       variables: {
          fulfillmentDate: {
-            _in: [moment(state.date).format('YYYY-MM-DD')],
+            _in: state.dates.map(date => moment(date).format('YYYY-MM-DD')),
          },
       },
    })
@@ -91,10 +91,24 @@ const PlansSection = () => {
             },
          },
          {
+            hozAlign: 'right',
+            headerHozAlign: 'right',
+            title: 'Fulfillment Date',
+            field: 'fulfillmentDate',
+            formatter: ({ _cell: { value } }) => moment(value).format('MMM DD'),
+            headerTooltip: column => {
+               const identifier = 'plan_listing_column_fulfillmentDate'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+         },
+         {
             title: 'Cut Off',
             field: 'cutoffTimeStamp',
             formatter: ({ _cell: { value } }) =>
-               moment(value).format('MMM DD HH:MM A'),
+               moment(value).format('MMM DD HH:mm A'),
             headerTooltip: column => {
                const identifier = 'plan_listing_column_cut_off'
                return (
@@ -107,7 +121,7 @@ const PlansSection = () => {
             title: 'Start Time',
             field: 'startTimeStamp',
             formatter: ({ _cell: { value } }) =>
-               moment(value).format('MMM DD HH:MM A'),
+               moment(value).format('MMM DD HH:mm A'),
             headerTooltip: column => {
                const identifier = 'plan_listing_column_state_time'
                return (
