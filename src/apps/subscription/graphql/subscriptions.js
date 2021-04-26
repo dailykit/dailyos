@@ -22,6 +22,11 @@ export const SUBSCRIPTION_OCCURENCES = gql`
    subscription subscriptionOccurences($fulfillmentDate: date_comparison_exp!) {
       subscriptionOccurences: subscriptionOccurencesAggregate(
          where: { fulfillmentDate: $fulfillmentDate }
+         order_by: {
+            subscriptionTitle: { title: asc }
+            subscriptionServing: { servingSize: asc }
+            subscriptionItemCount: { count: asc }
+         }
       ) {
          aggregate {
             count
