@@ -85,7 +85,12 @@ const Customers = ({ id, setCustomersTotal }) => {
             ref={tableRef}
             columns={columns}
             data={subscription_customers.customers.nodes}
-            options={{ ...tableOptions, layout: 'fitColumns' }}
+            options={{
+               ...tableOptions,
+               layout: 'fitColumns',
+               pagination: 'local',
+               paginationSize: 10,
+            }}
          />
       </>
    )
