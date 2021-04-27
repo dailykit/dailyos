@@ -1,5 +1,13 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Flex, Form, TunnelHeader } from '@dailykit/ui'
+import {
+   ButtonTile,
+   Flex,
+   Form,
+   Select,
+   Spacer,
+   TunnelHeader,
+   useTunnel,
+} from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -13,10 +21,17 @@ import {
 } from '../../../../../graphql'
 import { validators } from '../../../../../utils/validators'
 import { Highlight, StyledInputGroup, TunnelBody } from '../styled'
+import { UPSERT_SUPPLIER_ITEM_UNIT_CONVERSION } from '../../../../../graphql/mutations'
 
 const address = 'apps.inventory.views.forms.item.tunnels.info.'
 
-export default function InfoTunnel({ close, formState }) {
+export default function InfoTunnel({
+   close,
+   formState,
+   openLinkConversionTunnel,
+   selectedConversions,
+   setSelectedConversions,
+}) {
    const { t } = useTranslation()
    const { setTabTitle } = useTabs()
    const [units, setUnits] = useState([])
@@ -82,6 +97,18 @@ export default function InfoTunnel({ close, formState }) {
          close()
       },
    })
+   const [
+      upsertSupplierItemUnitConversions,
+      { loading: upserting },
+   ] = useMutation(UPSERT_SUPPLIER_ITEM_UNIT_CONVERSION, {
+      onCompleted: () => {
+         toast.success('Unit conversions linked!')
+      },
+      onError: error => {
+         logger(error)
+         toast.error(ERROR_UPDATING_ITEM_INFORMATION)
+      },
+   })
 
    const isObjectValid = () => {
       if (!itemName.value || !itemName.meta.isValid) return 'invalid item name'
@@ -101,6 +128,14 @@ export default function InfoTunnel({ close, formState }) {
    const handleSave = () => {
       const isValid = isObjectValid()
       if (!isValid.length) {
+         upsertSupplierItemUnitConversions({
+            variables: {
+               objects: selectedConversions.map(op => ({
+                  entityId: formState.id,
+                  unitConversionId: op.id,
+               })),
+            },
+         })
          updateSupplierItem({
             variables: {
                id: formState.id,
@@ -210,7 +245,7 @@ export default function InfoTunnel({ close, formState }) {
             title={t(address.concat('item information'))}
             close={close}
             right={{
-               title: loading ? 'Saving...' : 'Save',
+               title: loading || upserting ? 'Saving...' : 'Save',
                action: handleSave,
             }}
             description="update supplier item information"
@@ -326,6 +361,18 @@ export default function InfoTunnel({ close, formState }) {
                         {unit.meta.isTouched && !unit.meta.isValid && (
                            <Form.Error>{unit.meta.errors[0]}</Form.Error>
                         )}
+                        <Spacer size="16px" />
+                        <Select
+                           options={selectedConversions}
+                           addOption={() => openLinkConversionTunnel(1)}
+                           placeholder="Link Conversions"
+                           removeOption={option => {
+                              const updatedOptions = selectedConversions.filter(
+                                 op => op.id !== option.id
+                              )
+                              setSelectedConversions(updatedOptions)
+                           }}
+                        />
                      </Form.Group>
                      <Form.Group>
                         <Form.Label title="unit price" htmlFor="unitPrice">

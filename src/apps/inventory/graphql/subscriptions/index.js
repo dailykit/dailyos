@@ -83,6 +83,15 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
          id
          name
          bulkItemAsShippedId
+         supplierItemUnitConversions {
+            id
+            unitConversion {
+               id
+               inputUnitName
+               outputUnitName
+               conversionFactor
+            }
+         }
          bulkItemAsShipped {
             id
             name: processingName

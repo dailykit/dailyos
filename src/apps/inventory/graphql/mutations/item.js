@@ -155,3 +155,21 @@ export const UPDATE_SUPPLIER_ITEM = gql`
       }
    }
 `
+
+export const UPSERT_SUPPLIER_ITEM_UNIT_CONVERSION = gql`
+   mutation UpsertSupplierItemUnitConversion(
+      $objects: [inventory_supplierItem_unitConversion_insert_input!]!
+   ) {
+      insert_inventory_supplierItem_unitConversion(
+         objects: $objects
+         on_conflict: {
+            constraint: supplierItem_unitConversion_pkey
+            update_columns: []
+         }
+      ) {
+         returning {
+            id
+         }
+      }
+   }
+`
