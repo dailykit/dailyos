@@ -8,7 +8,13 @@ import { Switch, Route, Link, useLocation } from 'react-router-dom'
 
 import { useTabs } from './shared/providers'
 import { isKeycloakSupported } from './shared/utils'
-import { TabBar, Lang, RedirectBanner, Sidebar } from './shared/components'
+import {
+   TabBar,
+   Lang,
+   RedirectBanner,
+   Sidebar,
+   InsightDashboard,
+} from './shared/components'
 
 const APPS = gql`
    subscription apps {
@@ -107,6 +113,12 @@ const App = () => {
                         </AppItem>
                      ))}
                   </AppList>
+                  <InsightDashboard
+                     appTitle="global"
+                     moduleTitle="dashboard"
+                     includeChart
+                     showInTunnel={true}
+                  />
                </Route>
                <Route path="/inventory" component={Inventory} />
                <Route path="/safety" component={Safety} />
