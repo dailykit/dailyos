@@ -118,7 +118,7 @@ const App = () => {
                         appTitle="global"
                         moduleTitle="dashboard"
                         includeChart
-                        showInTunnel={true}
+                        showInTunnel={false}
                      />
                   </InsightDiv>
                </Route>
