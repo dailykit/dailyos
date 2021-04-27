@@ -13,7 +13,11 @@ import {
    CUSTOMERS_LISTING,
    CUSTOMER_ARCHIVED,
 } from '../../../graphql'
-import { Tooltip, InlineLoader } from '../../../../../shared/components'
+import {
+   Tooltip,
+   InlineLoader,
+   InsightDashboard,
+} from '../../../../../shared/components'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { currencyFmt, logger } from '../../../../../shared/utils'
@@ -360,6 +364,11 @@ const CustomerListing = () => {
                ref={tableRef}
             />
          )}
+         <InsightDashboard
+            appTitle="CRM App"
+            moduleTitle="Customer Listing"
+            showInTunnel={false}
+         />
       </StyledWrapper>
    )
 }

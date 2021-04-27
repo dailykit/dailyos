@@ -14,7 +14,11 @@ import {
 // third party imports
 import { useTranslation } from 'react-i18next'
 // shared dir imports
-import { InlineLoader, Tooltip } from '../../../../../shared/components'
+import {
+   InlineLoader,
+   Tooltip,
+   InsightDashboard,
+} from '../../../../../shared/components'
 import { useTabs, useTooltip } from '../../../../../shared/providers'
 // local imports
 import { AddIcon } from '../../../assets/icons'
@@ -170,6 +174,11 @@ const ProductsListing = () => {
                   options={tableOptions}
                />
             )}
+            <InsightDashboard
+               appTitle="Products App"
+               moduleTitle="Product Listing"
+               showInTunnel={false}
+            />
          </ResponsiveFlex>
       </>
    )

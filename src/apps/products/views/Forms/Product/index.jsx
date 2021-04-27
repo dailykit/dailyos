@@ -19,6 +19,7 @@ import {
    ErrorState,
    InlineLoader,
    Tooltip,
+   InsightDashboard,
 } from '../../../../../shared/components'
 import { useTabs } from '../../../../../shared/providers'
 import { logger, randomSuffix } from '../../../../../shared/utils'
@@ -314,6 +315,7 @@ const Product = () => {
                      <HorizontalTabList>
                         <HorizontalTab>Basic Details</HorizontalTab>
                         <HorizontalTab>Options</HorizontalTab>
+                        <HorizontalTab>Insights</HorizontalTab>
                      </HorizontalTabList>
                      <HorizontalTabPanels>
                         <HorizontalTabPanel>
@@ -332,6 +334,16 @@ const Product = () => {
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
                            {renderOptions()}
+                        </HorizontalTabPanel>
+                        <HorizontalTabPanel>
+                           <InsightDashboard
+                              appTitle="Products App"
+                              moduleTitle="Product Page"
+                              variables={{
+                                 productId,
+                              }}
+                              showInTunnel={false}
+                           />
                         </HorizontalTabPanel>
                      </HorizontalTabPanels>
                   </HorizontalTabs>

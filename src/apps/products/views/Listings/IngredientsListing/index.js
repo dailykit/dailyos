@@ -16,6 +16,7 @@ import {
    ErrorState,
    InlineLoader,
    Tooltip,
+   InsightDashboard,
 } from '../../../../../shared/components'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { logger, randomSuffix } from '../../../../../shared/utils'
@@ -205,6 +206,11 @@ function DataTable({
             options={tableOptions}
             data-custom-attr="test-custom-attribute"
             className="custom-css-class"
+         />
+         <InsightDashboard
+            appTitle="Products App"
+            moduleTitle="Ingredient Listing"
+            showInTunnel={false}
          />
       </>
    )

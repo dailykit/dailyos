@@ -33,6 +33,7 @@ import {
    ErrorState,
    InlineLoader,
    ErrorBoundary,
+   InsightDashboard,
 } from '../../../../../../shared/components'
 import { TickIcon, CloseIcon } from '../../../../../../shared/assets/icons'
 import {
@@ -174,7 +175,18 @@ const Title = () => {
                      <Form.Error key={index}>{node}</Form.Error>
                   ))}
             </Form.Group>
+
             <Flex container alignItems="center">
+               <Flex container alignItems="center">
+                  <InsightDashboard
+                     appTitle="Subscription App"
+                     moduleTitle="Subscription Page"
+                     variables={{
+                        subscriptionId: params?.id,
+                     }}
+                  />
+               </Flex>
+               <Spacer size="16px" xAxis />
                {title.isValid ? (
                   <Flex container flex="1" alignItems="center">
                      <TickIcon size={20} color="green" />

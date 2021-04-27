@@ -13,6 +13,7 @@ import {
    Tooltip,
    ErrorState,
    InlineLoader,
+   InsightDashboard,
 } from '../../../../../shared/components'
 import { ResponsiveFlex } from '../../../../../shared/components/ResponsiveFlex'
 
@@ -111,6 +112,12 @@ export const Subscriptions = () => {
                options={{ ...options, pagination: 'local', paginationSize: 10 }}
             />
          )}
+
+         <InsightDashboard
+            appTitle="Subscription App"
+            moduleTitle="Subcription Listing"
+            showInTunnel={false}
+         />
       </ResponsiveFlex>
    )
 }

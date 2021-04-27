@@ -113,12 +113,14 @@ const App = () => {
                         </AppItem>
                      ))}
                   </AppList>
-                  <InsightDashboard
-                     appTitle="global"
-                     moduleTitle="dashboard"
-                     includeChart
-                     showInTunnel={true}
-                  />
+                  <InsightDiv>
+                     <InsightDashboard
+                        appTitle="global"
+                        moduleTitle="dashboard"
+                        includeChart
+                        showInTunnel={true}
+                     />
+                  </InsightDiv>
                </Route>
                <Route path="/inventory" component={Inventory} />
                <Route path="/safety" component={Safety} />
@@ -202,4 +204,7 @@ const Layout = styled.div`
    @media only screen and (max-width: 767px) {
       grid-template-columns: ${({ open }) => (open ? '100vw' : '48px 1fr')};
    }
+`
+const InsightDiv = styled.div`
+   padding: 1rem;
 `

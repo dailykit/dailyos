@@ -31,6 +31,7 @@ import {
    ErrorState,
    InlineLoader,
    Tooltip,
+   InsightDashboard,
 } from '../../../../../shared/components'
 import { useTabs } from '../../../../../shared/providers'
 import { HeaderWrapper, InputTextWrapper } from './styled'
@@ -253,12 +254,23 @@ const IngredientForm = () => {
                      ))}
                </Form.Group>
             </InputTextWrapper>
+
             <Flex
                container
                alignItems="center"
                justifyContent="flex-end"
                width="100%"
             >
+               <Flex container alignItems="center">
+                  <InsightDashboard
+                     appTitle="Products App"
+                     moduleTitle="Ingredient Page"
+                     variables={{
+                        ingredientId,
+                     }}
+                  />
+               </Flex>
+               <Spacer xAxis size="8px" />
                <div>
                   {state.isValid?.status ? (
                      <Flex container alignItems="center">
