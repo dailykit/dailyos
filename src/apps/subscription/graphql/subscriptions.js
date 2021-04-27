@@ -297,17 +297,26 @@ export const SUBSCRIPTION_CUSTOMERS = gql`
    query subscription_customers($id: Int!) {
       subscription_customers: subscription_subscription_by_pk(id: $id) {
          id
-         customers: customers_aggregate {
+         customers: brand_customers_aggregate {
             aggregate {
                count
             }
             nodes {
                id
-               email
-               customer: platform_customer {
-                  lastName
-                  firstName
-                  phoneNumber
+               brandId
+               brand {
+                  id
+                  title
+               }
+               pausePeriod
+               isSubscriptionCancelled
+               customer {
+                  email
+                  platform_customer {
+                     lastName
+                     firstName
+                     phoneNumber
+                  }
                }
             }
          }
