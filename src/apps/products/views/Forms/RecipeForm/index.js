@@ -204,6 +204,7 @@ const RecipeForm = () => {
       }
    }
    const toggleSubRecipe = () => {
+      const val = !state.isSubRecipe
          updateRecipe({
             variables: {
                id: state.id,
