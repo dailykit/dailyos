@@ -193,6 +193,7 @@ export const S_RECIPE = gql`
          image
          assets
          isValid
+         isSubRecipe
          isPublished
          author
          type
