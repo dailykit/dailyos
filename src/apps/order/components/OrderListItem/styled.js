@@ -1,6 +1,13 @@
 import styled, { css } from 'styled-components'
 
 export const Styles = {
+   DeleteBtn: styled.span(
+      () => css`
+         position: absolute;
+         bottom: 8px;
+         right: 8px;
+      `
+   ),
    Status: styled.div(
       ({ status }) => css`
          top: -3px;
