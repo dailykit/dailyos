@@ -132,7 +132,12 @@ const Occurences = ({ id, setOccurencesTotal }) => {
          <ReactTabulator
             ref={tableRef}
             columns={columns}
-            options={{ ...tableOptions, layout: 'fitColumns' }}
+            options={{
+               ...tableOptions,
+               layout: 'fitColumns',
+               pagination: 'local',
+               paginationSize: 10,
+            }}
             data={subscription_occurences?.occurences_aggregate?.nodes || []}
          />
          <AddOnProductsTunnel

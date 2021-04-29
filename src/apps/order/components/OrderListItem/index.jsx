@@ -30,7 +30,7 @@ const OrderListItem = ({ containerId, order = {} }) => {
       if (order.cart?.status === 'ORDER_DELIVERED') return
       const status_list = statuses.map(status => status.value)
       const next = status_list.indexOf(order.cart?.status)
-      if (next + 1 < status_list.length - 1) {
+      if (next + 1 < status_list.length) {
          updateCart({
             variables: {
                pk_columns: { id: order.cart.id },

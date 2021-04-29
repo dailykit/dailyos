@@ -3,7 +3,7 @@ import React from 'react'
 const MenuContext = React.createContext()
 
 const initialState = {
-   date: null,
+   dates: [],
    products: { selected: [] },
    plans: { isPermanent: false, selected: [] },
 }
@@ -13,7 +13,7 @@ const reducers = (state, { type, payload }) => {
       case 'SET_DATE':
          return {
             ...state,
-            date: payload,
+            dates: payload,
             products: { selected: [] },
             plans: { selected: [], isPermanent: false },
          }

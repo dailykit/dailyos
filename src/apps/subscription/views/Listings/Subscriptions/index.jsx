@@ -107,8 +107,8 @@ export const Subscriptions = () => {
                data={titles}
                ref={tableRef}
                columns={columns}
-               options={options}
                rowClick={rowClick}
+               options={{ ...options, pagination: 'local', paginationSize: 10 }}
             />
          )}
       </ResponsiveFlex>
