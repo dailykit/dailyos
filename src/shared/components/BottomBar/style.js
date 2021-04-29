@@ -3,26 +3,10 @@ import styled from 'styled-components'
 const Styles = {
    Wrapper: styled.div`
       width: 100%;
-      /* height: 78px; */
       position: fixed;
       z-index: 4;
       bottom: 0;
       left: 0;
-      /* > button {
-         height: 34px;
-      }
-      > div {
-         display: flex;
-         width: 100%;
-         background: #ffffff;
-         box-shadow: -5px 5px 10px rgba(201, 201, 201, 0.2),
-            5px -5px 10px rgba(201, 201, 201, 0.2),
-            -5px -5px 10px rgba(255, 255, 255, 0.9),
-            5px 5px 13px rgba(201, 201, 201, 0.9),
-            inset 1px 1px 2px rgba(255, 255, 255, 0.3),
-            inset -1px -1px 2px rgba(201, 201, 201, 0.5);
-      } */
-
       .option {
          display: flex;
          align-items: center;
@@ -44,6 +28,7 @@ const Styles = {
       display: flex;
       width: 100vw;
       padding: 0 32px;
+      cursor: pointer;
    `,
    Bar: styled.div`
       height: 8px;

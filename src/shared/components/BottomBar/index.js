@@ -29,6 +29,19 @@ const BottomBar = () => {
       setIsModalOpen(true)
    }
 
+   React.useEffect(() => {
+      const timeId = setTimeout(() => {
+         if (!isModalOpen) {
+            setIsOpen(false)
+         } else {
+            setIsOpen(true)
+         }
+      }, 2000)
+      return () => {
+         clearTimeout(timeId)
+      }
+   }, [isOpen, isModalOpen])
+
    return (
       <>
          <Styles.Wrapper>
@@ -37,8 +50,9 @@ const BottomBar = () => {
                   setIsModalOpen(false)
                   setIsOpen(!isOpen)
                }}
+               onMouseEnter={() => setIsOpen(true)}
             >
-               <MenuIcon />
+               <MenuIcon isOpen={isOpen} />
             </Styles.BottomBarMenu>
             {isOpen && (
                <Styles.BottomBarWrapper>
