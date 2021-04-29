@@ -203,13 +203,28 @@ const RecipeForm = () => {
          })
       }
    }
-
+   const toggleSubRecipe = () => {
+      const val = !state.isSubRecipe
+      if (val && !state.isValid.status) {
+         toast.error('Recipe should be valid!')
+      } else {
+         updateRecipe({
+            variables: {
+               id: state.id,
+               set: {
+                  isSubRecipe: val,
+               },
+            },
+         })
+      }
+   }
    const clone = () => {
       if (cloning) return
       const clonedRecipe = {
          name: `${state.name}-${randomSuffix()}`,
          assets: state.assets,
          isPublished: state.isPublished,
+         isSubRecipe: state.isSubRecipe,
          author: state.author,
          type: state.type,
          description: state.description,
@@ -362,7 +377,19 @@ const RecipeForm = () => {
                      <CloneIcon color="#00A7E1" />
                      Clone Recipe
                   </ComboButton>
-                  <Spacer xAxis size="16px" />
+                  <Spacer xAxis size="10px" />
+                  <Form.Toggle
+                     name="subRecipe"
+                     value={state.isSubRecipe}
+                     onChange={toggleSubRecipe}
+                  > <Flex container alignItems="center">
+                        Sub Recipe
+                  <Spacer xAxis size="10px" />
+                        <Tooltip identifier="sub_publish" />
+                     </Flex>
+                  </Form.Toggle>
+
+                  <Spacer xAxis size="10px" />
                   <Form.Toggle
                      name="published"
                      value={state.isPublished}
@@ -370,7 +397,7 @@ const RecipeForm = () => {
                   >
                      <Flex container alignItems="center">
                         Published
-                        <Spacer xAxis size="16px" />
+                        <Spacer xAxis size="10px" />
                         <Tooltip identifier="recipe_publish" />
                      </Flex>
                   </Form.Toggle>
