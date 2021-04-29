@@ -9,6 +9,7 @@ import {
    Tunnel,
    Tunnels,
    useTunnel,
+   Dropdown
 } from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
@@ -23,7 +24,7 @@ import {
 import {
    S_INGREDIENT,
    S_SIMPLE_RECIPES_FROM_INGREDIENT_AGGREGATE,
-   UPDATE_INGREDIENT,
+   UPDATE_INGREDIENT,INGREDIENT_CATEGORIES_INGREDIENTS_AGGREGATE
 } from '../../../graphql'
 import { Processings, Stats } from './components'
 import validator from './validators'
@@ -69,6 +70,12 @@ const IngredientForm = () => {
    const [state, setState] = React.useState({})
    const [linkedRecipesCount, setLinkedRecipesCount] = React.useState(0)
 
+   //dropdown
+   const [options, setOptions] = React.useState([])
+   const selectedOption = option => console.log(option)
+   const searchedOption = option => console.log(option)
+
+
    // Subscriptions
    const { loading, error } = useSubscription(S_INGREDIENT, {
       variables: {
@@ -87,6 +94,19 @@ const IngredientForm = () => {
          })
       },
    })
+
+
+   useSubscription(INGREDIENT_CATEGORIES_INGREDIENTS_AGGREGATE, {
+   
+      onSubscriptionData: data => {
+         console.log("data" ,  data.subscriptionData.data)
+          setOptions(data.subscriptionData.data.ingredientCategories)
+      },
+   })
+
+    console.log("options" , options)
+
+   
    useSubscription(S_SIMPLE_RECIPES_FROM_INGREDIENT_AGGREGATE, {
       variables: {
          where: {
@@ -233,7 +253,7 @@ const IngredientForm = () => {
                   <Form.Label htmlFor="category" title="category">
                      Category
                   </Form.Label>
-                  <Form.Text
+                  {/* <Form.Text
                      id="category"
                      name="category"
                      value={category.value}
@@ -245,12 +265,21 @@ const IngredientForm = () => {
                      hasError={
                         !category.meta.isValid && category.meta.isTouched
                      }
-                  />
-                  {category.meta.isTouched &&
+                  /> */}
+                  {/* {category.meta.isTouched &&
                      !category.meta.isValid &&
                      category.meta.errors.map((error, index) => (
                         <Form.Error key={index}>{error}</Form.Error>
-                     ))}
+                     ))} */}
+                     <Dropdown
+            type='single'
+            defaultValue={2}
+            options={options}
+            addOption={() => console.log('Item added')}
+            searchedOption={searchedOption}
+            selectedOption={selectedOption}
+            placeholder="type what you're looking for..."
+         />
                </Form.Group>
             </InputTextWrapper>
             <Flex
