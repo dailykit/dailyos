@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { ComboButton, ClearIcon } from '@dailykit/ui'
 import { webRenderer } from '@dailykit/web-renderer'
 import { ModalWrapper } from './styles'
-import TreeView from './TreeView'
+import TreeView from './treeView'
 import { useBottomBar } from '../../providers'
 import { getTreeViewArray } from '../../utils'
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import MenuItem from './MenuItem'
+import MenuItem from './menuItem'
 
 const TreeView = ({ data = [], onToggle, clickHandler }) => {
    let treeData = data
