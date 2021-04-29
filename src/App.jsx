@@ -6,15 +6,10 @@ import styled from 'styled-components'
 import { useSubscription } from '@apollo/react-hooks'
 import { Switch, Route, Link, useLocation } from 'react-router-dom'
 
-import { useTabs, useBottomBar } from './shared/providers'
-import { isKeycloakSupported, getTreeViewArray } from './shared/utils'
-import {
-   TabBar,
-   Lang,
-   RedirectBanner,
-   Sidebar,
-   Modal,
-} from './shared/components'
+import { useTabs } from './shared/providers'
+import { isKeycloakSupported } from './shared/utils'
+import { TabBar, Lang, RedirectBanner, Sidebar } from './shared/components'
+import BottomBar from './shared/components/BottomBar'
 
 const APPS = gql`
    subscription apps {
@@ -84,29 +79,9 @@ const Editor = Loadable({
 const App = () => {
    const location = useLocation()
    const { routes, setRoutes } = useTabs()
-   const {
-      state,
-      addClickedOptionInfo,
-      addClickedOptionMenuInfo,
-   } = useBottomBar()
-   const [open, toggle] = React.useState(false)
-   const [isModalOpen, setIsModalOpen] = React.useState(false)
-   const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
 
-   const handleBottomBarOptionClick = async option => {
-      console.log('opptioon', option)
-      await addClickedOptionInfo(option)
-      const treeData = await getTreeViewArray({
-         dataset: option?.navigationMenu?.navigationMenuItems,
-         rootIdKeyName: 'id',
-         parentIdKeyName: 'parentNavigationMenuItemId',
-      })
-      await addClickedOptionMenuInfo({
-         ...option?.navigationMenu,
-         navigationMenuItems: treeData,
-      })
-      setIsModalOpen(true)
-   }
+   const [open, toggle] = React.useState(false)
+   const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
 
    React.useEffect(() => {
       if (location.pathname === '/') {
@@ -151,24 +126,7 @@ const App = () => {
          </main>
          {!isKeycloakSupported() && <RedirectBanner />}
          <Lang />
-         <BottomBar>
-            {state?.bottomBarOptions.map(option => {
-               return (
-                  <div className="option">
-                     <img src={option?.icon} alt="option-icon" />
-                     <p
-                        key={option.id}
-                        onClick={() => handleBottomBarOptionClick(option)}
-                     >
-                        {option?.title || ''}
-                     </p>
-                  </div>
-               )
-            })}
-         </BottomBar>
-         {state?.clickedOption && (
-            <Modal isOpen={isModalOpen} close={() => setIsModalOpen(false)} />
-         )}
+         <BottomBar />
       </Layout>
    )
 }
@@ -234,33 +192,5 @@ const Layout = styled.div`
    }
    @media only screen and (max-width: 767px) {
       grid-template-columns: ${({ open }) => (open ? '100vw' : '48px 1fr')};
-   }
-`
-const BottomBar = styled.div`
-   width: 100%;
-   height: 40px;
-   position: fixed;
-   z-index: 4;
-   bottom: 0;
-   left: 0;
-   background: #111;
-   color: #fff;
-   display: flex;
-   padding: 8px;
-   p {
-      cursor: pointer;
-      margin-right: 2rem;
-   }
-   .option {
-      display: flex;
-      align-items: center;
-      img {
-         width: 24px;
-         height: 24px;
-         background: #fff;
-         object-fit: contain;
-         border-radius: 50%;
-         margin-right: 4px;
-      }
    }
 `

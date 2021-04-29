@@ -1,40 +1,58 @@
 import styled from 'styled-components'
 
 export const ModalWrapper = styled.div`
-   width: 100%;
-   height: 100%;
+   width: 100vw;
+   bottom: 0;
    position: absolute;
-   top: 0;
+   top: 42px;
    left: 0;
-   background: #fff;
+   background: rgba(255, 255, 255, 0.13);
+   border: 1px solid #f2f3f3;
+   backdrop-filter: blur(11.37px);
    display: ${({ show }) => (show ? 'block' : 'none')};
+
    .modal_header {
-      padding: 1rem;
+      position: absolute;
+      right: 40px;
+      > button {
+         color: #45484c;
+         > span > svg {
+            stroke: #45484c;
+         }
+      }
    }
    .modal_body {
       display: flex;
-      padding: 1rem;
-      .heading_h1 {
-         font-size: 24px;
-         color: #55b6e;
-         text-align: center;
-      }
-      .menu_area_wrapper {
-         width: 30%;
-         height: 560px;
-      }
+      padding: 32px;
+      height: calc(100% - 20px);
+      width: 100%;
+
       .menu_area {
-         width: 100%;
-         height: 100%;
-         background: #111;
-         border-radius: 4px;
+         width: 360px;
+         background: #320e3b;
+         border-radius: 30px;
          color: #fff;
-         margin-right: 1rem;
-         padding: 1rem;
-         h1 {
+         padding: 16px;
+         .menu_area_header {
             color: #fff;
-            text-align: center;
-            text-transform: uppercase;
+            margin: 20px 16px 10px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            h2 {
+               text-align: center;
+               font-weight: 500;
+               font-size: 28px;
+               line-height: 20px;
+               text-transform: capitalize;
+            }
+            p {
+               color: #fff;
+               font-size: 12px;
+               font-weight: normal;
+               line-height: 17px;
+               text-align: center;
+               letter-spacing: 0.02em;
+               padding: 10px;
+            }
          }
          ul {
             list-style: none;
@@ -48,10 +66,7 @@ export const ModalWrapper = styled.div`
          }
       }
       .content_area {
-         width: 70%;
-         flex: 1;
-         background: #fff;
-         color: #111;
+         text-align: center;
       }
    }
 `

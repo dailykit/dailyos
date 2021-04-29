@@ -74,7 +74,7 @@ export const useBottomBar = () => {
    const { state, dispatch } = React.useContext(BottomBarContext)
    const addClickedOptionInfo = React.useCallback(
       data => {
-         console.log('from provider', data)
+         // console.log('from provider', data)
          dispatch({
             type: 'ADD_CLICKED_OPTION_INFO',
             payload: data,
@@ -84,7 +84,7 @@ export const useBottomBar = () => {
    )
    const addClickedOptionMenuInfo = React.useCallback(
       data => {
-         console.log('from provider menu', data)
+         // console.log('from provider menu', data)
          dispatch({
             type: 'ADD_CLICKED_OPTION_MENU_INFO',
             payload: data,

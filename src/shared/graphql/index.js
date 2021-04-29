@@ -126,6 +126,7 @@ export const GET_BOTTOM_BAR_OPTIONS = gql`
          navigationMenu {
             title
             id
+            description
             navigationMenuItems {
                id
                label
