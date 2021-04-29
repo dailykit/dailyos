@@ -26,6 +26,9 @@ const MasterList = () => {
    const { data: productCategories } = useSubscription(
       MASTER.PRODUCT_CATEGORY.AGGREGATE
    )
+   const { data: ingredientCategories } = useSubscription(
+      MASTER.INGREDIENT_CATEGORY.AGGREGATE
+   )
 
    const rowClick = (e, cell) => {
       const { _click } = cell.getData()
@@ -110,6 +113,18 @@ const MasterList = () => {
             addTab(
                'Product Categories',
                '/settings/master-lists/product-categories'
+            )
+         },
+      },
+      {
+         listName: 'Ingredient Categories',
+         length:
+            ingredientCategories?.ingredientCategoriesAggregate.aggregate
+               .count || '...',
+         _click() {
+            addTab(
+               'Ingredient Categories',
+               '/settings/master-lists/ingredient-categories'
             )
          },
       },
