@@ -7,6 +7,8 @@ import { RightIcon } from '../../assets/icons'
 import { logger } from '../../../../shared/utils'
 import { QUERIES, MUTATIONS } from '../../graphql'
 import { Details, Products, Actions, Header } from './sections'
+import { IconButton } from '@dailykit/ui'
+import { DeleteIcon } from '../../../../shared/assets/icons'
 
 const OrderListItem = ({ containerId, order = {} }) => {
    const [updateCart] = useMutation(MUTATIONS.CART.UPDATE.ONE, {
@@ -18,6 +20,16 @@ const OrderListItem = ({ containerId, order = {} }) => {
          toast.error('Failed to update the order')
       },
    })
+   const [updateOrder] = useMutation(MUTATIONS.ORDER.UPDATE, {
+      onCompleted: () => {
+         toast.success('Successfully deleted the order!')
+      },
+      onError: error => {
+         logger(error)
+         toast.error('Failed to delete the order')
+      },
+   })
+
    const {
       data: { order_orderStatusEnum: statuses = [] } = {},
    } = useSubscription(QUERIES.ORDER.STATUSES)
@@ -40,6 +52,20 @@ const OrderListItem = ({ containerId, order = {} }) => {
       }
    }
 
+   const deleteOrder = () => {
+      const isConfirmed = window.confirm(
+         'Are you sure you want to delete this order?'
+      )
+      if (isConfirmed) {
+         updateOrder({
+            variables: {
+               id: order.id,
+               _set: { isArchived: true },
+            },
+         })
+      }
+   }
+
    return (
       <Styles.Order status={order.cart?.status} id={containerId}>
          <Details order={order} />
@@ -52,6 +78,11 @@ const OrderListItem = ({ containerId, order = {} }) => {
                <RightIcon size={20} color="#fff" />
             </span>
          </Styles.Status>
+         <Styles.DeleteBtn tabIndex={0} role="button" onClick={deleteOrder}>
+            <IconButton type="ghost" size="sm">
+               <DeleteIcon color="#FF5A52" />
+            </IconButton>
+         </Styles.DeleteBtn>
       </Styles.Order>
    )
 }
