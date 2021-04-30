@@ -39,9 +39,7 @@ const Descriptions = ({ state, updated, setUpdated }) => {
                         variables: {
                            id: state.id,
                            set: {
-                              description: description.length
-                                 ? description
-                                 : null,
+                              description: description ? description : null,
                            },
                         },
                      })

@@ -12,7 +12,9 @@ import { logger } from '../../../../../../../shared/utils'
 import { isArray } from 'lodash'
 
 const NotIncluded = ({ state, updated, setUpdated }) => {
-   const [notIncluded, setNotIncluded] = React.useState(state.notIncluded)
+   const [notIncluded, setNotIncluded] = React.useState(
+      state.notIncluded === null ? [] : state.notIncluded
+   )
    const [errors, setErrors] = React.useState([])
 
    const [updateNotIncluded, { loading: updatingNotIncluded }] = useMutation(

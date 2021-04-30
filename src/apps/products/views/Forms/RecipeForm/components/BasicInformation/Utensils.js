@@ -12,7 +12,9 @@ import { logger } from '../../../../../../../shared/utils'
 import { toast } from 'react-toastify'
 
 const Utensils = ({ state, updated, setUpdated }) => {
-   const [utensils, setUtensils] = React.useState(state.utensils)
+   const [utensils, setUtensils] = React.useState(
+      state.utensils === null ? [] : state.utensils
+   )
    const [errors, setErrors] = React.useState([])
 
    const [updateUtensils, { loading: updatingUtensils }] = useMutation(

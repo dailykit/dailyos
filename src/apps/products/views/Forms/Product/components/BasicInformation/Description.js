@@ -11,7 +11,7 @@ import { isArray } from 'lodash'
 const Description = ({ state }) => {
    const [updated, setUpdated] = React.useState(null)
    const [description, setDescription] = React.useState(state.description)
-   const [tags, setTags] = React.useState(state.tags)
+   const [tags, setTags] = React.useState(state.tags === null ? [] : state.tags)
    const [errors, setErrors] = React.useState([])
 
    const [updateDescription, { loading: updatingDescription }] = useMutation(
@@ -104,9 +104,7 @@ const Description = ({ state }) => {
                            variables: {
                               id: state.id,
                               _set: {
-                                 description: description.length
-                                    ? description
-                                    : null,
+                                 description: description ? description : null,
                               },
                            },
                         })
