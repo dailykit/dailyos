@@ -97,12 +97,12 @@ export default function ItemForm() {
             setItemName({ value: data.name, meta: { ...itemName.meta } })
             setFormState(data)
             const updatedConversions = data.supplierItemUnitConversions.map(
-               ({ unitConversion: conv }) => ({
-                  ...conv,
+               ({ unitConversion: conv, id }) => ({
                   title: `1 ${conv.inputUnitName} = ${conv.conversionFactor} ${conv.outputUnitName}`,
+                  id,
                })
             )
-            setSelectedConversions(updatedConversions)
+            setSelectedConversions([...updatedConversions])
          },
       }
    )
@@ -188,7 +188,6 @@ export default function ItemForm() {
                   openLinkConversionTunnel={openLinkConversionTunnel}
                   formState={formState}
                   selectedConversions={selectedConversions}
-                  setSelectedConversions={setSelectedConversions}
                />
             </Tunnel>
          </Tunnels>
@@ -213,11 +212,13 @@ export default function ItemForm() {
             </Tunnel>
          </Tunnels>
          <LinkUnitConversionTunnels
-            preselected={selectedConversions}
+            schema="inventory"
+            table="supplierItem"
+            entityId={formState.id}
             tunnels={linkConversionTunnels}
             openTunnel={openLinkConversionTunnel}
             closeTunnel={closeLinkConversionTunnel}
-            onSave={selected => setSelectedConversions(selected)}
+            onSave={() => closeLinkConversionTunnel(1)}
          />
          <div
             style={{ background: '#f3f3f3', minHeight: 'calc(100vh - 40px)' }}

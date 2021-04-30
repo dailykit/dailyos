@@ -20,6 +20,25 @@ export const UNIT_CONVERSIONS = {
          }
       }
    `,
+   SUPPLIER_ITEMS: {
+      CREATE: gql`
+         mutation UpsertSupplierItemUnitConversion(
+            $objects: [inventory_supplierItem_unitConversion_insert_input!]!
+         ) {
+            insert_inventory_supplierItem_unitConversion(
+               objects: $objects
+               on_conflict: {
+                  constraint: supplierItem_unitConversion_pkey
+                  update_columns: []
+               }
+            ) {
+               returning {
+                  id
+               }
+            }
+         }
+      `,
+   },
 }
 
 export const UNITS = {

@@ -21,7 +21,7 @@ import {
 } from '../../../../../graphql'
 import { validators } from '../../../../../utils/validators'
 import { Highlight, StyledInputGroup, TunnelBody } from '../styled'
-import { UPSERT_SUPPLIER_ITEM_UNIT_CONVERSION } from '../../../../../graphql/mutations'
+import { DELETE_SUPPLIER_ITEM_UNIT_CONVERSION } from '../../../../../graphql/mutations'
 
 const address = 'apps.inventory.views.forms.item.tunnels.info.'
 
@@ -30,7 +30,6 @@ export default function InfoTunnel({
    formState,
    openLinkConversionTunnel,
    selectedConversions,
-   setSelectedConversions,
 }) {
    const { t } = useTranslation()
    const { setTabTitle } = useTabs()
@@ -97,18 +96,19 @@ export default function InfoTunnel({
          close()
       },
    })
-   const [
-      upsertSupplierItemUnitConversions,
-      { loading: upserting },
-   ] = useMutation(UPSERT_SUPPLIER_ITEM_UNIT_CONVERSION, {
-      onCompleted: () => {
-         toast.success('Unit conversions linked!')
-      },
-      onError: error => {
-         logger(error)
-         toast.error(ERROR_UPDATING_ITEM_INFORMATION)
-      },
-   })
+
+   const [removeLinkedConversion] = useMutation(
+      DELETE_SUPPLIER_ITEM_UNIT_CONVERSION,
+      {
+         onCompleted: () => {
+            toast.success('Conversion removed!')
+         },
+         onError: error => {
+            logger(error)
+            toast.error('Something went wrong!')
+         },
+      }
+   )
 
    const isObjectValid = () => {
       if (!itemName.value || !itemName.meta.isValid) return 'invalid item name'
@@ -128,14 +128,6 @@ export default function InfoTunnel({
    const handleSave = () => {
       const isValid = isObjectValid()
       if (!isValid.length) {
-         upsertSupplierItemUnitConversions({
-            variables: {
-               objects: selectedConversions.map(op => ({
-                  entityId: formState.id,
-                  unitConversionId: op.id,
-               })),
-            },
-         })
          updateSupplierItem({
             variables: {
                id: formState.id,
@@ -245,7 +237,7 @@ export default function InfoTunnel({
             title={t(address.concat('item information'))}
             close={close}
             right={{
-               title: loading || upserting ? 'Saving...' : 'Save',
+               title: loading ? 'Saving...' : 'Save',
                action: handleSave,
             }}
             description="update supplier item information"
@@ -366,12 +358,11 @@ export default function InfoTunnel({
                            options={selectedConversions}
                            addOption={() => openLinkConversionTunnel(1)}
                            placeholder="Link Conversions"
-                           removeOption={option => {
-                              const updatedOptions = selectedConversions.filter(
-                                 op => op.id !== option.id
-                              )
-                              setSelectedConversions(updatedOptions)
-                           }}
+                           removeOption={option =>
+                              removeLinkedConversion({
+                                 variables: { id: option.id },
+                              })
+                           }
                         />
                      </Form.Group>
                      <Form.Group>

@@ -60,7 +60,6 @@ const UnitConversionsListing = ({
                title: 'Save',
                action: () => {
                   onSave(selected)
-                  closeTunnel(1)
                },
             }}
          />
