@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+const colors = { primary: '#320E3B', secondary: '#373B48' }
 
 const Styles = {
    Wrapper: styled.div`
@@ -53,10 +54,15 @@ const Styles = {
       font-size: 12px;
       line-height: 14px;
       text-transform: uppercase;
-      color: ${({ active }) => (active ? `#fff` : `#373B48`)};
+      color: ${({ active }) => (active ? `#fff` : `${colors.secondary}`)};
       cursor: pointer;
       padding: 10px 16px;
-      background-color: ${({ active }) => (active ? `#320E3B` : `#fff`)};
+      background-color: ${({ active }) =>
+         active ? `${colors.primary}` : `#fff`};
+      &:hover {
+         background: ${({ active }) =>
+            !active ? '#f4f4f4' : `${colors.primary}`};
+      }
    `,
 }
 export default Styles

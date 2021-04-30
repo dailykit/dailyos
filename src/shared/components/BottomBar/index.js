@@ -8,7 +8,7 @@ import Styles from './style'
 const BottomBar = () => {
    const [isModalOpen, setIsModalOpen] = React.useState(false)
    const [isOpen, setIsOpen] = React.useState(false)
-
+   const bottomBarRef = React.useRef()
    const {
       state,
       addClickedOptionInfo,
@@ -29,34 +29,41 @@ const BottomBar = () => {
       setIsModalOpen(true)
    }
 
-   React.useEffect(() => {
-      const timeId = setTimeout(() => {
-         if (!isModalOpen) {
-            setIsOpen(false)
-         } else {
-            setIsOpen(true)
-         }
-      }, 2000)
-      return () => {
-         clearTimeout(timeId)
-      }
-   }, [isOpen, isModalOpen])
+   // React.useEffect(() => {
+   //    const timeId = setTimeout(() => {
+   //       if (!isModalOpen) {
+   //          setIsOpen(false)
+   //       } else {
+   //          setIsOpen(true)
+   //       }
+   //    }, 2000)
+   //    return () => {
+   //       clearTimeout(timeId)
+   //    }
+   // }, [isOpen, isModalOpen])
 
    return (
       <>
-         <Styles.Wrapper>
+         <Styles.Wrapper
+            id="wrapper"
+            onMouseOver={() => setIsOpen(true)}
+            onMouseLeave={() => {
+               if (!isModalOpen) {
+                  setIsOpen(false)
+               }
+            }}
+         >
             <Styles.BottomBarMenu
                onClick={() => {
                   setIsModalOpen(false)
                   setIsOpen(!isOpen)
                }}
-               onMouseEnter={() => setIsOpen(true)}
             >
                <MenuIcon isOpen={isOpen} />
             </Styles.BottomBarMenu>
             {isOpen && (
                <Styles.BottomBarWrapper>
-                  <Styles.BottomBar>
+                  <Styles.BottomBar ref={bottomBarRef}>
                      {state?.bottomBarOptions.map(option => {
                         return (
                            <div className="option" key={option.id}>
@@ -80,7 +87,12 @@ const BottomBar = () => {
             )}
          </Styles.Wrapper>
          {state?.clickedOption && (
-            <Modal isOpen={isModalOpen} close={() => setIsModalOpen(false)} />
+            <Modal
+               isOpen={isModalOpen}
+               setIsOpen={setIsOpen}
+               setIsModalOpen={setIsModalOpen}
+               bottomBarRef={bottomBarRef}
+            />
          )}
       </>
    )

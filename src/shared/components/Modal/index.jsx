@@ -5,14 +5,25 @@ import { ModalWrapper } from './styles'
 import TreeView from './treeView'
 import { useBottomBar } from '../../providers'
 import { getTreeViewArray } from '../../utils'
+import { useOnClickOutside } from './useOnClickOutSide'
 
-export default function Modal({ isOpen, close }) {
+export default function Modal({
+   isOpen,
+   setIsModalOpen,
+   setIsOpen,
+   bottomBarRef,
+}) {
    const { state = {} } = useBottomBar()
    const [optionMenu, setOptionMenu] = useState({})
    const [filePaths, setfilePaths] = useState([])
    const [cssPaths, setCssPaths] = useState([])
    const [jsPaths, setJsPaths] = useState([])
-   console.log(state)
+   const ref = React.useRef()
+
+   useOnClickOutside([ref, bottomBarRef], () => {
+      setIsModalOpen(false)
+      setIsOpen(false)
+   })
 
    useEffect(() => {
       if (state?.clickedOptionMenu) {
@@ -21,7 +32,6 @@ export default function Modal({ isOpen, close }) {
    }, [state?.clickedOptionMenu])
 
    const handleMenuItemClick = menuItem => {
-      console.log('MENU ITEM', menuItem)
       if (menuItem?.action?.actionTypeTitle === 'infoOverlay') {
          const { path, linkedCssFiles, linkedJsFiles } = menuItem?.action?.file
          const linkedCssPaths = linkedCssFiles.map(file => {
@@ -66,16 +76,30 @@ export default function Modal({ isOpen, close }) {
          document.getElementById('content_area').innerHTML = ''
       }
    }, [filePaths])
+
+   useEffect(() => {
+      if (!isOpen) {
+         setfilePaths([])
+         setCssPaths([])
+         setJsPaths([])
+      }
+   }, [isOpen])
+
+   const hasContent =
+      filePaths?.length > 0 || cssPaths?.length > 0 || jsPaths?.length > 0
+
    return (
-      <ModalWrapper show={isOpen}>
+      <ModalWrapper show={isOpen} hasContent={hasContent}>
          <div className="modal_header">
-            <ComboButton type="ghost" onClick={close}>
-               <ClearIcon color="#45484C" />
-               CLOSE
-            </ComboButton>
+            {hasContent && (
+               <ComboButton type="ghost" onClick={() => setIsModalOpen(false)}>
+                  <ClearIcon color="#45484C" />
+                  CLOSE
+               </ComboButton>
+            )}
          </div>
          <div className="modal_body">
-            <div className="menu_area">
+            <div className="menu_area" ref={ref}>
                <div className="menu_area_header">
                   <h2>{optionMenu?.title || 'Title'}</h2>
                   <p>{optionMenu?.description || 'Description'}</p>
@@ -86,7 +110,6 @@ export default function Modal({ isOpen, close }) {
                />
             </div>
             <div className="content_area">
-               <h1 className="heading_h1">Content Area</h1>
                <div id="content_area" />
             </div>
          </div>

@@ -27,11 +27,6 @@ const ChildNode = ({ child, toggleMenu, clickHandler }) => {
                   <ChevronDown size="16px" color="#fff" />
                </StyledButton>
             )}
-            {child?.childNodes?.length <= 0 && (
-               <StyledButton hasChild={child?.childNodes?.length > 0}>
-                  <ChevronRight size="16px" color="#fff" />
-               </StyledButton>
-            )}
          </div>
          {toggleParent &&
             child?.childNodes?.map(c => {
@@ -53,11 +48,6 @@ const ChildNode = ({ child, toggleMenu, clickHandler }) => {
                            onClick={() => setToggleChild(!toggleChild)}
                         >
                            <ChevronDown size="16px" color="#fff" />
-                        </StyledButton>
-                     )}
-                     {c?.childNodes?.length <= 0 && (
-                        <StyledButton hasChild={c?.childNodes?.length > 0}>
-                           <ChevronRight size="16px" color="#fff" />
                         </StyledButton>
                      )}
                   </div>

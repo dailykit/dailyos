@@ -1,14 +1,16 @@
 import styled from 'styled-components'
 
 export const ModalWrapper = styled.div`
-   width: 100vw;
+   width: ${({ hasContent }) => (hasContent ? '100vw' : '100%')};
+   background: ${({ hasContent }) =>
+      hasContent ? 'rgba(255, 255, 255, 0.13)' : 'none'};
+   backdrop-filter: ${({ hasContent }) =>
+      hasContent ? 'blur(11.37px)' : 'none'};
    bottom: 0;
    position: absolute;
    top: 42px;
    left: 0;
-   background: rgba(255, 255, 255, 0.13);
-   border: 1px solid #f2f3f3;
-   backdrop-filter: blur(11.37px);
+
    display: ${({ show }) => (show ? 'block' : 'none')};
 
    .modal_header {
@@ -26,9 +28,8 @@ export const ModalWrapper = styled.div`
       padding: 32px;
       height: calc(100% - 20px);
       width: 100%;
-
       .menu_area {
-         width: 360px;
+         width: 330px;
          background: #320e3b;
          border-radius: 30px;
          color: #fff;
@@ -40,7 +41,7 @@ export const ModalWrapper = styled.div`
             h2 {
                text-align: center;
                font-weight: 500;
-               font-size: 28px;
+               font-size: 19px;
                line-height: 20px;
                text-transform: capitalize;
             }
