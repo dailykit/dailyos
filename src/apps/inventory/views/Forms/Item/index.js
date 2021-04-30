@@ -96,13 +96,16 @@ export default function ItemForm() {
 
             setItemName({ value: data.name, meta: { ...itemName.meta } })
             setFormState(data)
-            const updatedConversions = data.supplierItemUnitConversions.map(
-               ({ unitConversion: conv, id }) => ({
-                  title: `1 ${conv.inputUnitName} = ${conv.conversionFactor} ${conv.outputUnitName}`,
-                  id,
-               })
-            )
-            setSelectedConversions([...updatedConversions])
+            if (data.bulkItemAsShipped) {
+               const updatedConversions = data.bulkItemAsShipped.bulkItemUnitConversions.map(
+                  ({ unitConversion: conv, id }) => ({
+                     title: `1 ${conv.inputUnitName} = ${conv.conversionFactor} ${conv.outputUnitName}`,
+                     id,
+                  })
+               )
+               console.log('UC:', updatedConversions)
+               setSelectedConversions([...updatedConversions])
+            }
          },
       }
    )
@@ -208,18 +211,12 @@ export default function ItemForm() {
                   close={closeConfigTunnel}
                   open={openConfigTunnel}
                   id={bulktItems[0]?.id}
+                  openLinkConversionTunnel={openLinkConversionTunnel}
+                  selectedConversions={selectedConversions}
+                  test={1234}
                />
             </Tunnel>
          </Tunnels>
-         <LinkUnitConversionTunnels
-            schema="inventory"
-            table="supplierItem"
-            entityId={formState.id}
-            tunnels={linkConversionTunnels}
-            openTunnel={openLinkConversionTunnel}
-            closeTunnel={closeLinkConversionTunnel}
-            onSave={() => closeLinkConversionTunnel(1)}
-         />
          <div
             style={{ background: '#f3f3f3', minHeight: 'calc(100vh - 40px)' }}
          >
@@ -488,6 +485,8 @@ export default function ItemForm() {
                            formState={formState}
                            proc={formState.bulkItemAsShipped}
                            isDefault
+                           openLinkConversionTunnel={openLinkConversionTunnel}
+                           selectedConversions={selectedConversions}
                         />
                      </SectionTabPanel>
 
@@ -507,6 +506,15 @@ export default function ItemForm() {
                </SectionTabs>
             </>
          </div>
+         <LinkUnitConversionTunnels
+            schema="inventory"
+            table="bulkItem"
+            entityId={formState.bulkItemAsShippedId}
+            tunnels={linkConversionTunnels}
+            openTunnel={openLinkConversionTunnel}
+            closeTunnel={closeLinkConversionTunnel}
+            onSave={() => closeLinkConversionTunnel(1)}
+         />
       </>
    )
 }

@@ -32,7 +32,13 @@ import { ConfigTunnel } from './tunnels'
 
 const address = 'apps.inventory.views.forms.item.'
 
-export default function ProcessingView({ formState, proc = {}, isDefault }) {
+export default function ProcessingView({
+   formState,
+   proc = {},
+   isDefault,
+   openLinkConversionTunnel,
+   selectedConversions,
+}) {
    const { t } = useTranslation()
 
    const [configTunnel, openConfigTunnel, closeConfigTunnel] = useTunnel(1)
@@ -62,6 +68,8 @@ export default function ProcessingView({ formState, proc = {}, isDefault }) {
                   close={closeConfigTunnel}
                   open={openConfigTunnel}
                   proc={proc}
+                  openLinkConversionTunnel={openLinkConversionTunnel}
+                  selectedConversions={selectedConversions}
                />
             </Tunnel>
          </Tunnels>

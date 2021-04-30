@@ -4,6 +4,8 @@ import {
    Flex,
    Form,
    IconButton,
+   Select,
+   Spacer,
    Tag,
    TagGroup,
    Tunnel,
@@ -39,10 +41,17 @@ import {
    TunnelBody,
 } from '../styled'
 import PhotoTunnel from './PhotoTunnel'
+import { DELETE_BULK_ITEM_UNIT_CONVERSION } from '../../../../../graphql/mutations'
 
 const address = 'apps.inventory.views.forms.item.tunnels.config.'
 
-export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
+export default function ConfigTunnel({
+   close,
+   proc: bulkItem = {},
+   id,
+   openLinkConversionTunnel,
+   selectedConversions,
+}) {
    const { t } = useTranslation()
    const [units, setUnits] = useState([])
 
@@ -123,6 +132,19 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
          close(1)
       },
    })
+
+   const [removeLinkedConversion] = useMutation(
+      DELETE_BULK_ITEM_UNIT_CONVERSION,
+      {
+         onCompleted: () => {
+            toast.success('Conversion removed!')
+         },
+         onError: error => {
+            logger(error)
+            toast.error('Something went wrong!')
+         },
+      }
+   )
 
    const checkValidation = () => {
       if (!parLevel.value || !parLevel.meta.isValid)
@@ -330,6 +352,17 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                      />
                   </Form.Group>
                </StyledInputGroup>
+               <Spacer size="16px" />
+               <Select
+                  options={selectedConversions || []}
+                  addOption={() => openLinkConversionTunnel(1)}
+                  placeholder="Link Conversions"
+                  removeOption={option =>
+                     removeLinkedConversion({
+                        variables: { id: option.id },
+                     })
+                  }
+               />
             </StyledRow>
 
             <StyledRow>

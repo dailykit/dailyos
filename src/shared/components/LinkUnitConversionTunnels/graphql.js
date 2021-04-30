@@ -39,6 +39,25 @@ export const UNIT_CONVERSIONS = {
          }
       `,
    },
+   BULK_ITEMS: {
+      CREATE: gql`
+         mutation UpsertBulkItemUnitConversion(
+            $objects: [inventory_bulkItem_unitConversion_insert_input!]!
+         ) {
+            insert_inventory_bulkItem_unitConversion(
+               objects: $objects
+               on_conflict: {
+                  constraint: bulkItem_unitConversion_pkey
+                  update_columns: []
+               }
+            ) {
+               returning {
+                  id
+               }
+            }
+         }
+      `,
+   },
 }
 
 export const UNITS = {
