@@ -155,3 +155,13 @@ export const UPDATE_SUPPLIER_ITEM = gql`
       }
    }
 `
+
+export const DELETE_SUPPLIER_ITEM_UNIT_CONVERSION = gql`
+   mutation DeleteSupplierItemUnitConversion($id: Int!) {
+      delete_inventory_supplierItem_unitConversion(
+         where: { id: { _eq: $id } }
+      ) {
+         affected_rows
+      }
+   }
+`

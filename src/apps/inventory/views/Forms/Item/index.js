@@ -21,7 +21,10 @@ import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import AddIcon from '../../../../../shared/assets/icons/Add'
-import { Tooltip } from '../../../../../shared/components'
+import {
+   LinkUnitConversionTunnels,
+   Tooltip,
+} from '../../../../../shared/components'
 import { currencyFmt } from '../../../../../shared/utils'
 import { logger } from '../../../../../shared/utils/errorLog'
 import { ClockIcon, ItemIcon } from '../../../assets/icons'
@@ -64,9 +67,15 @@ export default function ItemForm() {
          isTouched: false,
       },
    })
+   const [selectedConversions, setSelectedConversions] = React.useState([])
    const { id } = useParams()
    const { setTabTitle } = useTabs()
 
+   const [
+      linkConversionTunnels,
+      openLinkConversionTunnel,
+      closeLinkConversionTunnel,
+   ] = useTunnel(2)
    const [supplierTunnel, openSupplierTunnel, closeSupplierTunnel] = useTunnel(
       1
    )
@@ -87,6 +96,13 @@ export default function ItemForm() {
 
             setItemName({ value: data.name, meta: { ...itemName.meta } })
             setFormState(data)
+            const updatedConversions = data.supplierItemUnitConversions.map(
+               ({ unitConversion: conv, id }) => ({
+                  title: `1 ${conv.inputUnitName} = ${conv.conversionFactor} ${conv.outputUnitName}`,
+                  id,
+               })
+            )
+            setSelectedConversions([...updatedConversions])
          },
       }
    )
@@ -169,7 +185,9 @@ export default function ItemForm() {
             <Tunnel layer={1}>
                <InfoTunnel
                   close={() => closeInfoTunnel(1)}
+                  openLinkConversionTunnel={openLinkConversionTunnel}
                   formState={formState}
+                  selectedConversions={selectedConversions}
                />
             </Tunnel>
          </Tunnels>
@@ -193,7 +211,15 @@ export default function ItemForm() {
                />
             </Tunnel>
          </Tunnels>
-
+         <LinkUnitConversionTunnels
+            schema="inventory"
+            table="supplierItem"
+            entityId={formState.id}
+            tunnels={linkConversionTunnels}
+            openTunnel={openLinkConversionTunnel}
+            closeTunnel={closeLinkConversionTunnel}
+            onSave={() => closeLinkConversionTunnel(1)}
+         />
          <div
             style={{ background: '#f3f3f3', minHeight: 'calc(100vh - 40px)' }}
          >
