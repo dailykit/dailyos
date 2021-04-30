@@ -673,10 +673,8 @@ export const MASTER = {
          }
       `,
       CREATE: gql`
-         mutation insertIngredientCategory(
-            $object: master_IngredientCategory_insert_input!
-         ) {
-            insertIngredientCategory(object: $object) {
+         mutation insertIngredientCategory($name: String!) {
+            createIngredientCategory(object: { name: $name }) {
                name
             }
          }

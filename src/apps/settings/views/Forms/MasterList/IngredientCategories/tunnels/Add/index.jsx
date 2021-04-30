@@ -23,25 +23,16 @@ const AddTypesTunnel = ({ closeTunnel }) => {
       },
    })
 
-   const [description, setDescription] = React.useState({
-      value: '',
-      meta: {
-         isValid: false,
-         isTouched: false,
-         errors: [],
-      },
-   })
-
    // Mutation
    const [addCategory, { loading: addingCategory }] = useMutation(
-      MASTER.PRODUCT_CATEGORY.CREATE,
+      MASTER.INGREDIENT_CATEGORY.CREATE,
       {
          onCompleted: () => {
-            toast.success('Product category added!')
+            toast.success('Ingredient category added!')
             closeTunnel(1)
          },
          onError: error => {
-            toast.error('Failed to add product category!')
+            toast.error('Failed to add ingredient category!')
             logger(error)
          },
       }
@@ -51,12 +42,7 @@ const AddTypesTunnel = ({ closeTunnel }) => {
    const add = () => {
       addCategory({
          variables: {
-            object: {
-               name: name.value,
-               metaDetails: {
-                  description: description.value,
-               },
-            },
+            name: name.value,
          },
       })
    }
@@ -72,7 +58,9 @@ const AddTypesTunnel = ({ closeTunnel }) => {
                disabled: !name.meta.isValid,
             }}
             close={() => closeTunnel(1)}
-            tooltip={<Tooltip identifier="tunnel_product_category_heading" />}
+            tooltip={
+               <Tooltip identifier="tunnel_ingredient_category_heading" />
+            }
          />
          <Flex padding="16px">
             <Form.Group>
@@ -105,28 +93,6 @@ const AddTypesTunnel = ({ closeTunnel }) => {
                   ))}
             </Form.Group>
             <Spacer size="16px" />
-            <Form.Group>
-               <Form.Label htmlFor="description" title="description">
-                  Description
-               </Form.Label>
-               <Form.TextArea
-                  id="description"
-                  name="description"
-                  onChange={e =>
-                     setDescription({ ...description, value: e.target.value })
-                  }
-                  value={description.value}
-                  placeholder="Write about category"
-                  hasError={
-                     description.meta.isTouched && !description.meta.isValid
-                  }
-               />
-               {description.meta.isTouched &&
-                  !description.meta.isValid &&
-                  description.meta.errors.map((error, index) => (
-                     <Form.Error key={index}>{error}</Form.Error>
-                  ))}
-            </Form.Group>
          </Flex>
       </>
    )
