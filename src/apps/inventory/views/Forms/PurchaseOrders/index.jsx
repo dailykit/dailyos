@@ -1,6 +1,7 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
+   Dropdown,
    Flex,
    Form,
    Loader,
@@ -21,6 +22,7 @@ import { ItemCard, Separator, StatusSwitch } from '../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import {
    PURCHASE_ORDER_SUBSCRIPTION,
+   UNITS_SUBSCRIPTION,
    UPDATE_PURCHASE_ORDER_ITEM,
 } from '../../../graphql'
 import { validators } from '../../../utils/validators'
@@ -39,10 +41,21 @@ export default function PurchaseOrderForm() {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const { id } = useParams()
 
+   const [options, setOptions] = React.useState([])
    const [orderQuantity, setOrderQuantity] = useState({
       value: '',
       meta: { isValid: false, isTouched: false, errors: [] },
    })
+   const [orderUnit, setOrderUnit] = useState('')
+
+   const { loading, error: unitsError } = useSubscription(UNITS_SUBSCRIPTION, {
+      onSubscriptionData: data => {
+         const { units } = data.subscriptionData.data
+         console.log(units)
+         setOptions(units)
+      },
+   })
+   if (unitsError) console.log(unitsError)
 
    const {
       data: { purchaseOrderItem: state = {} } = {},
@@ -108,12 +121,14 @@ export default function PurchaseOrderForm() {
       }
    }
 
+   const searchedOption = option => console.log(option)
+
    if (error) {
       logger(error)
       return <ErrorState />
    }
 
-   if (orderLoading) return <Loader />
+   if (orderLoading || loading) return <Loader />
 
    return (
       <>
@@ -201,15 +216,27 @@ export default function PurchaseOrderForm() {
                            )}
                      </Form.Group>
 
-                     <Spacer xAxis size="8px" />
+                     <Spacer xAxis size="16px" />
 
-                     <Text as="title">
-                        (in{' '}
-                        {state.supplierItem?.bulkItemAsShipped?.unit ||
-                           state?.unit ||
-                           'N/A'}
-                        )
-                     </Text>
+                     <Form.Group>
+                        <Form.Label> Unit </Form.Label>
+                        <Dropdown
+                           type="single"
+                           options={options}
+                           searchedOption={searchedOption}
+                           selectedOption={option =>
+                              updatePurchaseOrder({
+                                 variables: {
+                                    id: state.id,
+                                    set: {
+                                       unit: option.title,
+                                    },
+                                 },
+                              })
+                           }
+                           placeholder="type what you're looking for..."
+                        />
+                     </Form.Group>
                   </Flex>
                </>
             ) : (
