@@ -151,7 +151,15 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
             yield
             consumed
             bulkDensity
-
+            bulkItemUnitConversions {
+               id
+               unitConversion {
+                  id
+                  inputUnitName
+                  outputUnitName
+                  conversionFactor
+               }
+            }
             sachetItems {
                id
                onHand
@@ -446,7 +454,7 @@ export const SACHET_ITEMS_SUBSCRIPTION = gql`
 `
 
 export const BULK_WORK_ORDER_SUBSCRIPTION = gql`
-   subscription BulkWorkOrder($id: Int!) {
+   subscription BulkWorkOrder($id: Int!, $from: String!) {
       bulkWorkOrder(id: $id) {
          id
          status
@@ -469,6 +477,25 @@ export const BULK_WORK_ORDER_SUBSCRIPTION = gql`
             onHand
             unit
             shelfLife
+            bulkItemUnitConversions {
+               id
+               unitConversion {
+                  inputUnitName
+                  outputUnitName
+               }
+            }
+            unit_conversions(
+               args: {
+                  from_unit: $from
+                  to_unit: "kg"
+                  quantity: 1
+                  from_unit_bulk_density: -1
+                  to_unit_bulk_density: -1
+               }
+            ) {
+               id
+               data
+            }
          }
          supplierItem {
             id

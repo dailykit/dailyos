@@ -13,7 +13,13 @@ import { StyledInputGroup } from '../styled'
 
 const address = 'apps.inventory.views.forms.item.tunnels.configuresachettunnel.'
 
-export default function ConfigureSachetTunnel({ close, procId, unit }) {
+export default function ConfigureSachetTunnel({
+   close,
+   procId,
+   unit,
+   openLinkConversionTunnel,
+   selectedConversions,
+}) {
    const { t } = useTranslation()
 
    const [quantity, setQuantity] = useState({

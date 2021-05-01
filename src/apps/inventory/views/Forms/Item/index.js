@@ -68,6 +68,12 @@ export default function ItemForm() {
       },
    })
    const [selectedConversions, setSelectedConversions] = React.useState([])
+   const [tabState, setTabState] = React.useState({
+      table: 'bulkItem',
+      entityId: null,
+      view: 'As Shipped',
+   })
+
    const { id } = useParams()
    const { setTabTitle } = useTabs()
 
@@ -87,28 +93,27 @@ export default function ItemForm() {
    ] = useTunnel(1)
    const [configTunnel, openConfigTunnel, closeConfigTunnel] = useTunnel(1)
 
-   const { loading: itemDetailLoading } = useSubscription(
+   const { loading: itemDetailLoading, error } = useSubscription(
       SUPPLIER_ITEM_SUBSCRIPTION,
       {
          variables: { id },
          onSubscriptionData: input => {
             const data = input.subscriptionData.data.supplierItem
-
+            console.log({ data })
             setItemName({ value: data.name, meta: { ...itemName.meta } })
             setFormState(data)
-            if (data.bulkItemAsShipped) {
-               const updatedConversions = data.bulkItemAsShipped.bulkItemUnitConversions.map(
-                  ({ unitConversion: conv, id }) => ({
-                     title: `1 ${conv.inputUnitName} = ${conv.conversionFactor} ${conv.outputUnitName}`,
-                     id,
-                  })
-               )
-               console.log('UC:', updatedConversions)
-               setSelectedConversions([...updatedConversions])
+            if (data.bulkItemAsShipped && tabState.view === 'As Shipped') {
+               setTabState({
+                  ...tabState,
+                  entityId: data.bulkItemAsShipped.id,
+                  view: 'As Shipped',
+               })
+               updateSelectedConversions(data.bulkItemAsShipped)
             }
          },
       }
    )
+   if (error) console.log(error)
 
    const [updateSupplierItem] = useMutation(UPDATE_SUPPLIER_ITEM, {
       onError: error => {
@@ -170,6 +175,25 @@ export default function ItemForm() {
             isTouched: true,
          },
       })
+   }
+
+   const updateSelectedConversions = data => {
+      const updatedConversions = data.bulkItemUnitConversions.map(
+         ({ unitConversion: conv, id }) => ({
+            title: `1 ${conv.inputUnitName} = ${conv.conversionFactor} ${conv.outputUnitName}`,
+            id,
+         })
+      )
+      setSelectedConversions([...updatedConversions])
+   }
+
+   const tabClicked = (type, data) => {
+      setTabState({
+         ...tabState,
+         entityId: data.id,
+         view: type,
+      })
+      updateSelectedConversions(data)
    }
 
    if (itemDetailLoading) return <Loader />
@@ -397,6 +421,12 @@ export default function ItemForm() {
                                     style={{ textAlign: 'left' }}
                                     padding="14px"
                                     justifyContent="space-between"
+                                    onClick={() =>
+                                       tabClicked(
+                                          'As Shipped',
+                                          formState.bulkItemAsShipped
+                                       )
+                                    }
                                  >
                                     <div>
                                        <h3 style={{ marginBottom: '5px' }}>
@@ -449,6 +479,12 @@ export default function ItemForm() {
                                                 textAlign: 'left',
                                              }}
                                              padding="14px"
+                                             onClick={() =>
+                                                tabClicked(
+                                                   'Mise In Place',
+                                                   procs
+                                                )
+                                             }
                                           >
                                              <h3
                                                 style={{ marginBottom: '5px' }}
@@ -498,6 +534,10 @@ export default function ItemForm() {
                               <ProcessingView
                                  formState={formState}
                                  proc={procs}
+                                 openLinkConversionTunnel={
+                                    openLinkConversionTunnel
+                                 }
+                                 selectedConversions={selectedConversions}
                               />
                            </SectionTabPanel>
                         )
@@ -508,8 +548,8 @@ export default function ItemForm() {
          </div>
          <LinkUnitConversionTunnels
             schema="inventory"
-            table="bulkItem"
-            entityId={formState.bulkItemAsShippedId}
+            table={tabState.table}
+            entityId={tabState.entityId}
             tunnels={linkConversionTunnels}
             openTunnel={openLinkConversionTunnel}
             closeTunnel={closeLinkConversionTunnel}

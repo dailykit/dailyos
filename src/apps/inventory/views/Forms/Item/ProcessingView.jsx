@@ -120,6 +120,8 @@ export default function ProcessingView({
                      sachetItems={proc?.sachetItems}
                      procId={proc?.id}
                      unit={proc?.unit}
+                     openLinkConversionTunnel={openLinkConversionTunnel}
+                     selectedConversions={selectedConversions}
                   />
                </HorizontalTabPanel>
             </HorizontalTabPanels>
