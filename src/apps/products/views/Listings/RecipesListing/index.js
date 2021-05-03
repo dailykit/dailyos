@@ -131,6 +131,12 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
 
    const columns = [
       {
+         formatter: 'rowSelection',
+         titleFormatter: 'rowSelection',
+         align: 'center',
+         headerSort: false,
+      },
+      {
          title: 'Name',
          field: 'name',
          headerFilter: true,
