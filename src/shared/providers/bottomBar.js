@@ -1,5 +1,4 @@
-import React from 'react'
-import { isEmpty, has } from 'lodash'
+import React, { useEffect } from 'react'
 import { Loader } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 
@@ -19,6 +18,7 @@ const reducers = (state, { type, payload }) => {
    switch (type) {
       case 'SET_BOTTOM_BAR_OPTIONS':
          return { ...state, bottomBarOptions: payload }
+
       case 'ADD_CLICKED_OPTION_INFO':
          const optionIndex = state.bottomBarOptions.findIndex(
             option => option.id === payload.id
@@ -28,15 +28,24 @@ const reducers = (state, { type, payload }) => {
                ...state,
                clickedOption: payload,
             }
+         } else {
+            return state
          }
-         return state
 
       case 'ADD_CLICKED_OPTION_MENU_INFO':
-         console.log('dissss', payload)
          return {
             ...state,
             clickedOptionMenu: payload,
          }
+
+      case 'REMOVE_CLICKED_OPTION_INFO':
+         return {
+            ...state,
+            clickedOption: null,
+            clickedOptionMenu: null,
+         }
+      default:
+         return state
    }
 }
 
@@ -47,7 +56,6 @@ export const BottomBarProvider = ({ app, children }) => {
       onSubscriptionData: ({
          subscriptionData: { data: { ux_bottomBarOption = [] } = {} } = {},
       } = {}) => {
-         console.log(ux_bottomBarOption, 'subsciptionsss')
          dispatch({
             type: 'SET_BOTTOM_BAR_OPTIONS',
             payload: ux_bottomBarOption,
@@ -74,7 +82,6 @@ export const useBottomBar = () => {
    const { state, dispatch } = React.useContext(BottomBarContext)
    const addClickedOptionInfo = React.useCallback(
       data => {
-         // console.log('from provider', data)
          dispatch({
             type: 'ADD_CLICKED_OPTION_INFO',
             payload: data,
@@ -82,9 +89,9 @@ export const useBottomBar = () => {
       },
       [dispatch]
    )
+
    const addClickedOptionMenuInfo = React.useCallback(
       data => {
-         // console.log('from provider menu', data)
          dispatch({
             type: 'ADD_CLICKED_OPTION_MENU_INFO',
             payload: data,
@@ -92,6 +99,16 @@ export const useBottomBar = () => {
       },
       [dispatch]
    )
+   const removeClickedOptionInfo = React.useCallback(() => {
+      dispatch({
+         type: 'REMOVE_CLICKED_OPTION_INFO',
+      })
+   }, [dispatch])
 
-   return { state, addClickedOptionInfo, addClickedOptionMenuInfo }
+   return {
+      state,
+      addClickedOptionInfo,
+      addClickedOptionMenuInfo,
+      removeClickedOptionInfo,
+   }
 }

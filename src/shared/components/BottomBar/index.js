@@ -4,11 +4,13 @@ import { useBottomBar } from '../../providers'
 import { getTreeViewArray } from '../../utils'
 import Modal from '../Modal'
 import Styles from './style'
+import { useWindowSize } from '../../hooks/useWindowSize'
 
 const BottomBar = () => {
    const [isModalOpen, setIsModalOpen] = React.useState(false)
    const [isOpen, setIsOpen] = React.useState(false)
    const bottomBarRef = React.useRef()
+   const { width } = useWindowSize()
    const {
       state,
       addClickedOptionInfo,
@@ -33,19 +35,22 @@ const BottomBar = () => {
       <>
          <Styles.Wrapper
             id="wrapper"
-            onMouseOver={() => setIsOpen(true)}
+            onMouseOver={() => {
+               if (width > 565) {
+                  setIsOpen(true)
+               }
+            }}
             onMouseLeave={() => {
                if (!isModalOpen) {
                   setIsOpen(false)
                }
             }}
+            onClick={() => {
+               setIsModalOpen(false)
+               setIsOpen(!isOpen)
+            }}
          >
-            <Styles.BottomBarMenu
-               onClick={() => {
-                  setIsModalOpen(false)
-                  setIsOpen(!isOpen)
-               }}
-            >
+            <Styles.BottomBarMenu>
                <MenuIcon isOpen={isOpen} />
             </Styles.BottomBarMenu>
             {isOpen && (

@@ -6,25 +6,27 @@ import TreeView from './treeView'
 import { useBottomBar } from '../../providers'
 import { getTreeViewArray } from '../../utils'
 import { useOnClickOutside } from './useOnClickOutSide'
+
 export default function Modal({
    isOpen,
    setIsModalOpen,
    setIsOpen,
    bottomBarRef,
 }) {
-   const { state = {} } = useBottomBar()
+   const { state = {}, removeClickedOptionInfo } = useBottomBar()
    const [optionMenu, setOptionMenu] = useState({})
    const [filePaths, setfilePaths] = useState([])
    const [cssPaths, setCssPaths] = useState([])
    const [jsPaths, setJsPaths] = useState([])
+
    const ref = React.useRef()
    const contentRef = React.useRef()
-
    const [isContentOpen, setIsContentOpen] = useState(false)
 
    useOnClickOutside([ref, bottomBarRef, contentRef], () => {
       setIsModalOpen(false)
       setIsOpen(false)
+      removeClickedOptionInfo()
    })
 
    useEffect(() => {
@@ -94,7 +96,7 @@ export default function Modal({
    return (
       <Styles.ModalWrapper show={isOpen} hasContent={hasContent}>
          <Styles.ModalBody>
-            <Styles.MenuArea>
+            <Styles.MenuArea ref={ref}>
                <Styles.MenuAreaHeader>
                   <Flex
                      container

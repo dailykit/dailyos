@@ -15,6 +15,7 @@ const Styles = {
    BottomBarMenu: styled.div`
       display: flex;
       justify-content: center;
+      cursor: pointer;
    `,
 
    OptionsWrapper: styled.div`

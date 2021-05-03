@@ -72,8 +72,7 @@ const Styles = {
    `,
    ContentArea: styled.div`
       width: 100%;
-      overflow: auto;
-      padding-left: 16px;
+      padding: 16px;
       display: ${({ hasContent, isContentOpen }) =>
          hasContent && isContentOpen ? 'block' : 'none'};
       @media only screen and (max-width: 565px) {
@@ -90,6 +89,9 @@ const Styles = {
          margin-left: auto;
          color: #45484c;
          text-transform: uppercase;
+      }
+      div#content-area {
+         overflow: auto;
       }
    `,
    CloseButton: styled(IconButton)`
