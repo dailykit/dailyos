@@ -374,7 +374,9 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
          console.log(error)
          return null
       }
-      return Math.round((value * outputQuantity * 100) / yieldPercentage)
+      return parseFloat(
+         ((outputQuantity / value) * (100 / yieldPercentage)).toFixed(2)
+      )
    }
 
    return (

@@ -480,6 +480,7 @@ export const BULK_WORK_ORDER_SUBSCRIPTION = gql`
             bulkItemUnitConversions {
                id
                unitConversion {
+                  id
                   inputUnitName
                   outputUnitName
                }
@@ -487,7 +488,7 @@ export const BULK_WORK_ORDER_SUBSCRIPTION = gql`
             unit_conversions(
                args: {
                   from_unit: $from
-                  to_unit: "kg"
+                  to_unit: ""
                   quantity: 1
                   from_unit_bulk_density: -1
                   to_unit_bulk_density: -1

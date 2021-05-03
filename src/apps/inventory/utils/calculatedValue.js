@@ -35,10 +35,16 @@ export const getCalculatedValue = (sourceUnit, targetUnit, conversions) => {
       console.log(sourceUnit, targetUnit)
       console.log(allConversions)
 
-      const result = allConversions.find(
+      const cleanedResults = allConversions.map(conv => {
+         if (conv.result) return conv.result
+         return conv
+      })
+      const result = cleanedResults.find(
          ({ toUnitName, fromUnitName }) =>
             toUnitName === targetUnit && fromUnitName === sourceUnit
       )
+
+      console.log({ result })
 
       if (result) {
          return { error: null, value: result.equivalentValue }
