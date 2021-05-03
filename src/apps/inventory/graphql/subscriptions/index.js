@@ -741,3 +741,35 @@ export const SACHET_ITEM_HISTORIES = gql`
       }
    }
 `
+
+export const BULK_ITEM_UNIT_CONVERSIONS = gql`
+   subscription BulkItemUnitConversions($id: Int!) {
+      bulkItem(id: $id) {
+         bulkItemUnitConversions {
+            id
+            unitConversion {
+               id
+               inputUnitName
+               outputUnitName
+               conversionFactor
+            }
+         }
+      }
+   }
+`
+
+export const SACHET_ITEM_UNIT_CONVERSIONS = gql`
+   subscription SachetItemUnitConversions($id: Int!) {
+      sachetItem(id: $id) {
+         sachetItemUnitConversions {
+            id
+            unitConversion {
+               id
+               inputUnitName
+               outputUnitName
+               conversionFactor
+            }
+         }
+      }
+   }
+`

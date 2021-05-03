@@ -25,12 +25,7 @@ import { DELETE_SUPPLIER_ITEM_UNIT_CONVERSION } from '../../../../../graphql/mut
 
 const address = 'apps.inventory.views.forms.item.tunnels.info.'
 
-export default function InfoTunnel({
-   close,
-   formState,
-   openLinkConversionTunnel,
-   selectedConversions,
-}) {
+export default function InfoTunnel({ close, formState }) {
    const { t } = useTranslation()
    const { setTabTitle } = useTabs()
    const [units, setUnits] = useState([])
@@ -354,16 +349,6 @@ export default function InfoTunnel({
                            <Form.Error>{unit.meta.errors[0]}</Form.Error>
                         )}
                         <Spacer size="16px" />
-                        <Select
-                           options={selectedConversions}
-                           addOption={() => openLinkConversionTunnel(1)}
-                           placeholder="Link Conversions"
-                           removeOption={option =>
-                              removeLinkedConversion({
-                                 variables: { id: option.id },
-                              })
-                           }
-                        />
                      </Form.Group>
                      <Form.Group>
                         <Form.Label title="unit price" htmlFor="unitPrice">

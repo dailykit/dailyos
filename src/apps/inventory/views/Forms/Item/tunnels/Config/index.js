@@ -19,6 +19,7 @@ import { toast } from 'react-toastify'
 import { EditIcon } from '../../../../../../../shared/assets/icons'
 import {
    Gallery,
+   InlineLoader,
    NutritionTunnel,
    Tooltip,
 } from '../../../../../../../shared/components'
@@ -42,6 +43,7 @@ import {
 } from '../styled'
 import PhotoTunnel from './PhotoTunnel'
 import { DELETE_BULK_ITEM_UNIT_CONVERSION } from '../../../../../graphql/mutations'
+import { BULK_ITEM_UNIT_CONVERSIONS } from '../../../../../graphql/subscriptions'
 
 const address = 'apps.inventory.views.forms.item.tunnels.config.'
 
@@ -50,10 +52,10 @@ export default function ConfigTunnel({
    proc: bulkItem = {},
    id,
    openLinkConversionTunnel,
-   selectedConversions,
 }) {
    const { t } = useTranslation()
    const [units, setUnits] = useState([])
+   const [selectedConversions, setSelectedConversions] = useState([])
 
    const [parLevel, setParLevel] = useState({
       value: bulkItem?.parLevel || '',
@@ -107,6 +109,28 @@ export default function ConfigTunnel({
          if (!unit) setUnit(data[0].name)
       },
    })
+   const { loading: conversionsLoading, error } = useSubscription(
+      BULK_ITEM_UNIT_CONVERSIONS,
+      {
+         variables: {
+            id: bulkItem?.id || id,
+         },
+         onSubscriptionData: data => {
+            const { bulkItem } = data.subscriptionData.data
+            console.log({ bulkItem })
+            if (bulkItem.bulkItemUnitConversions) {
+               const updatedConversions = bulkItem.bulkItemUnitConversions.map(
+                  ({ unitConversion: c, id }) => ({
+                     title: `1 ${c.inputUnitName} = ${c.conversionFactor} ${c.outputUnitName}`,
+                     id,
+                  })
+               )
+               setSelectedConversions([...updatedConversions])
+            }
+         },
+      }
+   )
+   if (error) console.log(error)
 
    const [
       allergensTunnel,
@@ -211,6 +235,7 @@ export default function ConfigTunnel({
       })
    }
 
+   if (conversionsLoading) return <InlineLoader />
    return (
       <>
          <Tunnels tunnels={allergensTunnel}>
@@ -354,7 +379,7 @@ export default function ConfigTunnel({
                </StyledInputGroup>
                <Spacer size="16px" />
                <Select
-                  options={selectedConversions || []}
+                  options={selectedConversions}
                   addOption={() => openLinkConversionTunnel(1)}
                   placeholder="Link Conversions"
                   removeOption={option =>

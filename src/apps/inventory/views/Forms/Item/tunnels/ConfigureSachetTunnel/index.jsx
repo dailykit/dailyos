@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/react-hooks'
-import { Flex, Form, Spacer, TunnelHeader } from '@dailykit/ui'
+import { Flex, Form, Select, Spacer, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -10,6 +10,7 @@ import { SACHET_ITEMS_CREATE_ERROR } from '../../../../../constants/errorMessage
 import { CREATE_SACHET_ITEM } from '../../../../../graphql'
 import { validators } from '../../../../../utils/validators'
 import { StyledInputGroup } from '../styled'
+import { DELETE_SACHET_ITEM_UNIT_CONVERSION } from '../../../../../graphql/mutations'
 
 const address = 'apps.inventory.views.forms.item.tunnels.configuresachettunnel.'
 
@@ -46,6 +47,18 @@ export default function ConfigureSachetTunnel({
          toast.error(SACHET_ITEMS_CREATE_ERROR)
       },
    })
+   const [removeLinkedConversion] = useMutation(
+      DELETE_SACHET_ITEM_UNIT_CONVERSION,
+      {
+         onCompleted: () => {
+            toast.success('Conversion removed!')
+         },
+         onError: error => {
+            logger(error)
+            toast.error('Something went wrong!')
+         },
+      }
+   )
 
    const checkValues = () => {
       if (!par.value || (!par.meta.isValid && par.meta.isTouched))
@@ -129,6 +142,17 @@ export default function ConfigureSachetTunnel({
                </Form.Group>
             </StyledInputGroup>
 
+            <Spacer size="16px" />
+            <Select
+               options={selectedConversions || []}
+               addOption={() => openLinkConversionTunnel(1)}
+               placeholder="Link Conversions"
+               removeOption={option =>
+                  removeLinkedConversion({
+                     variables: { id: option.id },
+                  })
+               }
+            />
             <Spacer size="16px" />
 
             <StyledInputGroup>

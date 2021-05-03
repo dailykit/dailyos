@@ -62,7 +62,6 @@ export default function PlannedLotView({
                   procId={procId}
                   unit={unit}
                   openLinkConversionTunnel={openLinkConversionTunnel}
-                  selectedConversions={selectedConversions}
                />
             </Tunnel>
          </Tunnels>

@@ -67,7 +67,6 @@ export default function ItemForm() {
          isTouched: false,
       },
    })
-   const [selectedConversions, setSelectedConversions] = React.useState([])
    const [tabState, setTabState] = React.useState({
       table: 'bulkItem',
       entityId: null,
@@ -108,7 +107,6 @@ export default function ItemForm() {
                   entityId: data.bulkItemAsShipped.id,
                   view: 'As Shipped',
                })
-               updateSelectedConversions(data.bulkItemAsShipped)
             }
          },
       }
@@ -177,23 +175,12 @@ export default function ItemForm() {
       })
    }
 
-   const updateSelectedConversions = data => {
-      const updatedConversions = data.bulkItemUnitConversions.map(
-         ({ unitConversion: conv, id }) => ({
-            title: `1 ${conv.inputUnitName} = ${conv.conversionFactor} ${conv.outputUnitName}`,
-            id,
-         })
-      )
-      setSelectedConversions([...updatedConversions])
-   }
-
    const tabClicked = (type, data) => {
       setTabState({
          ...tabState,
          entityId: data.id,
          view: type,
       })
-      updateSelectedConversions(data)
    }
 
    if (itemDetailLoading) return <Loader />
@@ -214,7 +201,6 @@ export default function ItemForm() {
                   close={() => closeInfoTunnel(1)}
                   openLinkConversionTunnel={openLinkConversionTunnel}
                   formState={formState}
-                  selectedConversions={selectedConversions}
                />
             </Tunnel>
          </Tunnels>
@@ -236,8 +222,6 @@ export default function ItemForm() {
                   open={openConfigTunnel}
                   id={bulktItems[0]?.id}
                   openLinkConversionTunnel={openLinkConversionTunnel}
-                  selectedConversions={selectedConversions}
-                  test={1234}
                />
             </Tunnel>
          </Tunnels>
@@ -522,7 +506,6 @@ export default function ItemForm() {
                            proc={formState.bulkItemAsShipped}
                            isDefault
                            openLinkConversionTunnel={openLinkConversionTunnel}
-                           selectedConversions={selectedConversions}
                         />
                      </SectionTabPanel>
 
@@ -537,7 +520,6 @@ export default function ItemForm() {
                                  openLinkConversionTunnel={
                                     openLinkConversionTunnel
                                  }
-                                 selectedConversions={selectedConversions}
                               />
                            </SectionTabPanel>
                         )

@@ -37,7 +37,6 @@ export default function ProcessingView({
    proc = {},
    isDefault,
    openLinkConversionTunnel,
-   selectedConversions,
 }) {
    const { t } = useTranslation()
 
@@ -69,7 +68,6 @@ export default function ProcessingView({
                   open={openConfigTunnel}
                   proc={proc}
                   openLinkConversionTunnel={openLinkConversionTunnel}
-                  selectedConversions={selectedConversions}
                />
             </Tunnel>
          </Tunnels>
@@ -121,7 +119,6 @@ export default function ProcessingView({
                      procId={proc?.id}
                      unit={proc?.unit}
                      openLinkConversionTunnel={openLinkConversionTunnel}
-                     selectedConversions={selectedConversions}
                   />
                </HorizontalTabPanel>
             </HorizontalTabPanels>
