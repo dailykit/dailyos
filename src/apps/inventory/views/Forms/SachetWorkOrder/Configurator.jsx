@@ -80,6 +80,9 @@ export default function Configurator({
                               id: state.id,
                               set: {
                                  outputQuantity: +e.target.value,
+                                 inputQuantity:
+                                    +e.target.value *
+                                    +state.outputSachetItem.unitSize,
                               },
                            },
                         })
@@ -97,7 +100,9 @@ export default function Configurator({
                         {t(address.concat('suggested committed quantity'))}
                      </Text>
                      <Spacer size="8px" />
-                     <Text as="title">{inputQuantity}</Text>
+                     <Text as="title">
+                        {inputQuantity} {state.outputSachetItem.unit}
+                     </Text>
                   </>
                ) : null}
             </div>

@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Flex, Form, Select, Spacer, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -11,6 +11,7 @@ import { CREATE_SACHET_ITEM } from '../../../../../graphql'
 import { validators } from '../../../../../utils/validators'
 import { StyledInputGroup } from '../styled'
 import { DELETE_SACHET_ITEM_UNIT_CONVERSION } from '../../../../../graphql/mutations'
+import { SACHET_ITEM_UNIT_CONVERSIONS } from '../../../../../graphql/subscriptions'
 
 const address = 'apps.inventory.views.forms.item.tunnels.configuresachettunnel.'
 
@@ -19,9 +20,9 @@ export default function ConfigureSachetTunnel({
    procId,
    unit,
    openLinkConversionTunnel,
-   selectedConversions,
 }) {
    const { t } = useTranslation()
+   const [selectedConversions, setSelectedConversions] = useState([])
 
    const [quantity, setQuantity] = useState({
       value: '',
@@ -35,6 +36,28 @@ export default function ConfigureSachetTunnel({
       value: '',
       meta: { isValid: false, isTouched: false, errors: [] },
    })
+
+   const { loading: conversionsLoading, error } = useSubscription(
+      SACHET_ITEM_UNIT_CONVERSIONS,
+      {
+         variables: {
+            id: procId,
+         },
+         onSubscriptionData: data => {
+            const { sachetItem } = data.subscriptionData.data
+            if (sachetItem.sachetItemUnitConversions) {
+               const updatedConversions = sachetItem.sachetItemUnitConversions.map(
+                  ({ unitConversion: c, id }) => ({
+                     title: `1 ${c.inputUnitName} = ${c.conversionFactor} ${c.outputUnitName}`,
+                     id,
+                  })
+               )
+               setSelectedConversions([...updatedConversions])
+            }
+         },
+      }
+   )
+   if (error) console.log(error)
 
    const [creatSachetItem, { loading }] = useMutation(CREATE_SACHET_ITEM, {
       onCompleted: () => {
@@ -144,8 +167,14 @@ export default function ConfigureSachetTunnel({
 
             <Spacer size="16px" />
             <Select
-               options={selectedConversions || []}
-               addOption={() => openLinkConversionTunnel(1)}
+               options={selectedConversions}
+               addOption={() =>
+                  openLinkConversionTunnel({
+                     schema: 'inventory',
+                     table: 'sachetItem',
+                     entityId: procId,
+                  })
+               }
                placeholder="Link Conversions"
                removeOption={option =>
                   removeLinkedConversion({

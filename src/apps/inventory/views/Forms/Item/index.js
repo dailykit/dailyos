@@ -68,9 +68,9 @@ export default function ItemForm() {
       },
    })
    const [tabState, setTabState] = React.useState({
+      schema: 'inventory',
       table: 'bulkItem',
       entityId: null,
-      view: 'As Shipped',
    })
 
    const { id } = useParams()
@@ -101,13 +101,6 @@ export default function ItemForm() {
             console.log({ data })
             setItemName({ value: data.name, meta: { ...itemName.meta } })
             setFormState(data)
-            if (data.bulkItemAsShipped && tabState.view === 'As Shipped') {
-               setTabState({
-                  ...tabState,
-                  entityId: data.bulkItemAsShipped.id,
-                  view: 'As Shipped',
-               })
-            }
          },
       }
    )
@@ -175,12 +168,9 @@ export default function ItemForm() {
       })
    }
 
-   const tabClicked = (type, data) => {
-      setTabState({
-         ...tabState,
-         entityId: data.id,
-         view: type,
-      })
+   const handleOpenLinkConversionTunnel = data => {
+      setTabState({ ...data })
+      openLinkConversionTunnel(1)
    }
 
    if (itemDetailLoading) return <Loader />
@@ -199,7 +189,6 @@ export default function ItemForm() {
             <Tunnel layer={1}>
                <InfoTunnel
                   close={() => closeInfoTunnel(1)}
-                  openLinkConversionTunnel={openLinkConversionTunnel}
                   formState={formState}
                />
             </Tunnel>
@@ -221,7 +210,7 @@ export default function ItemForm() {
                   close={closeConfigTunnel}
                   open={openConfigTunnel}
                   id={bulktItems[0]?.id}
-                  openLinkConversionTunnel={openLinkConversionTunnel}
+                  openLinkConversionTunnel={handleOpenLinkConversionTunnel}
                />
             </Tunnel>
          </Tunnels>
@@ -405,12 +394,6 @@ export default function ItemForm() {
                                     style={{ textAlign: 'left' }}
                                     padding="14px"
                                     justifyContent="space-between"
-                                    onClick={() =>
-                                       tabClicked(
-                                          'As Shipped',
-                                          formState.bulkItemAsShipped
-                                       )
-                                    }
                                  >
                                     <div>
                                        <h3 style={{ marginBottom: '5px' }}>
@@ -463,12 +446,6 @@ export default function ItemForm() {
                                                 textAlign: 'left',
                                              }}
                                              padding="14px"
-                                             onClick={() =>
-                                                tabClicked(
-                                                   'Mise In Place',
-                                                   procs
-                                                )
-                                             }
                                           >
                                              <h3
                                                 style={{ marginBottom: '5px' }}
@@ -505,7 +482,9 @@ export default function ItemForm() {
                            formState={formState}
                            proc={formState.bulkItemAsShipped}
                            isDefault
-                           openLinkConversionTunnel={openLinkConversionTunnel}
+                           openLinkConversionTunnel={
+                              handleOpenLinkConversionTunnel
+                           }
                         />
                      </SectionTabPanel>
 
@@ -518,7 +497,7 @@ export default function ItemForm() {
                                  formState={formState}
                                  proc={procs}
                                  openLinkConversionTunnel={
-                                    openLinkConversionTunnel
+                                    handleOpenLinkConversionTunnel
                                  }
                               />
                            </SectionTabPanel>

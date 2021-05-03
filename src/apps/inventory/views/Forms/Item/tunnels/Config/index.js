@@ -117,7 +117,6 @@ export default function ConfigTunnel({
          },
          onSubscriptionData: data => {
             const { bulkItem } = data.subscriptionData.data
-            console.log({ bulkItem })
             if (bulkItem.bulkItemUnitConversions) {
                const updatedConversions = bulkItem.bulkItemUnitConversions.map(
                   ({ unitConversion: c, id }) => ({
@@ -380,7 +379,13 @@ export default function ConfigTunnel({
                <Spacer size="16px" />
                <Select
                   options={selectedConversions}
-                  addOption={() => openLinkConversionTunnel(1)}
+                  addOption={() =>
+                     openLinkConversionTunnel({
+                        schema: 'inventory',
+                        table: 'bulkItem',
+                        entityId: bulkItem?.id || id,
+                     })
+                  }
                   placeholder="Link Conversions"
                   removeOption={option =>
                      removeLinkedConversion({

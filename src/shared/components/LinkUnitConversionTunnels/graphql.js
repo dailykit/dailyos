@@ -58,6 +58,25 @@ export const UNIT_CONVERSIONS = {
          }
       `,
    },
+   SACHET_ITEMS: {
+      CREATE: gql`
+         mutation UpsertSachetItemUnitConversion(
+            $objects: [inventory_sachetItem_unitConversion_insert_input!]!
+         ) {
+            insert_inventory_sachetItem_unitConversion(
+               objects: $objects
+               on_conflict: {
+                  constraint: sachetItem_unitConversion_pkey
+                  update_columns: []
+               }
+            ) {
+               returning {
+                  id
+               }
+            }
+         }
+      `,
+   },
 }
 
 export const UNITS = {

@@ -43,6 +43,20 @@ const LinkConversionsTunnels = ({
       }
    )
 
+   const [upsertSachetItemUnitConversions] = useMutation(
+      UNIT_CONVERSIONS.SACHET_ITEMS.CREATE,
+      {
+         onCompleted: () => {
+            toast.success('Unit conversions linked!')
+            onSave()
+         },
+         onError: error => {
+            logger(error)
+            toast.error('Something went wrong!')
+         },
+      }
+   )
+
    const getMutationFunction = (schema, table) => {
       switch (schema) {
          case 'inventory': {
@@ -51,6 +65,8 @@ const LinkConversionsTunnels = ({
                   return upsertSupplierItemUnitConversions
                case 'bulkItem':
                   return upsertBulkItemUnitConversions
+               case 'sachetItems':
+                  return upsertSachetItemUnitConversions
             }
             break
          }
