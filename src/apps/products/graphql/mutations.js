@@ -405,3 +405,20 @@ export const INSTRUCTION_STEP = {
       }
    `,
 }
+
+export const INGREDIENT_INGREDIENT_CATEGORY_UPDATE = gql`
+   mutation updateIngredientCategory($id: Int_comparison_exp! $category: String!) {
+      updateIngredient(where: {id: $id}, _set: {category: $category}) {
+        affected_rows
+      }
+    }
+`
+
+export const INGREDIENT_CATEGORY_CREATE = gql`
+   mutation insertIngredientCategory($name: String!) {
+      createIngredientCategory(object: { name: $name }) {
+         name
+      }
+   }
+`
+

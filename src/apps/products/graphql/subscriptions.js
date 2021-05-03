@@ -460,6 +460,7 @@ subscription IngredientCategoryIngredientsAggregate {
      ingredients_aggregate {
        aggregate {
          count
+         description : count
        }
      }
    }
