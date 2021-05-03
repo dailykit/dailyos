@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { ComboButton, ClearIcon } from '@dailykit/ui'
+import { ComboButton, ClearIcon, Flex, CloseIcon } from '@dailykit/ui'
 import { webRenderer } from '@dailykit/web-renderer'
-import { ModalWrapper } from './styles'
+import Styles from './styles'
 import TreeView from './treeView'
 import { useBottomBar } from '../../providers'
 import { getTreeViewArray } from '../../utils'
 import { useOnClickOutside } from './useOnClickOutSide'
-
 export default function Modal({
    isOpen,
    setIsModalOpen,
@@ -19,8 +18,11 @@ export default function Modal({
    const [cssPaths, setCssPaths] = useState([])
    const [jsPaths, setJsPaths] = useState([])
    const ref = React.useRef()
+   const contentRef = React.useRef()
 
-   useOnClickOutside([ref, bottomBarRef], () => {
+   const [isContentOpen, setIsContentOpen] = useState(false)
+
+   useOnClickOutside([ref, bottomBarRef, contentRef], () => {
       setIsModalOpen(false)
       setIsOpen(false)
    })
@@ -46,6 +48,7 @@ export default function Modal({
       } else {
          document.getElementById('content_area').innerHTML = ''
       }
+      setIsContentOpen(true)
    }
 
    useEffect(() => {
@@ -86,33 +89,47 @@ export default function Modal({
    }, [isOpen])
 
    const hasContent =
-      filePaths?.length > 0 || cssPaths?.length > 0 || jsPaths?.length > 0
-
+      (filePaths?.length > 0 || cssPaths?.length > 0 || jsPaths?.length > 0) &&
+      isContentOpen
    return (
-      <ModalWrapper show={isOpen} hasContent={hasContent}>
-         <div className="modal_header">
-            {hasContent && (
-               <ComboButton type="ghost" onClick={() => setIsModalOpen(false)}>
-                  <ClearIcon color="#45484C" />
-                  CLOSE
-               </ComboButton>
-            )}
-         </div>
-         <div className="modal_body">
-            <div className="menu_area" ref={ref}>
-               <div className="menu_area_header">
-                  <h2>{optionMenu?.title || 'Title'}</h2>
+      <Styles.ModalWrapper show={isOpen} hasContent={hasContent}>
+         <Styles.ModalBody>
+            <Styles.MenuArea>
+               <Styles.MenuAreaHeader>
+                  <Flex
+                     container
+                     alignItems="center"
+                     justifyContent="center"
+                     width="100%"
+                  >
+                     <h2>{optionMenu?.title || 'Title'}</h2>
+                     <Styles.CloseButton onClick={() => setIsModalOpen(false)}>
+                        <ClearIcon color="#fff" />
+                     </Styles.CloseButton>
+                  </Flex>
                   <p>{optionMenu?.description || 'Description'}</p>
-               </div>
+               </Styles.MenuAreaHeader>
                <TreeView
                   data={optionMenu?.navigationMenuItems}
                   clickHandler={handleMenuItemClick}
                />
-            </div>
-            <div className="content_area">
+            </Styles.MenuArea>
+            <Styles.ContentArea
+               hasContent={hasContent}
+               isContentOpen={isContentOpen}
+               ref={contentRef}
+            >
+               <ComboButton
+                  type="ghost"
+                  size="sm"
+                  onClick={() => setIsContentOpen(false)}
+               >
+                  <ClearIcon color="#45484C" />
+                  Close
+               </ComboButton>
                <div id="content_area" />
-            </div>
-         </div>
-      </ModalWrapper>
+            </Styles.ContentArea>
+         </Styles.ModalBody>
+      </Styles.ModalWrapper>
    )
 }

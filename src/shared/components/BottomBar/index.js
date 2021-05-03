@@ -29,19 +29,6 @@ const BottomBar = () => {
       setIsModalOpen(true)
    }
 
-   // React.useEffect(() => {
-   //    const timeId = setTimeout(() => {
-   //       if (!isModalOpen) {
-   //          setIsOpen(false)
-   //       } else {
-   //          setIsOpen(true)
-   //       }
-   //    }, 2000)
-   //    return () => {
-   //       clearTimeout(timeId)
-   //    }
-   // }, [isOpen, isModalOpen])
-
    return (
       <>
          <Styles.Wrapper
@@ -62,28 +49,23 @@ const BottomBar = () => {
                <MenuIcon isOpen={isOpen} />
             </Styles.BottomBarMenu>
             {isOpen && (
-               <Styles.BottomBarWrapper>
-                  <Styles.BottomBar ref={bottomBarRef}>
-                     {state?.bottomBarOptions.map(option => {
-                        return (
-                           <div className="option" key={option.id}>
-                              <Styles.Option
-                                 active={
-                                    isModalOpen &&
-                                    state?.clickedOption?.navigationMenu?.id ===
-                                       option?.navigationMenuId
-                                 }
-                                 onClick={() =>
-                                    handleBottomBarOptionClick(option)
-                                 }
-                              >
-                                 {option?.title || ''}
-                              </Styles.Option>
-                           </div>
-                        )
-                     })}
-                  </Styles.BottomBar>
-               </Styles.BottomBarWrapper>
+               <Styles.OptionsWrapper ref={bottomBarRef}>
+                  {state?.bottomBarOptions.map(option => {
+                     return (
+                        <Styles.Option
+                           key={option.id}
+                           active={
+                              isModalOpen &&
+                              state?.clickedOption?.navigationMenu?.id ===
+                                 option?.navigationMenuId
+                           }
+                           onClick={() => handleBottomBarOptionClick(option)}
+                        >
+                           {option?.title || ''}
+                        </Styles.Option>
+                     )
+                  })}
+               </Styles.OptionsWrapper>
             )}
          </Styles.Wrapper>
          {state?.clickedOption && (

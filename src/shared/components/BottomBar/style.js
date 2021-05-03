@@ -8,38 +8,24 @@ const Styles = {
       z-index: 4;
       bottom: 0;
       left: 0;
-      .option {
-         display: flex;
-         align-items: center;
-         img {
-            width: 24px;
-            height: 24px;
-            background: #fff;
-            object-fit: contain;
-            border-radius: 50%;
-            margin-right: 4px;
-         }
+      @media only screen and (max-width: 565px) {
+         z-index: 0;
       }
    `,
    BottomBarMenu: styled.div`
       display: flex;
       justify-content: center;
    `,
-   BottomBar: styled.div`
+
+   OptionsWrapper: styled.div`
       display: flex;
       width: 100vw;
       padding: 0 32px;
       cursor: pointer;
-   `,
-   Bar: styled.div`
-      height: 8px;
-      width: 90px;
-      border-radius: 90px 90px 0 0;
-      display: flex;
-      justify-content: center;
-   `,
-   BottomBarWrapper: styled.div`
       background: #ffffff;
+      @media only screen and (max-width: 565px) {
+         flex-direction: column;
+      }
       box-shadow: -5px 5px 10px rgba(201, 201, 201, 0.2),
          5px -5px 10px rgba(201, 201, 201, 0.2),
          -5px -5px 10px rgba(255, 255, 255, 0.9),
@@ -54,14 +40,29 @@ const Styles = {
       font-size: 12px;
       line-height: 14px;
       text-transform: uppercase;
-      color: ${({ active }) => (active ? `#fff` : `${colors.secondary}`)};
       cursor: pointer;
       padding: 10px 16px;
-      background-color: ${({ active }) =>
-         active ? `${colors.primary}` : `#fff`};
-      &:hover {
-         background: ${({ active }) =>
-            !active ? '#f4f4f4' : `${colors.primary}`};
+      display: flex;
+      align-items: center;
+      img {
+         width: 24px;
+         height: 24px;
+         background: #fff;
+         object-fit: contain;
+         border-radius: 50%;
+         margin-right: 4px;
+      }
+
+      color: ${colors.secondary};
+      background-color: #fff;
+      @media only screen and (min-width: 566px) {
+         color: ${({ active }) => (active ? `#fff` : `${colors.secondary}`)};
+         background-color: ${({ active }) =>
+            active ? `${colors.primary}` : `#fff`};
+         &:hover {
+            background: ${({ active }) =>
+               !active ? '#f4f4f4' : `${colors.primary}`};
+         }
       }
    `,
 }

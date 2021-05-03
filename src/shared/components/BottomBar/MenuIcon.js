@@ -12,11 +12,11 @@ const MenuIcon = ({ isOpen }) => {
                fill="none"
                xmlns="http://www.w3.org/2000/svg"
             >
-               <g clip-path="url(#clip0)">
+               <g clipPath="url(#clip0)">
                   <g filter="url(#filter0_ddddii)">
                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
+                        fillRule="evenodd"
+                        clipRule="evenodd"
                         d="M75.1981 34C78.1516 31.2605 80 27.3461 80 23C80 14.7157 73.2843 8 65 8C56.7157 8 50 14.7157 50 23C50 27.3461 51.8484 31.2605 54.8019 34H33.6788C28.0088 34 22.7798 37.0582 20 42H110C106.89 37.0233 101.435 34 95.566 34H75.1981Z"
                         fill="white"
                      />
@@ -25,14 +25,14 @@ const MenuIcon = ({ isOpen }) => {
                      <circle cx="65" cy="23" r="11" fill="white" />
                   </g>
                   <path
-                     fill-rule="evenodd"
-                     clip-rule="evenodd"
+                     fillRule="evenodd"
+                     clipRule="evenodd"
                      d="M65.0005 26.958L68.854 23.1045C69.0493 22.9092 69.0493 22.5926 68.854 22.3973C68.6588 22.2021 68.3422 22.2021 68.1469 22.3973L65.0005 25.5438L61.854 22.3973C61.6588 22.2021 61.3422 22.2021 61.1469 22.3973C60.9517 22.5926 60.9517 22.9092 61.1469 23.1045L65.0005 26.958Z"
                      fill="#919699"
                   />
                   <path
-                     fill-rule="evenodd"
-                     clip-rule="evenodd"
+                     fillRule="evenodd"
+                     clipRule="evenodd"
                      d="M67.0892 20.8042L65.0005 22.5791L62.9118 20.8042C62.6967 20.6214 62.6967 20.3055 62.9118 20.1227C63.1028 19.9605 63.3982 19.9605 63.5892 20.1227L65.0005 21.3221L66.4118 20.1227C66.6028 19.9605 66.8982 19.9605 67.0892 20.1227C67.3043 20.3055 67.3043 20.6214 67.0892 20.8042Z"
                      fill="#919699"
                   />
@@ -45,9 +45,9 @@ const MenuIcon = ({ isOpen }) => {
                      width="123"
                      height="67"
                      filterUnits="userSpaceOnUse"
-                     color-interpolation-filters="sRGB"
+                     colorInterpolationFilters="sRGB"
                   >
-                     <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                     <feFlood floodOpacity="0" result="BackgroundImageFix" />
                      <feColorMatrix
                         in="SourceAlpha"
                         type="matrix"
@@ -172,9 +172,9 @@ const MenuIcon = ({ isOpen }) => {
                      width="28"
                      height="28"
                      filterUnits="userSpaceOnUse"
-                     color-interpolation-filters="sRGB"
+                     colorInterpolationFilters="sRGB"
                   >
-                     <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                     <feFlood floodOpacity="0" result="BackgroundImageFix" />
                      <feColorMatrix
                         in="SourceAlpha"
                         type="matrix"
@@ -319,12 +319,12 @@ const MenuIcon = ({ isOpen }) => {
                fill="none"
                xmlns="http://www.w3.org/2000/svg"
             >
-               <g clip-path="url(#clip0)">
+               <g clipPath="url(#clip0)">
                   <rect width="130" height="42" fill="white" />
                   <g filter="url(#filter0_ddddii)">
                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
+                        fillRule="evenodd"
+                        clipRule="evenodd"
                         d="M75.1981 34C78.1516 31.2605 80 27.3461 80 23C80 14.7157 73.2843 8 65 8C56.7157 8 50 14.7157 50 23C50 27.3461 51.8484 31.2605 54.8019 34H33.6788C28.0088 34 22.7798 37.0582 20 42H110C106.89 37.0233 101.435 34 95.566 34H75.1981Z"
                         fill="white"
                      />
@@ -333,14 +333,14 @@ const MenuIcon = ({ isOpen }) => {
                      <circle cx="65" cy="23" r="11" fill="white" />
                   </g>
                   <path
-                     fill-rule="evenodd"
-                     clip-rule="evenodd"
+                     fillRule="evenodd"
+                     clipRule="evenodd"
                      d="M65.0005 20.001L68.854 23.8545C69.0493 24.0498 69.0493 24.3664 68.854 24.5616C68.6588 24.7569 68.3422 24.7569 68.1469 24.5616L65.0005 21.4152L61.854 24.5616C61.6588 24.7569 61.3422 24.7569 61.1469 24.5616C60.9517 24.3664 60.9517 24.0498 61.1469 23.8545L65.0005 20.001Z"
                      fill="#919699"
                   />
                   <path
-                     fill-rule="evenodd"
-                     clip-rule="evenodd"
+                     fillRule="evenodd"
+                     clipRule="evenodd"
                      d="M67.0892 26.1548L65.0005 24.3799L62.9118 26.1548C62.6967 26.3376 62.6967 26.6534 62.9118 26.8362C63.1028 26.9985 63.3982 26.9985 63.5892 26.8362L65.0005 25.6369L66.4118 26.8362C66.6028 26.9985 66.8982 26.9985 67.0892 26.8362C67.3043 26.6534 67.3043 26.3376 67.0892 26.1548Z"
                      fill="#919699"
                   />
@@ -353,9 +353,9 @@ const MenuIcon = ({ isOpen }) => {
                      width="123"
                      height="67"
                      filterUnits="userSpaceOnUse"
-                     color-interpolation-filters="sRGB"
+                     colorInterpolationFilters="sRGB"
                   >
-                     <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                     <feFlood floodOpacity="0" result="BackgroundImageFix" />
                      <feColorMatrix
                         in="SourceAlpha"
                         type="matrix"
@@ -480,9 +480,9 @@ const MenuIcon = ({ isOpen }) => {
                      width="28"
                      height="28"
                      filterUnits="userSpaceOnUse"
-                     color-interpolation-filters="sRGB"
+                     colorInterpolationFilters="sRGB"
                   >
-                     <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                     <feFlood floodOpacity="0" result="BackgroundImageFix" />
                      <feColorMatrix
                         in="SourceAlpha"
                         type="matrix"
