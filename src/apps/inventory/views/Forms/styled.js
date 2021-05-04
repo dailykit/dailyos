@@ -4,7 +4,7 @@ export const StyledWrapper = styled.div`
    margin: 0 auto;
    max-width: 1280px;
    width: calc(100vw - 64px);
-   height: 100%;
+   min-height: calc(100vh - 120px);
 
    h1 {
       color: #555b6e;
