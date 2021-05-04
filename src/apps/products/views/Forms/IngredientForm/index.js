@@ -117,19 +117,17 @@ const IngredientForm = () => {
 
    useSubscription(INGREDIENT_CATEGORIES_INGREDIENTS_AGGREGATE, {
       onSubscriptionData: data => {
-         setOptions(prevState => {
-            prevState = []
-            data.subscriptionData.data.ingredientCategories.map((item, i) => {
-               const ingredientData = { id: i }
-               ingredientData.title = item.name
-               ingredientData.description =
-                  'This is used ' +
-                  item.ingredients_aggregate.aggregate.count +
-                  ' times'
-               prevState = [...prevState, ingredientData]
-            })
-            return prevState
+         let newOptions = []
+         data.subscriptionData.data.ingredientCategories.forEach((item, i) => {
+            const ingredientData = { id: i }
+            ingredientData.title = item.name
+            ingredientData.description =
+               'This is used ' +
+               item.ingredients_aggregate.aggregate.count +
+               ' times'
+            newOptions = [...newOptions, ingredientData]
          })
+         setOptions(newOptions)
       },
    })
 

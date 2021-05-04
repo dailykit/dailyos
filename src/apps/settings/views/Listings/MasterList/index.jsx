@@ -119,8 +119,8 @@ const MasterList = () => {
       {
          listName: 'Ingredient Categories',
          length:
-            ingredientCategories?.ingredientCategoriesAggregate.aggregate
-               .count || '...',
+            ingredientCategories?.ingredientCategoriesAggregate?.aggregate
+               ?.count || '...',
          _click() {
             addTab(
                'Ingredient Categories',
