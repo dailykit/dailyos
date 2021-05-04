@@ -65,7 +65,7 @@ const LinkConversionsTunnels = ({
                   return upsertSupplierItemUnitConversions
                case 'bulkItem':
                   return upsertBulkItemUnitConversions
-               case 'sachetItems':
+               case 'sachetItem':
                   return upsertSachetItemUnitConversions
             }
             break

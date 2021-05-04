@@ -86,6 +86,7 @@ export const UNITS = {
             id
             name
             title: name
+            isStandard
          }
       }
    `,
