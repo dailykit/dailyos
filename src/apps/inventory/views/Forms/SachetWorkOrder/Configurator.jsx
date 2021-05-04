@@ -71,6 +71,7 @@ export default function Configurator({
                   <Form.Number
                      id="quantity"
                      placeholder="quantity..."
+                     disabled={state.status !== 'UNPUBLISHED'}
                      value={quantity}
                      name="quantity"
                      onChange={e => setQuantity(e.target.value)}
@@ -196,6 +197,7 @@ export default function Configurator({
                <Form.Date
                   id="scheduledDate"
                   name="scheduleDate"
+                  disabled={state.status !== 'UNPUBLISHED'}
                   value={assignedDate}
                   onChange={e => {
                      setAssignedDate(e.target.value)
