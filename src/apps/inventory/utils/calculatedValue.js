@@ -2,6 +2,10 @@ export const getCalculatedValue = (sourceUnit, targetUnit, conversions) => {
    try {
       let allConversions = []
 
+      if (conversions.value) {
+         allConversions.push(conversions)
+      }
+
       const directCustomConversions = conversions.custom
       const directStandardConversions = conversions.standard
       const otherCustomConversions = conversions.others?.custom

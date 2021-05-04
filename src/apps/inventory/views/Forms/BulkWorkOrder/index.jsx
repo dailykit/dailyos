@@ -34,6 +34,8 @@ import SelectStationTunnel from './Tunnels/SelectStationTunnel'
 import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
 import SelectUserTunnel from './Tunnels/SelectUserTunnel'
 
+import { merge } from 'lodash'
+
 const address = 'apps.inventory.views.forms.bulkworkorder.'
 
 function onError(error) {
@@ -363,12 +365,19 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
    // const inputQuantity = Math.round((outputQuantity * 100) / yieldPercentage)
 
    const renderInputQuantity = () => {
-      const [conversions] = bulkWorkOrder.outputBulkItem.unit_conversions
-      console.log({ conversions })
+      const [conversions1] = bulkWorkOrder.outputBulkItem.unit_conversions
+      const [conversions2] = bulkWorkOrder.inputBulkItem.unit_conversions
+
+      const combinedConversions = merge(
+         conversions1.data.result,
+         conversions2.data.result
+      )
+
+      console.log({ combinedConversions })
       const { error, value } = getCalculatedValue(
          bulkWorkOrder.inputBulkItem.unit,
          bulkWorkOrder.outputBulkItem.unit,
-         conversions.data.result
+         combinedConversions
       )
       if (error) {
          console.log(error)

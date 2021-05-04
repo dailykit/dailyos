@@ -509,6 +509,18 @@ export const BULK_WORK_ORDER_SUBSCRIPTION = gql`
             onHand
             unit
             shelfLife
+            unit_conversions(
+               args: {
+                  from_unit: $from
+                  to_unit: ""
+                  quantity: 1
+                  from_unit_bulk_density: -1
+                  to_unit_bulk_density: -1
+               }
+            ) {
+               id
+               data
+            }
          }
       }
    }
@@ -575,6 +587,14 @@ export const PURCHASE_ORDER_SUBSCRIPTION = gql`
             bulkItemAsShipped {
                id
                unit
+               bulkItemUnitConversions {
+                  id
+                  unitConversion {
+                     id
+                     inputUnitName
+                     outputUnitName
+                  }
+               }
             }
          }
          status
