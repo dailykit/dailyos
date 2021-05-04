@@ -26,6 +26,7 @@ const Orders = () => {
       skip: !state.orders.where?.cart?.status?._eq,
       variables: {
          where: {
+            isArchived: { _eq: false },
             cart: { status: { _eq: state.orders.where?.cart?.status?._eq } },
          },
       },
