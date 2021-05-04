@@ -108,7 +108,7 @@ const CreateUnitConversion = ({ closeTunnel }) => {
                   <Form.Label> Input Unit </Form.Label>
                   <Dropdown
                      type="single"
-                     options={options}
+                     options={options.filter(op => !op.isStandard)}
                      searchedOption={searchedOption}
                      selectedOption={option => setInputUnitName(option.title)}
                      placeholder="type what you're looking for..."
@@ -144,7 +144,7 @@ const CreateUnitConversion = ({ closeTunnel }) => {
                         <Form.Label> Output Unit </Form.Label>
                         <Dropdown
                            type="single"
-                           options={options}
+                           options={options.filter(op => op.isStandard)}
                            searchedOption={searchedOption}
                            selectedOption={option =>
                               handleChange('unit', option.title, index)

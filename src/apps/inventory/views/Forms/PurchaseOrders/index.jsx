@@ -1,6 +1,7 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    ButtonTile,
+   Dropdown,
    Flex,
    Form,
    Loader,
@@ -21,6 +22,7 @@ import { ItemCard, Separator, StatusSwitch } from '../../../components'
 import { GENERAL_ERROR_MESSAGE } from '../../../constants/errorMessages'
 import {
    PURCHASE_ORDER_SUBSCRIPTION,
+   UNITS_SUBSCRIPTION,
    UPDATE_PURCHASE_ORDER_ITEM,
 } from '../../../graphql'
 import { validators } from '../../../utils/validators'
@@ -39,10 +41,12 @@ export default function PurchaseOrderForm() {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const { id } = useParams()
 
+   const [options, setOptions] = React.useState([])
    const [orderQuantity, setOrderQuantity] = useState({
       value: '',
       meta: { isValid: false, isTouched: false, errors: [] },
    })
+   const [orderUnit, setOrderUnit] = useState('')
 
    const {
       data: { purchaseOrderItem: state = {} } = {},
@@ -57,8 +61,36 @@ export default function PurchaseOrderForm() {
             value: orderQuantity,
             meta: { isValid, errors, ...orderQuantity.meta },
          })
+         const { supplierItem } = data.subscriptionData.data.purchaseOrderItem
+         const validUnits = []
+         validUnits.push(supplierItem.bulkItemAsShipped.unit)
+         supplierItem.bulkItemAsShipped.bulkItemUnitConversions.forEach(
+            ({ unitConversion: c }) => {
+               validUnits.push(c.inputUnitName)
+               validUnits.push(c.outputUnitName)
+            }
+         )
+         const formattedUnits = [...new Set(validUnits)].map(op => ({
+            title: op,
+         }))
+         setOptions(formattedUnits)
       },
    })
+
+   // const { loading, error: unitsError } = useSubscription(UNITS_SUBSCRIPTION, {
+   //    skip: !Object.keys(state).length,
+   //    onSubscriptionData: data => {
+   //       const { units } = data.subscriptionData.data
+
+   //       const updatedUnits = units.filter(unit => {
+
+   //       })
+   //       console.log(updatedUnits)
+   //       setOptions(updatedUnits)
+   //    },
+   // })
+   // if (unitsError) console.log(unitsError)
+
    const [updatePurchaseOrder] = useMutation(UPDATE_PURCHASE_ORDER_ITEM, {
       onError,
       onCompleted: () => {
@@ -74,7 +106,11 @@ export default function PurchaseOrderForm() {
          return false
       }
       if (editable && (!orderQuantity.value || !orderQuantity.meta.isValid)) {
-         toast.error('invalid order quantity!')
+         toast.error('Invalid order quantity!')
+         return false
+      }
+      if (editable && !state.unit) {
+         toast.error('No unit selected!')
          return false
       }
 
@@ -107,6 +143,8 @@ export default function PurchaseOrderForm() {
          })
       }
    }
+
+   const searchedOption = option => console.log(option)
 
    if (error) {
       logger(error)
@@ -163,54 +201,72 @@ export default function PurchaseOrderForm() {
                   )}
                   <Separator />
 
-                  <Flex
-                     container
-                     alignItems="flex-end"
-                     margin="0px 0px 0px 16px"
-                  >
-                     <Form.Group>
-                        <Form.Label htmlFor="quantity" title="quantity">
-                           <Flex container alignItems="center">
-                              {t(address.concat('enter order quantity'))}
-
-                              <Tooltip identifier="purchase_order_form_order_quantity" />
-                           </Flex>
-                        </Form.Label>
-
-                        <Form.Number
-                           id="quantity"
-                           name="quantity"
-                           hasWriteAccess={editable}
-                           value={orderQuantity.value}
-                           placeholder={t(
-                              address.concat('enter order quantity')
-                           )}
-                           onChange={e => {
-                              setOrderQuantity({
-                                 value: e.target.value,
-                                 meta: { ...orderQuantity.meta },
-                              })
-                           }}
-                           onBlur={handleOnBlur}
-                        />
-                        {orderQuantity.meta.isTouched &&
-                           !orderQuantity.meta.isValid && (
-                              <Form.Error>
-                                 {orderQuantity.meta.errors[0]}
-                              </Form.Error>
-                           )}
-                     </Form.Group>
-
-                     <Spacer xAxis size="8px" />
-
+                  {state.status !== 'UNPUBLISHED' ? (
                      <Text as="title">
-                        (in{' '}
-                        {state.supplierItem?.bulkItemAsShipped?.unit ||
-                           state?.unit ||
-                           'N/A'}
-                        )
+                        {state.orderQuantity} {state.unit}
                      </Text>
-                  </Flex>
+                  ) : (
+                     <Flex
+                        container
+                        alignItems="flex-end"
+                        margin="0px 0px 0px 16px"
+                     >
+                        <Form.Group>
+                           <Form.Label htmlFor="quantity" title="quantity">
+                              <Flex container alignItems="center">
+                                 {t(address.concat('enter order quantity'))}
+
+                                 <Tooltip identifier="purchase_order_form_order_quantity" />
+                              </Flex>
+                           </Form.Label>
+
+                           <Form.Number
+                              id="quantity"
+                              name="quantity"
+                              hasWriteAccess={editable}
+                              value={orderQuantity.value}
+                              placeholder={t(
+                                 address.concat('enter order quantity')
+                              )}
+                              onChange={e => {
+                                 setOrderQuantity({
+                                    value: e.target.value,
+                                    meta: { ...orderQuantity.meta },
+                                 })
+                              }}
+                              onBlur={handleOnBlur}
+                           />
+                           {orderQuantity.meta.isTouched &&
+                              !orderQuantity.meta.isValid && (
+                                 <Form.Error>
+                                    {orderQuantity.meta.errors[0]}
+                                 </Form.Error>
+                              )}
+                        </Form.Group>
+
+                        <Spacer xAxis size="16px" />
+
+                        <Form.Group>
+                           <Form.Label> Unit </Form.Label>
+                           <Dropdown
+                              type="single"
+                              options={options}
+                              searchedOption={searchedOption}
+                              selectedOption={option =>
+                                 updatePurchaseOrder({
+                                    variables: {
+                                       id: state.id,
+                                       set: {
+                                          unit: option.title,
+                                       },
+                                    },
+                                 })
+                              }
+                              placeholder="type what you're looking for..."
+                           />
+                        </Form.Group>
+                     </Flex>
+                  )}
                </>
             ) : (
                <ButtonTile

@@ -1,5 +1,5 @@
-import { useMutation } from '@apollo/react-hooks'
-import { Flex, Form, Spacer, TunnelHeader } from '@dailykit/ui'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { Flex, Form, Select, Spacer, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -10,11 +10,19 @@ import { SACHET_ITEMS_CREATE_ERROR } from '../../../../../constants/errorMessage
 import { CREATE_SACHET_ITEM } from '../../../../../graphql'
 import { validators } from '../../../../../utils/validators'
 import { StyledInputGroup } from '../styled'
+import { DELETE_SACHET_ITEM_UNIT_CONVERSION } from '../../../../../graphql/mutations'
+import { SACHET_ITEM_UNIT_CONVERSIONS } from '../../../../../graphql/subscriptions'
 
 const address = 'apps.inventory.views.forms.item.tunnels.configuresachettunnel.'
 
-export default function ConfigureSachetTunnel({ close, procId, unit }) {
+export default function ConfigureSachetTunnel({
+   close,
+   procId,
+   unit,
+   openLinkConversionTunnel,
+}) {
    const { t } = useTranslation()
+   const [selectedConversions, setSelectedConversions] = useState([])
 
    const [quantity, setQuantity] = useState({
       value: '',
@@ -29,6 +37,28 @@ export default function ConfigureSachetTunnel({ close, procId, unit }) {
       meta: { isValid: false, isTouched: false, errors: [] },
    })
 
+   const { loading: conversionsLoading, error } = useSubscription(
+      SACHET_ITEM_UNIT_CONVERSIONS,
+      {
+         variables: {
+            id: procId,
+         },
+         onSubscriptionData: data => {
+            const { sachetItem } = data.subscriptionData.data
+            if (sachetItem.sachetItemUnitConversions) {
+               const updatedConversions = sachetItem.sachetItemUnitConversions.map(
+                  ({ unitConversion: c, id }) => ({
+                     title: `1 ${c.inputUnitName} = ${c.conversionFactor} ${c.outputUnitName}`,
+                     id,
+                  })
+               )
+               setSelectedConversions([...updatedConversions])
+            }
+         },
+      }
+   )
+   if (error) console.log(error)
+
    const [creatSachetItem, { loading }] = useMutation(CREATE_SACHET_ITEM, {
       onCompleted: () => {
          close(1)
@@ -40,6 +70,18 @@ export default function ConfigureSachetTunnel({ close, procId, unit }) {
          toast.error(SACHET_ITEMS_CREATE_ERROR)
       },
    })
+   const [removeLinkedConversion] = useMutation(
+      DELETE_SACHET_ITEM_UNIT_CONVERSION,
+      {
+         onCompleted: () => {
+            toast.success('Conversion removed!')
+         },
+         onError: error => {
+            logger(error)
+            toast.error('Something went wrong!')
+         },
+      }
+   )
 
    const checkValues = () => {
       if (!par.value || (!par.meta.isValid && par.meta.isTouched))
@@ -123,6 +165,23 @@ export default function ConfigureSachetTunnel({ close, procId, unit }) {
                </Form.Group>
             </StyledInputGroup>
 
+            <Spacer size="16px" />
+            <Select
+               options={selectedConversions}
+               addOption={() =>
+                  openLinkConversionTunnel({
+                     schema: 'inventory',
+                     table: 'sachetItem',
+                     entityId: procId,
+                  })
+               }
+               placeholder="Link Conversions"
+               removeOption={option =>
+                  removeLinkedConversion({
+                     variables: { id: option.id },
+                  })
+               }
+            />
             <Spacer size="16px" />
 
             <StyledInputGroup>

@@ -15,19 +15,47 @@ const LinkConversionsTunnels = ({
    closeTunnel,
    onSave,
 }) => {
-   const [
-      upsertSupplierItemUnitConversions,
-      { loading: upserting1 },
-   ] = useMutation(UNIT_CONVERSIONS.SUPPLIER_ITEMS.CREATE, {
-      onCompleted: () => {
-         toast.success('Unit conversions linked!')
-         onSave()
-      },
-      onError: error => {
-         logger(error)
-         toast.error('Something went wrong!')
-      },
-   })
+   const [upsertSupplierItemUnitConversions] = useMutation(
+      UNIT_CONVERSIONS.SUPPLIER_ITEMS.CREATE,
+      {
+         onCompleted: () => {
+            toast.success('Unit conversions linked!')
+            onSave()
+         },
+         onError: error => {
+            logger(error)
+            toast.error('Something went wrong!')
+         },
+      }
+   )
+
+   const [upsertBulkItemUnitConversions] = useMutation(
+      UNIT_CONVERSIONS.BULK_ITEMS.CREATE,
+      {
+         onCompleted: () => {
+            toast.success('Unit conversions linked!')
+            onSave()
+         },
+         onError: error => {
+            logger(error)
+            toast.error('Something went wrong!')
+         },
+      }
+   )
+
+   const [upsertSachetItemUnitConversions] = useMutation(
+      UNIT_CONVERSIONS.SACHET_ITEMS.CREATE,
+      {
+         onCompleted: () => {
+            toast.success('Unit conversions linked!')
+            onSave()
+         },
+         onError: error => {
+            logger(error)
+            toast.error('Something went wrong!')
+         },
+      }
+   )
 
    const getMutationFunction = (schema, table) => {
       switch (schema) {
@@ -35,6 +63,10 @@ const LinkConversionsTunnels = ({
             switch (table) {
                case 'supplierItem':
                   return upsertSupplierItemUnitConversions
+               case 'bulkItem':
+                  return upsertBulkItemUnitConversions
+               case 'sachetItem':
+                  return upsertSachetItemUnitConversions
             }
             break
          }

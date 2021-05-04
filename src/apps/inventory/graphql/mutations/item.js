@@ -165,3 +165,19 @@ export const DELETE_SUPPLIER_ITEM_UNIT_CONVERSION = gql`
       }
    }
 `
+
+export const DELETE_BULK_ITEM_UNIT_CONVERSION = gql`
+   mutation DeleteBulkItemUnitConversion($id: Int!) {
+      delete_inventory_bulkItem_unitConversion(where: { id: { _eq: $id } }) {
+         affected_rows
+      }
+   }
+`
+
+export const DELETE_SACHET_ITEM_UNIT_CONVERSION = gql`
+   mutation DeleteSachetItemUnitConversion($id: Int!) {
+      delete_inventory_sachetItem_unitConversion(where: { id: { _eq: $id } }) {
+         affected_rows
+      }
+   }
+`

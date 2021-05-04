@@ -36,7 +36,13 @@ import { ConfigureSachetTunnel } from './tunnels'
 
 const address = 'apps.inventory.views.forms.item.'
 
-export default function PlannedLotView({ sachetItems = [], procId, unit }) {
+export default function PlannedLotView({
+   sachetItems = [],
+   procId,
+   unit,
+   openLinkConversionTunnel,
+   selectedConversions,
+}) {
    const { t } = useTranslation()
    const [
       configureSachetTunnel,
@@ -55,6 +61,7 @@ export default function PlannedLotView({ sachetItems = [], procId, unit }) {
                   close={closeConfigureSachetTunnel}
                   procId={procId}
                   unit={unit}
+                  openLinkConversionTunnel={openLinkConversionTunnel}
                />
             </Tunnel>
          </Tunnels>

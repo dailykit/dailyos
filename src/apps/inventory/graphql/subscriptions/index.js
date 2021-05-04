@@ -83,15 +83,6 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
          id
          name
          bulkItemAsShippedId
-         supplierItemUnitConversions {
-            id
-            unitConversion {
-               id
-               inputUnitName
-               outputUnitName
-               conversionFactor
-            }
-         }
          bulkItemAsShipped {
             id
             name: processingName
@@ -110,7 +101,15 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
             image
             labor
             bulkDensity
-
+            bulkItemUnitConversions {
+               id
+               unitConversion {
+                  id
+                  inputUnitName
+                  outputUnitName
+                  conversionFactor
+               }
+            }
             sachetItems {
                id
                onHand
@@ -152,7 +151,15 @@ export const SUPPLIER_ITEM_SUBSCRIPTION = gql`
             yield
             consumed
             bulkDensity
-
+            bulkItemUnitConversions {
+               id
+               unitConversion {
+                  id
+                  inputUnitName
+                  outputUnitName
+                  conversionFactor
+               }
+            }
             sachetItems {
                id
                onHand
@@ -447,7 +454,7 @@ export const SACHET_ITEMS_SUBSCRIPTION = gql`
 `
 
 export const BULK_WORK_ORDER_SUBSCRIPTION = gql`
-   subscription BulkWorkOrder($id: Int!) {
+   subscription BulkWorkOrder($id: Int!, $from: String!) {
       bulkWorkOrder(id: $id) {
          id
          status
@@ -470,6 +477,26 @@ export const BULK_WORK_ORDER_SUBSCRIPTION = gql`
             onHand
             unit
             shelfLife
+            bulkItemUnitConversions {
+               id
+               unitConversion {
+                  id
+                  inputUnitName
+                  outputUnitName
+               }
+            }
+            unit_conversions(
+               args: {
+                  from_unit: $from
+                  to_unit: ""
+                  quantity: 1
+                  from_unit_bulk_density: -1
+                  to_unit_bulk_density: -1
+               }
+            ) {
+               id
+               data
+            }
          }
          supplierItem {
             id
@@ -482,6 +509,18 @@ export const BULK_WORK_ORDER_SUBSCRIPTION = gql`
             onHand
             unit
             shelfLife
+            unit_conversions(
+               args: {
+                  from_unit: $from
+                  to_unit: ""
+                  quantity: 1
+                  from_unit_bulk_density: -1
+                  to_unit_bulk_density: -1
+               }
+            ) {
+               id
+               data
+            }
          }
       }
    }
@@ -548,6 +587,14 @@ export const PURCHASE_ORDER_SUBSCRIPTION = gql`
             bulkItemAsShipped {
                id
                unit
+               bulkItemUnitConversions {
+                  id
+                  unitConversion {
+                     id
+                     inputUnitName
+                     outputUnitName
+                  }
+               }
             }
          }
          status
@@ -711,6 +758,38 @@ export const SACHET_ITEM_HISTORIES = gql`
             }
          }
          status
+      }
+   }
+`
+
+export const BULK_ITEM_UNIT_CONVERSIONS = gql`
+   subscription BulkItemUnitConversions($id: Int!) {
+      bulkItem(id: $id) {
+         bulkItemUnitConversions {
+            id
+            unitConversion {
+               id
+               inputUnitName
+               outputUnitName
+               conversionFactor
+            }
+         }
+      }
+   }
+`
+
+export const SACHET_ITEM_UNIT_CONVERSIONS = gql`
+   subscription SachetItemUnitConversions($id: Int!) {
+      sachetItem(id: $id) {
+         sachetItemUnitConversions {
+            id
+            unitConversion {
+               id
+               inputUnitName
+               outputUnitName
+               conversionFactor
+            }
+         }
       }
    }
 `
