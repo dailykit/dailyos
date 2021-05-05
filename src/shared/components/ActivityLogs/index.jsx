@@ -166,7 +166,7 @@ const Log = ({ row, occurenceId }) => {
             <>
                <Flex as="section" container alignItems="center">
                   <Text as="h4">Message: </Text>
-                  <Text as="p">&nbsp;{row.log.message}</Text>
+                  <Text as="p">&nbsp;{row?.log?.message}</Text>
                </Flex>
                <Spacer size="14px" />
             </>
@@ -195,11 +195,7 @@ const Log = ({ row, occurenceId }) => {
                   <Text as="h4">Plan: </Text>
                   <Text as="text1">
                      &nbsp;
-                     {row.subscriptionOccurence?.subscriptionTitle?.title},
-                     serves{' '}
-                     {row.subscriptionOccurence?.subscriptionServing?.size},
-                     count{' '}
-                     {row.subscriptionOccurence?.subscriptionItemCount?.count}
+                     {row?.plan}
                   </Text>
                </Flex>
                <Spacer size="14px" />
@@ -228,6 +224,58 @@ const Log = ({ row, occurenceId }) => {
                </aside>
             </Flex>
          )}
+         <Flex as="section" container alignItems="center" id="update__by">
+            {row?.updateByUserId && (
+               <>
+                  <Flex as="section" container alignItems="center">
+                     <Text as="h4">Updated by customer: </Text>
+                     <Spacer size="8px" xAxis />
+                     {parse_name(row?.updatedByCustomer?.platform_customer) ? (
+                        <Avatar
+                           withName
+                           title={parse_name(
+                              row?.updatedByCustomer?.platform_customer
+                           )}
+                        />
+                     ) : (
+                        <Flex as="section" container alignItems="center">
+                           <Text as="h4">User: </Text>
+                           <Text as="p">{row?.updatedByCustomer?.email}</Text>
+                        </Flex>
+                     )}
+                  </Flex>
+               </>
+            )}
+            <Spacer size="24px" xAxis />
+            {row?.updateByStaffId && (
+               <>
+                  <Flex as="section" container alignItems="center">
+                     <Text as="h4">Updated by staff: </Text>
+                     <Spacer size="8px" xAxis />
+                     {parse_name(row?.updatedByStaff) ? (
+                        <Avatar
+                           withName
+                           title={parse_name(row?.updatedByStaff)}
+                        />
+                     ) : (
+                        <Flex as="section" container alignItems="center">
+                           <Text as="h4">User: </Text>
+                           <Text as="p">{row?.updatedByStaff?.email}</Text>
+                        </Flex>
+                     )}
+                  </Flex>
+               </>
+            )}
+         </Flex>
+         {row?.updateByMessage && (
+            <>
+               <Spacer size="14px" />
+               <Flex as="section" container alignItems="center">
+                  <Text as="h4">Update Reason: </Text>
+                  <Text as="p">&nbsp;{row?.updateByMessage}</Text>
+               </Flex>
+            </>
+         )}
       </Styles.Log>
    )
 }
@@ -240,11 +288,13 @@ const Styles = {
       border-radius: 2px;
       border: 1px solid #e3e3e3;
       @media screen and (max-width: 980px) {
-         #fields {
+         #fields,
+         #update__by {
             flex-direction: column;
             align-items: flex-start;
-            aside:last-child {
-               margin-top: 16px;
+            aside:last-child,
+            section:last-child {
+               margin-top: 14px;
             }
          }
       }
@@ -255,8 +305,8 @@ const Styles = {
 }
 
 const ACTIVITY_LOGS = gql`
-   query activityLogs($where: settings_activityLogs_bool_exp = {}) {
-      activityLogs: settings_activityLogs(
+   query activityLogs($where: settings_view_activityLogs_bool_exp = {}) {
+      activityLogs: settings_view_activityLogs(
          where: $where
          order_by: { created_at: desc }
       ) {
@@ -269,6 +319,8 @@ const ACTIVITY_LOGS = gql`
             orderId
          }
          created_at
+         plan
+         updateByMessage
          subscriptionOccurence_customer {
             customer {
                id
@@ -279,24 +331,21 @@ const ACTIVITY_LOGS = gql`
                }
             }
          }
-         subscriptionOccurenceId
-         subscriptionOccurence {
+         updateByUserId
+         updatedByCustomer {
             id
-            subscriptionTitleId
-            subscriptionTitle {
-               id
-               title
+            email
+            platform_customer {
+               firstName
+               lastName
             }
-            subscriptionServingId
-            subscriptionServing {
-               id
-               size: servingSize
-            }
-            subscriptionItemCountId
-            subscriptionItemCount {
-               id
-               count
-            }
+         }
+         updateByStaffId
+         updatedByStaff {
+            id
+            email
+            firstName
+            lastName
          }
       }
    }
