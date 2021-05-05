@@ -1,5 +1,6 @@
 import React from 'react'
 import moment from 'moment'
+import { isEmpty } from 'lodash'
 import styled from 'styled-components'
 import { useSubscription } from '@apollo/react-hooks'
 import { Text, Form, Flex, TextButton, useTunnel } from '@dailykit/ui'
@@ -213,12 +214,12 @@ const PlansSection = () => {
                   <Text as="h2">Plans</Text>
                   <Tooltip identifier="listing_menu_section_plans_heading" />
                </Flex>
-               {state.date && (
+               {!isEmpty(state.dates) && (
                   <TextButton
                      size="sm"
                      type="ghost"
                      onClick={() => {
-                        dispatch({ type: 'SET_DATE', payload: null })
+                        dispatch({ type: 'SET_DATE', payload: [] })
                         localStorage.removeItem('serving_size')
                      }}
                   >
@@ -237,8 +238,10 @@ const PlansSection = () => {
                <Tooltip identifier="listing_menu_section_plans_add_permanently" />
             </Flex>
          </Flex>
-         {!state.date && <Text as="h3">Select a date to view plans.</Text>}
-         {state.date && loading && <InlineLoader />}
+         {isEmpty(state.dates) && (
+            <Text as="h3">Select a date to view plans.</Text>
+         )}
+         {isEmpty(state.dates) && loading && <InlineLoader />}
          {state && !loading && subscriptionOccurences?.aggregate?.count > 0 && (
             <ReactTabulator
                ref={tableRef}
