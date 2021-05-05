@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useContext } from 'react'
-import { Text, Flex } from '@dailykit/ui'
+import { Text, Flex, useTunnel } from '@dailykit/ui'
 import { useQuery, useSubscription } from '@apollo/react-hooks'
 import { useHistory } from 'react-router-dom'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
@@ -8,7 +8,11 @@ import { OCCURENCES } from '../../../graphql'
 import { NewInfoIcon } from '../../../../../shared/assets/icons'
 import { StyledInfo, StyledActionText } from './styled'
 import options from '../../tableOptions'
-import { Tooltip, InlineLoader } from '../../../../../shared/components'
+import {
+   Tooltip,
+   InlineLoader,
+   ActivityLogs,
+} from '../../../../../shared/components'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { currencyFmt, logger } from '../../../../../shared/utils'
 import { toast } from 'react-toastify'
@@ -22,6 +26,8 @@ const SubscriptionTable = ({ brandCustomerId }) => {
    const history = useHistory()
    const [occurences, setOccurences] = useState([])
    const tableRef = useRef(null)
+   const [tunnels, openLogsTunnel, closeLogsTunnel] = useTunnel(1)
+   const [occurenceId, setOccurenceId] = React.useState(null)
 
    const { loading: listLoading, data: occurencesData } = useSubscription(
       OCCURENCES_REPORT,
@@ -44,347 +50,344 @@ const SubscriptionTable = ({ brandCustomerId }) => {
       }
    }, [history, tab])
 
-   const InfoButton = ({ cell }) => {
-      const rowData = cell._cell.row.data
-      return (
-         <Text as="p">
-            {rowData.date} &nbsp;&nbsp;
-            <StyledInfo>
-               <NewInfoIcon size="16" />
-               <div>
-                  <Text as="subtitle">CutoffTimestamp </Text>
-                  <Text as="p">{rowData.startTimeStamp} </Text>
-                  <Text as="subtitle">StartTimestamp </Text>
-                  <Text as="p">{rowData.cutoffTimeStamp}</Text>
-               </div>
-            </StyledInfo>
-         </Text>
-      )
-   }
-
-   const ActionText = ({ cell }) => {
-      const rowData = cell._cell.row.data
-      switch (rowData.action) {
-         case 'Skipped':
-            return (
-               <StyledActionText color="#E6C02A">
-                  {`[${rowData.action}]`}
-               </StyledActionText>
-            )
-         case 'Order Placed':
-            return (
-               <StyledActionText color="#28C1F7">{`[${rowData.action}]`}</StyledActionText>
-            )
-         case 'Added To Cart':
-            return (
-               <StyledActionText color="#53C22B">
-                  {`[${rowData.action}]`}
-               </StyledActionText>
-            )
-         case 'No Action':
-            return (
-               <StyledActionText color="#C4C4C4">
-                  {rowData.action}
-               </StyledActionText>
-            )
-         default:
-            return <StyledActionText>{rowData.action}</StyledActionText>
-      }
-   }
-
-   const columns = [
-      {
-         title: 'ID',
-         field: 'id',
-         hozAlign: 'left',
-         frozen: true,
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
+   const columns = React.useMemo(
+      () => [
+         {
+            title: 'ID',
+            field: 'id',
+            hozAlign: 'left',
+            frozen: true,
+            cssClass: 'rowClick',
+            cellClick: (e, cell) => {
+               const data = cell.getData()
+               if (data?.id) {
+                  setOccurenceId(data?.id)
+                  openLogsTunnel(1)
+               }
+            },
+            titleFormatter: function (cell) {
+               cell.getElement().style.textAlign = 'right'
+               return '' + cell.getValue()
+            },
+            headerTooltip: function (column) {
+               const identifier = 'subscription_occurence_sub_id_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            width: 100,
          },
-         headerTooltip: function (column) {
-            const identifier = 'subscription_occurence_sub_id_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+         {
+            title: 'Fulfillment Date',
+            field: 'fulfillmentDate',
+            hozAlign: 'left',
+            frozen: true,
+            titleFormatter: function (cell) {
+               cell.getElement().style.textAlign = 'right'
+               return '' + cell.getValue()
+            },
+            headerTooltip: function (column) {
+               const identifier =
+                  'subscription_occurence_fulfillment_date_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            width: 150,
          },
-         width: 100,
-      },
-      {
-         title: 'Fulfillment Date',
-         field: 'fulfillmentDate',
-         hozAlign: 'left',
-         frozen: true,
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
+         {
+            title: 'Cut-off Time',
+            field: 'cutoffTimeStamp',
+            hozAlign: 'left',
+            titleFormatter: function (cell) {
+               cell.getElement().style.textAlign = 'right'
+               return '' + cell.getValue()
+            },
+            headerTooltip: function (column) {
+               const identifier =
+                  'subscription_occurence_fulfillment_date_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            width: 150,
          },
-         headerTooltip: function (column) {
-            const identifier = 'subscription_occurence_fulfillment_date_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+         {
+            title: 'Item Count Valid',
+            field: 'isItemCountValid',
+            hozAlign: 'left',
+            titleFormatter: function (cell) {
+               cell.getElement().style.textAlign = 'right'
+               return '' + cell.getValue()
+            },
+            headerTooltip: function (column) {
+               const identifier =
+                  'subscription_occurence_fulfillment_date_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            width: 150,
          },
-         width: 150,
-      },
-      {
-         title: 'Cut-off Time',
-         field: 'cutoffTimeStamp',
-         hozAlign: 'left',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
+         {
+            title: 'Skipped',
+            field: 'isSkipped',
+            hozAlign: 'left',
+            titleFormatter: function (cell) {
+               cell.getElement().style.textAlign = 'right'
+               return '' + cell.getValue()
+            },
+            headerTooltip: function (column) {
+               const identifier =
+                  'subscription_occurence_fulfillment_date_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            width: 150,
          },
-         headerTooltip: function (column) {
-            const identifier = 'subscription_occurence_fulfillment_date_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+         {
+            title: 'Products Added',
+            field: 'addedProductsCount',
+            hozAlign: 'left',
+            titleFormatter: function (cell) {
+               cell.getElement().style.textAlign = 'right'
+               return '' + cell.getValue()
+            },
+            headerTooltip: function (column) {
+               const identifier =
+                  'subscription_occurence_fulfillment_date_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            width: 150,
          },
-         width: 150,
-      },
-      {
-         title: 'Item Count Valid',
-         field: 'isItemCountValid',
-         hozAlign: 'left',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
+         {
+            title: 'Products to be Added',
+            field: 'totalProductsToBeAdded',
+            hozAlign: 'left',
+            titleFormatter: function (cell) {
+               cell.getElement().style.textAlign = 'right'
+               return '' + cell.getValue()
+            },
+            headerTooltip: function (column) {
+               const identifier =
+                  'subscription_occurence_products_to_be_added_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            width: 100,
          },
-         headerTooltip: function (column) {
-            const identifier = 'subscription_occurence_fulfillment_date_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+         {
+            title: 'Cart ID',
+            field: 'cartId',
+            hozAlign: 'right',
+            titleFormatter: function (cell) {
+               cell.getElement().style.textAlign = 'right'
+               return '' + cell.getValue()
+            },
+            headerTooltip: function (column) {
+               const identifier =
+                  'subscription_occurence_fulfillment_date_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            width: 150,
          },
-         width: 150,
-      },
-      {
-         title: 'Skipped',
-         field: 'isSkipped',
-         hozAlign: 'left',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
+         {
+            title: 'Between Pause',
+            field: 'betweenPause',
+            hozAlign: 'left',
+            titleFormatter: function (cell) {
+               cell.getElement().style.textAlign = 'right'
+               return '' + cell.getValue()
+            },
+            headerTooltip: function (column) {
+               const identifier =
+                  'subscription_occurence_fulfillment_date_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            width: 150,
          },
-         headerTooltip: function (column) {
-            const identifier = 'subscription_occurence_fulfillment_date_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+         {
+            title: 'All Time Rank',
+            field: 'allTimeRank',
+            hozAlign: 'left',
+            titleFormatter: function (cell) {
+               cell.getElement().style.textAlign = 'right'
+               return '' + cell.getValue()
+            },
+            headerTooltip: function (column) {
+               const identifier =
+                  'subscription_occurence_fulfillment_date_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            width: 150,
          },
-         width: 150,
-      },
-      {
-         title: 'Products Added',
-         field: 'addedProductsCount',
-         hozAlign: 'left',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
+         {
+            title: 'Payment Status',
+            field: 'paymentStatus',
+            hozAlign: 'left',
+            titleFormatter: function (cell) {
+               cell.getElement().style.textAlign = 'right'
+               return '' + cell.getValue()
+            },
+            headerTooltip: function (column) {
+               const identifier =
+                  'subscription_occurence_fulfillment_date_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            width: 150,
          },
-         headerTooltip: function (column) {
-            const identifier = 'subscription_occurence_fulfillment_date_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+         {
+            title: 'Cart Payment Status',
+            field: 'cartPaymentStatus',
+            hozAlign: 'left',
+            titleFormatter: function (cell) {
+               cell.getElement().style.textAlign = 'right'
+               return '' + cell.getValue()
+            },
+            headerTooltip: function (column) {
+               const identifier =
+                  'subscription_occurence_fulfillment_date_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            width: 150,
          },
-         width: 150,
-      },
-      {
-         title: 'Products to be Added',
-         field: 'totalProductsToBeAdded',
-         hozAlign: 'left',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
+         {
+            title: 'Cart Status',
+            field: 'cartStatus',
+            hozAlign: 'left',
+            titleFormatter: function (cell) {
+               cell.getElement().style.textAlign = 'right'
+               return '' + cell.getValue()
+            },
+            headerTooltip: function (column) {
+               const identifier =
+                  'subscription_occurence_fulfillment_date_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            width: 150,
          },
-         headerTooltip: function (column) {
-            const identifier =
-               'subscription_occurence_products_to_be_added_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+         {
+            title: 'Cart Amount',
+            field: 'cartAmount',
+            hozAlign: 'left',
+            titleFormatter: function (cell) {
+               cell.getElement().style.textAlign = 'right'
+               return '' + cell.getValue()
+            },
+            headerTooltip: function (column) {
+               const identifier =
+                  'subscription_occurence_fulfillment_date_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            width: 150,
          },
-         width: 100,
-      },
-      {
-         title: 'Cart ID',
-         field: 'cartId',
-         hozAlign: 'right',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
+         {
+            title: 'Percentage Skipped',
+            field: 'percentageSkipped',
+            hozAlign: 'left',
+            titleFormatter: function (cell) {
+               cell.getElement().style.textAlign = 'right'
+               return '' + cell.getValue()
+            },
+            headerTooltip: function (column) {
+               const identifier =
+                  'subscription_occurence_fulfillment_date_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            width: 150,
          },
-         headerTooltip: function (column) {
-            const identifier = 'subscription_occurence_fulfillment_date_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+         {
+            title: 'Skipped at Stage',
+            field: 'skippedAtThisStage',
+            hozAlign: 'left',
+            titleFormatter: function (cell) {
+               cell.getElement().style.textAlign = 'right'
+               return '' + cell.getValue()
+            },
+            headerTooltip: function (column) {
+               const identifier =
+                  'subscription_occurence_fulfillment_date_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            width: 150,
          },
-         width: 150,
-      },
-      {
-         title: 'Between Pause',
-         field: 'betweenPause',
-         hozAlign: 'left',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
+         {
+            title: 'Paused',
+            field: 'isPaused',
+            hozAlign: 'left',
+            titleFormatter: function (cell) {
+               cell.getElement().style.textAlign = 'right'
+               return '' + cell.getValue()
+            },
+            headerTooltip: function (column) {
+               const identifier =
+                  'subscription_occurence_fulfillment_date_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            width: 150,
          },
-         headerTooltip: function (column) {
-            const identifier = 'subscription_occurence_fulfillment_date_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+         {
+            title: 'Auto',
+            field: 'isAuto',
+            hozAlign: 'left',
+            titleFormatter: function (cell) {
+               cell.getElement().style.textAlign = 'right'
+               return '' + cell.getValue()
+            },
+            headerTooltip: function (column) {
+               const identifier =
+                  'subscription_occurence_fulfillment_date_column'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+            width: 150,
          },
-         width: 150,
-      },
-      {
-         title: 'All Time Rank',
-         field: 'allTimeRank',
-         hozAlign: 'left',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
-         },
-         headerTooltip: function (column) {
-            const identifier = 'subscription_occurence_fulfillment_date_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
-         },
-         width: 150,
-      },
-      {
-         title: 'Payment Status',
-         field: 'paymentStatus',
-         hozAlign: 'left',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
-         },
-         headerTooltip: function (column) {
-            const identifier = 'subscription_occurence_fulfillment_date_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
-         },
-         width: 150,
-      },
-      {
-         title: 'Cart Payment Status',
-         field: 'cartPaymentStatus',
-         hozAlign: 'left',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
-         },
-         headerTooltip: function (column) {
-            const identifier = 'subscription_occurence_fulfillment_date_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
-         },
-         width: 150,
-      },
-      {
-         title: 'Cart Status',
-         field: 'cartStatus',
-         hozAlign: 'left',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
-         },
-         headerTooltip: function (column) {
-            const identifier = 'subscription_occurence_fulfillment_date_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
-         },
-         width: 150,
-      },
-      {
-         title: 'Cart Amount',
-         field: 'cartAmount',
-         hozAlign: 'left',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
-         },
-         headerTooltip: function (column) {
-            const identifier = 'subscription_occurence_fulfillment_date_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
-         },
-         width: 150,
-      },
-      {
-         title: 'Percentage Skipped',
-         field: 'percentageSkipped',
-         hozAlign: 'left',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
-         },
-         headerTooltip: function (column) {
-            const identifier = 'subscription_occurence_fulfillment_date_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
-         },
-         width: 150,
-      },
-      {
-         title: 'Skipped at Stage',
-         field: 'skippedAtThisStage',
-         hozAlign: 'left',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
-         },
-         headerTooltip: function (column) {
-            const identifier = 'subscription_occurence_fulfillment_date_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
-         },
-         width: 150,
-      },
-      {
-         title: 'Paused',
-         field: 'isPaused',
-         hozAlign: 'left',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
-         },
-         headerTooltip: function (column) {
-            const identifier = 'subscription_occurence_fulfillment_date_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
-         },
-         width: 150,
-      },
-      {
-         title: 'Auto',
-         field: 'isAuto',
-         hozAlign: 'left',
-         titleFormatter: function (cell) {
-            cell.getElement().style.textAlign = 'right'
-            return '' + cell.getValue()
-         },
-         headerTooltip: function (column) {
-            const identifier = 'subscription_occurence_fulfillment_date_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
-         },
-         width: 150,
-      },
-   ]
+      ],
+      []
+   )
 
    const setOrder = (orderId, order) => {
       dispatch({
@@ -467,9 +470,64 @@ const SubscriptionTable = ({ brandCustomerId }) => {
                   {Boolean(occurences) && renderTabulator()}
                </>
             )}
+            <ActivityLogs
+               tunnels={tunnels}
+               openTunnel={openLogsTunnel}
+               closeTunnel={closeLogsTunnel}
+               brand_customerId={brandCustomerId}
+               subscriptionOccurenceId={occurenceId}
+            />
          </Flex>
       </>
    )
 }
 
 export default SubscriptionTable
+
+const InfoButton = ({ cell }) => {
+   const rowData = cell._cell.row.data
+   return (
+      <Text as="p">
+         {rowData.date} &nbsp;&nbsp;
+         <StyledInfo>
+            <NewInfoIcon size="16" />
+            <div>
+               <Text as="subtitle">CutoffTimestamp </Text>
+               <Text as="p">{rowData.startTimeStamp} </Text>
+               <Text as="subtitle">StartTimestamp </Text>
+               <Text as="p">{rowData.cutoffTimeStamp}</Text>
+            </div>
+         </StyledInfo>
+      </Text>
+   )
+}
+
+const ActionText = ({ cell }) => {
+   const rowData = cell._cell.row.data
+   switch (rowData.action) {
+      case 'Skipped':
+         return (
+            <StyledActionText color="#E6C02A">
+               {`[${rowData.action}]`}
+            </StyledActionText>
+         )
+      case 'Order Placed':
+         return (
+            <StyledActionText color="#28C1F7">{`[${rowData.action}]`}</StyledActionText>
+         )
+      case 'Added To Cart':
+         return (
+            <StyledActionText color="#53C22B">
+               {`[${rowData.action}]`}
+            </StyledActionText>
+         )
+      case 'No Action':
+         return (
+            <StyledActionText color="#C4C4C4">
+               {rowData.action}
+            </StyledActionText>
+         )
+      default:
+         return <StyledActionText>{rowData.action}</StyledActionText>
+   }
+}
