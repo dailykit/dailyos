@@ -42,10 +42,11 @@ export default function ConfigureSachetTunnel({
       SACHET_ITEM_UNIT_CONVERSIONS,
       {
          variables: {
-            id: procId,
+            id: supplierState.sachetItemId,
          },
          onSubscriptionData: data => {
             const { sachetItem } = data.subscriptionData.data
+            console.log({ sachetItem })
             if (sachetItem.sachetItemUnitConversions) {
                const updatedConversions = sachetItem.sachetItemUnitConversions.map(
                   ({ unitConversion: c, id }) => ({
