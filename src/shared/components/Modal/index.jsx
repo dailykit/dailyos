@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { ComboButton, ClearIcon, Flex, CloseIcon } from '@dailykit/ui'
+import { ComboButton, ClearIcon, Flex } from '@dailykit/ui'
 import { webRenderer } from '@dailykit/web-renderer'
 import Styles from './styles'
 import TreeView from './treeView'
 import { useBottomBar } from '../../providers'
-import { getTreeViewArray } from '../../utils'
 import { useOnClickOutside } from './useOnClickOutSide'
 
 export default function Modal({
@@ -47,10 +46,10 @@ export default function Modal({
          setfilePaths([path])
          setCssPaths(linkedCssPaths)
          setJsPaths(linkedJsPaths)
+         setIsContentOpen(true)
       } else {
          document.getElementById('content_area').innerHTML = ''
       }
-      setIsContentOpen(true)
    }
 
    useEffect(() => {

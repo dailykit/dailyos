@@ -1,46 +1,40 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { ChevronDown, ChevronUp } from '../../assets/icons'
-import { toggleNode } from './utils.js'
-import { useBottomBar } from '../../providers'
 import ChildNode from './ChildNode'
 
 export default function MenuItem({ menuItem = {}, clickHandler, ...props }) {
-   const { state, addClickedOptionMenuInfo } = useBottomBar()
-   const [toggleMenu, setToggleMenu] = useState(menuItem?.isChildOpen || true)
+   const [toggleMenu, setToggleMenu] = useState(false)
+   console.log(menuItem)
 
-   const handleClick = async () => {
-      setToggleMenu(prev => !prev)
-      const mutated = await toggleNode(
-         state?.clickedOptionMenu?.navigationMenuItems,
-         menuItem.id
-      )
-      addClickedOptionMenuInfo({
-         ...state?.clickedOptionMenu,
-         navigationMenuItems: mutated,
-      })
-   }
    return (
       <StyledWrapper
-         isChildOpen={menuItem?.isChildOpen}
+         isChildOpen={toggleMenu}
          {...props}
          hasChild={menuItem?.childNodes?.length > 0}
+         onClick={e => {
+            e.stopPropagation()
+            if (menuItem?.action) {
+               clickHandler()
+            } else {
+               setToggleMenu(!toggleMenu)
+            }
+         }}
       >
          <ButtonWrapper>
-            <p onClick={() => clickHandler(menuItem)}>{menuItem?.label}</p>
+            <p>{menuItem?.label}</p>
 
-            {menuItem?.childNodes?.length > 0 && toggleMenu && (
-               <button onClick={handleClick}>
-                  <ChevronUp size="16px" color="#fff" />
-               </button>
-            )}
-            {menuItem?.childNodes?.length > 0 && !toggleMenu && (
-               <button onClick={handleClick}>
-                  <ChevronDown size="16px" color="#fff" />
+            {menuItem?.childNodes?.length > 0 && (
+               <button>
+                  {toggleMenu ? (
+                     <ChevronUp size="16px" color="#fff" />
+                  ) : (
+                     <ChevronDown size="16px" color="#fff" />
+                  )}
                </button>
             )}
          </ButtonWrapper>
-         {menuItem?.childNodes?.length > 0 && menuItem?.isChildOpen && (
+         {menuItem?.childNodes?.length > 0 && toggleMenu && (
             <StyledChildren>
                {menuItem?.childNodes?.map(child => (
                   <ChildNode

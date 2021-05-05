@@ -1,53 +1,55 @@
 import React from 'react'
 import styled from 'styled-components'
-import { ChevronDown, ChevronRight, ChevronUp } from '../../assets/icons'
+import { ChevronDown, ChevronUp } from '../../assets/icons'
 
-const ChildNode = ({ child, toggleMenu, clickHandler }) => {
+const ChildNode = ({ child, clickHandler }) => {
    const [toggleParent, setToggleParent] = React.useState(false)
    const [toggleChild, setToggleChild] = React.useState(false)
 
    return (
-      <StyledChild>
+      <StyledChild
+         onClick={e => {
+            e.stopPropagation()
+            if (child?.action) {
+               clickHandler(child)
+            } else {
+               setToggleParent(!toggleParent)
+            }
+         }}
+      >
          <div>
-            <p onClick={() => clickHandler(child)}>{child.label}</p>
-
-            {child?.childNodes?.length > 0 && toggleParent && (
-               <StyledButton
-                  hasChild={child?.childNodes?.length > 0}
-                  onClick={() => setToggleParent(!toggleParent)}
-               >
-                  <ChevronUp size="16px" color="#fff" />
-               </StyledButton>
-            )}
-            {child?.childNodes?.length > 0 && !toggleParent && (
-               <StyledButton
-                  hasChild={child?.childNodes?.length > 0}
-                  onClick={() => setToggleParent(!toggleParent)}
-               >
-                  <ChevronDown size="16px" color="#fff" />
+            <p>{child.label}</p>
+            {child?.childNodes?.length > 0 && (
+               <StyledButton hasChild={child?.childNodes?.length > 0}>
+                  {toggleParent ? (
+                     <ChevronUp size="16px" color="#fff" />
+                  ) : (
+                     <ChevronDown size="16px" color="#fff" />
+                  )}
                </StyledButton>
             )}
          </div>
          {toggleParent &&
             child?.childNodes?.map(c => {
                return (
-                  <div>
-                     <p onClick={() => clickHandler(c)}>{c.label}</p>
-
-                     {c?.childNodes?.length > 0 && toggleChild && (
-                        <StyledButton
-                           hasChild={c?.childNodes?.length > 0}
-                           onClick={() => setToggleChild(!toggleChild)}
-                        >
-                           <ChevronUp size="16px" color="#fff" />
-                        </StyledButton>
-                     )}
-                     {c?.childNodes?.length > 0 && !toggleChild && (
-                        <StyledButton
-                           hasChild={c?.childNodes?.length > 0}
-                           onClick={() => setToggleChild(!toggleChild)}
-                        >
-                           <ChevronDown size="16px" color="#fff" />
+                  <div
+                     onClick={e => {
+                        e.stopPropagation()
+                        if (c?.action) {
+                           clickHandler(child)
+                        } else {
+                           setToggleChild(!toggleChild)
+                        }
+                     }}
+                  >
+                     <p>{c.label}</p>
+                     {c?.childNodes?.length > 0 && (
+                        <StyledButton hasChild={c?.childNodes?.length > 0}>
+                           {toggleChild ? (
+                              <ChevronUp size="16px" color="#fff" />
+                           ) : (
+                              <ChevronDown size="16px" color="#fff" />
+                           )}
                         </StyledButton>
                      )}
                   </div>
@@ -78,15 +80,6 @@ const StyledButton = styled.button`
          : 'none'};
    border-radius: 18.6691px;
 `
-const StyledChildren = styled.div`
-   display: flex;
-   align-items: center;
-   flex-direction: column;
-   justify-content: space-between;
-   border: 1px solid #320e3b;
-   margin-top: 16px;
-   border-radius: 4px;
-`
 const StyledChild = styled.div`
    width: 100%;
    font-style: normal;
@@ -95,6 +88,9 @@ const StyledChild = styled.div`
    line-height: 14px;
    padding: 8px;
    background: #3c1845;
+   &:hover {
+      background: #320e3b;
+   }
    > div {
       display: flex;
       align-items: center;

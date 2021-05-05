@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import MenuItem from './menuItem'
 
-const TreeView = ({ data = [], onToggle, clickHandler }) => {
+const TreeView = ({ data = [], clickHandler }) => {
    let treeData = data
    if (treeData.length === 0) {
       return <EmptyMsg>No Menu Item! Try adding one!</EmptyMsg>
