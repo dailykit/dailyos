@@ -135,13 +135,29 @@ const Log = ({ row, occurenceId }) => {
          {occurenceId && (
             <>
                <section>
-                  <Avatar
-                     withName
-                     title={parse_name(
-                        row?.subscriptionOccurence_customer?.customer
-                           ?.platform_customer
-                     )}
-                  />
+                  {parse_name(
+                     row?.subscriptionOccurence_customer?.customer
+                        ?.platform_customer
+                  ) ? (
+                     <Avatar
+                        withName
+                        title={parse_name(
+                           row?.subscriptionOccurence_customer?.customer
+                              ?.platform_customer
+                        )}
+                     />
+                  ) : (
+                     <Flex as="section" container alignItems="center">
+                        <Text as="h4">User: </Text>
+                        <Text as="p">
+                           &nbsp;
+                           {
+                              row?.subscriptionOccurence_customer?.customer
+                                 ?.email
+                           }
+                        </Text>
+                     </Flex>
+                  )}
                </section>
                <Spacer size="14px" />
             </>
