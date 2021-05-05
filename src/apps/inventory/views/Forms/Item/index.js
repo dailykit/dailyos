@@ -53,6 +53,7 @@ import {
    ProcessingTunnel,
    SuppliersTunnel,
 } from './tunnels'
+import { SupplierItemProvider } from '../../../context/sachetItem'
 
 const address = 'apps.inventory.views.forms.item.'
 
@@ -176,7 +177,7 @@ export default function ItemForm() {
    if (itemDetailLoading) return <Loader />
 
    return (
-      <>
+      <SupplierItemProvider>
          <Tunnels tunnels={supplierTunnel}>
             <Tunnel layer={1} style={{ overflowY: 'auto' }}>
                <SuppliersTunnel
@@ -516,6 +517,6 @@ export default function ItemForm() {
             closeTunnel={closeLinkConversionTunnel}
             onSave={() => closeLinkConversionTunnel(1)}
          />
-      </>
+      </SupplierItemProvider>
    )
 }
