@@ -33,7 +33,7 @@ const address = 'apps.products.views.listings.recipeslisting.'
 const RecipesListing = () => {
    const { t } = useTranslation()
    const { addTab, tab } = useTabs()
-
+   const [selectedRows, setSelectedRows] = React.useState([])
    // Queries and Mutations
    const {
       loading,
@@ -95,7 +95,7 @@ const RecipesListing = () => {
       logger(error)
       return <ErrorState />
    }
-
+   console.log('this is selected rows', selectedRows)
    return (
       <ResponsiveFlex maxWidth="1280px" margin="0 auto">
          <Flex
@@ -119,22 +119,27 @@ const RecipesListing = () => {
                addTab={addTab}
                deleteRecipeHandler={deleteRecipeHandler}
                createRecipeHandler={createRecipeHandler}
+               selectedRows={selectedRows}
+               setSelectedRows={setSelectedRows}
             />
          )}
       </ResponsiveFlex>
    )
 }
 
-function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
-   const tableRef = React.useRef()
-   const { tooltip } = useTooltip()
-
-   const columns = [
+class DataTable extends React.Component {
+   constructor(props) {
+      super(props)
+      this.tableRef = React.createRef()
+      this.handleRowSelection = this.handleRowSelection.bind(this)
+   }
+   columns = [
       {
          formatter: 'rowSelection',
          titleFormatter: 'rowSelection',
-         align: 'center',
+         hozAlign: 'center',
          headerSort: false,
+         width: 15,
       },
       {
          title: 'Name',
@@ -142,13 +147,7 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
          headerFilter: true,
          cellClick: (e, cell) => {
             const { name, id } = cell._cell.row.data
-            addTab(name, `/products/recipes/${id}`)
-         },
-         headerTooltip: function (column) {
-            const identifier = 'recipe_listing_name_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+            this.props.addTab(name, `/products/recipes/${id}`)
          },
          cssClass: 'colHover',
       },
@@ -177,6 +176,7 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
          hozAlign: 'center',
          headerHozAlign: 'center',
          width: 150,
+         headerFilter: true,
       },
       {
          title: 'Actions',
@@ -185,36 +185,49 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
          hozAlign: 'center',
          headerHozAlign: 'center',
          formatter: reactFormatter(
-            <DeleteRecipe onDelete={deleteRecipeHandler} />
+            <DeleteRecipe onDelete={this.props.deleteRecipeHandler} />
          ),
          width: 150,
       },
    ]
-
-   return (
-      <>
-         <Flex container alignItems="center" justifyContent="space-between">
-            <TextButton
-               type="outline"
-               onClick={() => tableRef.current.table.clearHeaderFilter()}
-            >
-               Clear Filters
-            </TextButton>
-            <ComboButton type="solid" onClick={createRecipeHandler}>
-               <AddIcon color="#fff" size={24} /> Create Recipe
-            </ComboButton>
-         </Flex>
-         <Spacer size="16px" />
-         <ReactTabulator
-            ref={tableRef}
-            columns={columns}
-            data={data}
-            options={tableOptions}
-            data-custom-attr="test-custom-attribute"
-            className="custom-css-class"
-         />
-      </>
-   )
+   handleRowSelection = rows => {
+      this.props.setSelectedRows(rows)
+   }
+   render() {
+      return (
+         <>
+            <Flex container alignItems="center" justifyContent="space-between">
+               <TextButton
+                  type="outline"
+                  onClick={() =>
+                     this.tableRef.current.table.clearHeaderFilter()
+                  }
+               >
+                  Clear Filters
+               </TextButton>
+               <ComboButton
+                  type="solid"
+                  onClick={this.props.createRecipeHandler}
+               >
+                  <AddIcon color="#fff" size={24} /> Create Recipe
+               </ComboButton>
+            </Flex>
+            <Spacer size="16px" />
+            <ReactTabulator
+               ref={this.tableRef}
+               columns={this.columns}
+               data={this.props.data}
+               selectableCheck={() => true}
+               rowSelectionChanged={(data, components) => {
+                  this.handleRowSelection(data)
+               }}
+               options={tableOptions}
+               data-custom-attr="test-custom-attribute"
+               className="custom-css-class"
+            />
+         </>
+      )
+   }
 }
 
 function DeleteRecipe({ cell, onDelete }) {
@@ -226,5 +239,4 @@ function DeleteRecipe({ cell, onDelete }) {
       </IconButton>
    )
 }
-
 export default RecipesListing
