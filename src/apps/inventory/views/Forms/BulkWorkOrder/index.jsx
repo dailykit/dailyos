@@ -26,12 +26,15 @@ import {
    BULK_WORK_ORDER_SUBSCRIPTION,
    UPDATE_BULK_WORK_ORDER,
 } from '../../../graphql'
+import { getCalculatedValue } from '../../../utils/calculatedValue'
 import { StyledWrapper } from '../styled'
 import SelectInputBulkItemTunnel from './Tunnels/SelectInputBulkItemTunnel'
 import SelectOutputBulkItemTunnel from './Tunnels/SelectOutputBulkItemTunnel'
 import SelectStationTunnel from './Tunnels/SelectStationTunnel'
 import SelectSupplierItemTunnel from './Tunnels/SelectSupplierItemTunnel'
 import SelectUserTunnel from './Tunnels/SelectUserTunnel'
+
+import { merge } from 'lodash'
 
 const address = 'apps.inventory.views.forms.bulkworkorder.'
 
@@ -44,12 +47,21 @@ export default function BulkWorkOrderForm() {
    const { t } = useTranslation()
    const { id } = useParams()
 
+   const [fromUnit, setFromUnit] = React.useState('')
+
    const {
       data: { bulkWorkOrder: state = {} } = {},
       loading,
       error,
    } = useSubscription(BULK_WORK_ORDER_SUBSCRIPTION, {
-      variables: { id },
+      variables: { id, from: fromUnit },
+      onSubscriptionData: data => {
+         const { bulkWorkOrder } = data.subscriptionData.data
+         console.log({ bulkWorkOrder })
+         if (bulkWorkOrder.inputBulkItem) {
+            setFromUnit(bulkWorkOrder.inputBulkItem.unit)
+         }
+      },
    })
 
    const [updateBulkWorkOrder] = useMutation(UPDATE_BULK_WORK_ORDER, {
@@ -80,7 +92,7 @@ export default function BulkWorkOrderForm() {
 
    if (error) {
       onError(error)
-      return
+      return null
    }
 
    const checkForm = () => {
@@ -274,7 +286,7 @@ export default function BulkWorkOrderForm() {
 
             <Spacer size="16px" />
 
-            {state.supplierItem?.name ? (
+            {state.supplierItem?.name && state.inputBulkItem ? (
                <>
                   <Text as="title">
                      {t(address.concat('output bulk item'))}
@@ -350,7 +362,31 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
       },
    })
 
-   const inputQuantity = Math.round((outputQuantity * 100) / yieldPercentage)
+   // const inputQuantity = Math.round((outputQuantity * 100) / yieldPercentage)
+
+   const renderInputQuantity = () => {
+      const [conversions1] = bulkWorkOrder.outputBulkItem.unit_conversions
+      const [conversions2] = bulkWorkOrder.inputBulkItem.unit_conversions
+
+      const combinedConversions = merge(
+         conversions1.data.result,
+         conversions2.data.result
+      )
+
+      console.log({ combinedConversions })
+      const { error, value } = getCalculatedValue(
+         bulkWorkOrder.inputBulkItem.unit,
+         bulkWorkOrder.outputBulkItem.unit,
+         combinedConversions
+      )
+      if (error) {
+         console.log(error)
+         return null
+      }
+      return parseFloat(
+         ((outputQuantity / value) * (100 / yieldPercentage)).toFixed(2)
+      )
+   }
 
    return (
       <>
@@ -393,7 +429,8 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
          <Flex container alignItems="center" margin="0px 0px 0px 16px">
             <Form.Group>
                <Form.Label title="output quantity" htmlFor="output">
-                  {t(address.concat('enter output quantity'))}
+                  {t(address.concat('enter output quantity'))} (
+                  {bulkWorkOrder.outputBulkItem.unit})
                </Form.Label>
 
                <Form.Number
@@ -413,7 +450,7 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
                               id: bulkWorkOrder.id,
                               object: {
                                  outputQuantity: +e.target.value,
-                                 inputQuantity,
+                                 inputQuantity: renderInputQuantity(),
                               },
                            },
                         })
@@ -430,7 +467,10 @@ function Configurator({ openUserTunnel, openStationTunnel, bulkWorkOrder }) {
                      <Text as="subtitle">
                         {t(address.concat('suggested committed quantity'))}
                      </Text>
-                     <Text as="title">{inputQuantity}</Text>
+                     <Text as="title">
+                        {renderInputQuantity()}{' '}
+                        {bulkWorkOrder.inputBulkItem.unit}
+                     </Text>
                   </>
                ) : null}
             </div>

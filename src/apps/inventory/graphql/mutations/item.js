@@ -91,26 +91,27 @@ export const CREATE_BULK_ITEM = gql`
       }
    }
 `
+
 export const CREATE_SACHET_ITEM = gql`
    mutation CreateSachetItem(
       $unitSize: numeric!
       $bulkItemId: Int!
       $unit: String!
-      $par: numeric!
-      $maxLevel: numeric!
    ) {
       createSachetItem(
-         objects: {
-            unitSize: $unitSize
-            bulkItemId: $bulkItemId
-            unit: $unit
-            maxLevel: $maxLevel
-            parLevel: $par
-         }
+         objects: { unitSize: $unitSize, bulkItemId: $bulkItemId, unit: $unit }
       ) {
          returning {
             id
          }
+      }
+   }
+`
+
+export const UPDATE_SACHET_ITEM = gql`
+   mutation UpdateSachetItem($id: Int!, $_set: inventory_sachetItem_set_input) {
+      updateSachetItem(where: { id: { _eq: $id } }, _set: $_set) {
+         affected_rows
       }
    }
 `
@@ -161,6 +162,22 @@ export const DELETE_SUPPLIER_ITEM_UNIT_CONVERSION = gql`
       delete_inventory_supplierItem_unitConversion(
          where: { id: { _eq: $id } }
       ) {
+         affected_rows
+      }
+   }
+`
+
+export const DELETE_BULK_ITEM_UNIT_CONVERSION = gql`
+   mutation DeleteBulkItemUnitConversion($id: Int!) {
+      delete_inventory_bulkItem_unitConversion(where: { id: { _eq: $id } }) {
+         affected_rows
+      }
+   }
+`
+
+export const DELETE_SACHET_ITEM_UNIT_CONVERSION = gql`
+   mutation DeleteSachetItemUnitConversion($id: Int!) {
+      delete_inventory_sachetItem_unitConversion(where: { id: { _eq: $id } }) {
          affected_rows
       }
    }

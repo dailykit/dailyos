@@ -452,3 +452,19 @@ export const S_SIMPLE_RECIPES_FROM_INGREDIENT_AGGREGATE = gql`
       }
    }
 `
+
+export const INGREDIENT_CATEGORIES_INGREDIENTS_AGGREGATE = gql`
+subscription IngredientCategoryIngredientsAggregate {
+   ingredientCategories {
+     name 
+     title: name
+     ingredients_aggregate {
+       aggregate {
+         count
+         description : count
+       }
+     }
+   }
+ }
+`
+

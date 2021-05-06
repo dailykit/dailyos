@@ -39,6 +39,44 @@ export const UNIT_CONVERSIONS = {
          }
       `,
    },
+   BULK_ITEMS: {
+      CREATE: gql`
+         mutation UpsertBulkItemUnitConversion(
+            $objects: [inventory_bulkItem_unitConversion_insert_input!]!
+         ) {
+            insert_inventory_bulkItem_unitConversion(
+               objects: $objects
+               on_conflict: {
+                  constraint: bulkItem_unitConversion_pkey
+                  update_columns: []
+               }
+            ) {
+               returning {
+                  id
+               }
+            }
+         }
+      `,
+   },
+   SACHET_ITEMS: {
+      CREATE: gql`
+         mutation UpsertSachetItemUnitConversion(
+            $objects: [inventory_sachetItem_unitConversion_insert_input!]!
+         ) {
+            insert_inventory_sachetItem_unitConversion(
+               objects: $objects
+               on_conflict: {
+                  constraint: sachetItem_unitConversion_pkey
+                  update_columns: []
+               }
+            ) {
+               returning {
+                  id
+               }
+            }
+         }
+      `,
+   },
 }
 
 export const UNITS = {
@@ -48,6 +86,7 @@ export const UNITS = {
             id
             name
             title: name
+            isStandard
          }
       }
    `,
