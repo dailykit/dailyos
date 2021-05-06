@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import styled from 'styled-components'
 import { ReactTabulator } from '@dailykit/react-tabulator'
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Text,
    Form,
@@ -225,16 +225,17 @@ const MealKits = ({
    handleRowSelection,
    handleRowValidation,
 }) => {
-   const { error, loading, data: { productOptions = {} } = {} } = useQuery(
-      SIMPLE_RECIPE_PRODUCT_OPTIONS,
-      {
-         variables: {
-            type: {
-               _eq: 'mealKit',
-            },
+   const {
+      error,
+      loading,
+      data: { productOptions = {} } = {},
+   } = useSubscription(SIMPLE_RECIPE_PRODUCT_OPTIONS, {
+      variables: {
+         type: {
+            _eq: 'mealKit',
          },
-      }
-   )
+      },
+   })
 
    if (loading) return <InlineLoader />
    if (error) {
@@ -265,16 +266,17 @@ const ReadyToEats = ({
    readyToEatTableRef,
    handleRowValidation,
 }) => {
-   const { error, loading, data: { productOptions = {} } = {} } = useQuery(
-      SIMPLE_RECIPE_PRODUCT_OPTIONS,
-      {
-         variables: {
-            type: {
-               _eq: 'readyToEat',
-            },
+   const {
+      error,
+      loading,
+      data: { productOptions = {} } = {},
+   } = useSubscription(SIMPLE_RECIPE_PRODUCT_OPTIONS, {
+      variables: {
+         type: {
+            _eq: 'readyToEat',
          },
-      }
-   )
+      },
+   })
 
    if (loading) return <InlineLoader />
    if (error)
@@ -302,14 +304,15 @@ const ReadyToEats = ({
 
 const Inventory = ({ inventoryTableRef, handleRowSelection }) => {
    const { tooltip } = useTooltip()
-   const { error, loading, data: { productOptions = {} } = {} } = useQuery(
-      INVENTORY_PRODUCT_OPTIONS,
-      {
-         variables: {
-            type: { _eq: 'inventory' },
-         },
-      }
-   )
+   const {
+      error,
+      loading,
+      data: { productOptions = {} } = {},
+   } = useSubscription(INVENTORY_PRODUCT_OPTIONS, {
+      variables: {
+         type: { _eq: 'inventory' },
+      },
+   })
 
    const columns = [
       {

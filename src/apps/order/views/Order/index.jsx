@@ -29,7 +29,7 @@ import { QUERIES, MUTATIONS } from '../../graphql'
 import { PrintIcon, UserIcon } from '../../assets/icons'
 import { useConfig, useOrder } from '../../context'
 import { currencyFmt, logger } from '../../../../shared/utils'
-import { useAccess, useTabs } from '../../../../shared/providers'
+import { useAccess, useAuth, useTabs } from '../../../../shared/providers'
 import {
    Tooltip,
    ErrorState,
@@ -44,6 +44,7 @@ const parser = new htmlToReact.Parser(React)
 
 const Order = () => {
    const params = useParams()
+   const { user } = useAuth()
    const { t } = useTranslation()
    const { isSuperUser } = useAccess()
    const { tab, addTab } = useTabs()
@@ -245,7 +246,7 @@ const Order = () => {
                   payload: {
                      new: {
                         id: order.id,
-                        orderStatus: 'ORDER_UNDER_PROCESSING',
+                        status: 'ORDER_UNDER_PROCESSING',
                      },
                   },
                },
@@ -322,13 +323,14 @@ const Order = () => {
    )
    */
 
-   if (loading) return <InlineLoader />
+   if (loading || productsLoading) return <InlineLoader />
    if (error) {
       logger(error)
       toast.error('Failed to fetch order details!')
       return <ErrorState message="Failed to fetch order details!" />
    }
    const types = groupBy(products, 'productOptionType')
+   console.log('🚀 ~ file: index.jsx ~ line 333 ~ Order ~ types', types)
    return (
       <Flex>
          <Spacer size="16px" />
@@ -514,7 +516,18 @@ const Order = () => {
                </Flex>
             </ResponsiveFlex>
          </ResponsiveFlex>
-
+         <Flex margin="16px 0" padding="0 16px">
+            {order.cart.source === 'subscription' && (
+               <>
+                  <Text as="text1">Details: </Text>
+                  <span>
+                     {order.cart.subscriptionOccurence?.title?.title}, serves{' '}
+                     {order.cart.subscriptionOccurence?.serving?.size}, count{' '}
+                     {order.cart.subscriptionOccurence?.itemCount?.count}
+                  </span>
+               </>
+            )}
+         </Flex>
          <Spacer size="8px" />
          {isThirdParty ? (
             <HorizontalTabs>
@@ -571,7 +584,7 @@ const Order = () => {
                <HorizontalTabList style={{ padding: '0 16px' }}>
                   {Object.keys(types).map(key => (
                      <HorizontalTab key={key}>
-                        {key}
+                        {key === 'null' ? 'Others' : key}
                         <span> ({types[key].length})</span>
                      </HorizontalTab>
                   ))}
@@ -580,7 +593,6 @@ const Order = () => {
                   {Object.values(types).map((listing, index) => (
                      <HorizontalTabPanel key={index}>
                         <Products
-                           order={order}
                            products={listing}
                            loading={productsLoading}
                            error={productsError}

@@ -19,6 +19,7 @@ const initialState = {
       loading: true,
       where: {
          cart: { status: { _eq: 'ORDER_PENDING' } },
+         isArchived: { _eq: false },
          _or: [
             { isRejected: { _eq: false } },
             { isRejected: { _is_null: true } },
@@ -39,6 +40,7 @@ const reducers = (state, { type, payload }) => {
       case 'SELECT_PRODUCT':
          return {
             ...state,
+            current_view: 'PRODUCT',
             current_product: payload,
          }
       case 'SWITCH_VIEW': {

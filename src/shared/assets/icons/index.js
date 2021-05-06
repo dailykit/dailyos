@@ -29,6 +29,9 @@ import StoreIcon from './Store'
 import DailykitIcon from './Dailykit'
 import LogoutIcon from './Logout'
 import ChevronLeft from './ChevronLeft'
+import RefreshIcon from './Refresh'
+import LinkIcon from './Link'
+
 export {
    AddIcon,
    MenuIcon,
@@ -61,6 +64,8 @@ export {
    StoreIcon,
    DailykitIcon,
    LogoutIcon,
+   RefreshIcon,
+   LinkIcon,
 }
 
 export * from './Tick'

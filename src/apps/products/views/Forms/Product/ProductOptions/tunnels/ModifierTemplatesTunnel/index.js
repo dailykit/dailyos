@@ -23,7 +23,7 @@ import { TunnelBody } from '../../../tunnels/styled'
 
 const ModifierTemplatesTunnel = ({ close }) => {
    const {
-      modifiersState: { meta },
+      modifiersState: { optionId },
    } = React.useContext(ModifiersContext)
 
    // Subscription
@@ -54,7 +54,7 @@ const ModifierTemplatesTunnel = ({ close }) => {
       if (inFlight) return
       updateProductOptions({
          variables: {
-            id: meta.optionId,
+            id: optionId,
             _set: {
                modifierId: current.id,
             },

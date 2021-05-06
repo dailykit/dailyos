@@ -111,7 +111,7 @@ const App = () => {
                <Route path="/editor" component={Editor} />
             </Switch>
          </main>
-         {!isKeycloakSupported() && <RedirectBanner />}
+         {/* {!isKeycloakSupported() && <RedirectBanner />} */}
          <Lang />
       </Layout>
    )

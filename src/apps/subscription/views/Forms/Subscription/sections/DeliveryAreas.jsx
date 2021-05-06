@@ -220,7 +220,12 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
             ref={tableRef}
             columns={columns}
             data={subscriptionZipcodes}
-            options={{ ...tableOptions, layout: 'fitColumns' }}
+            options={{
+               ...tableOptions,
+               layout: 'fitColumns',
+               pagination: 'local',
+               paginationSize: 10,
+            }}
          />
          <Tunnels tunnels={tunnels}>
             <Tunnel layer="1">

@@ -363,7 +363,7 @@ const InformationTunnel = ({ state, closeTunnel }) => {
                               title="notIncluded"
                            >
                               <Flex container alignItems="center">
-                                 What's not included?
+                                 What you'll need
                                  <Tooltip identifier="recipe_not_included" />
                               </Flex>
                            </Form.Label>
@@ -396,7 +396,7 @@ const InformationTunnel = ({ state, closeTunnel }) => {
                                  })
                               }}
                               value={_state.notIncluded.value}
-                              placeholder="Enter what's not included"
+                              placeholder="Enter what you'll need"
                               hasError={
                                  _state.notIncluded.meta.isTouched &&
                                  !_state.notIncluded.meta.isValid

@@ -6,7 +6,7 @@ import { AccessProvider, TooltipProvider } from '../../shared/providers'
 
 const Settings = () => (
    <TooltipProvider app="Order App">
-      <AccessProvider app="Order App">
+      <AccessProvider app="Orders">
          <ConfigProvider>
             <OrderProvider>
                <App />

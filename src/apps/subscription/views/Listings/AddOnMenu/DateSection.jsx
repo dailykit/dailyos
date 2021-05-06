@@ -1,7 +1,10 @@
 import React from 'react'
-import { Text, Flex } from '@dailykit/ui'
-import DatePicker from 'react-datepicker'
+import styled from 'styled-components'
+import { Text, Flex, Spacer } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
+import DayPicker, { DateUtils } from 'react-day-picker'
+
+import 'react-day-picker/lib/style.css'
 
 import { useMenu } from './state'
 import { OCCURRENCES_DATES } from '../../../graphql'
@@ -13,8 +16,24 @@ const DateSection = () => {
       OCCURRENCES_DATES
    )
 
-   const handleDateChange = date => {
-      dispatch({ type: 'SET_DATE', payload: date })
+   function isDayDisabled(day) {
+      return !occurrences_dates
+         .map(node => new Date(node.date))
+         .some(disabledDay => DateUtils.isSameDay(day, disabledDay))
+   }
+
+   const handleDayClick = (day, { selected }) => {
+      localStorage.removeItem('serving_size')
+      const selectedDays = state.dates.concat()
+      if (selected) {
+         const selectedIndex = selectedDays.findIndex(selectedDay =>
+            DateUtils.isSameDay(selectedDay, day)
+         )
+         selectedDays.splice(selectedIndex, 1)
+      } else {
+         selectedDays.push(day)
+      }
+      dispatch({ type: 'SET_DATE', payload: selectedDays })
    }
 
    return (
@@ -23,15 +42,22 @@ const DateSection = () => {
             <Text as="h2">Date</Text>
             <Tooltip identifier="listing_menu_section_date_heading" />
          </Flex>
-         <DatePicker
-            inline
-            selected={state.date}
-            onChange={handleDateChange}
-            disabledKeyboardNavigation={true}
-            includeDates={occurrences_dates.map(node => new Date(node.date))}
-         />
+         <Spacer size="16px" />
+         <DatePickerWrapper>
+            <DayPicker
+               selectedDays={state.dates}
+               onDayClick={handleDayClick}
+               disabledDays={isDayDisabled}
+            />
+         </DatePickerWrapper>
       </aside>
    )
 }
 
 export default DateSection
+
+const DatePickerWrapper = styled.section`
+   .DayPicker-Month {
+      margin: 0;
+   }
+`

@@ -28,14 +28,18 @@ import { ModifiersContext } from '../../../../context/product/modifiers'
 import { ProductContext } from '../../../../context/product'
 import validator from '../validators'
 import {
-   ProductOptionTypeTunnel,
-   ProductOptionItemTunnel,
+   ServingsTunnel,
    ModifierFormTunnel,
    ModifierModeTunnel,
    ModifierOptionsTunnel,
    ModifierPhotoTunnel,
    ModifierTemplatesTunnel,
    ModifierTypeTunnel,
+   InventoryBundleModeTunnel,
+   InventoryBundleFormTunnel,
+   InventoryBundleItemTypeTunnel,
+   InventoryBundleItemsTunnel,
+   InventoryBundleListingTunnel,
 } from './tunnels'
 import {
    DragNDrop,
@@ -44,10 +48,18 @@ import {
 } from '../../../../../../shared/components'
 import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
 import { from } from 'apollo-link'
+import { InventoryBundleContext } from '../../../../context/product/inventoryBundle'
 
-const ProductOptions = ({ productId, options }) => {
+const ProductOptions = ({ productId, productName, options }) => {
+   const SERVING_TUNNEL_TYPES = ['mealKit', 'readyToEat', 'Meal Kit']
+
    const { initiatePriority } = useDnd()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
+   const [
+      inventoryTunnels,
+      openInventoryTunnel,
+      closeInventoryTunnel,
+   ] = useTunnel(5)
    const [
       modifiersTunnel,
       openModifiersTunnel,
@@ -61,6 +73,7 @@ const ProductOptions = ({ productId, options }) => {
 
    const { productState, productDispatch } = React.useContext(ProductContext)
    const { modifiersDispatch } = React.useContext(ModifiersContext)
+   const { bundleDispatch } = React.useContext(InventoryBundleContext)
 
    const [productOptionTypes, setProductOptionTypes] = React.useState([])
 
@@ -113,21 +126,42 @@ const ProductOptions = ({ productId, options }) => {
       })
    }
 
-   const handleAddOptionItem = optionId => {
+   const handleAddOptionItem = option => {
       productDispatch({
-         type: 'OPTION',
-         payload: optionId,
+         type: 'OPTION_ID',
+         payload: option.id,
       })
-      openTunnel(1)
+      if (SERVING_TUNNEL_TYPES.includes(option.type)) {
+         openTunnel(1)
+      } else {
+         bundleDispatch({
+            type: 'LABEL',
+            payload: `${productName} - ${option.label}`,
+         })
+         openInventoryTunnel(1)
+      }
+   }
+
+   const handleEditOptionItem = option => {
+      productDispatch({
+         type: 'OPTION_ID',
+         payload: option.id,
+      })
+      if (option.simpleRecipeYield) {
+         openTunnel(1)
+      } else {
+         bundleDispatch({
+            type: 'BUNDLE_ID',
+            payload: option.inventoryProductBundle.id,
+         })
+         openInventoryTunnel(2)
+      }
    }
 
    const handleAddModifier = optionId => {
       modifiersDispatch({
-         type: 'META',
-         payload: {
-            name: 'optionId',
-            value: optionId,
-         },
+         type: 'OPTION_ID',
+         payload: optionId,
       })
       openModifiersTunnel(1)
    }
@@ -142,7 +176,7 @@ const ProductOptions = ({ productId, options }) => {
 
    const handleAddOpConfig = optionId => {
       productDispatch({
-         type: 'OPTION',
+         type: 'OPTION_ID',
          payload: optionId,
       })
       opConfigInvokedBy.current = 'option'
@@ -171,13 +205,33 @@ const ProductOptions = ({ productId, options }) => {
       <>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               <ProductOptionTypeTunnel
-                  openTunnel={openTunnel}
-                  closeTunnel={closeTunnel}
+               <ServingsTunnel closeTunnel={closeTunnel} />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={inventoryTunnels}>
+            <Tunnel layer={1}>
+               <InventoryBundleModeTunnel
+                  open={openInventoryTunnel}
+                  close={closeInventoryTunnel}
                />
             </Tunnel>
             <Tunnel layer={2}>
-               <ProductOptionItemTunnel closeTunnel={closeTunnel} />
+               <InventoryBundleFormTunnel
+                  open={openInventoryTunnel}
+                  close={closeInventoryTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={3}>
+               <InventoryBundleItemTypeTunnel
+                  open={openInventoryTunnel}
+                  close={closeInventoryTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={4}>
+               <InventoryBundleItemsTunnel close={closeInventoryTunnel} />
+            </Tunnel>
+            <Tunnel layer={5}>
+               <InventoryBundleListingTunnel close={closeInventoryTunnel} />
             </Tunnel>
          </Tunnels>
          <Tunnels tunnels={modifiersTunnel}>
@@ -233,8 +287,9 @@ const ProductOptions = ({ productId, options }) => {
                         key={option.id}
                         option={option}
                         productOptionTypes={productOptionTypes}
-                        handleAddOptionItem={() =>
-                           handleAddOptionItem(option.id)
+                        handleAddOptionItem={() => handleAddOptionItem(option)}
+                        handleEditOptionItem={() =>
+                           handleEditOptionItem(option)
                         }
                         handleAddModifier={() => handleAddModifier(option.id)}
                         handleEditModifier={() =>
@@ -263,6 +318,7 @@ const Option = ({
    handleAddOptionItem,
    handleAddModifier,
    handleEditModifier,
+   handleEditOptionItem,
    handleAddOpConfig,
 }) => {
    const [history, setHistory] = React.useState({
@@ -350,6 +406,7 @@ const Option = ({
                simpleRecipeYieldId: null,
                supplierItemId: null,
                sachetItemId: null,
+               inventoryProductBundleId: null,
             },
          },
       })
@@ -489,27 +546,24 @@ const Option = ({
    }
 
    const renderLinkedItem = () => {
+      if (!option.type) return null
+
       const renderItemName = () => {
          if (option.simpleRecipeYield) {
             return `${option.simpleRecipeYield.simpleRecipe.name} - ${option.simpleRecipeYield.yield.serving} serving`
          }
-         if (option.supplierItem) {
-            return `${option.supplierItem.name} - ${option.supplierItem.unitSize} ${option.supplierItem.unit}`
-         }
-         if (option.sachetItem) {
-            return `${option.sachetItem.bulkItem.supplierItem.name} ${option.sachetItem.bulkItem.processingName} - ${option.sachetItem.unitSize} ${option.sachetItem.unit}`
+         if (option.inventoryProductBundle) {
+            return `${option.inventoryProductBundle.label}`
          }
       }
 
       return (
          <>
-            {option.simpleRecipeYield ||
-            option.supplierItem ||
-            option.sachetItem ? (
+            {option.simpleRecipeYield || option.inventoryProductBundle ? (
                <Flex container alignItems="center">
                   <Text as="title">{renderItemName()}</Text>
                   <Spacer xAxis size="16px" />
-                  <IconButton type="ghost" onClick={handleAddOptionItem}>
+                  <IconButton type="ghost" onClick={handleEditOptionItem}>
                      <EditIcon color="#00A7E1" />
                   </IconButton>
                   <Spacer xAxis size="8px" />

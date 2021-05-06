@@ -193,6 +193,7 @@ export const S_RECIPE = gql`
          image
          assets
          isValid
+         isSubRecipe
          isPublished
          author
          type
@@ -243,6 +244,7 @@ export const S_RECIPE = gql`
                simpleRecipeYield {
                   id
                   yield
+                  baseYieldId
                }
                slipName
                isVisible
@@ -254,6 +256,7 @@ export const S_RECIPE = gql`
          ) {
             id
             yield
+            baseYieldId
             cost
             nutritionalInfo
          }
@@ -366,9 +369,26 @@ export const S_SACHET_ITEMS = gql`
    }
 `
 
+export const S_BULK_ITEMS = gql`
+   subscription BulkItems {
+      bulkItems(where: { isArchived: { _eq: false } }) {
+         id
+         unit
+         processingName
+         supplierItem {
+            id
+            name
+            prices
+         }
+      }
+   }
+`
+
 export const S_SIMPLE_RECIPE_YIELDS = gql`
-   subscription {
-      simpleRecipeYields(where: { isArchived: { _eq: false } }) {
+   subscription SimpleRecipeYields(
+      $where: simpleRecipe_simpleRecipeYield_bool_exp
+   ) {
+      simpleRecipeYields(where: $where) {
          id
          yield
          simpleRecipe {
@@ -378,3 +398,73 @@ export const S_SIMPLE_RECIPE_YIELDS = gql`
       }
    }
 `
+
+export const S_SIMPLE_PRODUCTS_FROM_RECIPE = gql`
+   subscription SimpleProductsFromRecipe(
+      $where: products_productOption_bool_exp
+      $distinct_on: [products_productOption_select_column!]
+   ) {
+      productOptions(where: $where, distinct_on: $distinct_on) {
+         product {
+            id
+            name
+            assets
+         }
+      }
+   }
+`
+
+export const S_SIMPLE_PRODUCTS_FROM_RECIPE_AGGREGATE = gql`
+   subscription SimpleProductsFromRecipeAggregate(
+      $where: products_productOption_bool_exp
+      $distinct_on: [products_productOption_select_column!]
+   ) {
+      productOptionsAggregate(where: $where, distinct_on: $distinct_on) {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+
+export const S_SIMPLE_RECIPES_FROM_INGREDIENT = gql`
+   subscription SimpleRecipesFromIngredients(
+      $where: simpleRecipe_simpleRecipe_ingredient_processing_bool_exp
+   ) {
+      simpleRecipeIngredientProcessings(where: $where) {
+         simpleRecipe {
+            id
+            name
+            assets
+         }
+      }
+   }
+`
+
+export const S_SIMPLE_RECIPES_FROM_INGREDIENT_AGGREGATE = gql`
+   subscription SimpleRecipesFromIngredientsAggregate(
+      $where: simpleRecipe_simpleRecipe_ingredient_processing_bool_exp
+   ) {
+      simpleRecipeIngredientProcessingsAggregate(where: $where) {
+         aggregate {
+            count
+         }
+      }
+   }
+`
+
+export const INGREDIENT_CATEGORIES_INGREDIENTS_AGGREGATE = gql`
+subscription IngredientCategoryIngredientsAggregate {
+   ingredientCategories {
+     name 
+     title: name
+     ingredients_aggregate {
+       aggregate {
+         count
+         description : count
+       }
+     }
+   }
+ }
+`
+

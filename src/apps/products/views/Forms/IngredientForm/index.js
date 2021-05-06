@@ -1,17 +1,34 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Flex, Form, Spacer, Text } from '@dailykit/ui'
+import {
+   ComboButton,
+   Flex,
+   Form,
+   Spacer,
+   Text,
+   Tunnel,
+   Tunnels,
+   useTunnel,
+   Dropdown,
+} from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../shared/utils'
-import { CloseIcon, TickIcon } from '../../../assets/icons'
+import { CloseIcon, EyeIcon, TickIcon } from '../../../assets/icons'
 import {
    IngredientContext,
    reducers,
    state as initialState,
 } from '../../../context/ingredient'
-import { S_INGREDIENT, UPDATE_INGREDIENT } from '../../../graphql'
+import {
+   S_INGREDIENT,
+   S_SIMPLE_RECIPES_FROM_INGREDIENT_AGGREGATE,
+   UPDATE_INGREDIENT,
+   INGREDIENT_CATEGORIES_INGREDIENTS_AGGREGATE,
+   INGREDIENT_INGREDIENT_CATEGORY_UPDATE,
+   INGREDIENT_CATEGORY_CREATE,
+} from '../../../graphql'
 import { Processings, Stats } from './components'
 import validator from './validators'
 import {
@@ -21,6 +38,7 @@ import {
 } from '../../../../../shared/components'
 import { useTabs } from '../../../../../shared/providers'
 import { HeaderWrapper, InputTextWrapper } from './styled'
+import { LinkedRecipesTunnel } from './tunnels'
 
 const IngredientForm = () => {
    const { setTabTitle, tab, addTab } = useTabs()
@@ -29,6 +47,12 @@ const IngredientForm = () => {
       reducers,
       initialState
    )
+
+   const [
+      linkedRecipesTunnels,
+      openLinkedRecipesTunnel,
+      closeLinkedRecipesTunnel,
+   ] = useTunnel(1)
 
    const [title, setTitle] = React.useState({
       value: '',
@@ -47,6 +71,31 @@ const IngredientForm = () => {
       },
    })
    const [state, setState] = React.useState({})
+   const [linkedRecipesCount, setLinkedRecipesCount] = React.useState(0)
+   const [options, setOptions] = React.useState([])
+   const [
+      searchIngredientCategory,
+      setSearchIngredientCategory,
+   ] = React.useState('')
+
+   const selectedOption = option => {
+      updateIngredientCategory({
+         variables: { id: { _eq: state.id }, category: option.title },
+      })
+   }
+   const searchedOption = option => {
+      setSearchIngredientCategory(option)
+   }
+
+   const addIngredientCategory = () => {
+      _addIngredientCategory({
+         variables: {
+            name: searchIngredientCategory,
+         },
+      })
+
+      setSearchIngredientCategory('')
+   }
 
    // Subscriptions
    const { loading, error } = useSubscription(S_INGREDIENT, {
@@ -54,7 +103,6 @@ const IngredientForm = () => {
          id: ingredientId,
       },
       onSubscriptionData: data => {
-         console.log(data.subscriptionData.data)
          setState(data.subscriptionData.data.ingredient)
          setTitle({
             ...title,
@@ -67,6 +115,42 @@ const IngredientForm = () => {
       },
    })
 
+   useSubscription(INGREDIENT_CATEGORIES_INGREDIENTS_AGGREGATE, {
+      onSubscriptionData: data => {
+         let newOptions = []
+         data.subscriptionData.data.ingredientCategories.forEach((item, i) => {
+            const ingredientData = { id: i }
+            ingredientData.title = item.name
+            ingredientData.description =
+               'This is used ' +
+               item.ingredients_aggregate.aggregate.count +
+               ' times'
+            newOptions = [...newOptions, ingredientData]
+         })
+         setOptions(newOptions)
+      },
+   })
+
+   useSubscription(S_SIMPLE_RECIPES_FROM_INGREDIENT_AGGREGATE, {
+      variables: {
+         where: {
+            ingredientId: {
+               _eq: state.id,
+            },
+            isArchived: { _eq: false },
+            simpleRecipe: {
+               isArchived: { _eq: false },
+            },
+         },
+      },
+      onSubscriptionData: data => {
+         setLinkedRecipesCount(
+            data.subscriptionData.data
+               .simpleRecipeIngredientProcessingsAggregate.aggregate.count
+         )
+      },
+   })
+
    // Mutations
    const [updateIngredient] = useMutation(UPDATE_INGREDIENT, {
       onCompleted: () => {
@@ -74,6 +158,29 @@ const IngredientForm = () => {
       },
       onError: () => {
          toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
+   const [updateIngredientCategory] = useMutation(
+      INGREDIENT_INGREDIENT_CATEGORY_UPDATE,
+      {
+         onCompleted: () => {
+            toast.success('Updated!')
+         },
+         onError: () => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
+
+   const [_addIngredientCategory] = useMutation(INGREDIENT_CATEGORY_CREATE, {
+      onCompleted: () => {
+         toast.success('Ingredient category added!')
+      },
+      onError: error => {
+         toast.error('Failed to add ingredient category!')
          logger(error)
       },
    })
@@ -109,27 +216,6 @@ const IngredientForm = () => {
          },
       })
    }
-   const updateCategory = () => {
-      const { isValid, errors } = validator.name(category.value)
-      if (isValid) {
-         updateIngredient({
-            variables: {
-               id: state.id,
-               set: {
-                  category: category.value,
-               },
-            },
-         })
-      }
-      setCategory({
-         ...category,
-         meta: {
-            isTouched: true,
-            errors,
-            isValid,
-         },
-      })
-   }
    const togglePublish = () => {
       const val = !state.isPublished
       if (val && !state.isValid.status) {
@@ -157,6 +243,14 @@ const IngredientForm = () => {
       <IngredientContext.Provider
          value={{ ingredientState, ingredientDispatch }}
       >
+         <Tunnels tunnels={linkedRecipesTunnels}>
+            <Tunnel layer={1} size="sm">
+               <LinkedRecipesTunnel
+                  state={state}
+                  closeTunnel={closeLinkedRecipesTunnel}
+               />
+            </Tunnel>
+         </Tunnels>
          <HeaderWrapper>
             <InputTextWrapper>
                <Form.Group>
@@ -185,30 +279,28 @@ const IngredientForm = () => {
                   <Form.Label htmlFor="category" title="category">
                      Category
                   </Form.Label>
-                  <Form.Text
-                     id="category"
-                     name="category"
-                     value={category.value}
-                     placeholder="Enter ingredient category"
-                     onChange={e =>
-                        setCategory({ ...category, value: e.target.value })
-                     }
-                     onBlur={updateCategory}
-                     hasError={
-                        !category.meta.isValid && category.meta.isTouched
-                     }
-                  />
-                  {category.meta.isTouched &&
-                     !category.meta.isValid &&
-                     category.meta.errors.map((error, index) => (
-                        <Form.Error key={index}>{error}</Form.Error>
-                     ))}
+                  {options && (
+                     <Dropdown
+                        type="single"
+                        variant="revamp"
+                        addOption={addIngredientCategory}
+                        options={options}
+                        defaultOption={
+                           options.find(
+                              item => item.title === category.value
+                           ) || null
+                        }
+                        searchedOption={searchedOption}
+                        selectedOption={selectedOption}
+                        typeName="category"
+                     />
+                  )}
                </Form.Group>
             </InputTextWrapper>
             <Flex
                container
                alignItems="center"
-               justifyContent="space-between"
+               justifyContent="flex-end"
                width="100%"
             >
                <div>
@@ -224,7 +316,16 @@ const IngredientForm = () => {
                      </Flex>
                   )}
                </div>
-               {/* <Spacer xAxis size="16px" /> */}
+               <Spacer xAxis size="16px" />
+               <ComboButton
+                  type="ghost"
+                  size="sm"
+                  onClick={() => openLinkedRecipesTunnel(1)}
+               >
+                  <EyeIcon color="#00A7E1" />
+                  {`Linked Recipes (${linkedRecipesCount})`}
+               </ComboButton>
+               <Spacer xAxis size="16px" />
                <Form.Toggle
                   name="published"
                   value={state.isPublished}

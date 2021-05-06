@@ -1,5 +1,6 @@
 import React from 'react'
 import moment from 'moment'
+import { isEmpty } from 'lodash'
 import styled from 'styled-components'
 import { useSubscription } from '@apollo/react-hooks'
 import { Text, Form, Flex, TextButton, useTunnel } from '@dailykit/ui'
@@ -26,7 +27,7 @@ const PlansSection = () => {
    } = useSubscription(SUBSCRIPTION_OCCURENCES, {
       variables: {
          fulfillmentDate: {
-            _in: [moment(state.date).format('YYYY-MM-DD')],
+            _in: state.dates.map(date => moment(date).format('YYYY-MM-DD')),
          },
       },
    })
@@ -91,10 +92,24 @@ const PlansSection = () => {
             },
          },
          {
+            hozAlign: 'right',
+            headerHozAlign: 'right',
+            title: 'Fulfillment Date',
+            field: 'fulfillmentDate',
+            formatter: ({ _cell: { value } }) => moment(value).format('MMM DD'),
+            headerTooltip: column => {
+               const identifier = 'plan_listing_column_fulfillmentDate'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+         },
+         {
             title: 'Cut Off',
             field: 'cutoffTimeStamp',
             formatter: ({ _cell: { value } }) =>
-               moment(value).format('MMM DD HH:MM A'),
+               moment(value).format('MMM DD HH:mm A'),
             headerTooltip: column => {
                const identifier = 'plan_listing_column_cut_off'
                return (
@@ -107,7 +122,7 @@ const PlansSection = () => {
             title: 'Start Time',
             field: 'startTimeStamp',
             formatter: ({ _cell: { value } }) =>
-               moment(value).format('MMM DD HH:MM A'),
+               moment(value).format('MMM DD HH:mm A'),
             headerTooltip: column => {
                const identifier = 'plan_listing_column_state_time'
                return (
@@ -199,12 +214,12 @@ const PlansSection = () => {
                   <Text as="h2">Plans</Text>
                   <Tooltip identifier="listing_menu_section_plans_heading" />
                </Flex>
-               {state.date && (
+               {!isEmpty(state.dates) && (
                   <TextButton
                      size="sm"
                      type="ghost"
                      onClick={() => {
-                        dispatch({ type: 'SET_DATE', payload: null })
+                        dispatch({ type: 'SET_DATE', payload: [] })
                         localStorage.removeItem('serving_size')
                      }}
                   >
@@ -223,8 +238,10 @@ const PlansSection = () => {
                <Tooltip identifier="listing_menu_section_plans_add_permanently" />
             </Flex>
          </Flex>
-         {!state.date && <Text as="h3">Select a date to view plans.</Text>}
-         {state.date && loading && <InlineLoader />}
+         {isEmpty(state.dates) && (
+            <Text as="h3">Select a date to view plans.</Text>
+         )}
+         {isEmpty(state.dates) && loading && <InlineLoader />}
          {state && !loading && subscriptionOccurences?.aggregate?.count > 0 && (
             <ReactTabulator
                ref={tableRef}

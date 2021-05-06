@@ -142,6 +142,10 @@ const ModifierFormTunnel = ({
          <TunnelHeader
             title="Create New Modifier Template"
             close={() => close(2)}
+            right={{
+               title: 'Done',
+               action: () => close(2),
+            }}
             tooltip={<Tooltip identifier="add_modifier_tunnel" />}
          />
          <TunnelBody>

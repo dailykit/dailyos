@@ -11,6 +11,7 @@ import options from '../../tableOptions'
 import { toast } from 'react-toastify'
 import { currencyFmt, logger } from '../../../../../shared/utils'
 import BrandContext from '../../../context/Brand'
+import * as moment from 'moment'
 
 const OrdersTable = ({ id }) => {
    const [context, setContext] = useContext(BrandContext)
@@ -25,18 +26,19 @@ const OrdersTable = ({ id }) => {
          brandId: context.brandId,
       },
       onCompleted: ({ brand: { brand_customers = [] } = {} } = {}) => {
-         const result = brand_customers[0]?.customer?.orders.map(order => {
-            return {
-               id: order?.id,
-               products: order?.products?.length || '0',
-               walletUsed: 'N/A',
-               discount: order?.discount,
-               amountPaid: `$ ${order?.amountPaid || 'N/A'}`,
-               channel: order?.channel?.cartSource || 'N/A',
-               orderedOn: order?.created_at?.substr(0, 16) || 'N/A',
-               deliveredOn: 'N/A',
-            }
-         })
+         const result = brand_customers[0]?.customer?.orders.map(order => ({
+            id: order?.id,
+            products: order?.cart?.cartItemViews?.length || '0',
+            walletAmountUsed: currencyFmt(order?.cart?.walletAmountUsed),
+            loyaltyPointsUsed: order?.cart?.loyaltyPointsUsed,
+            discount: currencyFmt(order?.discount),
+            amountPaid: `${currencyFmt(order?.amountPaid) || 'N/A'}`,
+            channel: order?.cart?.source || 'N/A',
+            orderedOn:
+               moment(order?.created_at).format('MMMM Do YYYY, h:mm:ss a') ||
+               'N/A',
+            deliveredOn: 'N/A',
+         }))
          setOrders(result)
       },
       onError: error => {
@@ -89,8 +91,25 @@ const OrdersTable = ({ id }) => {
          width: 150,
       },
       {
-         title: 'Wallet Used',
-         field: 'walletUsed',
+         title: 'Loyalty Points Used',
+         field: 'loyaltyPointsUsed',
+         hozAlign: 'right',
+         titleFormatter: function (cell) {
+            cell.getElement().style.textAlign = 'right'
+            return '' + cell.getValue()
+         },
+         headerTooltip: function (column) {
+            const identifier = 'order_listing_loyalty_points_used_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+         formatter: cell => cell.getValue(),
+         width: 150,
+      },
+      {
+         title: 'Wallet Amount Used',
+         field: 'walletAmountUsed',
          hozAlign: 'right',
          titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'right'
@@ -102,7 +121,7 @@ const OrdersTable = ({ id }) => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
-         formatter: cell => currencyFmt(Number(cell.getValue()) || 0),
+         formatter: cell => cell.getValue(),
          width: 150,
       },
       {
@@ -119,7 +138,7 @@ const OrdersTable = ({ id }) => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
-         formatter: cell => currencyFmt(Number(cell.getValue()) || 0),
+         formatter: cell => cell.getValue(),
          width: 150,
       },
       {
@@ -136,7 +155,7 @@ const OrdersTable = ({ id }) => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
-         formatter: cell => currencyFmt(Number(cell.getValue()) || 0),
+         formatter: cell => cell.getValue(),
          width: 150,
       },
       {
@@ -203,6 +222,8 @@ const OrdersTable = ({ id }) => {
       const orderId = cell._cell.row.data.id
       setOrder(orderId, true)
    }
+
+   console.log(orders)
 
    if (listLoading) return <InlineLoader />
    return (

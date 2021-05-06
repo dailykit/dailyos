@@ -6,7 +6,7 @@ import { AccessProvider, TooltipProvider } from '../../shared/providers'
 
 const BrandApp = () => (
    <TooltipProvider app="Brand App">
-      <AccessProvider app="Brand App">
+      <AccessProvider app="Brands">
          <App />
       </AccessProvider>
    </TooltipProvider>

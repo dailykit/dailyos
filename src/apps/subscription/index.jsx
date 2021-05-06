@@ -10,7 +10,7 @@ import './tableStyle.css'
 
 const Subscription = () => (
    <TooltipProvider app="Subscription App">
-      <AccessProvider app="Subscription App">
+      <AccessProvider app="Manage Subscription">
          <App />
       </AccessProvider>
    </TooltipProvider>

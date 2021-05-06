@@ -1,6 +1,6 @@
 import React from 'react'
 import { Text, Flex } from '@dailykit/ui'
-import { StyleContainer, StyledDiv, StyledHeading } from './styled'
+import { StyleContainer, StyledDiv, StyledHeading, Label } from './styled'
 import { UserIcon, CalendarIcon } from '../../../../shared/assets/icons'
 import { rruleToText } from '../../Utils'
 import { Tooltip } from '../../../../shared/components'
@@ -18,30 +18,41 @@ const SubscriptionCard = ({ planData }) => (
             <StyledDiv>
                <Text as="p">
                   {planData?.subscription?.subscriptionItemCount?.plan
-                     ?.subscriptionTitle?.title || 'N/A'}
-                  &nbsp;&nbsp;&nbsp;&nbsp;
-                  <UserIcon size="16" /> 1
+                     ?.subscriptionTitle?.title || 'N/A'}{' '}
+                  <UserIcon size="16" />{' '}
+                  {planData?.subscription?.subscriptionItemCount?.plan
+                     ?.servingSize || '-'}
                </Text>
             </StyledDiv>
             <StyledDiv>
                <Text as="p">
-                  {`${
-                     planData?.subscription?.subscriptionItemCount?.count ||
-                     'N/A'
-                  } Item Count`}
+                  Item count:{' '}
+                  {planData?.subscription?.subscriptionItemCount?.count}
                </Text>
             </StyledDiv>
             <StyledDiv>
                <Text as="p">
-                  <CalendarIcon size="14" /> &nbsp;
+                  <CalendarIcon size="14" />{' '}
                   {rruleToText(planData?.subscription?.rrule)}
                </Text>
             </StyledDiv>
-            <StyledDiv>
-               <Text as="p">
-                  {`${planData.isSubscriber ? 'Active' : 'Inactive'} Status`}
-               </Text>
-            </StyledDiv>
+            {!!Object.keys(planData.pausePeriod).length && (
+               <StyledDiv col>
+                  <Text as="subtitle">Pause Period</Text>
+                  <Text as="p">
+                     {`${planData.pausePeriod.startDate} - ${planData.pausePeriod.endDate}`}
+                  </Text>
+               </StyledDiv>
+            )}
+            {planData.isSubscriptionCancelled && (
+               <StyledDiv col>
+                  <Label>Subscription Cancelled</Label>
+                  <Text as="subtitle">Reason</Text>
+                  <Text as="p">
+                     {planData.subscriptionCancellationReason || '-'}
+                  </Text>
+               </StyledDiv>
+            )}
          </>
       ) : (
          <Text as="p">

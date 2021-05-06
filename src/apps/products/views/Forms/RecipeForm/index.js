@@ -11,6 +11,9 @@ import {
    HorizontalTabPanel,
    HorizontalTabs,
    ComboButton,
+   Tunnel,
+   useTunnel,
+   Tunnels,
 } from '@dailykit/ui'
 import { isEmpty, stubTrue } from 'lodash'
 import { useParams } from 'react-router-dom'
@@ -21,14 +24,20 @@ import {
    Tooltip,
 } from '../../../../../shared/components'
 import { logger, randomSuffix } from '../../../../../shared/utils'
-import { CloseIcon, TickIcon } from '../../../assets/icons'
+import { CloseIcon, EyeIcon, TickIcon } from '../../../assets/icons'
 import { useTabs } from '../../../../../shared/providers'
 import {
    RecipeContext,
    reducers,
    state as initialState,
 } from '../../../context/recipe'
-import { CREATE_SIMPLE_RECIPE, S_RECIPE, UPDATE_RECIPE } from '../../../graphql'
+import {
+   CREATE_SIMPLE_RECIPE,
+   PRODUCTS,
+   S_RECIPE,
+   S_SIMPLE_PRODUCTS_FROM_RECIPE_AGGREGATE,
+   UPDATE_RECIPE,
+} from '../../../graphql'
 import {
    Information,
    Ingredients,
@@ -39,8 +48,9 @@ import {
 } from './components'
 import validator from './validators'
 import { ResponsiveFlex, StyledFlex } from '../Product/styled'
-import { CloneIcon } from '../../../../../shared/assets/icons'
+import { CloneIcon, PlusIcon } from '../../../../../shared/assets/icons'
 import { useDnd } from '../../../../../shared/components/DragNDrop/useDnd'
+import { CreateProductTunnel, LinkedProductsTunnel } from './tunnels'
 
 const RecipeForm = () => {
    // Context
@@ -52,8 +62,18 @@ const RecipeForm = () => {
       initialState
    )
 
+   const [productTunnels, openProductsTunnel, closeProductsTunnel] = useTunnel(
+      1
+   )
+   const [
+      linkedProductsTunnels,
+      openLinkedProductsTunnel,
+      closeLinkedProductsTunnel,
+   ] = useTunnel(1)
+
    // States
    const [state, setState] = React.useState({})
+   const [linkedProductsCount, setLinkedProductsCount] = React.useState(0)
 
    const [title, setTitle] = React.useState({
       value: '',
@@ -87,6 +107,26 @@ const RecipeForm = () => {
                data: recipe.simpleRecipeIngredients,
             })
          }
+      },
+   })
+   useSubscription(S_SIMPLE_PRODUCTS_FROM_RECIPE_AGGREGATE, {
+      skip: !state.simpleRecipeYields,
+      variables: {
+         where: {
+            simpleRecipeYieldId: {
+               _in: state.simpleRecipeYields?.map(y => y.id),
+            },
+            isArchived: { _eq: false },
+            product: {
+               isArchived: { _eq: false },
+            },
+         },
+         distinct_on: ['productId'],
+      },
+      onSubscriptionData: data => {
+         setLinkedProductsCount(
+            data.subscriptionData.data.productOptionsAggregate.aggregate.count
+         )
       },
    })
 
@@ -163,13 +203,24 @@ const RecipeForm = () => {
          })
       }
    }
-
+   const toggleSubRecipe = () => {
+      const val = !state.isSubRecipe
+         updateRecipe({
+            variables: {
+               id: state.id,
+               set: {
+                  isSubRecipe: val,
+               },
+            },
+         })
+      }
    const clone = () => {
       if (cloning) return
       const clonedRecipe = {
          name: `${state.name}-${randomSuffix()}`,
          assets: state.assets,
          isPublished: state.isPublished,
+         isSubRecipe: state.isSubRecipe,
          author: state.author,
          type: state.type,
          description: state.description,
@@ -235,6 +286,22 @@ const RecipeForm = () => {
       <RecipeContext.Provider value={{ recipeState, recipeDispatch }}>
          <>
             {/* View */}
+            <Tunnels tunnels={productTunnels}>
+               <Tunnel layer={1}>
+                  <CreateProductTunnel
+                     state={state}
+                     closeTunnel={closeProductsTunnel}
+                  />
+               </Tunnel>
+            </Tunnels>
+            <Tunnels tunnels={linkedProductsTunnels}>
+               <Tunnel layer={1} size="sm">
+                  <LinkedProductsTunnel
+                     state={state}
+                     closeTunnel={closeLinkedProductsTunnel}
+                  />
+               </Tunnel>
+            </Tunnels>
             <ResponsiveFlex
                container
                justifyContent="space-between"
@@ -279,10 +346,45 @@ const RecipeForm = () => {
                      </>
                   )}
                   <Spacer xAxis size="16px" />
-                  <ComboButton type="ghost" size="sm" onClick={clone}>
-                     <CloneIcon color="#00A7E1" />
-                     {cloning ? 'Cloning...' : 'Clone Recipe'}
+                  <ComboButton
+                     type="ghost"
+                     size="sm"
+                     onClick={() => openLinkedProductsTunnel(1)}
+                  >
+                     <EyeIcon color="#00A7E1" />
+                     {`Linked Products (${linkedProductsCount})`}
                   </ComboButton>
+                  <Spacer xAxis size="16px" />
+                  <ComboButton
+                     type="ghost"
+                     size="sm"
+                     onClick={() => openProductsTunnel(1)}
+                  >
+                     <PlusIcon color="#00A7E1" />
+                     Create Product
+                  </ComboButton>
+                  <Spacer xAxis size="16px" />
+                  <ComboButton
+                     type="ghost"
+                     size="sm"
+                     onClick={clone}
+                     isLoading={cloning}
+                  >
+                     <CloneIcon color="#00A7E1" />
+                     Clone Recipe
+                  </ComboButton>
+                  <Spacer xAxis size="16px" />
+                  <Form.Toggle
+                     name="subRecipe"
+                     value={state.isSubRecipe}
+                     onChange={toggleSubRecipe}
+                  > <Flex container alignItems="center">
+                        Sub Recipe
+                  <Spacer xAxis size="16px" />
+                        <Tooltip identifier="sub_publish" />
+                     </Flex>
+                  </Form.Toggle>
+
                   <Spacer xAxis size="16px" />
                   <Form.Toggle
                      name="published"

@@ -22,6 +22,11 @@ export const SUBSCRIPTION_OCCURENCES = gql`
    subscription subscriptionOccurences($fulfillmentDate: date_comparison_exp!) {
       subscriptionOccurences: subscriptionOccurencesAggregate(
          where: { fulfillmentDate: $fulfillmentDate }
+         order_by: {
+            subscriptionTitle: { title: asc }
+            subscriptionServing: { servingSize: asc }
+            subscriptionItemCount: { count: asc }
+         }
       ) {
          aggregate {
             count
@@ -96,7 +101,7 @@ export const SUBSCRIPTION_OCCURENCES = gql`
 `
 
 export const SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
-   query productOptions($type: String_comparison_exp!) {
+   subscription productOptions($type: String_comparison_exp!) {
       productOptions: productOptionsAggregate(
          where: {
             type: $type
@@ -114,8 +119,10 @@ export const SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
             label
             quantity
             recipeYield: simpleRecipeYield {
+               id
                size: yield(path: "serving")
                recipe: simpleRecipe {
+                  id
                   cuisine
                   cookingTime
                   author
@@ -290,17 +297,26 @@ export const SUBSCRIPTION_CUSTOMERS = gql`
    query subscription_customers($id: Int!) {
       subscription_customers: subscription_subscription_by_pk(id: $id) {
          id
-         customers: customers_aggregate {
+         customers: brand_customers_aggregate {
             aggregate {
                count
             }
             nodes {
                id
-               email
-               customer: platform_customer {
-                  lastName
-                  firstName
-                  phoneNumber
+               brandId
+               brand {
+                  id
+                  title
+               }
+               pausePeriod
+               isSubscriptionCancelled
+               customer {
+                  email
+                  platform_customer {
+                     lastName
+                     firstName
+                     phoneNumber
+                  }
                }
             }
          }
@@ -319,7 +335,7 @@ export const SUBSCRIPTION = gql`
 `
 
 export const INVENTORY_PRODUCT_OPTIONS = gql`
-   query productOptions($type: String_comparison_exp!) {
+   subscription productOptions($type: String_comparison_exp!) {
       productOptions: productOptionsAggregate(
          where: {
             product: { isArchived: { _eq: false }, isPublished: { _eq: true } }
