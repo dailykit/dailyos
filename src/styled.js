@@ -2,6 +2,10 @@ import styled from 'styled-components'
 
 export const Layout = styled.div`
    height: 100vh;
+   > main {
+      height: 100%;
+      overflow-y: auto;
+   }
 `
 
 export const AppList = styled.ul`
