@@ -77,6 +77,9 @@ const Styles = {
       margin: 2px 8px;
       padding: 16px;
       background-color: #f6f6f6;
+      :hover {
+         background-color: #e8e8e8;
+      }
    `,
    CreateNewItems: styled.div`
       display: flex;

@@ -32,6 +32,11 @@ export const StyledTab = styled.li(
       justify-content: space-between;
       cursor: pointer;
       border-bottom: 1px solid #ebf1f4;
+      border-right: 1px solid #ebf1f4;
+      :hover {
+         background-color: #f4f4f4;
+      }
+
       height: 42px;
       background: ${active ? '#F6F6F6' : 'transparent'};
       box-shadow: ${active
