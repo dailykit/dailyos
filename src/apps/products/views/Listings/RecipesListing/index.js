@@ -8,6 +8,9 @@ import {
    Spacer,
    Text,
    TextButton,
+   Tunnel,
+   Tunnels,
+   useTunnel,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -19,6 +22,7 @@ import {
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { logger, randomSuffix } from '../../../../../shared/utils'
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
+import { BulkActionsTunnel } from './tunnels'
 import {
    CREATE_SIMPLE_RECIPE,
    DELETE_SIMPLE_RECIPES,
@@ -34,7 +38,10 @@ const RecipesListing = () => {
    const { t } = useTranslation()
    const { addTab, tab } = useTabs()
    const [selectedRows, setSelectedRows] = React.useState([])
+
    // Queries and Mutations
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+
    const {
       loading,
       data: { simpleRecipes: recipes = [] } = {},
@@ -98,6 +105,15 @@ const RecipesListing = () => {
    console.log('this is selected rows', selectedRows)
    return (
       <ResponsiveFlex maxWidth="1280px" margin="0 auto">
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1} size="lg">
+               <BulkActionsTunnel
+                  close={closeTunnel}
+                  selectedRows={selectedRows}
+                  setSelectedRows={setSelectedRows}
+               />
+            </Tunnel>
+         </Tunnels>
          <Flex
             container
             alignItems="center"
@@ -115,6 +131,7 @@ const RecipesListing = () => {
             <InlineLoader />
          ) : (
             <DataTable
+               openTunnel={openTunnel}
                data={recipes}
                addTab={addTab}
                deleteRecipeHandler={deleteRecipeHandler}
@@ -212,6 +229,12 @@ class DataTable extends React.Component {
                   <AddIcon color="#fff" size={24} /> Create Recipe
                </ComboButton>
             </Flex>
+            {this.props.selectedRows.length > 0 && (
+               <ActionBar
+                  selectedRows={this.props.selectedRows}
+                  openTunnel={this.props.openTunnel}
+               />
+            )}
             <Spacer size="16px" />
             <ReactTabulator
                ref={this.tableRef}
@@ -239,4 +262,35 @@ function DeleteRecipe({ cell, onDelete }) {
       </IconButton>
    )
 }
+
+function ActionBar({ selectedRows, openTunnel }) {
+   return (
+      <>
+         <p style={{ padding: '10px', marginTop: '30px' }}>
+            <span
+               style={{
+                  color: '#919699',
+                  fontStyle: 'italic',
+                  fontWeight: '500',
+                  marginRight: '20px',
+               }}
+            >
+               {selectedRows.length}{' '}
+               {selectedRows.length > 1 ? 'recipes' : 'recipe'} selected{' '}
+            </span>
+            <span
+               onClick={() => openTunnel(1)}
+               style={{
+                  cursor: 'pointer',
+                  color: '#367BF5',
+                  fontWeight: '700',
+               }}
+            >
+               APPLY BULK ACTIONS
+            </span>
+         </p>
+      </>
+   )
+}
+
 export default RecipesListing

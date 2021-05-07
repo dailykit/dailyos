@@ -2,6 +2,7 @@ import MenuIcon from './Menu'
 import CloseIcon from './Close'
 import EditIcon from './Edit'
 import DeleteIcon from './Delete'
+import RemoveIcon from './Remove'
 import AddIcon from './Add'
 import CodeIcon from './Code'
 import UserIcon from './User'
@@ -34,4 +35,5 @@ export {
    InfoIcon,
    LinkIcon,
    MinusIcon,
+   RemoveIcon,
 }
