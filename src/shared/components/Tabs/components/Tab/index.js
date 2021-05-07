@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom'
 import { useTabs } from '../../../../providers'
 import { CloseIcon } from '@dailykit/ui'
 
-const Tab = ({ index, tab, ...props }) => {
+const Tab = ({ index, tab, numTabs, ...props }) => {
    const location = useLocation()
    const { switchTab, removeTab } = useTabs()
    const active = tab.path === location.pathname
@@ -13,6 +13,7 @@ const Tab = ({ index, tab, ...props }) => {
          key={tab.path}
          onClick={() => switchTab(tab.path)}
          active={active}
+         numTabs={numTabs}
          {...props}
       >
          <span title={tab.title}>{tab.title}</span>

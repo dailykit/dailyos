@@ -121,9 +121,14 @@ const Tabs = () => {
                )}
             </>
          )}
-         <StyledTabs numTabs={tabs.length} width={getWidth()}>
+         <StyledTabs width={getWidth()}>
             {tabsToShow.map((tab, index) => (
-               <Tab tab={tab} key={tab.path} index={index} />
+               <Tab
+                  tab={tab}
+                  key={tab.path}
+                  index={index}
+                  numTabs={tabs.length}
+               />
             ))}
          </StyledTabs>
          {tabs.length > 0 && (

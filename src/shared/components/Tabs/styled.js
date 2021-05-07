@@ -7,6 +7,7 @@ export const TabsWrapper = styled.div`
    align-items: center;
    > button {
       border: none;
+      border-bottom: 1px solid #ebf1f4;
       width: 35px;
       height: 42px;
       background: #fefdfc;
@@ -15,23 +16,22 @@ export const TabsWrapper = styled.div`
    }
 `
 export const StyledTabs = styled.ul(
-   ({ width, numTabs }) => css`
+   ({ width }) => css`
       width: ${`calc(100vw - ${width})`};
       display: flex;
       align-items: center;
-      border-bottom: ${numTabs > 0 && `1px solid #ebf1f4`};
    `
 )
 
 export const StyledTab = styled.li(
-   ({ active }) => css`
-      width: 100%;
+   ({ active, numTabs }) => css`
+      width: ${numTabs > 2 ? '100%' : 'auto'};
+      min-width: 120px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
-      border: ${active ? 'none' : '1px solid #ebf1f4'};
-      border-bottom: none;
+      border-bottom: 1px solid #ebf1f4;
       height: 42px;
       background: ${active ? '#F6F6F6' : 'transparent'};
       box-shadow: ${active
