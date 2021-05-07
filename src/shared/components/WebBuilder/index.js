@@ -4,10 +4,13 @@ import 'grapesjs-preset-webpage'
 import grapesjs from 'grapesjs'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import Handlebars from 'handlebars'
+import Pug from 'pug'
 import { InlineLoader } from '../InlineLoader'
 import { logger } from '../../utils'
 import { config } from './config'
 import { StyledDiv } from './style'
+import { ContentState } from 'draft-js'
 
 const Builder = React.forwardRef(
    (
@@ -202,6 +205,84 @@ const Builder = React.forwardRef(
                content: block?.content,
                category: block.category,
             })
+         })
+
+         const comps = editor.DomComponents
+         const defaultType = comps.getType('default')
+         const defaultModel = defaultType.model
+         const defaultView = defaultType.view
+
+         var context = {
+            brandDetails: {
+               name: 'Dailykit',
+            },
+            customerDetails: {
+               name: 'Deepak',
+            },
+         }
+
+         comps.addType('pug', {
+            model: defaultModel.extend(
+               {
+                  defaults: Object.assign({}, defaultModel.prototype.defaults, {
+                     tagName: 'pug',
+                     droppable: true,
+                     editable: true,
+                  }),
+                  toHTML: function () {
+                     // If I have components I'll follow the original method
+                     // otherwise return the template
+                     if (this.components().length) {
+                        console.log('if')
+                        return defaultModel.prototype.toHTML.apply(
+                           this,
+                           arguments
+                        )
+                     } else {
+                        console.log(
+                           'else',
+
+                           this.get('template')
+                        )
+                        return this.get('template')
+                     }
+                  },
+                  toContent: function () {
+                     if (!this.components().length) {
+                        return this.get('components')
+                     }
+                  },
+               },
+               {
+                  // isComponent is mandatory when you define new components
+                  isComponent: function (el) {
+                     if (el.tagName === 'PUG') return { type: 'pug' }
+                  },
+               }
+            ),
+            view: defaultType.view.extend({
+               onRender: function () {
+                  var $el = this.$el
+                  var model = this.model
+                  var html = model.toHTML()
+                  var template = Pug.compile(html)
+                  $el.empty()
+                  $el.append(template(context))
+                  return this
+               },
+            }),
+         })
+
+         editor.BlockManager.add('ticket-comments', {
+            label: 'Ticket Comments Loop',
+            category: 'Ticket Components',
+            attributes: { class: 'fa fa-comment' },
+            content: {
+               type: 'pug',
+               style: { width: '100%' },
+               template:
+                  "h2(style='color: rgba(31, 41, 55,1);') #{brandDetails.name}",
+            },
          })
 
          // editor.Canvas.getDocument().head.insertAdjacentHTML(
