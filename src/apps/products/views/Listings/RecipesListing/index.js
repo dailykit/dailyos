@@ -240,16 +240,6 @@ class DataTable extends React.Component {
          }
       )
    }
-   handleClearGroupBy = () => {
-      this.setState(
-         {
-            groups: [],
-         },
-         () => {
-            this.tableRef.current.table.setGroupBy(this.state.groups)
-         }
-      )
-   }
    clearHeaderFilter = () => {
       this.tableRef.current.table.clearHeaderFilter()
    }
@@ -261,7 +251,6 @@ class DataTable extends React.Component {
                selectedRows={this.props.selectedRows}
                openTunnel={this.props.openTunnel}
                handleGroupBy={this.handleGroupBy}
-               handleClearGroupBy={this.handleClearGroupBy}
                clearHeaderFilter={this.clearHeaderFilter}
             />
             <Spacer size="30px" />
@@ -296,7 +285,6 @@ const ActionBar = ({
    selectedRows,
    openTunnel,
    handleGroupBy,
-   handleClearGroupBy,
    clearHeaderFilter,
 }) => {
    const [groupByOptions] = React.useState([
@@ -368,15 +356,6 @@ const ActionBar = ({
                      selectedOption={selectedOption}
                      typeName="cuisine"
                   />
-                  <ButtonGroup align="left">
-                     <TextButton
-                        type="ghost"
-                        size="sm"
-                        onClick={handleClearGroupBy}
-                     >
-                        Clear
-                     </TextButton>
-                  </ButtonGroup>
                </Flex>
                <Flex
                   container
