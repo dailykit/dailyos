@@ -1,3 +1,3 @@
 import BulkActionsTunnel from './BulkActionsTunnel'
-
-export { BulkActionsTunnel }
+import ApplyFilterTunnel from './ApplyFilterTunnel'
+export { BulkActionsTunnel, ApplyFilterTunnel }

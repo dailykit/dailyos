@@ -29,3 +29,6 @@
    background: #e5e5e5;
    cursor: pointer;
 }
+.tabulator-row.tabulator-selected:hover {
+   background-color: #9abcea !important;
+}

@@ -176,6 +176,7 @@ export const S_RECIPES = gql`
          name
          author
          cookingTime
+         cuisine
          isValid
          isPublished
          simpleRecipeYields(where: { isArchived: { _eq: false } }) {
