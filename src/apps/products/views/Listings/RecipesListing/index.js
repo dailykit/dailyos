@@ -31,10 +31,12 @@ import {
 import ServingsCount from '../../../utils/countFormatter'
 import tableOptions from '../tableOption'
 import { ResponsiveFlex } from '../styled'
+import { useRef } from 'react'
 
 const address = 'apps.products.views.listings.recipeslisting.'
 
 const RecipesListing = () => {
+   const dataTableRef = useRef()
    const { t } = useTranslation()
    const { addTab, tab } = useTabs()
    const [selectedRows, setSelectedRows] = React.useState([])
@@ -97,6 +99,10 @@ const RecipesListing = () => {
       }
    }
 
+   const removeSelectedRow = id => {
+      dataTableRef.current.removeSelectedRow(id)
+   }
+
    if (!loading && error) {
       toast.error('Failed to fetch Recipes!')
       logger(error)
@@ -108,6 +114,7 @@ const RecipesListing = () => {
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="lg">
                <BulkActionsTunnel
+                  removeSelectedRow={removeSelectedRow}
                   close={closeTunnel}
                   selectedRows={selectedRows}
                   setSelectedRows={setSelectedRows}
@@ -131,6 +138,7 @@ const RecipesListing = () => {
             <InlineLoader />
          ) : (
             <DataTable
+               ref={dataTableRef}
                openTunnel={openTunnel}
                data={recipes}
                addTab={addTab}
@@ -209,6 +217,10 @@ class DataTable extends React.Component {
    ]
    handleRowSelection = rows => {
       this.props.setSelectedRows(rows)
+   }
+
+   removeSelectedRow = id => {
+      this.tableRef.current.table.deselectRow(id)
    }
    render() {
       return (

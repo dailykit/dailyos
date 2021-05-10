@@ -19,6 +19,7 @@ import { PRODUCTS } from '../../../../../graphql'
 import { DeleteIcon, RemoveIcon } from '../../../../../assets/icons'
 import { Tooltip } from '../../../../../../../shared/components'
 import ConfirmationPopup from './confirmationPopup'
+import { SIMPLE_RECIPE_UPDATE } from '../../../../../graphql/mutations'
 
 const address = 'apps.menu.views.listings.productslisting.'
 
@@ -26,6 +27,7 @@ export default function BulkActionsTunnel({
    close,
    selectedRows,
    setSelectedRows,
+   removeSelectedRow,
 }) {
    const { t } = useTranslation()
    const { addTab } = useTabs()
@@ -33,20 +35,24 @@ export default function BulkActionsTunnel({
    const [showPopup, setShowPopup] = React.useState(false)
    const [popupHeading, setPopupHeading] = React.useState('')
 
+   const [bulkData, setBulkData] = React.useState({})
+
    const [mutationData, setMutationData] = React.useState({})
    const removeRecipe = index => {
       console.log('index', index)
+      removeSelectedRow(index)
       setSelectedRows(prevState => prevState.filter(row => row.id !== index))
    }
 
    // Mutations
-   const [createProduct] = useMutation(PRODUCTS.CREATE, {
-      onCompleted: data => {
-         toast.success('Product created!')
-         addTab(
-            data.createProduct.name,
-            `/products/products/${data.createProduct.id}`
-         )
+
+   const [simpleRecipeUpdate] = useMutation(SIMPLE_RECIPE_UPDATE, {
+      onCompleted: () => {
+         toast.success('Update Successfully')
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         //  logger(error)
       },
    })
 
@@ -56,9 +62,15 @@ export default function BulkActionsTunnel({
             title="Apply Bulk Actions"
             right={{
                action: function () {
-                  close(1)
+                  console.log('this is bulk', bulkData)
+                  simpleRecipeUpdate({
+                     variables: {
+                        ids: selectedRows.map(idx => idx.id),
+                        _set: bulkData,
+                     },
+                  })
                },
-               title: 'Done',
+               title: 'Save Changes',
             }}
             close={() => close(1)}
             tooltip={
@@ -67,6 +79,7 @@ export default function BulkActionsTunnel({
          />
          <TunnelBody>
             <ConfirmationPopup
+               setBulkData={setBulkData}
                showPopup={showPopup}
                setShowPopup={setShowPopup}
                popupHeading={popupHeading}
@@ -134,6 +147,8 @@ export default function BulkActionsTunnel({
                <Flex width="50%" padding="0px 0px 20px 20px">
                   <Text as="h3">Bulk Actions</Text>
                   <Spacer size="16px" />
+                  <Text as="text1">Change Publish Status</Text>
+                  <Spacer size="10px" />
                   <ButtonGroup align="left">
                      <TextButton
                         type="solid"
@@ -144,7 +159,7 @@ export default function BulkActionsTunnel({
                            setMutationData({ isPublished: true })
                         }}
                      >
-                        Make Publish
+                        Make All Published
                      </TextButton>
 
                      <TextButton
@@ -156,12 +171,12 @@ export default function BulkActionsTunnel({
                            setMutationData({ isPublished: false })
                         }}
                      >
-                        Make Unpublish
+                        Make All Unpublished
                      </TextButton>
                   </ButtonGroup>
                   <br />
                   <Flex container alignItems="center">
-                     <Text as="h3" margin="20px">
+                     <Text as="text1" margin="20px">
                         Remove selected Recipes
                      </Text>
                      <IconButton
