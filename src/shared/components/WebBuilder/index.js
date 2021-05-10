@@ -221,11 +221,11 @@ const Builder = React.forwardRef(
             },
          }
 
-         comps.addType('pug', {
+         comps.addType('handlebar', {
             model: defaultModel.extend(
                {
                   defaults: Object.assign({}, defaultModel.prototype.defaults, {
-                     tagName: 'pug',
+                     tagName: 'handlebar',
                      droppable: true,
                      editable: true,
                   }),
@@ -256,7 +256,8 @@ const Builder = React.forwardRef(
                {
                   // isComponent is mandatory when you define new components
                   isComponent: function (el) {
-                     if (el.tagName === 'PUG') return { type: 'pug' }
+                     if (el.tagName === 'HANDLEBAR')
+                        return { type: 'handlebar' }
                   },
                }
             ),
@@ -265,7 +266,8 @@ const Builder = React.forwardRef(
                   var $el = this.$el
                   var model = this.model
                   var html = model.toHTML()
-                  var template = Pug.compile(html)
+
+                  var template = Handlebars.compile(html)
                   $el.empty()
                   $el.append(template(context))
                   return this
@@ -278,10 +280,10 @@ const Builder = React.forwardRef(
             category: 'Ticket Components',
             attributes: { class: 'fa fa-comment' },
             content: {
-               type: 'pug',
+               type: 'handlebar',
                style: { width: '100%' },
                template:
-                  "h2(style='color: rgba(31, 41, 55,1);') #{brandDetails.name}",
+                  "<h2 style='color: rgba(31, 41, 55,1);'>{{brandDetails.name}}</h2> ",
             },
          })
 
