@@ -164,7 +164,7 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
                   type="outline"
                   onClick={() => editServing()}
                >
-                  <EditIcon />
+                  <EditIcon size={14} />
                </IconButton>
             </Stack>
          </Flex>
