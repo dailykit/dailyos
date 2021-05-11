@@ -30,7 +30,7 @@
       "i18next": "19.4.4",
       "i18next-http-backend": "1.0.8",
       "keycloak-js": "9.0.3",
-      "lodash": "4.17.15",
+      "lodash": "4.17.21",
       "moment": "2.25.3",
       "react": "16.13.1",
       "react-beautiful-dnd": "^13.0.0",
