@@ -12,6 +12,10 @@ import Account from './Account'
 import Search from './Search'
 
 const Tools = () => {
+   const [lang, setLang] = React.useState(
+      localStorage.getItem('i18nextLng') || 'en'
+   )
+
    const [open, setOpen] = React.useState(null)
    const [isMenuOpen, setIsMenuOpen] = React.useState(false)
    const toolbarRef = React.useRef()
@@ -43,7 +47,7 @@ const Tools = () => {
    })
 
    return (
-      <div ref={toolbarRef}>
+      <div ref={toolbarRef} style={{ width: '238px' }}>
          {/* LIST OF TOOLS IN LARGE SCREEN */}
          <ToolList
             toolbarRef={toolbarRef}
@@ -86,7 +90,12 @@ const Tools = () => {
             />
          )}
          {open === profile && (
-            <Account setIsMenuOpen={setIsMenuOpen} setOpen={setOpen} />
+            <Account
+               lang={lang}
+               setLang={setLang}
+               setIsMenuOpen={setIsMenuOpen}
+               setOpen={setOpen}
+            />
          )}
          {open === search && <Search setOpen={setOpen} />}
 

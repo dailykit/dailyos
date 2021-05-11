@@ -22,15 +22,15 @@ const ToolList = ({ toolbarRef, handleOpen, open, tools }) => {
          >
             <PlusIcon color={open === createItem ? '#367BF5' : '#45484C'} />
          </IconButton>
-         <IconButton size="sm" type="ghost" onClick={() => handleOpen(search)}>
+         {/* <IconButton size="sm" type="ghost" onClick={() => handleOpen(search)}>
             <SearchIcon />
-         </IconButton>
-         <IconButton size="sm" type="ghost">
+         </IconButton> */}
+         {/* <IconButton size="sm" type="ghost">
             <NotificationIcon />
-         </IconButton>
-         <IconButton size="sm" type="ghost">
+         </IconButton> */}
+         {/* <IconButton size="sm" type="ghost">
             <SettingsIcon />
-         </IconButton>
+         </IconButton> */}
          <IconButton size="sm" type="ghost">
             <StoreIcon />
          </IconButton>

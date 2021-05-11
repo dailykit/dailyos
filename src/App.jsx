@@ -112,7 +112,7 @@ const App = () => {
             </Switch>
          </main>
          {/* {!isKeycloakSupported() && <RedirectBanner />} */}
-         <Lang />
+         {/* <Lang /> */}
       </Layout>
    )
 }

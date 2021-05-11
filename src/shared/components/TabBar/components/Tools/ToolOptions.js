@@ -94,27 +94,27 @@ const ToolOptions = ({ setIsMenuOpen, handleOpen, tools, open }) => {
                <ChevronRight size={12} color="#75787A" />
             </Arrow>
          </Tool>
-         <Tool onClick={() => handleOpen(tools.search)}>
+         {/* <Tool onClick={() => handleOpen(tools.search)}>
             <SearchIcon />
             <Title>Search</Title>
             <Arrow type="ghost">
                <ChevronRight size={12} color="#75787A" />
             </Arrow>
-         </Tool>
-         <Tool>
+         </Tool> */}
+         {/* <Tool>
             <NotificationIcon />
             <Title>Notifications</Title>
             <Arrow type="ghost">
                <ChevronRight size={12} color="#75787A" />
             </Arrow>
-         </Tool>
-         <Tool>
+         </Tool> */}
+         {/* <Tool>
             <SettingsIcon />
             <Title>Settings</Title>
             <Arrow type="ghost">
                <ChevronRight size={12} color="#75787A" />
             </Arrow>
-         </Tool>
+         </Tool> */}
          <Tool>
             <StoreIcon />
             <Title>MarketPlaces</Title>

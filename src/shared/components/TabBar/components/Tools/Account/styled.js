@@ -12,6 +12,9 @@ export const Styled = {
       border-radius: 10px;
       color: #919699;
       z-index: 100;
+      display: ${({ spinner }) => (spinner ? 'grid' : 'block')};
+      place-items: ${({ spinner }) => (spinner ? 'center' : null)};
+      min-height: ${({ spinner }) => (spinner ? '80px' : 'auto')};
       @media only screen and (max-width: 767px) {
          top: 46px;
          right: 0px;
@@ -89,6 +92,25 @@ export const Styled = {
          padding: 0 4px;
       }
    `,
+   Language: styled.div`
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      border-top: 1px solid #f2f3f3;
+      cursor: pointer;
+      > :first-child {
+         padding-right: 24px;
+      }
+      > :last-child {
+         text-transform: uppercase;
+         font-weight: bold;
+         font-size: 14px;
+      }
+      > span {
+         display: flex;
+         align-items: center;
+      }
+   `,
    Logout: styled.div`
       padding: 6px;
       display: flex;
@@ -105,7 +127,7 @@ export const Styled = {
          cursor: pointer;
          padding: 10px;
          background: rgba(255, 255, 255, 0.13);
-         backdrop-filter: blur(44.37px);
+         /* backdrop-filter: blur(44.37px); */
          > span {
             color: #ff5a52;
             font-weight: bold;
@@ -114,5 +136,16 @@ export const Styled = {
             padding: 0px 6px;
          }
       }
+   `,
+   ChangeLanguage: styled.div`
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      background: rgba(255, 255, 255, 0.13);
+      border: 1px solid #f2f3f3;
+      backdrop-filter: blur(44.37px);
+      border-radius: 10px;
    `,
 }

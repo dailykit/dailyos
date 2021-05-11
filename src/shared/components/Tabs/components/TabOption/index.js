@@ -10,7 +10,7 @@ const TabOption = () => {
       <>
          {tabs.length > 0 && (
             <Styles.Wrapper>
-               <Styles.SmallText>Group tabs</Styles.SmallText>
+               {/* <Styles.SmallText>Group tabs</Styles.SmallText>
                <Styles.Group>
                   <Styles.GroupText>Group by apps</Styles.GroupText>
                   <Form.Toggle
@@ -28,7 +28,7 @@ const TabOption = () => {
                      value={'Val'}
                      size={32}
                   />
-               </Styles.Group>
+               </Styles.Group> */}
                <Styles.CloseTab>
                   <Styles.SmallText>
                      Opened tabs ({tabs.length})

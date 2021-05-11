@@ -4,6 +4,7 @@ import styled from 'styled-components'
 export const Wrapper = styled.div`
    display: flex;
    align-items: center;
+   justify-content: space-evenly;
    height: 42px;
    padding: 0px 14px 0px 20px;
    background: linear-gradient(135deg, #ffffff 0%, #f1f0ef 100%);
@@ -39,6 +40,7 @@ export const StyledAvatar = styled(Avatar)`
    height: 24px;
    width: 24px;
    font-size: 12px;
+   cursor: pointer;
    border: ${({ open }) => (open ? '2px solid #367BF5' : '1px solid #E3E3E3')};
 `
 export const ToolbarMenu = styled(IconButton)`
