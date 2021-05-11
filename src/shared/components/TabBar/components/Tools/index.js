@@ -10,6 +10,7 @@ import ToolOptions from './ToolOptions'
 import ToolList from './ToolList'
 import Account from './Account'
 import Search from './Search'
+import MarketPlace from './MarketPlace'
 
 const Tools = () => {
    const [lang, setLang] = React.useState(
@@ -34,9 +35,10 @@ const Tools = () => {
       createItem: 'create-item',
       profile: 'profile',
       search: 'search',
+      marketPlace: 'marketPlace',
    }
 
-   const { createItem, profile, search } = tools
+   const { createItem, profile, search, marketPlace } = tools
 
    const handleOpen = item => {
       setOpen(open === null || open !== item ? item : null)
@@ -98,6 +100,9 @@ const Tools = () => {
             />
          )}
          {open === search && <Search setOpen={setOpen} />}
+         {open === marketPlace && (
+            <MarketPlace setIsMenuOpen={setIsMenuOpen} setOpen={setOpen} />
+         )}
 
          {/* Tunnels */}
          <Tunnels tunnels={createBrandTunnels}>

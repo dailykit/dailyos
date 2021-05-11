@@ -12,7 +12,7 @@ import { useAuth } from '../../../../providers'
 const ToolList = ({ toolbarRef, handleOpen, open, tools }) => {
    const { user } = useAuth()
 
-   const { createItem, search, profile } = tools
+   const { createItem, search, profile, marketPlace } = tools
    return (
       <Wrapper ref={toolbarRef}>
          <IconButton
@@ -31,8 +31,12 @@ const ToolList = ({ toolbarRef, handleOpen, open, tools }) => {
          {/* <IconButton size="sm" type="ghost">
             <SettingsIcon />
          </IconButton> */}
-         <IconButton size="sm" type="ghost">
-            <StoreIcon />
+         <IconButton
+            size="sm"
+            type="ghost"
+            onClick={() => handleOpen(marketPlace)}
+         >
+            <StoreIcon color={open === marketPlace ? '#367BF5' : '#45484C'} />
          </IconButton>
          <StyledAvatar
             onClick={() => handleOpen(profile)}

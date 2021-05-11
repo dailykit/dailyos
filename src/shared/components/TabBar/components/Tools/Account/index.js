@@ -8,7 +8,7 @@ import {
    MailIcon,
    PhoneIcon,
 } from '../../../../../assets/icons'
-import { useAuth } from '../../../../../providers'
+import { useAuth, useTabs } from '../../../../../providers'
 import BackButton from '../BackButton'
 import { Styled } from './styled'
 import { USERS } from './userQuery'
@@ -17,6 +17,8 @@ import LanguageSelect from './LanguageSelect'
 const Account = ({ setIsMenuOpen, setOpen, lang, setLang }) => {
    const [isVisible, setIsVisible] = React.useState(true)
    const { user, logout } = useAuth()
+   const { addTab } = useTabs()
+
    const fullName = (f, l) => {
       let name = ''
       if (f) name += f
@@ -54,11 +56,25 @@ const Account = ({ setIsMenuOpen, setOpen, lang, setLang }) => {
          {isVisible ? (
             <>
                <BackButton setIsMenuOpen={setIsMenuOpen} setOpen={setOpen} />
-               {users[0] && (
+               {users.length > 0 && users[0] && (
                   <Styled.InnerWrapper>
                      <Styled.EditSection>
                         <span>Account</span>
-                        <IconButton type="ghost" size="sm">
+                        <IconButton
+                           type="ghost"
+                           size="sm"
+                           onClick={() => {
+                              setIsMenuOpen(false)
+                              setOpen(null)
+                              addTab(
+                                 `${fullName(
+                                    users[0]?.firstName,
+                                    users[0]?.lastName
+                                 )}`,
+                                 `/settings/users/${users[0]?.id}`
+                              )
+                           }}
+                        >
                            <EditIcon size={20} color="#919699" />
                         </IconButton>
                      </Styled.EditSection>

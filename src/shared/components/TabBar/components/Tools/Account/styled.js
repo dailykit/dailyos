@@ -127,7 +127,6 @@ export const Styled = {
          cursor: pointer;
          padding: 10px;
          background: rgba(255, 255, 255, 0.13);
-         /* backdrop-filter: blur(44.37px); */
          > span {
             color: #ff5a52;
             font-weight: bold;

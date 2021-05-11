@@ -4,10 +4,10 @@ const Styles = {
    CreateNewItem: styled.li`
       display: flex;
       align-items: center;
-      margin: 8px 0px 0px 8px;
+      margin: 8px 2px;
       color: #202020;
       font-weight: 500;
-      font-size: 12px;
+      font-size: 14px;
       line-height: 14px;
       cursor: pointer;
       > span {
@@ -15,7 +15,9 @@ const Styles = {
          margin-left: 6px;
       }
       &:hover {
+         background: #fff;
          color: #367bf5;
+         border-radius: 4px;
       }
    `,
    CreateNewWrapper: styled.ul`
@@ -47,7 +49,6 @@ const Styles = {
          font-size: 14px;
          line-height: 16px;
          letter-spacing: 0.44px;
-         color: #202020;
          padding: 8px 0px 6px 12px;
       }
       @media only screen and (max-width: 767px) {
@@ -62,10 +63,10 @@ const Styles = {
             align-items: center;
             padding: 8px;
             margin: 2px 8px;
+
             > span {
                font-weight: 500;
                font-size: 14px;
-               color: #202020;
             }
          }
       }
