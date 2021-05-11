@@ -130,6 +130,8 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
                {serving.id === state.title.defaultServing.id && (
                   <Tag>Default</Tag>
                )}
+               <Spacer size="14px" xAxis />
+               {serving.isDemo && <Tag>Demo</Tag>}
             </Stack>
             <Stack>
                {serving.isValid ? (

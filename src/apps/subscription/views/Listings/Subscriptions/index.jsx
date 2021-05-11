@@ -62,6 +62,19 @@ export const Subscriptions = () => {
             )
          },
       },
+      {
+         width: 150,
+         title: 'Demo',
+         field: 'isDemo',
+         headerFilter: true,
+         formatter: 'tickCross',
+         headerTooltip: column => {
+            const identifier = 'listing_subscription_column_isDemo'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
    ]
 
    const rowClick = (e, row) => {
@@ -108,7 +121,7 @@ export const Subscriptions = () => {
                ref={tableRef}
                columns={columns}
                rowClick={rowClick}
-               options={{ ...options, pagination: 'local', paginationSize: 10 }}
+               options={{ ...options, layout: 'fitColumns', maxHeight: 480 }}
             />
          )}
       </ResponsiveFlex>
