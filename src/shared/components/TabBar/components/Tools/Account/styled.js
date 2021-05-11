@@ -11,7 +11,7 @@ export const Styled = {
       backdrop-filter: blur(44.37px);
       border-radius: 10px;
       color: #919699;
-      z-index: 100;
+      z-index: 9999;
       display: ${({ spinner }) => (spinner ? 'grid' : 'block')};
       place-items: ${({ spinner }) => (spinner ? 'center' : null)};
       min-height: ${({ spinner }) => (spinner ? '80px' : 'auto')};

@@ -29,7 +29,7 @@ const Styles = {
       border: 1px solid #f2f3f3;
       backdrop-filter: blur(44.37px);
       border-radius: 10px;
-      z-index: 100;
+      z-index: 9999;
       > span {
          font-style: normal;
          font-weight: bold;
