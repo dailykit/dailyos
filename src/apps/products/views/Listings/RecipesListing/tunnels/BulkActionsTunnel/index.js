@@ -22,7 +22,7 @@ import { DeleteIcon, RemoveIcon } from '../../../../../assets/icons'
 import { Tooltip } from '../../../../../../../shared/components'
 import ConfirmationPopup from './confirmationPopup'
 import { SIMPLE_RECIPE_UPDATE } from '../../../../../graphql/mutations'
-import { CUISINES } from '../../../../../graphql/subscriptions'
+import { CUISINES_NAMES } from '../../../../../graphql/subscriptions'
 const address = 'apps.menu.views.listings.productslisting.'
 
 export default function BulkActionsTunnel({
@@ -65,7 +65,7 @@ export default function BulkActionsTunnel({
       },
    })
    //Subscription
-   const { loading, error } = useSubscription(CUISINES, {
+   const { loading, error } = useSubscription(CUISINES_NAMES, {
       onSubscriptionData: data => {
          const newCuisine = data.subscriptionData.data.cuisineNames.map(x => {
             x.payload = { cuisine: x.title }
