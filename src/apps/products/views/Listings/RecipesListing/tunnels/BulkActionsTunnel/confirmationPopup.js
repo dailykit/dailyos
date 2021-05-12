@@ -53,8 +53,10 @@ export default function ConfirmationPopup({
       }
    }
    const onClosePopup = () => {
-      setShowPopup(false)
-      setBulkActions({})
+      if (showPopup) {
+         setShowPopup(false)
+         setBulkActions({})
+      }
    }
    return (
       <Popup show={showPopup} clickOutsidePopup={() => onClosePopup()}>
