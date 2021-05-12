@@ -3,6 +3,7 @@ import moment from 'moment'
 import { toast } from 'react-toastify'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   Tag,
    Flex,
    Form,
    Text,
@@ -37,16 +38,14 @@ const DeliveryDay = ({ id }) => {
    const [areasTotal, setAreasTotal] = React.useState(0)
    const [customersTotal, setCustomersTotal] = React.useState(0)
    const [occurencesTotal, setOccurencesTotal] = React.useState(0)
-   const { error, loading } = useSubscription(SUBSCRIPTION, {
-      variables: {
-         id,
-      },
-      onSubscriptionData: ({
-         subscriptionData: { data: { subscription = {} } = {} } = {},
-      }) => {
-         setEndDate(subscription.endDate)
-      },
-   })
+   const { error, loading, data: { subscription = {} } = {} } = useSubscription(
+      SUBSCRIPTION,
+      {
+         variables: {
+            id,
+         },
+      }
+   )
 
    if (loading) return <InlineLoader />
    if (error) {
@@ -66,13 +65,14 @@ const DeliveryDay = ({ id }) => {
             <Flex as="section" container alignItems="center">
                <Text as="title">Subscription</Text>
                <Tooltip identifier="form_subscription_section_delivery_day_heading" />
+               {subscription?.isDemo && <Tag>Demo</Tag>}
             </Flex>
             <IconButton size="sm" type="outline" onClick={() => openTunnel(1)}>
                <EditIcon />
             </IconButton>
          </Flex>
          <Text as="subtitle">
-            Ends on - {moment(endDate).format('MMM DD, YYYY')}
+            Ends on - {moment(subscription?.endDate).format('MMM DD, YYYY')}
          </Text>
          <HorizontalTabs id="subscriptionTabs">
             <HorizontalTabList>
@@ -82,20 +82,32 @@ const DeliveryDay = ({ id }) => {
             </HorizontalTabList>
             <HorizontalTabPanels id="subscriptionTabPanels">
                <HorizontalTabPanel>
-                  <Occurences id={id} setOccurencesTotal={setOccurencesTotal} />
+                  <Occurences
+                     id={subscription?.id}
+                     setOccurencesTotal={setOccurencesTotal}
+                  />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
-                  <DeliveryAreas id={id} setAreasTotal={setAreasTotal} />
+                  <DeliveryAreas
+                     id={subscription?.id}
+                     setAreasTotal={setAreasTotal}
+                  />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
-                  <Customers id={id} setCustomersTotal={setCustomersTotal} />
+                  <Customers
+                     id={subscription?.id}
+                     setCustomersTotal={setCustomersTotal}
+                  />
                </HorizontalTabPanel>
             </HorizontalTabPanels>
          </HorizontalTabs>
          <ErrorBoundary rootRoute="/subscription/subscriptions">
             <Tunnels tunnels={tunnels}>
                <Tunnel layer="1">
-                  <EditSubscriptionTunnel id={id} closeTunnel={closeTunnel} />
+                  <EditSubscriptionTunnel
+                     id={subscription?.id}
+                     closeTunnel={closeTunnel}
+                  />
                </Tunnel>
             </Tunnels>
          </ErrorBoundary>
