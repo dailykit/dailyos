@@ -241,6 +241,7 @@ class DataTable extends React.Component {
 
    removeSelectedRow = id => {
       this.tableRef.current.table.deselectRow(id)
+   }
    handleGroupBy = value => {
       this.setState(
          {

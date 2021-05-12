@@ -9,7 +9,14 @@ export const INGREDIENTS_COUNT = gql`
       }
    }
 `
-
+export const CUISINES = gql`
+   subscription Cuisines {
+      cuisineNames {
+         id
+         title: name
+      }
+   }
+`
 export const S_INGREDIENTS = gql`
    subscription Ingredients {
       ingredients(

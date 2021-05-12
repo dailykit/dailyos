@@ -1,5 +1,5 @@
 import React from 'react'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
    Spacer,
    TunnelHeader,
@@ -9,6 +9,8 @@ import {
    Dropdown,
    IconButton,
    ButtonGroup,
+   RadioGroup,
+   ClearIcon,
 } from '@dailykit/ui'
 import { Trans, useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -20,7 +22,7 @@ import { DeleteIcon, RemoveIcon } from '../../../../../assets/icons'
 import { Tooltip } from '../../../../../../../shared/components'
 import ConfirmationPopup from './confirmationPopup'
 import { SIMPLE_RECIPE_UPDATE } from '../../../../../graphql/mutations'
-
+import { CUISINES } from '../../../../../graphql/subscriptions'
 const address = 'apps.menu.views.listings.productslisting.'
 
 export default function BulkActionsTunnel({
@@ -34,10 +36,17 @@ export default function BulkActionsTunnel({
 
    const [showPopup, setShowPopup] = React.useState(false)
    const [popupHeading, setPopupHeading] = React.useState('')
+   const [initialBulkAction, setInitialBulkAction] = React.useState({
+      isPublished: false,
+      dropdownDefaultOption: null,
+   })
+   const [bulkActions, setBulkActions] = React.useState({})
+   const [cuisineNames, setCuisineNames] = React.useState([])
+   const radioPublishOption = [
+      { id: 1, title: 'Publish', payload: { isPublished: true } },
+      { id: 2, title: 'Unpublish', payload: { isPublished: false } },
+   ]
 
-   const [bulkData, setBulkData] = React.useState({})
-
-   const [mutationData, setMutationData] = React.useState({})
    const removeRecipe = index => {
       console.log('index', index)
       removeSelectedRow(index)
@@ -55,22 +64,28 @@ export default function BulkActionsTunnel({
          //  logger(error)
       },
    })
-
+   //Subscription
+   const { loading, error } = useSubscription(CUISINES, {
+      onSubscriptionData: data => {
+         const newCuisine = data.subscriptionData.data.cuisineNames.map(x => {
+            x.payload = { cuisine: x.title }
+            return x
+         })
+         setCuisineNames(newCuisine)
+      },
+   })
+   const searchedOption = option => console.log(option)
    return (
       <>
          <TunnelHeader
             title="Apply Bulk Actions"
             right={{
                action: function () {
-                  console.log('this is bulk', bulkData)
-                  simpleRecipeUpdate({
-                     variables: {
-                        ids: selectedRows.map(idx => idx.id),
-                        _set: bulkData,
-                     },
-                  })
+                  setShowPopup(true)
+                  setPopupHeading('Delete selected Recipes')
+                  setBulkActions({ isArchived: true })
                },
-               title: 'Save Changes',
+               title: 'Delete Selected Data',
             }}
             close={() => close(1)}
             tooltip={
@@ -79,12 +94,13 @@ export default function BulkActionsTunnel({
          />
          <TunnelBody>
             <ConfirmationPopup
-               setBulkData={setBulkData}
+               bulkActions={bulkActions}
+               setBulkActions={setBulkActions}
                showPopup={showPopup}
                setShowPopup={setShowPopup}
                popupHeading={popupHeading}
                selectedRows={selectedRows}
-               mutationData={mutationData}
+               simpleRecipeUpdate={simpleRecipeUpdate}
             />
             <Flex
                container
@@ -145,54 +161,128 @@ export default function BulkActionsTunnel({
                   </div>
                </Flex>
                <Flex width="50%" padding="0px 0px 20px 20px">
-                  <Text as="h3">Bulk Actions</Text>
+                  <Flex container justifyContent="space-between">
+                     <Text as="h3">Bulk Actions</Text>
+                     <TextButton
+                        type="solid"
+                        size="sm"
+                        onClick={() => {
+                           console.log('this is all clear')
+                           setInitialBulkAction(prevState => ({
+                              ...prevState,
+                              isPublished: !prevState.isPublished,
+                              dropdownDefaultOption: null,
+                           }))
+                           setBulkActions({})
+                        }}
+                     >
+                        Clear All Actions
+                     </TextButton>
+                  </Flex>
                   <Spacer size="16px" />
-                  <Text as="text1">Change Publish Status</Text>
+                  <Flex container alignItems="center">
+                     <Text as="text1">Change Publish Status</Text>
+                     <TextButton
+                        type="ghost"
+                        size="sm"
+                        onClick={() => {
+                           console.log('publish clear')
+                           setInitialBulkAction(prevState => ({
+                              ...prevState,
+                              isPublished: !prevState.isPublished,
+                           }))
+                           setBulkActions(prevState => {
+                              delete prevState.isPublished
+                              return prevState
+                           })
+                        }}
+                     >
+                        Clear
+                     </TextButton>
+                  </Flex>
                   <Spacer size="10px" />
                   <ButtonGroup align="left">
-                     <TextButton
-                        type="solid"
-                        size="md"
-                        onClick={() => {
-                           setShowPopup(true)
-                           setPopupHeading('Make All Published')
-                           setMutationData({ isPublished: true })
+                     <RadioGroup
+                        options={radioPublishOption}
+                        active={initialBulkAction.isPublished}
+                        onChange={option => {
+                           if (option !== null) {
+                              console.log(option.payload)
+                              setBulkActions(prevState => ({
+                                 ...prevState,
+                                 ...option.payload,
+                              }))
+                              return
+                           }
+                           setBulkActions(prevState => {
+                              const newActions = { ...prevState }
+                              delete newActions['isPublished']
+                              return newActions
+                           })
                         }}
-                     >
-                        Make All Published
-                     </TextButton>
-
-                     <TextButton
-                        type="solid"
-                        size="md"
-                        onClick={() => {
-                           setShowPopup(true)
-                           setPopupHeading('Make All Unpublished')
-                           setMutationData({ isPublished: false })
-                        }}
-                     >
-                        Make All Unpublished
-                     </TextButton>
+                     />
                   </ButtonGroup>
                   <br />
                   <Flex container alignItems="center">
-                     <Text as="text1" margin="20px">
-                        Remove selected Recipes
-                     </Text>
-                     <IconButton
+                     <Text as="text1">Cuisine Type</Text>
+                     <TextButton
                         type="ghost"
+                        size="sm"
                         onClick={() => {
-                           setShowPopup(true)
-                           setPopupHeading('Delete selected Recipes')
-                           setMutationData({ isArchived: true })
+                           console.log('publish clear')
+                           setInitialBulkAction(prevState => ({
+                              ...prevState,
+                              dropdownDefaultOption: null,
+                           }))
+                           setBulkActions(prevState => {
+                              delete prevState.cuisine
+                              return prevState
+                           })
                         }}
                      >
-                        <DeleteIcon color="#FF5A52" />
-                     </IconButton>
+                        Clear
+                     </TextButton>
+                  </Flex>
+                  <Spacer size="10px" />
+                  <Dropdown
+                     type="single"
+                     defaultValue={initialBulkAction.dropdownDefaultOption}
+                     options={cuisineNames}
+                     searchedOption={searchedOption}
+                     selectedOption={option => {
+                        setInitialBulkAction(prevState => ({
+                           ...prevState,
+                           dropdownDefaultOption: option,
+                        }))
+                        setBulkActions(prevState => ({
+                           ...prevState,
+                           ...option.payload,
+                        }))
+                     }}
+                     placeholder="type what you're looking for..."
+                  />
+                  <Spacer size="16px" />
+                  <Flex container alignItems="center" justifyContent="flex-end">
+                     <TextButton
+                        type="solid"
+                        size="md"
+                        disabled={
+                           selectedRows.length > 0 &&
+                           Object.keys(bulkActions).length !== 0
+                              ? false
+                              : true
+                        }
+                        onClick={() => {
+                           setShowPopup(true)
+                           setPopupHeading('Save All Changes')
+                           console.log(bulkActions)
+                        }}
+                     >
+                        Save Changes
+                     </TextButton>
                   </Flex>
                </Flex>
             </Flex>
-            <Spacer size="16px" />
          </TunnelBody>
       </>
    )

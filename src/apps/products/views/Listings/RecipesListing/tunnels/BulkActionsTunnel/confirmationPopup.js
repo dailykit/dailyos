@@ -18,8 +18,9 @@ export default function ConfirmationPopup({
    setShowPopup,
    popupHeading,
    selectedRows,
-   mutationData,
-   setBulkData,
+   bulkActions,
+   setBulkActions,
+   simpleRecipeUpdate,
 }) {
    const [isValid, setIsValid] = React.useState(false)
    const [inputValue, setInputValue] = React.useState('')
@@ -36,7 +37,14 @@ export default function ConfirmationPopup({
 
    const checkValidation = () => {
       if (inputValue == selectedRows.length) {
-         setBulkData(prevState => ({ ...prevState, ...mutationData }))
+         simpleRecipeUpdate({
+            variables: {
+               ids: selectedRows.map(idx => idx.id),
+               _set: bulkActions,
+            },
+         })
+         console.log(bulkActions)
+         setBulkActions({})
          setInputValue('')
          setShowPopup(false)
       } else {
@@ -44,10 +52,16 @@ export default function ConfirmationPopup({
          console.log('invalid')
       }
    }
-
+   const onClosePopup = () => {
+      setShowPopup(false)
+      setBulkActions({})
+   }
    return (
-      <Popup show={showPopup}>
-         <Popup.Text as="h3">{popupHeading}</Popup.Text>
+      <Popup show={showPopup} clickOutsidePopup={() => onClosePopup()}>
+         <Popup.Actions>
+            <Popup.Text type="danger">{popupHeading}</Popup.Text>
+            <Popup.Close closePopup={() => onClosePopup()} />
+         </Popup.Actions>
          <Popup.ConfirmText>
             You’re making a change for {selectedRows.length} recipes. Type the
             number of recipes <br />
