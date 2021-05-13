@@ -1,5 +1,6 @@
 import React from 'react'
 import axios from 'axios'
+import moment from 'moment'
 import { toast } from 'react-toastify'
 import htmlToReact from 'html-to-react'
 import { useParams } from 'react-router-dom'
@@ -10,10 +11,15 @@ import {
    Tag,
    Flex,
    Text,
+   Form,
    Spacer,
    Filler,
+   Tunnel,
+   Tunnels,
+   useTunnel,
    TextButton,
    IconButton,
+   TunnelHeader,
    HorizontalTab,
    HorizontalTabs,
    HorizontalTabList,
@@ -26,7 +32,7 @@ import { formatDate } from '../../utils'
 import { findAndSelectSachet } from './methods'
 import { ResponsiveFlex, Styles } from './styled'
 import { QUERIES, MUTATIONS } from '../../graphql'
-import { PrintIcon, UserIcon } from '../../assets/icons'
+import { EditIcon, PrintIcon, UserIcon } from '../../assets/icons'
 import { useConfig, useOrder } from '../../context'
 import { currencyFmt, logger } from '../../../../shared/utils'
 import { useAccess, useAuth, useTabs } from '../../../../shared/providers'
@@ -51,6 +57,7 @@ const Order = () => {
    const { state: config } = useConfig()
    const { state, switchView, dispatch } = useOrder()
    const [tabIndex, setTabIndex] = React.useState(0)
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [isThirdParty, setIsThirdParty] = React.useState(false)
    const [updateOrder] = useMutation(MUTATIONS.ORDER.UPDATE, {
       onCompleted: () => {
@@ -330,7 +337,6 @@ const Order = () => {
       return <ErrorState message="Failed to fetch order details!" />
    }
    const types = groupBy(products, 'productOptionType')
-   console.log('🚀 ~ file: index.jsx ~ line 333 ~ Order ~ types', types)
    return (
       <Flex>
          <Spacer size="16px" />
@@ -430,6 +436,7 @@ const Order = () => {
                      <Spacer size="32px" xAxis />
                      <Flex as="section" container alignItems="center">
                         <TimeSlot
+                           openTunnel={openTunnel}
                            type={order.fulfillmentType}
                            time={order.cart.fulfillmentInfo?.slot}
                         />
@@ -602,13 +609,20 @@ const Order = () => {
                </HorizontalTabPanels>
             </HorizontalTabs>
          )}
+
+         <EditDeliveryTunnel
+            tunnels={tunnels}
+            cartId={order.cartId}
+            closeTunnel={closeTunnel}
+            fulfillment={order.cart?.fulfillmentInfo}
+         />
       </Flex>
    )
 }
 
 export default Order
 
-const TimeSlot = ({ type, time = {} }) => {
+const TimeSlot = ({ openTunnel, type, time = {} }) => {
    return (
       <Flex as="section" container alignItems="center">
          <Flex container alignItems="center">
@@ -616,28 +630,137 @@ const TimeSlot = ({ type, time = {} }) => {
             <Tooltip identifier="order_details_date_fulfillment" />
          </Flex>
          <Text as="p">
-            {time?.from
-               ? formatDate(time.from, {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                 })
-               : 'N/A'}
-            ,&nbsp;
-            {time.from
-               ? formatDate(time.from, {
-                    minute: 'numeric',
-                    hour: 'numeric',
-                 })
-               : 'N/A'}
-            -
-            {time.to
-               ? formatDate(time.to, {
-                    minute: 'numeric',
-                    hour: 'numeric',
-                 })
-               : 'N/A'}
+            {time?.from && moment(time?.from).format('MMM DD, YYYY')}
+            &nbsp;
+            {time?.from ? moment(time?.from).format('hh:mmA') : 'N/A'}-
+            {time?.to ? moment(time?.to).format('hh:mmA') : 'N/A'}
          </Text>
+         <Spacer size="16px" xAxis />
+         <IconButton type="ghost" size="sm" onClick={() => openTunnel(1)}>
+            <EditIcon color="#367BF5" />
+         </IconButton>
       </Flex>
+   )
+}
+
+const evalTime = (date, time) => {
+   const [hour, minute] = time.split(':')
+   return moment(date).hour(hour).minute(minute).second(0).toISOString()
+}
+
+const EditDeliveryTunnel = ({
+   cartId,
+   tunnels,
+   closeTunnel,
+   fulfillment = {},
+}) => {
+   const [form, setForm] = React.useState({
+      date: '',
+      from: '',
+      to: '',
+   })
+   const [updateCart] = useMutation(MUTATIONS.CART.UPDATE.ONE, {
+      onCompleted: () => {
+         toast.success('Successfully updated the order!')
+         closeTunnel(1)
+      },
+      onError: error => {
+         logger(error)
+         toast.error('Failed to update the order')
+      },
+   })
+
+   React.useEffect(() => {
+      if (
+         fulfillment &&
+         !isEmpty(fulfillment) &&
+         fulfillment.slot?.from &&
+         fulfillment.slot?.to
+      ) {
+         setForm({
+            date: moment(fulfillment.slot?.from).format('YYYY-MM-DD'),
+            from: moment(fulfillment.slot?.from).format('HH:mm'),
+            to: moment(fulfillment.slot?.to).format('HH:mm'),
+         })
+      }
+   }, [fulfillment])
+
+   const onSubmit = () => {
+      let from = evalTime(form.date, form.from)
+      let to = evalTime(form.date, form.to)
+      if (moment(from).unix() > moment(to).unix()) {
+         toast.error('Delivery from must be less than delivery till time.')
+         return
+      }
+      const result = {
+         type: fulfillment.type,
+         slot: {
+            from: evalTime(form.date, form.from),
+            to: evalTime(form.date, form.to),
+         },
+      }
+      updateCart({
+         variables: {
+            pk_columns: { id: cartId },
+            _set: { fulfillmentInfo: result },
+         },
+      })
+   }
+
+   const handleChange = e => {
+      const { name, value } = e.target
+      setForm(existing => ({ ...existing, [name]: value }))
+   }
+
+   return (
+      <Tunnels tunnels={tunnels}>
+         <Tunnel layer={1} size="sm">
+            <TunnelHeader
+               title="Edit Delivery Time"
+               close={() => closeTunnel(1)}
+               right={{
+                  title: 'Save',
+                  action: onSubmit,
+               }}
+            />
+            <Flex padding="16px" overflowY="auto" height="calc(100vh - 195px)">
+               <Form.Group>
+                  <Form.Label htmlFor="date" title="date">
+                     Date
+                  </Form.Label>
+                  <Form.Date
+                     id="date"
+                     name="date"
+                     value={form.date}
+                     onChange={handleChange}
+                  />
+               </Form.Group>
+               <Spacer size="16px" />
+               <Form.Group>
+                  <Form.Label htmlFor="from" title="from">
+                     From
+                  </Form.Label>
+                  <Form.Time
+                     id="from"
+                     name="from"
+                     value={form.from}
+                     onChange={handleChange}
+                  />
+               </Form.Group>
+               <Spacer size="16px" />
+               <Form.Group>
+                  <Form.Label htmlFor="to" title="to">
+                     To
+                  </Form.Label>
+                  <Form.Time
+                     id="to"
+                     name="to"
+                     value={form.to}
+                     onChange={handleChange}
+                  />
+               </Form.Group>
+            </Flex>
+         </Tunnel>
+      </Tunnels>
    )
 }
