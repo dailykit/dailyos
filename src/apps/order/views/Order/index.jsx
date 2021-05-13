@@ -32,10 +32,10 @@ import { formatDate } from '../../utils'
 import { findAndSelectSachet } from './methods'
 import { ResponsiveFlex, Styles } from './styled'
 import { QUERIES, MUTATIONS } from '../../graphql'
-import { EditIcon, PrintIcon, UserIcon } from '../../assets/icons'
 import { useConfig, useOrder } from '../../context'
-import { currencyFmt, logger } from '../../../../shared/utils'
+import { EditIcon, PrintIcon, UserIcon } from '../../assets/icons'
 import { useAccess, useAuth, useTabs } from '../../../../shared/providers'
+import { currencyFmt, logger, parseAddress } from '../../../../shared/utils'
 import {
    Tooltip,
    ErrorState,
@@ -58,6 +58,7 @@ const Order = () => {
    const { state, switchView, dispatch } = useOrder()
    const [tabIndex, setTabIndex] = React.useState(0)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+   const [addressTunnels, openAddressTunnel, closeAddressTunnel] = useTunnel(1)
    const [isThirdParty, setIsThirdParty] = React.useState(false)
    const [updateOrder] = useMutation(MUTATIONS.ORDER.UPDATE, {
       onCompleted: () => {
@@ -523,7 +524,8 @@ const Order = () => {
                </Flex>
             </ResponsiveFlex>
          </ResponsiveFlex>
-         <Flex margin="16px 0" padding="0 16px">
+         <Spacer size="8px" />
+         <Flex padding="0 16px">
             {order.cart.source === 'subscription' && (
                <>
                   <Text as="text1">Details: </Text>
@@ -532,6 +534,23 @@ const Order = () => {
                      {order.cart.subscriptionOccurence?.serving?.size}, count{' '}
                      {order.cart.subscriptionOccurence?.itemCount?.count}
                   </span>
+               </>
+            )}
+         </Flex>
+         <Spacer size="8px" />
+         <Flex padding="0 16px" container alignItems="center">
+            <IconButton
+               type="ghost"
+               size="sm"
+               onClick={() => openAddressTunnel(1)}
+            >
+               <EditIcon color="#367BF5" />
+            </IconButton>
+            {order.cart?.address && !isEmpty(order.cart?.address) && (
+               <>
+                  <Text as="text1">Address: </Text>
+                  <Spacer size="14px" xAxis />
+                  <p>{parseAddress(order.cart?.address)}</p>
                </>
             )}
          </Flex>
@@ -616,6 +635,12 @@ const Order = () => {
             closeTunnel={closeTunnel}
             fulfillment={order.cart?.fulfillmentInfo}
          />
+         <EditAddressTunnel
+            cartId={order.cartId}
+            tunnels={addressTunnels}
+            address={order.cart?.address}
+            closeTunnel={closeAddressTunnel}
+         />
       </Flex>
    )
 }
@@ -659,7 +684,7 @@ const EditDeliveryTunnel = ({
       from: '',
       to: '',
    })
-   const [updateCart] = useMutation(MUTATIONS.CART.UPDATE.ONE, {
+   const [updateCart, { loading }] = useMutation(MUTATIONS.CART.UPDATE.ONE, {
       onCompleted: () => {
          toast.success('Successfully updated the order!')
          closeTunnel(1)
@@ -721,6 +746,7 @@ const EditDeliveryTunnel = ({
                right={{
                   title: 'Save',
                   action: onSubmit,
+                  isLoading: loading,
                }}
             />
             <Flex padding="16px" overflowY="auto" height="calc(100vh - 195px)">
@@ -757,6 +783,142 @@ const EditDeliveryTunnel = ({
                      name="to"
                      value={form.to}
                      onChange={handleChange}
+                  />
+               </Form.Group>
+            </Flex>
+         </Tunnel>
+      </Tunnels>
+   )
+}
+
+const EditAddressTunnel = ({ cartId, tunnels, closeTunnel, address = {} }) => {
+   const [form, setForm] = React.useState({
+      line1: '',
+      line2: '',
+      city: '',
+      state: '',
+      country: '',
+      zipcode: '',
+   })
+   const [updateCart, { loading }] = useMutation(MUTATIONS.CART.UPDATE.ONE, {
+      onCompleted: () => {
+         toast.success('Successfully updated the order!')
+         closeTunnel(1)
+      },
+      onError: error => {
+         logger(error)
+         toast.error('Failed to update the order')
+      },
+   })
+
+   React.useEffect(() => {
+      if (address && !isEmpty(address)) {
+         setForm(address)
+      }
+   }, [address])
+
+   const onSubmit = () => {
+      updateCart({
+         variables: {
+            pk_columns: { id: cartId },
+            _set: { address: form },
+         },
+      })
+   }
+
+   const handleChange = e => {
+      const { name, value } = e.target
+      setForm(existing => ({ ...existing, [name]: value }))
+   }
+
+   return (
+      <Tunnels tunnels={tunnels}>
+         <Tunnel layer={1} size="sm">
+            <TunnelHeader
+               title="Edit Address"
+               close={() => closeTunnel(1)}
+               right={{
+                  title: 'Save',
+                  action: onSubmit,
+                  isLoading: loading,
+               }}
+            />
+            <Flex padding="16px" overflowY="auto" height="calc(100vh - 195px)">
+               <Form.Group>
+                  <Form.Label htmlFor="line1" title="line1">
+                     Apartment/Building Info/Street info*
+                  </Form.Label>
+                  <Form.Text
+                     id="line1"
+                     name="line1"
+                     value={form.line1}
+                     onChange={handleChange}
+                     placeholder="Apartment/Building Info/Street info*"
+                  />
+               </Form.Group>
+               <Spacer size="16px" />
+               <Form.Group>
+                  <Form.Label htmlFor="line2" title="line2">
+                     Line 2
+                  </Form.Label>
+                  <Form.Text
+                     id="line2"
+                     name="line2"
+                     value={form.line2}
+                     onChange={handleChange}
+                     placeholder="Enter line 2"
+                  />
+               </Form.Group>
+               <Spacer size="16px" />
+               <Form.Group>
+                  <Form.Label htmlFor="city" title="city">
+                     City
+                  </Form.Label>
+                  <Form.Text
+                     id="city"
+                     name="city"
+                     value={form.city}
+                     onChange={handleChange}
+                     placeholder="Enter city"
+                  />
+               </Form.Group>
+               <Spacer size="16px" />
+               <Form.Group>
+                  <Form.Label htmlFor="zipcode" title="zipcode">
+                     Zipcode
+                  </Form.Label>
+                  <Form.Text
+                     id="zipcode"
+                     name="zipcode"
+                     value={form.zipcode}
+                     onChange={handleChange}
+                     placeholder="Enter zipcode"
+                  />
+               </Form.Group>
+               <Spacer size="16px" />
+               <Form.Group>
+                  <Form.Label htmlFor="state" title="state">
+                     State
+                  </Form.Label>
+                  <Form.Text
+                     id="state"
+                     name="state"
+                     value={form.state}
+                     onChange={handleChange}
+                     placeholder="Enter state"
+                  />
+               </Form.Group>
+               <Spacer size="16px" />
+               <Form.Group>
+                  <Form.Label htmlFor="country" title="country">
+                     Country
+                  </Form.Label>
+                  <Form.Text
+                     id="country"
+                     name="country"
+                     value={form.country}
+                     onChange={handleChange}
+                     placeholder="Enter country"
                   />
                </Form.Group>
             </Flex>
