@@ -416,3 +416,10 @@ export const SIMPLE_RECIPE_UPDATE = gql`
       }
    }
 `
+export const CREATE_CUISINE_NAME = gql`
+   mutation CreateCuisineName($name: String) {
+      createCuisineName(objects: { name: $name }) {
+         affected_rows
+      }
+   }
+`
