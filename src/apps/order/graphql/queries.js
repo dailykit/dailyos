@@ -400,7 +400,7 @@ export const QUERIES = {
                            }
                         }
                         packedSachets: childs_aggregate(
-                           where: { status: { _eq: "READY" } }
+                           where: { status: { _in: ["READY", "PACKED"] } }
                         ) {
                            aggregate {
                               count
