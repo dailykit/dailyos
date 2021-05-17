@@ -8,6 +8,12 @@ import {
    Spacer,
    Text,
    TextButton,
+   ButtonGroup,
+   Dropdown,
+   Tunnel,
+   Tunnels,
+   useTunnel,
+   TunnelHeader,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -19,6 +25,7 @@ import {
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { logger, randomSuffix } from '../../../../../shared/utils'
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
+import { BulkActionsTunnel, ApplyFilterTunnel } from './tunnels'
 import {
    CREATE_SIMPLE_RECIPE,
    DELETE_SIMPLE_RECIPES,
@@ -27,14 +34,20 @@ import {
 import ServingsCount from '../../../utils/countFormatter'
 import tableOptions from '../tableOption'
 import { ResponsiveFlex } from '../styled'
+import { useRef } from 'react'
+import FilterIcon from '../../../assets/icons/Filter'
 
 const address = 'apps.products.views.listings.recipeslisting.'
 
 const RecipesListing = () => {
+   const dataTableRef = useRef()
    const { t } = useTranslation()
    const { addTab, tab } = useTabs()
+   const [selectedRows, setSelectedRows] = React.useState([])
 
+   const [tunnels, openTunnel, closeTunnel, visible] = useTunnel(2)
    // Queries and Mutations
+
    const {
       loading,
       data: { simpleRecipes: recipes = [] } = {},
@@ -90,14 +103,31 @@ const RecipesListing = () => {
       }
    }
 
+   const removeSelectedRow = id => {
+      dataTableRef.current.removeSelectedRow(id)
+   }
+
    if (!loading && error) {
       toast.error('Failed to fetch Recipes!')
       logger(error)
       return <ErrorState />
    }
-
+   console.log('this is selected rows', selectedRows)
    return (
       <ResponsiveFlex maxWidth="1280px" margin="0 auto">
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1} size="lg">
+               <BulkActionsTunnel
+                  removeSelectedRow={removeSelectedRow}
+                  close={closeTunnel}
+                  selectedRows={selectedRows}
+                  setSelectedRows={setSelectedRows}
+               />
+            </Tunnel>
+            <Tunnel layer={2} size="lg" visible={visible}>
+               <ApplyFilterTunnel close={closeTunnel} />
+            </Tunnel>
+         </Tunnels>
          <Flex
             container
             alignItems="center"
@@ -110,39 +140,52 @@ const RecipesListing = () => {
                </Text>
                <Tooltip identifier="recipes_list_heading" />
             </Flex>
+            <ComboButton type="solid" onClick={createRecipeHandler}>
+               <AddIcon color="#fff" size={24} /> Create Recipe
+            </ComboButton>
          </Flex>
          {loading ? (
             <InlineLoader />
          ) : (
             <DataTable
+               ref={dataTableRef}
+               openTunnel={openTunnel}
                data={recipes}
                addTab={addTab}
                deleteRecipeHandler={deleteRecipeHandler}
                createRecipeHandler={createRecipeHandler}
+               selectedRows={selectedRows}
+               setSelectedRows={setSelectedRows}
             />
          )}
       </ResponsiveFlex>
    )
 }
 
-function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
-   const tableRef = React.useRef()
-   const { tooltip } = useTooltip()
-
-   const columns = [
+class DataTable extends React.Component {
+   constructor(props) {
+      super(props)
+      this.state = {
+         groups: [],
+      }
+      this.tableRef = React.createRef()
+      this.handleRowSelection = this.handleRowSelection.bind(this)
+   }
+   columns = [
+      {
+         formatter: 'rowSelection',
+         titleFormatter: 'rowSelection',
+         hozAlign: 'center',
+         headerSort: false,
+         width: 15,
+      },
       {
          title: 'Name',
          field: 'name',
          headerFilter: true,
          cellClick: (e, cell) => {
             const { name, id } = cell._cell.row.data
-            addTab(name, `/products/recipes/${id}`)
-         },
-         headerTooltip: function (column) {
-            const identifier = 'recipe_listing_name_column'
-            return (
-               tooltip(identifier)?.description || column.getDefinition().title
-            )
+            this.props.addTab(name, `/products/recipes/${id}`)
          },
          cssClass: 'colHover',
       },
@@ -150,6 +193,13 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
       {
          title: 'Cooking Time',
          field: 'cookingTime',
+         headerFilter: true,
+         hozAlign: 'right',
+         headerHozAlign: 'right',
+      },
+      {
+         title: 'Cuisine type',
+         field: 'cuisine',
          headerFilter: true,
          hozAlign: 'right',
          headerHozAlign: 'right',
@@ -171,6 +221,7 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
          hozAlign: 'center',
          headerHozAlign: 'center',
          width: 150,
+         headerFilter: true,
       },
       {
          title: 'Actions',
@@ -179,36 +230,57 @@ function DataTable({ data, addTab, deleteRecipeHandler, createRecipeHandler }) {
          hozAlign: 'center',
          headerHozAlign: 'center',
          formatter: reactFormatter(
-            <DeleteRecipe onDelete={deleteRecipeHandler} />
+            <DeleteRecipe onDelete={this.props.deleteRecipeHandler} />
          ),
          width: 150,
       },
    ]
+   handleRowSelection = rows => {
+      this.props.setSelectedRows(rows)
+   }
 
-   return (
-      <>
-         <Flex container alignItems="center" justifyContent="space-between">
-            <TextButton
-               type="outline"
-               onClick={() => tableRef.current.table.clearHeaderFilter()}
-            >
-               Clear Filters
-            </TextButton>
-            <ComboButton type="solid" onClick={createRecipeHandler}>
-               <AddIcon color="#fff" size={24} /> Create Recipe
-            </ComboButton>
-         </Flex>
-         <Spacer size="16px" />
-         <ReactTabulator
-            ref={tableRef}
-            columns={columns}
-            data={data}
-            options={tableOptions}
-            data-custom-attr="test-custom-attribute"
-            className="custom-css-class"
-         />
-      </>
-   )
+   removeSelectedRow = id => {
+      this.tableRef.current.table.deselectRow(id)
+   }
+   handleGroupBy = value => {
+      this.setState(
+         {
+            groups: value,
+         },
+         () => {
+            this.tableRef.current.table.setGroupBy(this.state.groups)
+         }
+      )
+   }
+   clearHeaderFilter = () => {
+      this.tableRef.current.table.clearHeaderFilter()
+   }
+   render() {
+      return (
+         <>
+            <Spacer size="5px" />
+            <ActionBar
+               selectedRows={this.props.selectedRows}
+               openTunnel={this.props.openTunnel}
+               handleGroupBy={this.handleGroupBy}
+               clearHeaderFilter={this.clearHeaderFilter}
+            />
+            <Spacer size="30px" />
+            <ReactTabulator
+               ref={this.tableRef}
+               columns={this.columns}
+               data={this.props.data}
+               selectableCheck={() => true}
+               rowSelectionChanged={(data, components) => {
+                  this.handleRowSelection(data)
+               }}
+               options={tableOptions}
+               data-custom-attr="test-custom-attribute"
+               className="custom-css-class"
+            />
+         </>
+      )
+   }
 }
 
 function DeleteRecipe({ cell, onDelete }) {
@@ -218,6 +290,114 @@ function DeleteRecipe({ cell, onDelete }) {
       <IconButton type="ghost" onClick={() => onDelete(recipe)}>
          <DeleteIcon color="#FF5A52" />
       </IconButton>
+   )
+}
+
+const ActionBar = ({
+   selectedRows,
+   openTunnel,
+   handleGroupBy,
+   clearHeaderFilter,
+}) => {
+   const [groupByOptions] = React.useState([
+      { id: 1, title: 'isPublished' },
+      { id: 2, title: 'cuisine' },
+      { id: 3, title: 'author' },
+   ])
+   const selectedOption = option => {
+      const newOptions = option.map(x => x.title)
+      handleGroupBy(newOptions)
+   }
+   const searchedOption = option => console.log(option)
+   return (
+      <>
+         <Flex
+            container
+            as="header"
+            width="100%"
+            justifyContent="space-between"
+         >
+            <Flex
+               container
+               as="header"
+               width="30%"
+               alignItems="center"
+               justifyContent="space-between"
+            >
+               <Text as="subtitle">
+                  {selectedRows.length == 0
+                     ? 'No recipe'
+                     : selectedRows.length == 1
+                     ? `${selectedRows.length} recipe`
+                     : `${selectedRows.length} recipes`}{' '}
+                  selected
+               </Text>
+               <ButtonGroup align="left">
+                  <TextButton
+                     type="ghost"
+                     size="sm"
+                     disabled={selectedRows.length === 0 ? true : false}
+                     onClick={() => openTunnel(1)}
+                  >
+                     APPLY BULK ACTIONS
+                  </TextButton>
+               </ButtonGroup>
+            </Flex>
+            <Flex
+               container
+               as="header"
+               width="70%"
+               alignItems="center"
+               justifyContent="space-around"
+            >
+               <Flex
+                  container
+                  as="header"
+                  width="70%"
+                  alignItems="center"
+                  justifyContent="flex-end"
+               >
+                  <Text as="text1">Group By:</Text>
+                  <Spacer size="5px" xAxis />
+                  <Dropdown
+                     type="multi"
+                     variant="revamp"
+                     disabled={true}
+                     options={groupByOptions}
+                     searchedOption={searchedOption}
+                     selectedOption={selectedOption}
+                     typeName="cuisine"
+                  />
+               </Flex>
+               <Flex
+                  container
+                  as="header"
+                  width="30%"
+                  alignItems="center"
+                  justifyContent="flex-end"
+               >
+                  <Text as="text1">Apply Filter:</Text>
+                  <Spacer size="5px" xAxis />
+                  <IconButton
+                     type="ghost"
+                     size="sm"
+                     onClick={() => openTunnel(2)}
+                  >
+                     <FilterIcon />
+                  </IconButton>
+                  <ButtonGroup align="left">
+                     <TextButton
+                        type="ghost"
+                        size="sm"
+                        onClick={() => clearHeaderFilter()}
+                     >
+                        Clear
+                     </TextButton>
+                  </ButtonGroup>
+               </Flex>
+            </Flex>
+         </Flex>
+      </>
    )
 }
 
