@@ -101,7 +101,7 @@ export const ORDERS_LISTING = gql`
                      source
                      walletAmountUsed
                      loyaltyPointsUsed
-                     cartItemViews(where: { levelType: { _eq: "orderItem" } }) {
+                     cartItems(where: { levelType: { _eq: "orderItem" } }) {
                         displayName
                      }
                   }
@@ -204,7 +204,7 @@ export const ORDER = gql`
                billingDetails
                walletAmountUsed
                loyaltyPointsUsed
-               cartItemViews(where: { level: { _eq: 1 } }) {
+               cartItems(where: { level: { _eq: 1 } }) {
                   id
                   displayName
                   displayImage

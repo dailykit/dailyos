@@ -28,7 +28,7 @@ const OrdersTable = ({ id }) => {
       onCompleted: ({ brand: { brand_customers = [] } = {} } = {}) => {
          const result = brand_customers[0]?.customer?.orders.map(order => ({
             id: order?.id,
-            products: order?.cart?.cartItemViews?.length || '0',
+            products: order?.cart?.cartItems?.length || '0',
             walletAmountUsed: currencyFmt(order?.cart?.walletAmountUsed),
             loyaltyPointsUsed: order?.cart?.loyaltyPointsUsed,
             discount: currencyFmt(order?.discount),
