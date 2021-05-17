@@ -28,6 +28,7 @@ import {
    CREATE_CUISINE_NAME,
 } from '../../../../../graphql/mutations'
 import { CUISINES_NAMES } from '../../../../../graphql/subscriptions'
+import BulkActions from '../../../../../../../shared/components/BulkAction'
 const address = 'apps.menu.views.listings.productslisting.'
 
 export default function BulkActionsTunnel({
@@ -111,341 +112,335 @@ export default function BulkActionsTunnel({
          },
       })
    }
+   const clearAllActions = () => {
+      setInitialBulkAction(prevState => ({
+         ...prevState,
+         isPublished: !prevState.isPublished,
+         dropdownDefaultOption: null,
+         type: !prevState.type,
+         author: '',
+         cookingTime: '30',
+         utensils: '',
+         cuisineName: '',
+      }))
+      setBulkActions({})
+   }
    return (
       <>
-         <TunnelHeader
-            title="Apply Bulk Actions"
-            right={{
-               action: function () {
-                  setShowPopup(true)
-                  setPopupHeading('Delete selected Recipes')
-                  setBulkActions({ isArchived: true })
-               },
-               title: 'Delete Selected Data',
-            }}
-            close={() => close(1)}
-            tooltip={
-               <Tooltip identifier="products_listing_recipe_simple_recipe_bulk_action_tunnel" />
-            }
-         />
-         <TunnelBody>
-            <ConfirmationPopup
-               bulkActions={bulkActions}
-               setBulkActions={setBulkActions}
-               showPopup={showPopup}
-               setShowPopup={setShowPopup}
-               popupHeading={popupHeading}
-               selectedRows={selectedRows}
-               simpleRecipeUpdate={simpleRecipeUpdate}
+         <BulkActions
+            table="Recipe"
+            selectedRows={selectedRows}
+            removeSelectedRow={removeRecipe}
+            bulkActions={bulkActions}
+            setBulkActions={setBulkActions}
+            clearAllActions={clearAllActions}
+            close={close}
+         >
+            <Flex container alignItems="center">
+               <Text as="text1">Change Publish Status</Text>
+               <TextButton
+                  type="ghost"
+                  size="sm"
+                  onClick={() => {
+                     console.log('publish clear')
+                     setInitialBulkAction(prevState => ({
+                        ...prevState,
+                        isPublished: !prevState.isPublished,
+                     }))
+                     setBulkActions(prevState => {
+                        delete prevState.isPublished
+                        return prevState
+                     })
+                  }}
+               >
+                  Clear
+               </TextButton>
+            </Flex>
+            <Spacer size="10px" />
+            <ButtonGroup align="left">
+               <RadioGroup
+                  options={radioPublishOption}
+                  active={initialBulkAction.isPublished}
+                  onChange={option => {
+                     if (option !== null) {
+                        console.log(option.payload)
+                        setBulkActions(prevState => ({
+                           ...prevState,
+                           ...option.payload,
+                        }))
+                        return
+                     }
+                     setBulkActions(prevState => {
+                        const newActions = { ...prevState }
+                        delete newActions['isPublished']
+                        return newActions
+                     })
+                  }}
+               />
+            </ButtonGroup>
+            <br />
+            <Flex container alignItems="center">
+               <Text as="text1">Type</Text>
+               <TextButton
+                  type="ghost"
+                  size="sm"
+                  onClick={() => {
+                     console.log('Type clear')
+                     setInitialBulkAction(prevState => ({
+                        ...prevState,
+                        type: !prevState.type,
+                     }))
+                     setBulkActions(prevState => {
+                        delete prevState.type
+                        return prevState
+                     })
+                  }}
+               >
+                  Clear
+               </TextButton>
+            </Flex>
+            <Spacer size="10px" />
+            <ButtonGroup align="left">
+               <RadioGroup
+                  options={radioTypeOption}
+                  active={initialBulkAction.type}
+                  onChange={option => {
+                     if (option !== null) {
+                        console.log(option.payload)
+                        setBulkActions(prevState => ({
+                           ...prevState,
+                           ...option.payload,
+                        }))
+                        return
+                     }
+                     setBulkActions(prevState => {
+                        const newActions = { ...prevState }
+                        delete newActions['type']
+                        return newActions
+                     })
+                  }}
+               />
+            </ButtonGroup>
+            <br />
+            <Flex container alignItems="center">
+               <Text as="text1">Cuisine Type</Text>
+               <TextButton
+                  type="ghost"
+                  size="sm"
+                  onClick={() => {
+                     console.log('publish clear')
+                     setInitialBulkAction(prevState => ({
+                        ...prevState,
+                        dropdownDefaultOption: null,
+                     }))
+                     setBulkActions(prevState => {
+                        delete prevState.cuisine
+                        return prevState
+                     })
+                  }}
+               >
+                  Clear
+               </TextButton>
+            </Flex>
+            <Spacer size="10px" />
+            <Dropdown
+               type="single"
+               defaultValue={initialBulkAction.dropdownDefaultOption}
+               options={cuisineNames}
+               addOption={() => createCuisine()}
+               searchedOption={option =>
+                  setInitialBulkAction({
+                     ...initialBulkAction,
+                     cuisineName: option,
+                  })
+               }
+               selectedOption={option => {
+                  setInitialBulkAction(prevState => ({
+                     ...prevState,
+                     dropdownDefaultOption: option,
+                  }))
+                  setBulkActions(prevState => ({
+                     ...prevState,
+                     ...option.payload,
+                  }))
+               }}
+               placeholder="choose cuisine type"
             />
-            <Flex
-               container
-               as="header"
-               width="100%"
-               justifyContent="flex-start"
-            >
-               <Flex width="50%">
-                  <Flex
-                     container
-                     as="header"
-                     width=""
-                     alignItems="center"
-                     justifyContent="space-between"
-                  >
-                     <Text as="h3">Recipes</Text>
-                     <span
-                        style={{
-                           color: '#919699',
-                           fontStyle: 'italic',
-                           fontWeight: '500',
-                           marginRight: '20px',
-                        }}
-                     >
-                        {selectedRows.length}{' '}
-                        {selectedRows.length > 1 ? 'recipes' : 'recipe'}{' '}
-                        selected{' '}
-                     </span>
-                  </Flex>
-                  <div style={{ height: '400px', overflowY: 'auto' }}>
-                     {selectedRows.map((recipe, id) => (
-                        <div
-                           as="title"
-                           style={{
-                              backgroundColor: `${
-                                 id % 2 === 0 ? '#F4F4F4' : '#fff'
-                              }`,
-                              color: '#202020',
+            <Spacer size="20px" />
+            <Flex container>
+               <Form.Group>
+                  <Form.Label htmlFor="author" title="author">
+                     <Flex container alignItems="center">
+                        <Text as="text1">Author</Text>
+                        <TextButton
+                           type="ghost"
+                           size="sm"
+                           onClick={() => {
+                              setInitialBulkAction({
+                                 ...initialBulkAction,
+                                 author: '',
+                              })
+                              setBulkActions(prevState => {
+                                 const newOption = { ...prevState }
+                                 delete newOption['author']
+                                 return newOption
+                              })
                            }}
-                           key={id}
                         >
-                           <Flex
-                              container
-                              as="header"
-                              alignItems="center"
-                              justifyContent="space-between"
-                           >
-                              {recipe.name}
-                              <IconButton
-                                 type="ghost"
-                                 onClick={() => removeRecipe(recipe.id)}
-                              >
-                                 <RemoveIcon color="#FF5A52" />
-                              </IconButton>
-                           </Flex>
-                        </div>
-                     ))}
-                  </div>
-               </Flex>
-               <Flex width="50%" padding="0px 0px 20px 20px">
-                  <Flex container justifyContent="space-between">
-                     <Text as="h3">Bulk Actions</Text>
+                           Clear
+                        </TextButton>
+                        <Tooltip identifier="recipe_author" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Text
+                     id="author"
+                     name="author"
+                     value={initialBulkAction.author}
+                     onBlur={() => {
+                        if (initialBulkAction.author) {
+                           setBulkActions({
+                              ...bulkActions,
+                              author: initialBulkAction.author,
+                           })
+                           return
+                        }
+                        if ('author' in bulkActions) {
+                           const newOptions = { ...bulkActions }
+                           delete newOptions['author']
+                           setBulkActions(newOptions)
+                           return
+                        }
+                     }}
+                     onChange={e => {
+                        setInitialBulkAction({
+                           ...initialBulkAction,
+                           author: e.target.value,
+                        })
+                     }}
+                     placeholder="Enter author name"
+                  />
+               </Form.Group>
+               <Spacer xAxis size="16px" />
+               <Form.Group>
+                  <Form.Label htmlFor="cookingTime" title="cookingTime">
+                     <Flex container alignItems="center">
+                        <Text as="text2">Cooking Time(mins)</Text>
+                        <TextButton
+                           type="ghost"
+                           size="sm"
+                           onClick={() => {
+                              setInitialBulkAction({
+                                 ...initialBulkAction,
+                                 cookingTime: '30',
+                              })
+                              setBulkActions(prevState => {
+                                 const newOption = { ...prevState }
+                                 delete newOption['cookingTime']
+                                 return newOption
+                              })
+                           }}
+                        >
+                           Clear
+                        </TextButton>
+                        <Tooltip identifier="recipe_cooking_time" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Number
+                     id="cookingTime"
+                     name="cookingTime"
+                     value={initialBulkAction.cookingTime}
+                     placeholder="Enter cooking time"
+                     onChange={e =>
+                        setInitialBulkAction({
+                           ...initialBulkAction,
+                           cookingTime: e.target.value,
+                        })
+                     }
+                     onBlur={() => {
+                        if (initialBulkAction.cookingTime) {
+                           setBulkActions({
+                              ...bulkActions,
+                              cookingTime: initialBulkAction.cookingTime,
+                           })
+                           return
+                        }
+                        if ('cookingTime' in initialBulkAction) {
+                           const newOptions = { ...bulkActions }
+                           delete newOptions['cookingTime']
+                           setBulkActions(newOptions)
+                           return
+                        }
+                     }}
+                  />
+               </Form.Group>
+            </Flex>
+            <Spacer size="10px" />
+            <Form.Group>
+               <Form.Label htmlFor="utensils" title="utensils">
+                  <Flex container alignItems="center">
+                     <Text as="text1">Utensils</Text>
                      <TextButton
                         type="ghost"
                         size="sm"
                         onClick={() => {
-                           console.log('this is all clear')
-                           setInitialBulkAction(prevState => ({
-                              ...prevState,
-                              isPublished: !prevState.isPublished,
-                              dropdownDefaultOption: null,
-                              type: !prevState.type,
-                              author: '',
-                              cookingTime: '30',
-                              utensils: '',
-                              cuisineName: '',
-                           }))
-                           setBulkActions({})
-                        }}
-                     >
-                        Clear All Actions
-                     </TextButton>
-                  </Flex>
-                  <Spacer size="16px" />
-                  <RadioAction
-                     actionLabel="Change Publish State"
-                     radioOptions={radioPublishOption}
-                     keyName="isPublished"
-                     seedState={initialBulkAction}
-                     setSeedState={setInitialBulkAction}
-                     setBulkActions={setBulkActions}
-                  />
-                  <br />
-                  <RadioAction
-                     actionLabel="Type"
-                     radioOptions={radioTypeOption}
-                     keyName="type"
-                     seedState={initialBulkAction}
-                     setSeedState={setInitialBulkAction}
-                     setBulkActions={setBulkActions}
-                  />
-                  <br />
-                  <DropdownAction
-                     actionLabel="Cuisine Type"
-                     keyName="cuisineName"
-                     seedState={initialBulkAction}
-                     setSeedState={setInitialBulkAction}
-                     setBulkActions={setBulkActions}
-                     addOption={createCuisine}
-                     dropdownOption={cuisineNames}
-                     placeholder="choose cuisine type"
-                  />
-                  <Spacer size="20px" />
-                  <Flex container>
-                     <Form.Group>
-                        <Form.Label htmlFor="author" title="author">
-                           <Flex container alignItems="center">
-                              <Text as="text1">Author</Text>
-                              <TextButton
-                                 type="ghost"
-                                 size="sm"
-                                 onClick={() => {
-                                    setInitialBulkAction({
-                                       ...initialBulkAction,
-                                       author: '',
-                                    })
-                                    setBulkActions(prevState => {
-                                       const newOption = { ...prevState }
-                                       delete newOption['author']
-                                       return newOption
-                                    })
-                                 }}
-                              >
-                                 Clear
-                              </TextButton>
-                              <Tooltip identifier="recipe_author" />
-                           </Flex>
-                        </Form.Label>
-                        <Form.Text
-                           id="author"
-                           name="author"
-                           value={initialBulkAction.author}
-                           onBlur={() => {
-                              if (initialBulkAction.author) {
-                                 setBulkActions({
-                                    ...bulkActions,
-                                    author: initialBulkAction.author,
-                                 })
-                                 return
-                              }
-                              if ('author' in bulkActions) {
-                                 const newOptions = { ...bulkActions }
-                                 delete newOptions['author']
-                                 setBulkActions(newOptions)
-                                 return
-                              }
-                           }}
-                           onChange={e => {
-                              setInitialBulkAction({
-                                 ...initialBulkAction,
-                                 author: e.target.value,
-                              })
-                           }}
-                           placeholder="Enter author name"
-                        />
-                     </Form.Group>
-                     <Spacer xAxis size="16px" />
-                     <Form.Group>
-                        <Form.Label htmlFor="cookingTime" title="cookingTime">
-                           <Flex container alignItems="center">
-                              <Text as="text2">Cooking Time(mins)</Text>
-                              <TextButton
-                                 type="ghost"
-                                 size="sm"
-                                 onClick={() => {
-                                    setInitialBulkAction({
-                                       ...initialBulkAction,
-                                       cookingTime: '30',
-                                    })
-                                    setBulkActions(prevState => {
-                                       const newOption = { ...prevState }
-                                       delete newOption['cookingTime']
-                                       return newOption
-                                    })
-                                 }}
-                              >
-                                 Clear
-                              </TextButton>
-                              <Tooltip identifier="recipe_cooking_time" />
-                           </Flex>
-                        </Form.Label>
-                        <Form.Number
-                           id="cookingTime"
-                           name="cookingTime"
-                           value={initialBulkAction.cookingTime}
-                           placeholder="Enter cooking time"
-                           onChange={e =>
-                              setInitialBulkAction({
-                                 ...initialBulkAction,
-                                 cookingTime: e.target.value,
-                              })
-                           }
-                           onBlur={() => {
-                              if (initialBulkAction.cookingTime) {
-                                 setBulkActions({
-                                    ...bulkActions,
-                                    cookingTime: initialBulkAction.cookingTime,
-                                 })
-                                 return
-                              }
-                              if ('cookingTime' in initialBulkAction) {
-                                 const newOptions = { ...bulkActions }
-                                 delete newOptions['cookingTime']
-                                 setBulkActions(newOptions)
-                                 return
-                              }
-                           }}
-                        />
-                     </Form.Group>
-                  </Flex>
-                  <Spacer size="10px" />
-                  <Form.Group>
-                     <Form.Label htmlFor="utensils" title="utensils">
-                        <Flex container alignItems="center">
-                           <Text as="text1">Utensils</Text>
-                           <TextButton
-                              type="ghost"
-                              size="sm"
-                              onClick={() => {
-                                 setInitialBulkAction({
-                                    ...initialBulkAction,
-                                    utensils: '',
-                                 })
-                                 setBulkActions(prevState => {
-                                    const newOption = { ...prevState }
-                                    delete newOption['utensils']
-                                    return newOption
-                                 })
-                              }}
-                           >
-                              Clear
-                           </TextButton>
-                           <Tooltip identifier="recipe_utensils" />
-                        </Flex>
-                     </Form.Label>
-                     <Form.Text
-                        id="utensils"
-                        name="utensils"
-                        value={initialBulkAction.utensils}
-                        onChange={e =>
                            setInitialBulkAction({
                               ...initialBulkAction,
-                              utensils: e.target.value,
+                              utensils: '',
                            })
-                        }
-                        onBlur={() => {
-                           if (initialBulkAction.utensils) {
-                              const newUtensils = initialBulkAction.utensils
-                                 .split(',')
-                                 .map(tag => {
-                                    const newTag = tag.trim()
-                                    return capitalize(newTag)
-                                 })
-                              setBulkActions({
-                                 ...bulkActions,
-                                 utensils: newUtensils,
-                              })
-                              return
-                           }
-                           if ('utensils' in bulkActions) {
-                              const newOptions = { ...bulkActions }
-                              delete newOptions['utensils']
-                              setBulkActions(newOptions)
-                              return
-                           }
-                        }}
-                        placeholder="Enter utensils"
-                     />
-                  </Form.Group>
-                  <Form.Error>
-                     Changing utensils will overwrite already existing utensils
-                  </Form.Error>
-                  <HelperText
-                     type="hint"
-                     message="Enter comma separated values, for example: Pan, Spoon, Bowl"
-                  />
-                  <Spacer size="16px" />
-                  <Flex container alignItems="center" justifyContent="flex-end">
-                     <TextButton
-                        type="solid"
-                        size="md"
-                        disabled={
-                           selectedRows.length > 0 &&
-                           Object.keys(bulkActions).length !== 0
-                              ? false
-                              : true
-                        }
-                        onClick={() => {
-                           setShowPopup(true)
-                           setPopupHeading('Save All Changes')
-                           console.log(bulkActions)
+                           setBulkActions(prevState => {
+                              const newOption = { ...prevState }
+                              delete newOption['utensils']
+                              return newOption
+                           })
                         }}
                      >
-                        Save Changes
+                        Clear
                      </TextButton>
+                     <Tooltip identifier="recipe_utensils" />
                   </Flex>
-               </Flex>
-            </Flex>
-         </TunnelBody>
+               </Form.Label>
+               <Form.Text
+                  id="utensils"
+                  name="utensils"
+                  value={initialBulkAction.utensils}
+                  onChange={e =>
+                     setInitialBulkAction({
+                        ...initialBulkAction,
+                        utensils: e.target.value,
+                     })
+                  }
+                  onBlur={() => {
+                     if (initialBulkAction.utensils) {
+                        const newUtensils = initialBulkAction.utensils
+                           .split(',')
+                           .map(tag => {
+                              const newTag = tag.trim()
+                              return capitalize(newTag)
+                           })
+                        setBulkActions({
+                           ...bulkActions,
+                           utensils: newUtensils,
+                        })
+                        return
+                     }
+                     if ('utensils' in bulkActions) {
+                        const newOptions = { ...bulkActions }
+                        delete newOptions['utensils']
+                        setBulkActions(newOptions)
+                        return
+                     }
+                  }}
+                  placeholder="Enter utensils"
+               />
+            </Form.Group>
+            <Form.Error>
+               Changing utensils will overwrite already existing utensils
+            </Form.Error>
+            <HelperText
+               type="hint"
+               message="Enter comma separated values, for example: Pan, Spoon, Bowl"
+            />
+         </BulkActions>
       </>
    )
 }
