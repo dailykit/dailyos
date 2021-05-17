@@ -7,7 +7,7 @@ import AllergensForm from './Allergens'
 import ProcessingsForm from './Processings'
 import UnitsForm from './Units'
 import ProductCategories from './ProductCategories'
-
+import IngredientCategories from './IngredientCategories'
 const MasterListForm = () => {
    const { list } = useParams()
 
@@ -29,6 +29,9 @@ const MasterListForm = () => {
       }
       case 'product-categories': {
          return <ProductCategories />
+      }
+      case 'ingredient-categories': {
+         return <IngredientCategories />
       }
       default: {
          return <AccompanimentTypesForm />

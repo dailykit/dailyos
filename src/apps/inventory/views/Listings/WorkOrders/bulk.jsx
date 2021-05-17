@@ -134,6 +134,15 @@ export default function BulkWorkOrders() {
                   <ReactTabulator
                      columns={columns}
                      data={bulkWorkOrders.filter(
+                        col => col.status === 'PENDING'
+                     )}
+                     options={tableOptions}
+                  />
+               </HorizontalTabPanel>
+               <HorizontalTabPanel>
+                  <ReactTabulator
+                     columns={columns}
+                     data={bulkWorkOrders.filter(
                         col => col.status === 'CANCELLED'
                      )}
                      options={tableOptions}

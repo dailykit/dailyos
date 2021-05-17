@@ -21,7 +21,10 @@ import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import AddIcon from '../../../../../shared/assets/icons/Add'
-import { Tooltip } from '../../../../../shared/components'
+import {
+   LinkUnitConversionTunnels,
+   Tooltip,
+} from '../../../../../shared/components'
 import { currencyFmt } from '../../../../../shared/utils'
 import { logger } from '../../../../../shared/utils/errorLog'
 import { ClockIcon, ItemIcon } from '../../../assets/icons'
@@ -50,6 +53,7 @@ import {
    ProcessingTunnel,
    SuppliersTunnel,
 } from './tunnels'
+import { SupplierItemProvider } from '../../../context/sachetItem'
 
 const address = 'apps.inventory.views.forms.item.'
 
@@ -64,9 +68,20 @@ export default function ItemForm() {
          isTouched: false,
       },
    })
+   const [tabState, setTabState] = React.useState({
+      schema: 'inventory',
+      table: 'bulkItem',
+      entityId: null,
+   })
+
    const { id } = useParams()
    const { setTabTitle } = useTabs()
 
+   const [
+      linkConversionTunnels,
+      openLinkConversionTunnel,
+      closeLinkConversionTunnel,
+   ] = useTunnel(2)
    const [supplierTunnel, openSupplierTunnel, closeSupplierTunnel] = useTunnel(
       1
    )
@@ -78,18 +93,19 @@ export default function ItemForm() {
    ] = useTunnel(1)
    const [configTunnel, openConfigTunnel, closeConfigTunnel] = useTunnel(1)
 
-   const { loading: itemDetailLoading } = useSubscription(
+   const { loading: itemDetailLoading, error } = useSubscription(
       SUPPLIER_ITEM_SUBSCRIPTION,
       {
          variables: { id },
          onSubscriptionData: input => {
             const data = input.subscriptionData.data.supplierItem
-
+            console.log({ data })
             setItemName({ value: data.name, meta: { ...itemName.meta } })
             setFormState(data)
          },
       }
    )
+   if (error) console.log(error)
 
    const [updateSupplierItem] = useMutation(UPDATE_SUPPLIER_ITEM, {
       onError: error => {
@@ -153,10 +169,15 @@ export default function ItemForm() {
       })
    }
 
+   const handleOpenLinkConversionTunnel = data => {
+      setTabState({ ...data })
+      openLinkConversionTunnel(1)
+   }
+
    if (itemDetailLoading) return <Loader />
 
    return (
-      <>
+      <SupplierItemProvider>
          <Tunnels tunnels={supplierTunnel}>
             <Tunnel layer={1} style={{ overflowY: 'auto' }}>
                <SuppliersTunnel
@@ -190,10 +211,10 @@ export default function ItemForm() {
                   close={closeConfigTunnel}
                   open={openConfigTunnel}
                   id={bulktItems[0]?.id}
+                  openLinkConversionTunnel={handleOpenLinkConversionTunnel}
                />
             </Tunnel>
          </Tunnels>
-
          <div
             style={{ background: '#f3f3f3', minHeight: 'calc(100vh - 40px)' }}
          >
@@ -462,6 +483,9 @@ export default function ItemForm() {
                            formState={formState}
                            proc={formState.bulkItemAsShipped}
                            isDefault
+                           openLinkConversionTunnel={
+                              handleOpenLinkConversionTunnel
+                           }
                         />
                      </SectionTabPanel>
 
@@ -473,6 +497,9 @@ export default function ItemForm() {
                               <ProcessingView
                                  formState={formState}
                                  proc={procs}
+                                 openLinkConversionTunnel={
+                                    handleOpenLinkConversionTunnel
+                                 }
                               />
                            </SectionTabPanel>
                         )
@@ -481,6 +508,15 @@ export default function ItemForm() {
                </SectionTabs>
             </>
          </div>
-      </>
+         <LinkUnitConversionTunnels
+            schema="inventory"
+            table={tabState.table}
+            entityId={tabState.entityId}
+            tunnels={linkConversionTunnels}
+            openTunnel={openLinkConversionTunnel}
+            closeTunnel={closeLinkConversionTunnel}
+            onSave={() => closeLinkConversionTunnel(1)}
+         />
+      </SupplierItemProvider>
    )
 }

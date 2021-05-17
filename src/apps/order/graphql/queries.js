@@ -71,6 +71,7 @@ export const QUERIES = {
                   status
                   source
                   isTest
+                  address
                   paymentStatus
                   transactionId
                   fulfillmentInfo

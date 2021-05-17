@@ -240,7 +240,7 @@ export const SIGNUP_COUNT = gql`
       brand(id: $brandId) {
          brand_customers(where: { keycloakId: { _eq: $keycloakId } }) {
             customer {
-               customerReferralDetails {
+               customerReferrals {
                   customerReferrals_aggregate(
                      where: { signupStatus: { _eq: "COMPLETE" } }
                   ) {

@@ -32,11 +32,16 @@ import {
 import { NO_SACHET_HISTORIES } from '../../../constants/infoMessages'
 import { SACHET_ITEM_HISTORIES } from '../../../graphql'
 import tableOptions from '../../Listings/tableOption'
-import { ConfigureSachetTunnel } from './tunnels'
+import { ConfigureSachetTunnel, CreateSachetTunnel } from './tunnels'
 
 const address = 'apps.inventory.views.forms.item.'
 
-export default function PlannedLotView({ sachetItems = [], procId, unit }) {
+export default function PlannedLotView({
+   sachetItems = [],
+   procId,
+   unit,
+   openLinkConversionTunnel,
+}) {
    const { t } = useTranslation()
    const [
       configureSachetTunnel,
@@ -50,11 +55,20 @@ export default function PlannedLotView({ sachetItems = [], procId, unit }) {
       <>
          <Tunnels tunnels={configureSachetTunnel}>
             <Tunnel layer={1}>
+               <CreateSachetTunnel
+                  open={openConfigureSachetTunnel}
+                  close={closeConfigureSachetTunnel}
+                  procId={procId}
+                  unit={unit}
+               />
+            </Tunnel>
+            <Tunnel layer={2}>
                <ConfigureSachetTunnel
                   open={openConfigureSachetTunnel}
                   close={closeConfigureSachetTunnel}
                   procId={procId}
                   unit={unit}
+                  openLinkConversionTunnel={openLinkConversionTunnel}
                />
             </Tunnel>
          </Tunnels>

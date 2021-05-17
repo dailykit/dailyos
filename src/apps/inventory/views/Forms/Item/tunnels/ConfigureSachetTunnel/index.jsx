@@ -1,5 +1,5 @@
-import { useMutation } from '@apollo/react-hooks'
-import { Flex, Form, Spacer, TunnelHeader } from '@dailykit/ui'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { Flex, Form, Select, Spacer, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -10,16 +10,25 @@ import { SACHET_ITEMS_CREATE_ERROR } from '../../../../../constants/errorMessage
 import { CREATE_SACHET_ITEM } from '../../../../../graphql'
 import { validators } from '../../../../../utils/validators'
 import { StyledInputGroup } from '../styled'
+import {
+   DELETE_SACHET_ITEM_UNIT_CONVERSION,
+   UPDATE_SACHET_ITEM,
+} from '../../../../../graphql/mutations'
+import { SACHET_ITEM_UNIT_CONVERSIONS } from '../../../../../graphql/subscriptions'
+import { SupplierItemContext } from '../../../../../context/sachetItem'
 
 const address = 'apps.inventory.views.forms.item.tunnels.configuresachettunnel.'
 
-export default function ConfigureSachetTunnel({ close, procId, unit }) {
+export default function ConfigureSachetTunnel({
+   close,
+   procId,
+   unit,
+   openLinkConversionTunnel,
+}) {
+   const { supplierState } = React.useContext(SupplierItemContext)
    const { t } = useTranslation()
+   const [selectedConversions, setSelectedConversions] = useState([])
 
-   const [quantity, setQuantity] = useState({
-      value: '',
-      meta: { isValid: false, isTouched: false, errors: [] },
-   })
    const [par, setPar] = useState({
       value: '',
       meta: { isValid: false, isTouched: false, errors: [] },
@@ -29,17 +38,53 @@ export default function ConfigureSachetTunnel({ close, procId, unit }) {
       meta: { isValid: false, isTouched: false, errors: [] },
    })
 
-   const [creatSachetItem, { loading }] = useMutation(CREATE_SACHET_ITEM, {
+   const { loading: conversionsLoading, error } = useSubscription(
+      SACHET_ITEM_UNIT_CONVERSIONS,
+      {
+         variables: {
+            id: supplierState.sachetItemId,
+         },
+         onSubscriptionData: data => {
+            const { sachetItem } = data.subscriptionData.data
+            console.log({ sachetItem })
+            if (sachetItem.sachetItemUnitConversions) {
+               const updatedConversions = sachetItem.sachetItemUnitConversions.map(
+                  ({ unitConversion: c, id }) => ({
+                     title: `1 ${c.inputUnitName} = ${c.conversionFactor} ${c.outputUnitName}`,
+                     id,
+                  })
+               )
+               setSelectedConversions([...updatedConversions])
+            }
+         },
+      }
+   )
+   if (error) console.log(error)
+
+   const [updateSachetItem, { loading }] = useMutation(UPDATE_SACHET_ITEM, {
       onCompleted: () => {
+         toast.success('Sachet item updated!')
+         close(2)
          close(1)
-         toast.info('Sachet added!')
       },
       onError: error => {
-         close(1)
          logger(error)
-         toast.error(SACHET_ITEMS_CREATE_ERROR)
+         toast.error('Something went wrong!')
       },
    })
+
+   const [removeLinkedConversion] = useMutation(
+      DELETE_SACHET_ITEM_UNIT_CONVERSION,
+      {
+         onCompleted: () => {
+            toast.success('Conversion removed!')
+         },
+         onError: error => {
+            logger(error)
+            toast.error('Something went wrong!')
+         },
+      }
+   )
 
    const checkValues = () => {
       if (!par.value || (!par.meta.isValid && par.meta.isTouched))
@@ -49,24 +94,19 @@ export default function ConfigureSachetTunnel({ close, procId, unit }) {
          (!maxInventoryLevel.meta.isValid && maxInventoryLevel.meta.isTouched)
       )
          return 'invalid max inventory level value'
-      if (
-         !quantity.value ||
-         (!quantity.meta.isValid && quantity.meta.isTouched)
-      )
-         return 'invalid quantity'
       return true
    }
 
    const handleNext = () => {
       const checkIsValid = checkValues()
       if (!checkIsValid.length)
-         creatSachetItem({
+         updateSachetItem({
             variables: {
-               unitSize: quantity.value,
-               bulkItemId: procId,
-               unit,
-               par: par.value,
-               maxLevel: maxInventoryLevel.value,
+               id: supplierState.sachetItemId,
+               _set: {
+                  parLevel: par.value,
+                  maxLevel: maxInventoryLevel.value,
+               },
             },
          })
       else toast.error(checkIsValid)
@@ -75,8 +115,8 @@ export default function ConfigureSachetTunnel({ close, procId, unit }) {
    return (
       <>
          <TunnelHeader
-            title={t(address.concat('add sachet'))}
-            close={() => close(1)}
+            title="Sachet Details"
+            close={() => close(2)}
             right={{
                title: loading ? 'Saving...' : 'Save',
                action: handleNext,
@@ -87,42 +127,23 @@ export default function ConfigureSachetTunnel({ close, procId, unit }) {
             }
          />
          <TunnelContainer>
-            <StyledInputGroup>
-               <Form.Group>
-                  <Form.Label htmlFor="quantity" title="sachetQuantity">
-                     <Flex container alignItems="center">
-                        Sachet Quantity (in {unit})*
-                        <Tooltip identifier="supplier_form_add_sachet_quantity_formfield" />
-                     </Flex>
-                  </Form.Label>
-                  <Form.Number
-                     id="quantity"
-                     name="quantity"
-                     value={quantity.value}
-                     placeholder={`Sachet Quantity (in ${unit})`}
-                     onChange={e =>
-                        setQuantity({
-                           value: e.target.value,
-                           meta: { ...quantity.meta },
-                        })
-                     }
-                     onBlur={e => {
-                        const { isValid, errors } = validators.quantity(
-                           e.target.value
-                        )
-
-                        setQuantity({
-                           value: e.target.value,
-                           meta: { isValid, errors, isTouched: true },
-                        })
-                     }}
-                  />
-                  {quantity.meta.isTouched && !quantity.meta.isValid && (
-                     <Form.Error>{quantity.meta.errors[0]}</Form.Error>
-                  )}
-               </Form.Group>
-            </StyledInputGroup>
-
+            <Spacer size="16px" />
+            <Select
+               options={selectedConversions}
+               addOption={() =>
+                  openLinkConversionTunnel({
+                     schema: 'inventory',
+                     table: 'sachetItem',
+                     entityId: supplierState.sachetItemId,
+                  })
+               }
+               placeholder="Link Conversions"
+               removeOption={option =>
+                  removeLinkedConversion({
+                     variables: { id: option.id },
+                  })
+               }
+            />
             <Spacer size="16px" />
 
             <StyledInputGroup>
