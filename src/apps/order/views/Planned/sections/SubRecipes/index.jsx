@@ -48,7 +48,7 @@ const Listing = ({ setTotal, setServings }) => {
                   a.simpleRecipeYields_aggregate.nodes.reduce(
                      (y, x) =>
                         y +
-                           x.subRecipeCartItemViews_aggregate.aggregate.sum
+                           x.subRecipeCartItems_aggregate.aggregate.sum
                               .displayServing || 0,
                      0
                   ),
@@ -60,7 +60,7 @@ const Listing = ({ setTotal, setServings }) => {
                   b +
                   a.simpleRecipeYields_aggregate.nodes.reduce(
                      (y, x) =>
-                        y + x.subRecipeCartItemViews_aggregate.aggregate.count,
+                        y + x.subRecipeCartItems_aggregate.aggregate.count,
                      0
                   ),
                0
@@ -117,15 +117,15 @@ const Yields = ({ nodes }) => {
                         <span title="Total Servings">
                            (
                            {
-                              node.subRecipeCartItemViews_aggregate.aggregate
-                                 .sum.displayServing
+                              node.subRecipeCartItems_aggregate.aggregate.sum
+                                 .displayServing
                            }
                            )
                         </span>
                      </span>
                      <span title="Total Quantity">
                         {
-                           node.subRecipeCartItemViews_aggregate.aggregate.sum
+                           node.subRecipeCartItems_aggregate.aggregate.sum
                               .displayUnitQuantity
                         }
                      </span>
@@ -135,9 +135,7 @@ const Yields = ({ nodes }) => {
             <StyledTabPanels>
                {nodes.map(node => (
                   <StyledTabPanel>
-                     <Cards
-                        nodes={node.subRecipeCartItemViews_aggregate.nodes}
-                     />
+                     <Cards nodes={node.subRecipeCartItems_aggregate.nodes} />
                   </StyledTabPanel>
                ))}
             </StyledTabPanels>
