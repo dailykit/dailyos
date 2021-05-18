@@ -73,6 +73,7 @@ const Styles = {
    ContentArea: styled.div`
       width: 100%;
       padding: 16px;
+      overflow: auto;
       display: ${({ hasContent, isContentOpen }) =>
          hasContent && isContentOpen ? 'block' : 'none'};
       @media only screen and (max-width: 565px) {
