@@ -87,9 +87,11 @@ const Styles = {
          backdrop-filter: blur(11.37px);
       }
       > button {
-         margin-left: auto;
          color: #45484c;
          text-transform: uppercase;
+         position: absolute;
+         top: 0;
+         right: 30px;
       }
       div#content-area {
          overflow: auto;
