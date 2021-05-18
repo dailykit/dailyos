@@ -360,6 +360,21 @@ export const CREATE_SIMPLE_RECIPE_INGREDIENT_PROCESSINGS = gql`
    }
 `
 
+export const UPDATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING = gql`
+   mutation UpdateSimpleRecipeIngredientProcessing(
+      $id: Int!
+      $_set: simpleRecipe_simpleRecipe_ingredient_processing_set_input!
+   ) {
+      updateSimpleRecipeIngredientProcessing(
+         pk_columns: { id: $id }
+         _set: $_set
+      ) {
+         id
+      }
+   }
+`
+
+
 export const INSTRUCTION_SET = {
    CREATE: gql`
       mutation CreateInstructionSet(

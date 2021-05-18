@@ -32,7 +32,7 @@ import {
 } from './styles'
 import { Tooltip, InlineLoader } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
-import { DELETE_SIMPLE_RECIPE_YIELD, S_PROCESSINGS } from '../../../../../graphql'
+import { DELETE_SIMPLE_RECIPE_YIELD, S_PROCESSINGS, UPDATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING, UPSERT_MASTER_PROCESSING } from '../../../../../graphql'
 import { ServingsTunnel, IngredientsTunnel } from '../../tunnels'
 import { RecipeContext } from '../../../../../context/recipe'
 
@@ -70,6 +70,19 @@ const Servings = ({ state }) => {
          logger(error)
       },
    })
+
+   const [updateSimpleRecipeIngredientProcessing] = useMutation(
+      UPDATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING,
+      {
+         onCompleted: () => {
+            toast.success('Processing added!')
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
 
    // Handlers
    const remove = serving => {
@@ -192,7 +205,17 @@ const Servings = ({ state }) => {
    const ingredients_options =
       state.simpleRecipeIngredients?.map((option, index) => {
          console.log(option, 'Adrish ingredients_option')
-         const selectedOption = option => console.log(option)
+         const selectedOption = processing => {
+            updateSimpleRecipeIngredientProcessing({
+               variables: {
+                  id: processing.id,
+                  _set: {
+                     ingredientId: option.ingredient.id,
+                     simpleRecipeId: state.id
+                  } 
+               }
+            })
+         }
          const searchedOption = option => console.log(option)
          let ProcessingOptions = []
          return (
@@ -236,10 +259,7 @@ const Servings = ({ state }) => {
                         <Dropdown
                            type="single"
                            variant="revamp"
-                           defaultOption={{
-                              id: 3,
-                              title: 'processing',
-                           }}
+                           defaultOption={option.processing}
                            addOption={() => console.log('Item added')}
                            options={optionsWithoutDescription}
                            searchedOption={searchedOption}
@@ -338,7 +358,7 @@ const Servings = ({ state }) => {
             <Tooltip identifier="recipe_servings" />
          </Flex>
 
-         {options.length && ingredients_options.length ? (
+         {options.length ? (
             <>
                <table style={{ textAlign: 'left' }}>
                   <tr>
@@ -363,7 +383,7 @@ const Servings = ({ state }) => {
                      {options}
                   </tr>
 
-                  {loading ? <InlineLoader /> : ingredients_options}
+                  {loading && ingredients_options.length ? <InlineLoader /> : ingredients_options}
                </table>
                <br />
                <ButtonTile
