@@ -50,7 +50,7 @@ export const StyledCardIngredient = styled.div(
 
 export const SatchetCard = styled.div(
   ({ index }) => css`
-  height: 57px;
+  height: 90px;
   width: 160px;
   padding: 5px 5px 5px 5px;
   background: ${index % 2 == 0
@@ -64,7 +64,19 @@ export const SatchetCard = styled.div(
   font-size: 30px;
   line-height: 26px;
   letter-spacing: 0.32px;
-  margin-top: 25px;
-  
 `
 ) 
+
+
+export const StyledButton = styled.button(
+  ({ index }) => css`
+  height: 20px;
+  width: 20px;
+  padding: 2px 5px 5px 5px;
+  background: ${index % 2 == 0
+      ? `#F4F4F4`
+      : `#FFFFFF`};
+  border: none;
+  box-sizing: border-box;
+`
+)

@@ -21,6 +21,10 @@ import CalCount from './CalCount'
 import FoodCost from './FoodCost'
 import Yield from './Yield'
 import ChefPay from './ChefPay'
+import VisibiltyOn from './VisibilityOn';
+import VisibiltyOff from './VisibilityOff';
+
+
 
 export {
    MenuIcon,
@@ -45,5 +49,7 @@ export {
    CalCount,
    FoodCost,
    Yield,
-   ChefPay
+   ChefPay,
+   VisibiltyOn,
+   VisibiltyOff
 }

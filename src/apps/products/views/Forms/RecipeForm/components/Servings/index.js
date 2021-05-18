@@ -16,6 +16,7 @@ import {
    Context,
    Dropdown,
    Form,
+   Spacer
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import {
@@ -24,12 +25,15 @@ import {
    FoodCost,
    Yield,
    ChefPay,
+   VisibiltyOn,
+   VisibiltyOff,
 } from '../../../../../assets/icons'
 import {
    StyledCardEven,
    Heading,
    StyledCardIngredient,
    SatchetCard,
+   StyledButton,
 } from './styles'
 import { Tooltip, InlineLoader } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
@@ -47,6 +51,7 @@ import {
 } from '../../../../../graphql'
 import { ServingsTunnel, IngredientsTunnel } from '../../tunnels'
 import { RecipeContext } from '../../../../../context/recipe'
+import { Button } from 'react-scroll'
 
 const Servings = ({ state }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -367,10 +372,12 @@ const Servings = ({ state }) => {
                      </div>
 
                      <Link to="#">{option.ingredient.name}</Link>
-                     {console.log(ingredientProcessings, "Adrish ingredientProcessings")}
+                     {console.log(
+                        ingredientProcessings,
+                        'Adrish ingredientProcessings'
+                     )}
                      {ingredientProcessings.map((item, index) => {
                         if (option.ingredient.id == item.ingredientId) {
-                           
                            ProcessingOptions.push({
                               id: item.id,
                               title: item.title,
@@ -378,7 +385,7 @@ const Servings = ({ state }) => {
                         }
                         optionsWithoutDescription = ProcessingOptions
                      })}
-                    
+                     <Spacer size="7px" />
                      <div style={{ padding: '0px 0px 12px 45px' }}>
                         <Dropdown
                            type="single"
@@ -392,7 +399,7 @@ const Servings = ({ state }) => {
                            typeName="processing"
                         />
                      </div>
-                    
+
                      <div
                         style={{
                            display: 'inline-block',
@@ -440,7 +447,7 @@ const Servings = ({ state }) => {
                   let search = ''
                   let loader = false
                   let defaultslipName = ''
-                  let onChange = false
+                  let visibility = ''
                   sachets.map((item, index) => {
                      if (sachetDisabled == false) {
                         //console.log(option.processing.id, item.processingId, "Adrish Processing idss")
@@ -463,7 +470,7 @@ const Servings = ({ state }) => {
                      if (item.simpleRecipeYield.id == object.id) {
                         loader = true
                         defaultslipName = item.slipName
-
+                        visibility = item.isVisible
                         defaultSachetOption = {
                            id: item.ingredientSachet.id,
                            title: `${defaultSachetOption.title} ${item.ingredientSachet.quantity}`,
@@ -508,7 +515,10 @@ const Servings = ({ state }) => {
                            yieldId: object.id,
                            ingredientProcessingRecordId: option.id,
                            ingredientSachetId: sachet.id,
-                           slipName: option.ingredient.name,
+                           slipName:
+                              defaultslipName.length > 0
+                                 ? defaultslipName
+                                 : option.ingredient.name,
                         },
                      })
                   }
@@ -521,48 +531,51 @@ const Servings = ({ state }) => {
                      setslipname(typedName)
                      console.log(typedName)
                   }
-                  return(
+                  return (
                      <td>
-                     {loader == false || sachetOptions.length > 0 ? (
-                        <SatchetCard index={index}>
-                           <Dropdown
-                              disabled={sachetDisabled}
-                              options={sachetOptions}
-                              defaultOption={defaultSachetOption}
-                              addOption={quickCreateSachet}
-                              searchedOption={searchedSachetOption}
-                              selectedOption={selectedSachetOption}
-                              type="single"
-                              variant="revamp"
-                              typeName="sachet"
-                           />
-                           <div
-                              style={{
-                                 width: '181px',
-                                 padding: '0px 0px 0px 0px',
-                              }}
-                           >
-                              {option.processing == null ? (
-                                 <></>
-                              ) : (
+                        {loader == false || sachetOptions.length > 0 ? (
+                           <SatchetCard index={index}>
+                              <Dropdown
+                                 disabled={sachetDisabled}
+                                 options={sachetOptions}
+                                 defaultOption={defaultSachetOption}
+                                 addOption={quickCreateSachet}
+                                 searchedOption={searchedSachetOption}
+                                 selectedOption={selectedSachetOption}
+                                 type="single"
+                                 variant="revamp"
+                                 typeName="sachet"
+                              />
+                              <Spacer size="3px" />
+                              <div
+                                 style={{
+                                    width: '181px',
+                                    padding: '0px 0px 0px 0px',
+                                 }}
+                              >
                                  <SachetDetails
                                     yieldId={object.id}
                                     ingredientProcessingRecordId={option.id}
                                     slipName={defaultslipName}
+                                    isVisible={visibility}
+                                    disabled={
+                                       Object.keys(defaultSachetOption)
+                                          .length == 0
+                                          ? true
+                                          : false
+                                    }
+                                    index={index}
                                  />
-                              )}
-                           </div>
-                        </SatchetCard>
-                     ) : (
-                        <SatchetCard>
-                           <Skeleton />
-                        </SatchetCard>
-                     )}
-                  </td>
-               
+                              </div>
+                           </SatchetCard>
+                        ) : (
+                           <SatchetCard>
+                              <Skeleton />
+                           </SatchetCard>
+                        )}
+                     </td>
                   )
                })}
-
             </tr>
          )
       }) || []
@@ -638,19 +651,28 @@ const Servings = ({ state }) => {
 
 export default Servings
 
-
-const SachetDetails = ({ yieldId, slipName, ingredientProcessingRecordId }) => {
+const SachetDetails = ({
+   yieldId,
+   slipName,
+   ingredientProcessingRecordId,
+   isVisible,
+   disabled,
+   index,
+}) => {
    const [history, setHistory] = React.useState({
       slipName,
+      isVisible,
    })
    const [name, setName] = React.useState(slipName)
+   const [visibility, setVisibility] = React.useState(isVisible)
 
    React.useEffect(() => {
       setHistory({
          slipName,
       })
       setName(slipName)
-   }, [slipName])
+      setVisibility(isVisible)
+   }, [slipName, isVisible])
 
    // Mutation
    const [updateSachet] = useMutation(UPDATE_SIMPLE_RECIPE_YIELD_SACHET, {
@@ -659,6 +681,7 @@ const SachetDetails = ({ yieldId, slipName, ingredientProcessingRecordId }) => {
       },
       onError: error => {
          setName(history.slipName)
+         setVisibility(history.isVisible)
          toast.error('Something went wrong!')
          logger(error)
       },
@@ -679,18 +702,92 @@ const SachetDetails = ({ yieldId, slipName, ingredientProcessingRecordId }) => {
       })
    }
 
+   const updateVisibility = val => {
+      setVisibility(val)
+      updateSachet({
+         variables: {
+            ingredientProcessingRecordId,
+            yieldId,
+            set: {
+               isVisible: val,
+            },
+         },
+      })
+   }
+
    return (
-      <Form.Group>
-         <Form.Text
-            id={`slipName-${yieldId}`}
-            name={`slipName-${yieldId}`}
-            onBlur={updateSlipName}
-            onChange={e => setName(e.target.value)}
-            variant='revamp-sm'
-            value={name}
-            placeholder="Enter slip name"
-            hasError={!name}
-         />
-      </Form.Group>
+       <>
+         <div style={{ width: '150px' }}>
+            <Form.Text
+               id={`slipName-${yieldId}`}
+               name={`slipName-${yieldId}`}
+               onBlur={updateSlipName}
+               onChange={e => setName(e.target.value)}
+               variant="revamp-sm"
+               value={name}
+               placeholder="enter slip name"
+               hasError={!name}
+               disabled={disabled}
+            />
+         </div>
+
+         <div
+            style={{
+               display: 'inline-block',
+               width: '36px',
+               height: '16px',
+               background: '#F6C338',
+               borderRadius: '40px',
+               fontFamily: 'Roboto',
+               fontStyle: 'normal',
+               fontWeight: 'bold',
+               fontSize: '11px',
+               lineHeight: '16px',
+               margin: '0px 2px 0px 0px',
+               letterSpacing: '0.32px',
+               padding: '1px 0px 2.5px 5px',
+               color: '#FFFFFF',
+            }}
+         >
+            <CalCount /> 2%
+         </div>
+         <div
+            style={{
+               display: 'inline-block',
+               width: '36px',
+               height: '16px',
+               background: '#8AC03B',
+               borderRadius: '40px',
+               fontFamily: 'Roboto',
+               fontStyle: 'normal',
+               fontWeight: 'bold',
+               fontSize: '11px',
+               lineHeight: '16px',
+               margin: '0px 55px 0px 2px',
+               letterSpacing: '0.32px',
+               padding: '1px 5px 2.5px 5px',
+               color: '#FFFFFF',
+            }}
+         >
+            <FoodCost /> 2$
+         </div>
+         {disabled ? (
+            <></>
+         ) : visibility ? (
+            <StyledButton
+               index={index}
+               onClick={() => updateVisibility(!visibility)}
+            >
+               <VisibiltyOn />
+            </StyledButton>
+         ) : (
+            <StyledButton
+               index={index}
+               onClick={() => updateVisibility(!visibility)}
+            >
+               <VisibiltyOff />
+            </StyledButton>
+         )}
+      </>
    )
 }
