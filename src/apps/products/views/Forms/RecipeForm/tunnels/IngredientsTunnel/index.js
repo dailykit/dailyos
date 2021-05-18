@@ -8,7 +8,10 @@ import {
    ListSearch,
    TunnelHeader,
    useSingleList,
+   useMultiList,
    Dropdown,
+   TagGroup,
+   Tag,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
@@ -23,19 +26,18 @@ import { TunnelBody } from '../styled'
 
 const IngredientsTunnel = ({ state, closeTunnel, openTunnel }) => {
    const { recipeDispatch } = React.useContext(RecipeContext)
-
+   let ingredients_selected_temp = []
    // State for search input
    const [search, setSearch] = React.useState('')
    const [ingredients, setIngredients] = React.useState([])
-   const [list, current, selectOption] = useSingleList(ingredients)
-   let [IngredientsSelected] = React.useState([])
+   let [IngredientsSelected, setIngredientsSelected] = React.useState([])
+   const [list, selected, selectOption] = useMultiList(ingredients)
    // Mutation
    const [createSimpleRecipeIngredientProcessings] = useMutation(
       CREATE_SIMPLE_RECIPE_INGREDIENT_PROCESSINGS,
       {
          onCompleted: () => {
             toast.success('Ingredient added!')
-            closeTunnel(2)
             closeTunnel(1)
          },
          onError: error => {
@@ -44,10 +46,6 @@ const IngredientsTunnel = ({ state, closeTunnel, openTunnel }) => {
          },
       }
    )
-   
-
-   
-
    // Query
    const { loading } = useSubscription(S_INGREDIENTS, {
       onSubscriptionData: data => {
@@ -65,21 +63,18 @@ const IngredientsTunnel = ({ state, closeTunnel, openTunnel }) => {
       },
    })
 
-   const select = option => {
-      console.log(option)
-      selectOption('id', option.id)
-      recipeDispatch({
-         type: 'ADD_INGREDIENT',
-         payload: option,
-      })
-      openTunnel(2)
-   }
-
-   
    const add = () => {
+      
+      setIngredientsSelected([])
+      const tempIngredientSelected=selected.map(item => {
+         return {
+               ingredientId: item.id,
+               simpleRecipeId: state.id,
+            }
+      })
       createSimpleRecipeIngredientProcessings({
          variables: {
-            objects: IngredientsSelected,
+            objects: tempIngredientSelected
          },
       })
    }
@@ -92,40 +87,67 @@ const IngredientsTunnel = ({ state, closeTunnel, openTunnel }) => {
          },
       })
    }
-   const selectedOption = option => {
-      IngredientsSelected = []
-      option.map(item => {
-         IngredientsSelected.push({
-            ingredientId: item.id,
-            simpleRecipeId: state.id,
-         })
-      })
-      console.log(IngredientsSelected, 'Adrish Selected')
-   }
+   const selectedOption = option => {}
    const searchedOption = option => console.log(option, 'Adrish Searched')
 
    return (
       <>
+         {/* {console.log(search, 'Adrish Search')}
+         {console.log(ingredients, 'Adrish ingredients')} */}
+
          <TunnelHeader
             title="Select Ingredient"
             close={() => closeTunnel(1)}
+            right={{ action: add, title: 'Add' }}
             tooltip={<Tooltip identifier="ingredients_tunnel" />}
          />
          <TunnelBody>
             {loading ? (
                <InlineLoader />
             ) : (
-               <>
-                  <div>
-                     <Dropdown
-                        type="multi"
-                        options={ingredients}
-                        searchedOption={searchedOption}
-                        selectedOption={selectedOption}
-                        placeholder="type what you're looking for..."
-                     />
-                  </div>
-               </>
+               <List>
+                  <ListSearch
+                     onChange={value => setSearch(value)}
+                     placeholder="type what you’re looking for..."
+                  />
+                  {selected.length > 0 && (
+                     <TagGroup style={{ margin: '8px 0' }}>
+                        {}
+                        {selected.map(option => (
+                           <Tag
+                              key={option.id}
+                              title={option.title}
+                              onClick={() => selectOption('id', option.id)}
+                           >
+                              {option.title}
+                           </Tag>
+                        ))}
+                     </TagGroup>
+                  )}
+                  <ListHeader type="MSL1" label="Ingredients" />
+                  <ListOptions
+                     search={search}
+                     handleOnCreate={quickCreateIngredient}
+                  >
+                     {list
+                        .filter(option =>
+                           option.title.toLowerCase().includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="MSL1"
+                              key={option.id}
+                              title={option.title}
+                              onClick={() => {
+                                 selectOption('id', option.id)
+                              }}
+                              isActive={selected.find(
+                                 item => item.id === option.id
+                              )}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
             )}
          </TunnelBody>
       </>
