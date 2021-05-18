@@ -58,7 +58,6 @@ export const S_PROCESSINGS = gql`
       ingredientProcessings(where: $where) {
          id
          title: processingName
-         processingName
       }
    }
 `

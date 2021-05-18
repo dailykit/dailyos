@@ -348,6 +348,18 @@ export const CREATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING = gql`
    }
 `
 
+export const CREATE_SIMPLE_RECIPE_INGREDIENT_PROCESSINGS = gql`
+   mutation CreateSimpleRecipeIngredientProcessings(
+      $objects: [simpleRecipe_simpleRecipe_ingredient_processing_insert_input!]!
+   ) {
+      createSimpleRecipeIngredientProcessings(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
 export const INSTRUCTION_SET = {
    CREATE: gql`
       mutation CreateInstructionSet(

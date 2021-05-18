@@ -16,6 +16,11 @@ import DollarIcon from './Dollar'
 import InfoIcon from './Info'
 import LinkIcon from './Link'
 import MinusIcon from './Minus'
+import Serving from './Servings'
+import CalCount from './CalCount'
+import FoodCost from './FoodCost'
+import Yield from './Yield'
+import ChefPay from './ChefPay'
 
 export {
    MenuIcon,
@@ -36,4 +41,9 @@ export {
    LinkIcon,
    MinusIcon,
    RemoveIcon,
+   Serving,
+   CalCount,
+   FoodCost,
+   Yield,
+   ChefPay
 }

@@ -8,21 +8,45 @@ import {
    ListSearch,
    TunnelHeader,
    useSingleList,
+   Dropdown,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { RecipeContext } from '../../../../../context/recipe'
-import { CREATE_INGREDIENT, S_INGREDIENTS } from '../../../../../graphql'
+import {
+   CREATE_INGREDIENT,
+   S_INGREDIENTS,
+   CREATE_SIMPLE_RECIPE_INGREDIENT_PROCESSINGS,
+} from '../../../../../graphql'
 import { TunnelBody } from '../styled'
 
-const IngredientsTunnel = ({ closeTunnel, openTunnel }) => {
+const IngredientsTunnel = ({ state, closeTunnel, openTunnel }) => {
    const { recipeDispatch } = React.useContext(RecipeContext)
 
    // State for search input
    const [search, setSearch] = React.useState('')
    const [ingredients, setIngredients] = React.useState([])
    const [list, current, selectOption] = useSingleList(ingredients)
+   let [IngredientsSelected] = React.useState([])
+   // Mutation
+   const [createSimpleRecipeIngredientProcessings] = useMutation(
+      CREATE_SIMPLE_RECIPE_INGREDIENT_PROCESSINGS,
+      {
+         onCompleted: () => {
+            toast.success('Ingredient added!')
+            closeTunnel(2)
+            closeTunnel(1)
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
+   
+
+   
 
    // Query
    const { loading } = useSubscription(S_INGREDIENTS, {
@@ -51,6 +75,15 @@ const IngredientsTunnel = ({ closeTunnel, openTunnel }) => {
       openTunnel(2)
    }
 
+   
+   const add = () => {
+      createSimpleRecipeIngredientProcessings({
+         variables: {
+            objects: IngredientsSelected,
+         },
+      })
+   }
+
    const quickCreateIngredient = () => {
       const ingredientName = search.slice(0, 1).toUpperCase() + search.slice(1)
       createIngredient({
@@ -59,6 +92,17 @@ const IngredientsTunnel = ({ closeTunnel, openTunnel }) => {
          },
       })
    }
+   const selectedOption = option => {
+      IngredientsSelected = []
+      option.map(item => {
+         IngredientsSelected.push({
+            ingredientId: item.id,
+            simpleRecipeId: state.id,
+         })
+      })
+      console.log(IngredientsSelected, 'Adrish Selected')
+   }
+   const searchedOption = option => console.log(option, 'Adrish Searched')
 
    return (
       <>
@@ -72,35 +116,15 @@ const IngredientsTunnel = ({ closeTunnel, openTunnel }) => {
                <InlineLoader />
             ) : (
                <>
-                  <List>
-                     {Object.keys(current).length > 0 ? (
-                        <ListItem type="SSL1" title={current.title} />
-                     ) : (
-                        <ListSearch
-                           onChange={value => setSearch(value)}
-                           placeholder="type what you’re looking for..."
-                        />
-                     )}
-                     <ListHeader type="SSL1" label="Ingredients" />
-                     <ListOptions
-                        search={search}
-                        handleOnCreate={quickCreateIngredient}
-                     >
-                        {list
-                           .filter(option =>
-                              option.title.toLowerCase().includes(search)
-                           )
-                           .map(option => (
-                              <ListItem
-                                 type="SSL1"
-                                 key={option.id}
-                                 title={option.title}
-                                 isActive={option.id === current.id}
-                                 onClick={() => select(option)}
-                              />
-                           ))}
-                     </ListOptions>
-                  </List>
+                  <div>
+                     <Dropdown
+                        type="multi"
+                        options={ingredients}
+                        searchedOption={searchedOption}
+                        selectedOption={selectedOption}
+                        placeholder="type what you're looking for..."
+                     />
+                  </div>
                </>
             )}
          </TunnelBody>
