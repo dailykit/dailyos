@@ -57,7 +57,18 @@ export const S_PROCESSINGS = gql`
    subscription Processings($where: ingredient_ingredientProcessing_bool_exp) {
       ingredientProcessings(where: $where) {
          id
+         ingredientId
          title: processingName
+      }
+   }
+`
+export const S_PROCESSINGS_ID = gql`
+   subscription IngredientProcessings($_eq: Int!) {
+      simpleRecipeIngredientProcessings(
+         where: { simpleRecipeId: { _eq: $_eq } }
+      ) {
+         ingredientId
+         processingId
       }
    }
 `
@@ -72,6 +83,10 @@ export const S_SACHETS = gql`
          ingredient {
             id
             name
+         }
+         ingredientProcessingId
+         recipeYields {
+            recipeYieldId
          }
       }
    }
@@ -461,17 +476,16 @@ export const S_SIMPLE_RECIPES_FROM_INGREDIENT_AGGREGATE = gql`
 `
 
 export const INGREDIENT_CATEGORIES_INGREDIENTS_AGGREGATE = gql`
-subscription IngredientCategoryIngredientsAggregate {
-   ingredientCategories {
-     name 
-     title: name
-     ingredients_aggregate {
-       aggregate {
-         count
-         description : count
-       }
-     }
+   subscription IngredientCategoryIngredientsAggregate {
+      ingredientCategories {
+         name
+         title: name
+         ingredients_aggregate {
+            aggregate {
+               count
+               description: count
+            }
+         }
+      }
    }
- }
 `
-

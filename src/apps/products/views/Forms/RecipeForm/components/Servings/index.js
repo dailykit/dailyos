@@ -1,6 +1,7 @@
 import React from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Link } from 'react-router-dom'
+import Skeleton from 'react-loading-skeleton'
 import {
    ButtonTile,
    Flex,
@@ -32,7 +33,18 @@ import {
 } from './styles'
 import { Tooltip, InlineLoader } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
-import { DELETE_SIMPLE_RECIPE_YIELD, S_PROCESSINGS, UPDATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING, UPSERT_MASTER_PROCESSING } from '../../../../../graphql'
+import {
+   DELETE_SIMPLE_RECIPE_YIELD,
+   S_PROCESSINGS,
+   UPDATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING,
+   CREATE_PROCESSINGS,
+   UPSERT_MASTER_PROCESSING,
+   S_SACHETS,
+   UPSERT_MASTER_UNIT,
+   CREATE_SACHET,
+   UPSERT_SIMPLE_RECIPE_YIELD_SACHET,
+   UPDATE_SIMPLE_RECIPE_YIELD_SACHET,
+} from '../../../../../graphql'
 import { ServingsTunnel, IngredientsTunnel } from '../../tunnels'
 import { RecipeContext } from '../../../../../context/recipe'
 
@@ -40,8 +52,9 @@ const Servings = ({ state }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const { recipeState } = React.useContext(RecipeContext)
    const [ingredientProcessings, setIngredientProcessings] = React.useState([])
-   let [optionsWithoutDescription] = React.useState([])
-   
+   let [search] = React.useState('')
+   let [ingredientStateId, setingredientStateId] = React.useState(0)
+
    const [
       ingredientsTunnel,
       openingredientTunnel,
@@ -57,6 +70,28 @@ const Servings = ({ state }) => {
       onSubscriptionData: data => {
          const processings = data.subscriptionData.data.ingredientProcessings
          setIngredientProcessings(processings)
+      },
+   })
+
+   const [sachets, setSachets] = React.useState([])
+   let [slipname, setslipname] = React.useState('')
+
+   // Query
+   const { loadingSachets } = useSubscription(S_SACHETS, {
+      variables: {
+         where: {
+            isArchived: { _eq: false },
+         },
+      },
+      onSubscriptionData: data => {
+         const updatedSachets = data.subscriptionData.data.ingredientSachets.map(
+            sachet => ({
+               ...sachet,
+               title: `${sachet.quantity} ${sachet.unit}`,
+            })
+         )
+
+         setSachets([...updatedSachets])
       },
    })
 
@@ -97,6 +132,68 @@ const Servings = ({ state }) => {
          })
    }
 
+   const [upsertMasterProcessing] = useMutation(UPSERT_MASTER_PROCESSING, {
+      onCompleted: data => {
+         createProcessing({
+            variables: {
+               procs: [
+                  {
+                     ingredientId: ingredientStateId,
+                     processingName:
+                        data.createMasterProcessing.returning[0].name,
+                  },
+               ],
+            },
+         })
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
+   const [createProcessing] = useMutation(CREATE_PROCESSINGS, {
+      onCompleted: data => {
+         //console.log(data)
+         const processing = {
+            id: data.createIngredientProcessing.returning[0].id,
+            title: data.createIngredientProcessing.returning[0].processingName,
+         }
+         // add(processing)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
+   const [upsertMasterUnit] = useMutation(UPSERT_MASTER_UNIT, {
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+   const [createSachet] = useMutation(CREATE_SACHET, {
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
+   const [upsertRecipeYieldSachet] = useMutation(
+      UPSERT_SIMPLE_RECIPE_YIELD_SACHET,
+      {
+         onCompleted: () => {
+            toast.success('Sachet added!')
+            closeTunnel(3)
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
+
    const options =
       state.simpleRecipeYields?.map((option, index) => {
          console.log(option, 'Adrish option')
@@ -109,7 +206,7 @@ const Servings = ({ state }) => {
                      style={{
                         paddingLeft: '5px',
                         display: 'inline-block',
-                        width: '65px',
+                        width: '86px',
                      }}
                   >
                      {option.yield.serving}
@@ -204,19 +301,44 @@ const Servings = ({ state }) => {
 
    const ingredients_options =
       state.simpleRecipeIngredients?.map((option, index) => {
-         console.log(option, 'Adrish ingredients_option')
+         let dropDownReadOnly = true
+         let sachetDisabled = false
+         let optionsWithoutDescription = []
+         let sachetOptions = []
+
+         if (option.processing == null) {
+            dropDownReadOnly = false
+            sachetDisabled = true
+         }
          const selectedOption = processing => {
             updateSimpleRecipeIngredientProcessing({
                variables: {
-                  id: processing.id,
+                  id: option.id,
                   _set: {
-                     ingredientId: option.ingredient.id,
-                     simpleRecipeId: state.id
-                  } 
-               }
+                     processingId: processing.id,
+                     simpleRecipeId: state.id,
+                  },
+               },
             })
          }
-         const searchedOption = option => console.log(option)
+         const searchedOption = searchedProcessing => {
+            search = searchedProcessing
+
+            //console.log(search, 'Adrish Search')
+         }
+
+         const quickCreateProcessing = () => {
+            let processingName =
+               search.slice(0, 1).toUpperCase() + search.slice(1)
+            setingredientStateId(option.ingredient.id)
+            //console.log(ingredientStateId, 'ingredientStateId')
+            upsertMasterProcessing({
+               variables: {
+                  name: processingName,
+               },
+            })
+         }
+
          let ProcessingOptions = []
          return (
             <tr>
@@ -245,9 +367,10 @@ const Servings = ({ state }) => {
                      </div>
 
                      <Link to="#">{option.ingredient.name}</Link>
-
+                     {console.log(ingredientProcessings, "Adrish ingredientProcessings")}
                      {ingredientProcessings.map((item, index) => {
                         if (option.ingredient.id == item.ingredientId) {
+                           
                            ProcessingOptions.push({
                               id: item.id,
                               title: item.title,
@@ -255,30 +378,21 @@ const Servings = ({ state }) => {
                         }
                         optionsWithoutDescription = ProcessingOptions
                      })}
+                    
                      <div style={{ padding: '0px 0px 12px 45px' }}>
                         <Dropdown
                            type="single"
                            variant="revamp"
                            defaultOption={option.processing}
-                           addOption={() => console.log('Item added')}
-                           options={optionsWithoutDescription}
+                           addOption={quickCreateProcessing}
+                           options={ProcessingOptions}
                            searchedOption={searchedOption}
                            selectedOption={selectedOption}
+                           readOnly={dropDownReadOnly}
                            typeName="processing"
                         />
                      </div>
-                     <div
-                        style={{ width: '181px', padding: '0px 0px 10px 45px' }}
-                     >
-                        <Form.Group>
-                           <Form.Text
-                              id="username"
-                              name="username"
-                              placeholder="enter slip name"
-                              variant="revamp-sm"
-                           />
-                        </Form.Group>
-                     </div>
+                    
                      <div
                         style={{
                            display: 'inline-block',
@@ -321,19 +435,134 @@ const Servings = ({ state }) => {
                      </div>
                   </StyledCardIngredient>
                </td>
-               {state.simpleRecipeYields?.map((option, index) => {
-                  return (
+               {state.simpleRecipeYields?.map((object, index) => {
+                  sachetOptions = []
+                  let search = ''
+                  let loader = false
+                  let defaultslipName = ''
+                  let onChange = false
+                  sachets.map((item, index) => {
+                     if (sachetDisabled == false) {
+                        //console.log(option.processing.id, item.processingId, "Adrish Processing idss")
+                        if (
+                           option.processing.id ==
+                              item.ingredientProcessingId &&
+                           option.ingredient.id == item.ingredient.id
+                        ) {
+                           //console.log(item.id,"Adrish sachet idss")
+                           loader = true
+                           sachetOptions.push({
+                              id: item.id,
+                              title: item.title,
+                           })
+                        }
+                     }
+                  })
+                  let defaultSachetOption = {}
+                  option.linkedSachets.map((item, index) => {
+                     if (item.simpleRecipeYield.id == object.id) {
+                        loader = true
+                        defaultslipName = item.slipName
+
+                        defaultSachetOption = {
+                           id: item.ingredientSachet.id,
+                           title: `${defaultSachetOption.title} ${item.ingredientSachet.quantity}`,
+                        }
+                     }
+                     return ''
+                  })
+
+                  const quickCreateSachet = async () => {
+                     if (!search.includes(' '))
+                        return toast.error(
+                           'Quantity and Unit should be space separated!'
+                        )
+                     const [quantity, unit] = search.trim().split(' ')
+                     if (quantity && unit) {
+                        await upsertMasterUnit({
+                           variables: {
+                              name: unit,
+                           },
+                        })
+                        createSachet({
+                           variables: {
+                              objects: [
+                                 {
+                                    ingredientId: option.ingredient.id,
+                                    ingredientProcessingId:
+                                       option.processing.id,
+                                    quantity: +quantity,
+                                    unit,
+                                    tracking: false,
+                                 },
+                              ],
+                           },
+                        })
+                     } else {
+                        toast.error('Enter a valid quantity and unit!')
+                     }
+                  }
+                  const selectedSachetOption = sachet => {
+                     upsertRecipeYieldSachet({
+                        variables: {
+                           yieldId: object.id,
+                           ingredientProcessingRecordId: option.id,
+                           ingredientSachetId: sachet.id,
+                           slipName: option.ingredient.name,
+                        },
+                     })
+                  }
+                  const searchedSachetOption = searchedSachet => {
+                     search = searchedSachet
+
+                     //console.log(search, 'Adrish Search')
+                  }
+                  const setName = typedName => {
+                     setslipname(typedName)
+                     console.log(typedName)
+                  }
+                  return(
                      <td>
+                     {loader == false || sachetOptions.length > 0 ? (
                         <SatchetCard index={index}>
                            <Dropdown
+                              disabled={sachetDisabled}
+                              options={sachetOptions}
+                              defaultOption={defaultSachetOption}
+                              addOption={quickCreateSachet}
+                              searchedOption={searchedSachetOption}
+                              selectedOption={selectedSachetOption}
                               type="single"
                               variant="revamp"
                               typeName="sachet"
                            />
+                           <div
+                              style={{
+                                 width: '181px',
+                                 padding: '0px 0px 0px 0px',
+                              }}
+                           >
+                              {option.processing == null ? (
+                                 <></>
+                              ) : (
+                                 <SachetDetails
+                                    yieldId={object.id}
+                                    ingredientProcessingRecordId={option.id}
+                                    slipName={defaultslipName}
+                                 />
+                              )}
+                           </div>
                         </SatchetCard>
-                     </td>
+                     ) : (
+                        <SatchetCard>
+                           <Skeleton />
+                        </SatchetCard>
+                     )}
+                  </td>
+               
                   )
                })}
+
             </tr>
          )
       }) || []
@@ -383,7 +612,11 @@ const Servings = ({ state }) => {
                      {options}
                   </tr>
 
-                  {loading && ingredients_options.length ? <InlineLoader /> : ingredients_options}
+                  {loading && ingredients_options.length ? (
+                     <InlineLoader />
+                  ) : (
+                     ingredients_options
+                  )}
                </table>
                <br />
                <ButtonTile
@@ -404,3 +637,60 @@ const Servings = ({ state }) => {
 }
 
 export default Servings
+
+
+const SachetDetails = ({ yieldId, slipName, ingredientProcessingRecordId }) => {
+   const [history, setHistory] = React.useState({
+      slipName,
+   })
+   const [name, setName] = React.useState(slipName)
+
+   React.useEffect(() => {
+      setHistory({
+         slipName,
+      })
+      setName(slipName)
+   }, [slipName])
+
+   // Mutation
+   const [updateSachet] = useMutation(UPDATE_SIMPLE_RECIPE_YIELD_SACHET, {
+      onCompleted: () => {
+         toast.success('Updated!')
+      },
+      onError: error => {
+         setName(history.slipName)
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
+   const updateSlipName = () => {
+      if (!name) {
+         return toast.error('Slip name is required!')
+      }
+      updateSachet({
+         variables: {
+            ingredientProcessingRecordId,
+            yieldId,
+            set: {
+               slipName: name,
+            },
+         },
+      })
+   }
+
+   return (
+      <Form.Group>
+         <Form.Text
+            id={`slipName-${yieldId}`}
+            name={`slipName-${yieldId}`}
+            onBlur={updateSlipName}
+            onChange={e => setName(e.target.value)}
+            variant='revamp-sm'
+            value={name}
+            placeholder="Enter slip name"
+            hasError={!name}
+         />
+      </Form.Group>
+   )
+}

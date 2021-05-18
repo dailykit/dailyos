@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 export const StyledCardEven = styled.div(
   ({ index }) => css`
   height: 80px;
-  width: 140px;
+  width: 160px;
   padding: 5px 5px 5px 5px;
   background: ${index % 2 == 0
       ? `#FFFFFF`
@@ -34,7 +34,7 @@ export const Heading = styled.div`
 
 export const StyledCardIngredient = styled.div(
   () => css`
-  width: 226px;
+  width: 238px;
   height: 130px;
   background: #FFFFFF;
   font-family: Roboto;
@@ -51,7 +51,7 @@ export const StyledCardIngredient = styled.div(
 export const SatchetCard = styled.div(
   ({ index }) => css`
   height: 57px;
-  width: 140px;
+  width: 160px;
   padding: 5px 5px 5px 5px;
   background: ${index % 2 == 0
       ? `#FFFFFF`
@@ -64,7 +64,7 @@ export const SatchetCard = styled.div(
   font-size: 30px;
   line-height: 26px;
   letter-spacing: 0.32px;
-  display: inline-block;
+  margin-top: 25px;
   
 `
 ) 
