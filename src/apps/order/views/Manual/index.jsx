@@ -1,8 +1,8 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
-import { ManualProvider } from './state'
 import { Aside, Main, Footer } from './sections'
+import { ManualProvider, useManual } from './state'
 import { useTabs } from '../../../../shared/providers'
 
 export const Manual = () => {
@@ -21,8 +21,9 @@ export const Manual = () => {
 }
 
 const ManualContent = () => {
+   const { state } = useManual()
    return (
-      <Styles.Layout>
+      <Styles.Layout mode={state.mode}>
          <Main />
          <Aside />
          <Footer />
@@ -31,11 +32,13 @@ const ManualContent = () => {
 }
 
 const Styles = {
-   Layout: styled.div`
-      height: 100%;
-      display: grid;
-      grid-template-columns: 1fr 460px;
-      grid-template-rows: 1fr 80px;
-      grid-template-areas: 'main aside' 'footer aside';
-   `,
+   Layout: styled.div(
+      ({ mode }) => css`
+         height: 100%;
+         display: grid;
+         grid-template-columns: 1fr 460px;
+         grid-template-areas: 'main aside' 'footer aside';
+         grid-template-rows: 1fr ${mode === 'ondemand' ? '40px' : '80px'};
+      `
+   ),
 }

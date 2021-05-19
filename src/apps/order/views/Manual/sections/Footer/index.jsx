@@ -1,8 +1,11 @@
 import React from 'react'
-import styled from 'styled-components'
 import { Flex } from '@dailykit/ui'
+import styled from 'styled-components'
+
+import { useManual } from '../../state'
 
 export const Footer = () => {
+   const { state } = useManual()
    return (
       <Styles.Footer>
          <Flex
@@ -13,15 +16,17 @@ export const Footer = () => {
          >
             No categories available.
          </Flex>
-         <Flex
-            container
-            as="section"
-            alignItems="center"
-            justifyContent="center"
-            style={{ background: '#111111' }}
-         >
-            No weeks available.
-         </Flex>
+         {state.mode === 'subscription' && (
+            <Flex
+               container
+               as="section"
+               alignItems="center"
+               justifyContent="center"
+               style={{ background: '#111111' }}
+            >
+               No weeks available.
+            </Flex>
+         )}
       </Styles.Footer>
    )
 }
