@@ -14,7 +14,7 @@ import { TunnelBody } from './styled'
 
 import { RemoveIcon } from '../../../apps/products/assets/icons'
 import ConfirmationPopup from './confirmationPopup'
-import { SIMPLE_RECIPE_UPDATE } from './mutation'
+import { SIMPLE_RECIPE_UPDATE, UPDATE_INGREDIENTS } from './mutation'
 
 const BulkActions = ({
    children,
@@ -28,7 +28,18 @@ const BulkActions = ({
 }) => {
    const [showPopup, setShowPopup] = React.useState(false)
    const [popupHeading, setPopupHeading] = React.useState('')
+   //mutation
    const [simpleRecipeUpdate] = useMutation(SIMPLE_RECIPE_UPDATE, {
+      onCompleted: () => {
+         toast.success('Update Successfully')
+         close(1)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         //  logger(error)
+      },
+   })
+   const [updateIngredients] = useMutation(UPDATE_INGREDIENTS, {
       onCompleted: () => {
          toast.success('Update Successfully')
          close(1)
@@ -43,6 +54,8 @@ const BulkActions = ({
          case 'Recipe':
             return simpleRecipeUpdate
             break
+         case 'Ingredient':
+            return updateIngredients
       }
    }
    const handleOnUpdate = () => {

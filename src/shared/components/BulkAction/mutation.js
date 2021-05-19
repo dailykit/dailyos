@@ -10,3 +10,13 @@ export const SIMPLE_RECIPE_UPDATE = gql`
       }
    }
 `
+export const UPDATE_INGREDIENTS = gql`
+   mutation UpdateIngredients(
+      $ids: [Int!]
+      $_set: ingredient_ingredient_set_input
+   ) {
+      updateIngredient(where: { id: { _in: $ids } }, _set: $_set) {
+         affected_rows
+      }
+   }
+`
