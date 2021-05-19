@@ -26,13 +26,18 @@ export const Aside = () => {
                   <Flex as="main" padding="0 8px 8px 8px">
                      {brand?.id ? (
                         <>
-                           {brand?.title && (
-                              <>
-                                 <Avatar withName title={brand.title} />
-                                 <Spacer size="8px" />
-                              </>
-                           )}
-                           <Text as="subtitle">{brand?.domain}</Text>
+                           <Flex container alignItems="center">
+                              {brand?.title && (
+                                 <>
+                                    <Avatar title={brand.title} />
+                                    <Spacer size="22px" xAxis />
+                                 </>
+                              )}
+                              <Flex>
+                                 <Text as="p">{brand?.title}</Text>
+                                 <Text as="p">{brand?.domain}</Text>
+                              </Flex>
+                           </Flex>
                         </>
                      ) : (
                         <Styles.Filler
@@ -45,10 +50,32 @@ export const Aside = () => {
                </Styles.Card>
                <Spacer size="8px" />
                <Styles.Card>
-                  <Header title="Customer Details" />
+                  <Header
+                     title="Customer"
+                     onEdit={() => tunnels.customer[1](1)}
+                  />
                   <Flex as="main" padding="0 8px 8px 8px">
                      {customer?.id ? (
-                        <>{customer.id}</>
+                        <>
+                           <Flex container alignItems="center">
+                              <Avatar
+                                 title={
+                                    customer?.customer?.platform_customer
+                                       ?.fullName || ''
+                                 }
+                              />
+                              <Spacer size="22px" xAxis />
+                              <Flex>
+                                 <Text as="p">{customer?.customer?.email}</Text>
+                                 <Text as="p">
+                                    {
+                                       customer?.customer?.platform_customer
+                                          ?.phoneNumber
+                                    }
+                                 </Text>
+                              </Flex>
+                           </Flex>
+                        </>
                      ) : (
                         <Styles.Filler
                            height="100px"

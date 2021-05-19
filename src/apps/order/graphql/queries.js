@@ -984,6 +984,26 @@ export const QUERIES = {
             }
          `,
       },
+      CUSTOMER: {
+         LIST: gql`
+            query customers($where: crm_brand_customer_bool_exp = {}) {
+               customers: brandCustomers(where: $where) {
+                  id
+                  keycloakId
+                  customer {
+                     id
+                     email
+                     platform_customer {
+                        firstName
+                        lastName
+                        phoneNumber
+                        fullName
+                     }
+                  }
+               }
+            }
+         `,
+      },
    },
 }
 

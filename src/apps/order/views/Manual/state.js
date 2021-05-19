@@ -1,7 +1,7 @@
 import React from 'react'
 import { Filler, useTunnel } from '@dailykit/ui'
 
-import { BrandTunnel } from './tunnels'
+import { BrandTunnel, CustomerTunnel } from './tunnels'
 import { InlineLoader } from '../../../../shared/components'
 
 const Context = React.createContext()
@@ -27,6 +27,11 @@ const reducers = (state, { type, payload }) => {
                domain: payload?.domain || 'N/A',
             },
          }
+      case 'SET_CUSTOMER':
+         return {
+            ...state,
+            customer: payload,
+         }
       default:
          return state
    }
@@ -36,6 +41,7 @@ export const ManualProvider = ({ children }) => {
    const [isModeLoading, setIsModeLoading] = React.useState(true)
    const [state, dispatch] = React.useReducer(reducers, initial)
    const brandTunnels = useTunnel(1)
+   const customerTunnels = useTunnel(1)
 
    React.useEffect(() => {
       const mode = new URL(window.location.href).searchParams.get('mode')
@@ -60,11 +66,15 @@ export const ManualProvider = ({ children }) => {
             address: state.address,
             customer: state.customer,
             paymentMethod: state.paymentMethod,
-            tunnels: { brand: brandTunnels },
+            tunnels: {
+               brand: brandTunnels,
+               customer: customerTunnels,
+            },
          }}
       >
          {children}
          <BrandTunnel panel={brandTunnels} />
+         <CustomerTunnel panel={customerTunnels} />
       </Context.Provider>
    )
 }
