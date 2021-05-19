@@ -16,9 +16,8 @@ import {
    Context,
    Dropdown,
    Form,
-   Spacer
+   Spacer,
 } from '@dailykit/ui'
-import { toast } from 'react-toastify'
 import {
    Serving,
    CalCount,
@@ -28,6 +27,7 @@ import {
    VisibiltyOn,
    VisibiltyOff,
 } from '../../../../../assets/icons'
+import { toast } from 'react-toastify'
 import {
    StyledCardEven,
    Heading,
@@ -35,7 +35,11 @@ import {
    SatchetCard,
    StyledButton,
 } from './styles'
-import { Tooltip, InlineLoader } from '../../../../../../../shared/components'
+import {
+   Tooltip,
+   InlineLoader,
+   DragNDrop,
+} from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import {
    DELETE_SIMPLE_RECIPE_YIELD,
@@ -54,12 +58,12 @@ import { RecipeContext } from '../../../../../context/recipe'
 import { Button } from 'react-scroll'
 
 const Servings = ({ state }) => {
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const { recipeState } = React.useContext(RecipeContext)
    const [ingredientProcessings, setIngredientProcessings] = React.useState([])
+
    let [search] = React.useState('')
    let [ingredientStateId, setingredientStateId] = React.useState(0)
-
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [
       ingredientsTunnel,
       openingredientTunnel,
@@ -99,7 +103,7 @@ const Servings = ({ state }) => {
          setSachets([...updatedSachets])
       },
    })
-
+   //console.log(sachets, 'Adrish updated sachets')
    // Mutation
    const [deleteYield] = useMutation(DELETE_SIMPLE_RECIPE_YIELD, {
       onCompleted: () => {
@@ -110,19 +114,6 @@ const Servings = ({ state }) => {
          logger(error)
       },
    })
-
-   const [updateSimpleRecipeIngredientProcessing] = useMutation(
-      UPDATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING,
-      {
-         onCompleted: () => {
-            toast.success('Processing added!')
-         },
-         onError: error => {
-            toast.error('Something went wrong!')
-            logger(error)
-         },
-      }
-   )
 
    // Handlers
    const remove = serving => {
@@ -136,6 +127,19 @@ const Servings = ({ state }) => {
             },
          })
    }
+
+   const [updateSimpleRecipeIngredientProcessing] = useMutation(
+      UPDATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING,
+      {
+         onCompleted: () => {
+            toast.success('Processing added!')
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
 
    const [upsertMasterProcessing] = useMutation(UPSERT_MASTER_PROCESSING, {
       onCompleted: data => {
@@ -201,102 +205,30 @@ const Servings = ({ state }) => {
 
    const options =
       state.simpleRecipeYields?.map((option, index) => {
-         console.log(option, 'Adrish option')
+         //console.log(option, 'Adrish option')
 
          return (
             <th>
                <StyledCardEven index={index} id={option.id}>
                   <Serving />
-                  <div
-                     style={{
-                        paddingLeft: '5px',
-                        display: 'inline-block',
-                        width: '86px',
-                     }}
-                  >
-                     {option.yield.serving}
-                  </div>
-                  <div style={{ textAlign: 'right', display: 'inline-block' }}>
-                     <ContextualMenu
-                        style={{ margin: '0px', padding: '0px', width: '10px' }}
-                     >
+                  <div id="Serving">{option.yield.serving}</div>
+                  <div id="menu">
+                     <ContextualMenu>
                         <Context
                            title="Delete"
                            handleClick={() => remove(option)}
                         ></Context>
                      </ContextualMenu>
                   </div>
-                  <br />
-                  <p
-                     style={{
-                        fontFamily: 'Roboto',
-                        fontStyle: 'normal',
-                        fontWeight: 'normal',
-                        fontSize: '12px',
-                        lineHeight: '10px',
-                     }}
-                  >
-                     {' '}
-                     {option.yield.label}{' '}
-                  </p>
-                  <div
-                     style={{
-                        display: 'inline-block',
-                        width: '36px',
-                        height: '16px',
-                        background: '#F6C338',
-                        borderRadius: '40px',
-                        fontFamily: 'Roboto',
-                        fontStyle: 'normal',
-                        fontWeight: 'bold',
-                        fontSize: '11px',
-                        lineHeight: '16px',
-                        margin: '0px 2px 0px 0px',
-                        letterSpacing: '0.32px',
-                        padding: '1px 0px 2.5px 5px',
-                        color: '#FFFFFF',
-                     }}
-                  >
+
+                  <p> {option.yield.label} </p>
+                  <div id="calCount">
                      <CalCount /> 2%
                   </div>
-                  <div
-                     style={{
-                        display: 'inline-block',
-                        width: '36px',
-                        height: '16px',
-                        background: '#8AC03B',
-                        borderRadius: '40px',
-                        fontFamily: 'Roboto',
-                        fontStyle: 'normal',
-                        fontWeight: 'bold',
-                        fontSize: '11px',
-                        lineHeight: '16px',
-                        margin: '0px 2px 0px 2px',
-                        letterSpacing: '0.32px',
-                        padding: '1px 5px 2.5px 5px',
-                        color: '#FFFFFF',
-                     }}
-                  >
+                  <div id="foodCost">
                      <FoodCost /> 2$
                   </div>
-                  <div
-                     style={{
-                        display: 'inline-block',
-                        width: '44px',
-                        height: '16px',
-                        background: '#555B6E',
-                        borderRadius: '40px',
-                        fontFamily: 'Roboto',
-                        fontStyle: 'normal',
-                        fontWeight: 'bold',
-                        fontSize: '11px',
-                        lineHeight: '16px',
-                        margin: '0px 0px 0px 2px',
-                        letterSpacing: '0.32px',
-                        padding: '1px 5px 2.5px 5px',
-                        color: '#FFFFFF',
-                     }}
-                  >
+                  <div id="yield">
                      <Yield /> 2kg
                   </div>
                </StyledCardEven>
@@ -304,8 +236,9 @@ const Servings = ({ state }) => {
          )
       }) || []
 
-   const ingredients_options =
+   const ingredientsOptions =
       state.simpleRecipeIngredients?.map((option, index) => {
+         //console.log(option, 'Adrish selected processing')
          let dropDownReadOnly = true
          let sachetDisabled = false
          let optionsWithoutDescription = []
@@ -343,308 +276,256 @@ const Servings = ({ state }) => {
                },
             })
          }
-
          let ProcessingOptions = []
          return (
-            <tr>
-               <td>
-                  <StyledCardIngredient>
-                     <div
-                        style={{
-                           display: 'inline-block',
-                           width: '27px',
-                           height: '27px',
-                           borderRadius: '50%',
-                           background: '#F4F4F4',
-                           margin: '0px 18px 0px 0px',
-                           fontFamily: 'Roboto',
-                           fontStyle: 'normal',
-                           fontWeight: 'bold',
-                           fontSize: '12px',
-                           lineHeight: '16px',
-                           color: '#919699',
-                           letterSpacing: '0.32px',
-                           padding: '7px 0px 0px 0px',
-                           textAlign: 'center',
-                        }}
-                     >
-                        {index + 1}
-                     </div>
+            <table style={{ textAlign: 'left' }}>
+               <tr>
+                  <td>
+                     <StyledCardIngredient>
+                        <div id="index">{index + 1}</div>
 
-                     <Link to="#">{option.ingredient.name}</Link>
-                     {console.log(
-                        ingredientProcessings,
-                        'Adrish ingredientProcessings'
-                     )}
-                     {ingredientProcessings.map((item, index) => {
-                        if (option.ingredient.id == item.ingredientId) {
-                           ProcessingOptions.push({
-                              id: item.id,
-                              title: item.title,
-                           })
-                        }
-                        optionsWithoutDescription = ProcessingOptions
-                     })}
-                     <Spacer size="7px" />
-                     <div style={{ padding: '0px 0px 12px 45px' }}>
-                        <Dropdown
-                           type="single"
-                           variant="revamp"
-                           defaultOption={option.processing}
-                           addOption={quickCreateProcessing}
-                           options={ProcessingOptions}
-                           searchedOption={searchedOption}
-                           selectedOption={selectedOption}
-                           readOnly={dropDownReadOnly}
-                           typeName="processing"
-                        />
-                     </div>
+                        <Link to="#">{option.ingredient.name}</Link>
 
-                     <div
-                        style={{
-                           display: 'inline-block',
-                           width: '99px',
-                           height: '18px',
-                           background: '#F6C338',
-                           borderRadius: '40px',
-                           fontFamily: 'Roboto',
-                           fontStyle: 'normal',
-                           fontWeight: 'bold',
-                           fontSize: '11px',
-                           lineHeight: '16px',
-                           margin: '0px 2px 0px 45px',
-                           letterSpacing: '0.32px',
-                           padding: '1px 0px 2.5px 5px',
-                           color: '#FFFFFF',
-                        }}
-                     >
-                        <CalCount /> 2% per saving
-                     </div>
-                     <div
-                        style={{
-                           display: 'inline-block',
-                           width: '36px',
-                           height: '16px',
-                           background: '#FF5A52',
-                           borderRadius: '40px',
-                           fontFamily: 'Roboto',
-                           fontStyle: 'normal',
-                           fontWeight: 'bold',
-                           fontSize: '11px',
-                           lineHeight: '16px',
-                           margin: '0px 2px 0px 0px',
-                           letterSpacing: '0.32px',
-                           padding: '1px 0px 2.5px 5px',
-                           color: '#FFFFFF',
-                        }}
-                     >
-                        <ChefPay /> 2$
-                     </div>
-                  </StyledCardIngredient>
-               </td>
-               {state.simpleRecipeYields?.map((object, index) => {
-                  sachetOptions = []
-                  let search = ''
-                  let loader = false
-                  let defaultslipName = ''
-                  let visibility = ''
-                  sachets.map((item, index) => {
-                     if (sachetDisabled == false) {
-                        //console.log(option.processing.id, item.processingId, "Adrish Processing idss")
-                        if (
-                           option.processing.id ==
-                              item.ingredientProcessingId &&
-                           option.ingredient.id == item.ingredient.id
-                        ) {
-                           //console.log(item.id,"Adrish sachet idss")
-                           loader = true
-                           sachetOptions.push({
-                              id: item.id,
-                              title: item.title,
-                           })
-                        }
-                     }
-                  })
-                  let defaultSachetOption = {}
-                  option.linkedSachets.map((item, index) => {
-                     if (item.simpleRecipeYield.id == object.id) {
-                        loader = true
-                        defaultslipName = item.slipName
-                        visibility = item.isVisible
-                        defaultSachetOption = {
-                           id: item.ingredientSachet.id,
-                           title: `${defaultSachetOption.title} ${item.ingredientSachet.quantity}`,
-                        }
-                     }
-                     return ''
-                  })
+                        {ingredientProcessings.map((item, index) => {
+                           if (option.ingredient.id == item.ingredientId) {
+                              ProcessingOptions.push({
+                                 id: item.id,
+                                 title: item.title,
+                              })
+                           }
+                           optionsWithoutDescription = ProcessingOptions
+                        })}
+                        <Spacer size="7px" />
+                        <div id="dropdown">
+                           <Dropdown
+                              type="single"
+                              variant="revamp"
+                              defaultOption={option.processing}
+                              addOption={quickCreateProcessing}
+                              options={ProcessingOptions}
+                              searchedOption={searchedOption}
+                              selectedOption={selectedOption}
+                              readOnly={dropDownReadOnly}
+                              typeName="processing"
+                           />
+                        </div>
 
-                  const quickCreateSachet = async () => {
-                     if (!search.includes(' '))
-                        return toast.error(
-                           'Quantity and Unit should be space separated!'
-                        )
-                     const [quantity, unit] = search.trim().split(' ')
-                     if (quantity && unit) {
-                        await upsertMasterUnit({
-                           variables: {
-                              name: unit,
-                           },
-                        })
-                        createSachet({
-                           variables: {
-                              objects: [
-                                 {
-                                    ingredientId: option.ingredient.id,
-                                    ingredientProcessingId:
-                                       option.processing.id,
-                                    quantity: +quantity,
-                                    unit,
-                                    tracking: false,
-                                 },
-                              ],
-                           },
-                        })
-                     } else {
-                        toast.error('Enter a valid quantity and unit!')
-                     }
-                  }
-                  const selectedSachetOption = sachet => {
-                     upsertRecipeYieldSachet({
-                        variables: {
-                           yieldId: object.id,
-                           ingredientProcessingRecordId: option.id,
-                           ingredientSachetId: sachet.id,
-                           slipName:
-                              defaultslipName.length > 0
-                                 ? defaultslipName
-                                 : option.ingredient.name,
-                        },
+                        <div id="calCountIngredient">
+                           <CalCount /> 2% per saving
+                        </div>
+                        <div id="chefPay">
+                           <ChefPay /> 2$
+                        </div>
+                     </StyledCardIngredient>
+                  </td>
+                  {state.simpleRecipeYields?.map((object, index) => {
+                     sachetOptions = []
+                     let search = ''
+                     let loader = false
+                     let defaultslipName = ''
+                     let visibility = ''
+                     sachets.map((item, index) => {
+                        if (sachetDisabled == false) {
+                           //console.log(option.processing.id, item.processingId, "Adrish Processing idss")
+                           if (
+                              option.processing.id ==
+                                 item.ingredientProcessingId &&
+                              option.ingredient.id == item.ingredient.id
+                           ) {
+                              //console.log(item.id,"Adrish sachet idss")
+                              loader = true
+                              sachetOptions.push({
+                                 id: item.id,
+                                 title: item.title,
+                              })
+                           }
+                        }
                      })
-                  }
-                  const searchedSachetOption = searchedSachet => {
-                     search = searchedSachet
+                     let defaultSachetOption = {}
+                     //console.log(option , "Adrish Ingredient options")
+                     option.linkedSachets.map((item, index) => {
+                        if (item.simpleRecipeYield.id == object.id) {
+                           loader = true
+                           defaultslipName = item.slipName
+                           visibility = item.isVisible
+                           defaultSachetOption = {
+                              id: item.ingredientSachet.id,
+                              title: `${defaultSachetOption.title} ${item.ingredientSachet.quantity}`,
+                           }
+                        }
+                        return ''
+                     })
 
-                     //console.log(search, 'Adrish Search')
-                  }
-                  const setName = typedName => {
-                     setslipname(typedName)
-                     console.log(typedName)
-                  }
-                  return (
-                     <td>
-                        {loader == false || sachetOptions.length > 0 ? (
-                           <SatchetCard index={index}>
-                              <Dropdown
-                                 disabled={sachetDisabled}
-                                 options={sachetOptions}
-                                 defaultOption={defaultSachetOption}
-                                 addOption={quickCreateSachet}
-                                 searchedOption={searchedSachetOption}
-                                 selectedOption={selectedSachetOption}
-                                 type="single"
-                                 variant="revamp"
-                                 typeName="sachet"
-                              />
-                              <Spacer size="3px" />
-                              <div
-                                 style={{
-                                    width: '181px',
-                                    padding: '0px 0px 0px 0px',
-                                 }}
-                              >
-                                 <SachetDetails
-                                    yieldId={object.id}
-                                    ingredientProcessingRecordId={option.id}
-                                    slipName={defaultslipName}
-                                    isVisible={visibility}
-                                    disabled={
-                                       Object.keys(defaultSachetOption)
-                                          .length == 0
-                                          ? true
-                                          : false
-                                    }
-                                    index={index}
+                     const quickCreateSachet = async () => {
+                        if (!search.includes(' '))
+                           return toast.error(
+                              'Quantity and Unit should be space separated!'
+                           )
+                        const [quantity, unit] = search.trim().split(' ')
+                        if (quantity && unit) {
+                           await upsertMasterUnit({
+                              variables: {
+                                 name: unit,
+                              },
+                           })
+                           createSachet({
+                              variables: {
+                                 objects: [
+                                    {
+                                       ingredientId: option.ingredient.id,
+                                       ingredientProcessingId:
+                                          option.processing.id,
+                                       quantity: +quantity,
+                                       unit,
+                                       tracking: false,
+                                    },
+                                 ],
+                              },
+                           })
+                        } else {
+                           toast.error('Enter a valid quantity and unit!')
+                        }
+                     }
+                     const selectedSachetOption = sachet => {
+                        upsertRecipeYieldSachet({
+                           variables: {
+                              yieldId: object.id,
+                              ingredientProcessingRecordId: option.id,
+                              ingredientSachetId: sachet.id,
+                              slipName:
+                                 defaultslipName.length > 0
+                                    ? defaultslipName
+                                    : option.ingredient.name,
+                           },
+                        })
+                     }
+                     const searchedSachetOption = searchedSachet => {
+                        search = searchedSachet
+
+                        //console.log(search, 'Adrish Search')
+                     }
+
+                     //console.log(defaultSachetOption, "Adrish defaultSachetOption")
+                     return (
+                        <td>
+                           {loader == false || sachetOptions.length > 0 ? (
+                              <SatchetCard index={index}>
+                                 <Dropdown
+                                    disabled={sachetDisabled}
+                                    options={sachetOptions}
+                                    defaultOption={defaultSachetOption}
+                                    addOption={quickCreateSachet}
+                                    searchedOption={searchedSachetOption}
+                                    selectedOption={selectedSachetOption}
+                                    type="single"
+                                    variant="revamp"
+                                    typeName="sachet"
                                  />
-                              </div>
-                           </SatchetCard>
-                        ) : (
-                           <SatchetCard>
-                              <Skeleton />
-                           </SatchetCard>
-                        )}
-                     </td>
-                  )
-               })}
-            </tr>
+                                 <Spacer size="3px" />
+                                 <div id="sachetDetails">
+                                    <SachetDetails
+                                       yieldId={object.id}
+                                       ingredientProcessingRecordId={option.id}
+                                       slipName={defaultslipName}
+                                       isVisible={visibility}
+                                       disabled={
+                                          Object.keys(defaultSachetOption)
+                                             .length == 0
+                                             ? true
+                                             : false
+                                       }
+                                       index={index}
+                                    />
+                                 </div>
+                              </SatchetCard>
+                           ) : (
+                              <SatchetCard>
+                                 <Skeleton />
+                              </SatchetCard>
+                           )}
+                        </td>
+                     )
+                  })}
+               </tr>
+            </table>
          )
       }) || []
 
    return (
       <>
-         <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1} size="sm">
-               <ServingsTunnel state={state} closeTunnel={closeTunnel} />
-            </Tunnel>
-         </Tunnels>
-         <Tunnels tunnels={ingredientsTunnel}>
-            <Tunnel layer={1} size="sm">
-               <IngredientsTunnel
-                  state={state}
-                  closeTunnel={closeingredientTunnel}
-               />
-            </Tunnel>
-         </Tunnels>
-         <Flex container alignItems="center">
-            <Heading>Servings & Ingredients</Heading>
-            <Tooltip identifier="recipe_servings" />
-         </Flex>
+         {/* {console.log(ingredientProcessings, 'Adrish Processings')} */}
+         <>
+            <Tunnels tunnels={tunnels}>
+               <Tunnel layer={1} size="sm">
+                  <ServingsTunnel state={state} closeTunnel={closeTunnel} />
+               </Tunnel>
+            </Tunnels>
+            <Tunnels tunnels={ingredientsTunnel}>
+               <Tunnel layer={1} size="sm">
+                  <IngredientsTunnel
+                     state={state}
+                     closeTunnel={closeingredientTunnel}
+                  />
+               </Tunnel>
+            </Tunnels>
+            <Flex container alignItems="center">
+               <Heading>Servings & Ingredients</Heading>
+               <Tooltip identifier="recipe_servings" />
+            </Flex>
 
-         {options.length ? (
-            <>
-               <table style={{ textAlign: 'left' }}>
-                  <tr>
-                     <th>
-                        <IconButton
-                           variant="secondary"
-                           onClick={() => {
-                              openTunnel(1)
-                           }}
-                           style={{
-                              display: 'inline-block',
-                              width: '226px',
-                              height: '74px',
-                              marginTop: '0px',
-                              paddingTop: '0px',
-                           }}
-                           type="solid"
-                        >
-                           <PlusIcon color="#367BF5" />
-                        </IconButton>
-                     </th>
-                     {options}
-                  </tr>
-
-                  {loading && ingredients_options.length ? (
+            {options.length ? (
+               <>
+                  <table style={{ textAlign: 'left' }}>
+                     <tr>
+                        <th>
+                           <IconButton
+                              variant="secondary"
+                              onClick={() => {
+                                 openTunnel(1)
+                              }}
+                              style={{
+                                 display: 'inline-block',
+                                 width: '238px',
+                                 height: '80px',
+                                 marginTop: '0px',
+                                 paddingTop: '0px',
+                              }}
+                              type="solid"
+                           >
+                              <PlusIcon color="#367BF5" />
+                           </IconButton>
+                        </th>
+                        {options}
+                     </tr>
+                  </table>
+                  {loading && ingredientsOptions.length && loadingSachets ? (
                      <InlineLoader />
                   ) : (
-                     ingredients_options
+                     <DragNDrop
+                        list={state.simpleRecipeIngredients}
+                        droppableId="simpleRecipeIngredientsDroppableId"
+                        tablename="simpleRecipe_ingredient_processing"
+                        schemaname="simpleRecipe"
+                     >
+                        {ingredientsOptions}
+                     </DragNDrop>
                   )}
-               </table>
-               <br />
+
+                  <Spacer size="30px" />
+                  <ButtonTile
+                     type="secondary"
+                     text="Add Ingredient"
+                     onClick={() => openingredientTunnel(1)}
+                  />
+               </>
+            ) : (
                <ButtonTile
                   type="secondary"
-                  text="Add Ingredient"
-                  onClick={() => openingredientTunnel(1)}
+                  text="Add Servings"
+                  onClick={() => openTunnel(1)}
                />
-            </>
-         ) : (
-            <ButtonTile
-               type="secondary"
-               text="Add Servings"
-               onClick={() => openTunnel(1)}
-            />
-         )}
+            )}
+         </>
       </>
    )
 }
@@ -669,6 +550,7 @@ const SachetDetails = ({
    React.useEffect(() => {
       setHistory({
          slipName,
+         isVisible,
       })
       setName(slipName)
       setVisibility(isVisible)
@@ -716,7 +598,7 @@ const SachetDetails = ({
    }
 
    return (
-       <>
+      <>
          <div style={{ width: '150px' }}>
             <Form.Text
                id={`slipName-${yieldId}`}
