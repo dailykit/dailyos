@@ -2,7 +2,7 @@ import React from 'react'
 import { Text } from '@dailykit/ui'
 import { Route } from 'react-router-dom'
 
-import { Home, Orders, Order, Planned } from '../../views'
+import { Home, Orders, Order, Planned, Manual } from '../../views'
 import { useAccess } from '../../../../shared/providers'
 import { Flex, ErrorBoundary } from '../../../../shared/components'
 
@@ -40,6 +40,9 @@ const Main = () => {
             >
                <Planned />
             </AccessCheck>
+         </Route>
+         <Route path="/order/manual" exact>
+            <Manual />
          </Route>
       </main>
    )

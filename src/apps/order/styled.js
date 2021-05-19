@@ -2,7 +2,7 @@ import { Tunnel } from '@dailykit/ui'
 import styled, { css } from 'styled-components'
 
 export const StyledWrapper = styled.div(
-   ({ position }) => css`
+   ({ position, hideSummary }) => css`
       display: grid;
       height: calc(100vh - 110px);
       overflow: hidden;
@@ -10,7 +10,9 @@ export const StyledWrapper = styled.div(
       grid-template-areas: ${position === 'left'
          ? '"aside main" "footer footer"'
          : '"main aside" "footer footer"'};
-      grid-template-columns: ${position === 'left' ? '340px 1fr' : '1fr 340px'};
+      grid-template-columns: ${position === 'left'
+         ? `${hideSummary ? '0 1fr' : '340px 1fr'}`
+         : `${hideSummary ? '1fr 0' : '1fr 0'}`};
 
       > aside {
          grid-area: aside;
