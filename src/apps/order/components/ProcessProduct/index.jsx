@@ -35,13 +35,13 @@ export const ProcessProduct = () => {
    )
 
    const print = React.useCallback(async () => {
-      if (!product?.cartItemView?.operationConfig?.labelTemplateId) {
+      if (!product?.operationConfig?.labelTemplateId) {
          toast.error('No template assigned!')
          return
       }
 
       if (config.print.print_simulation.value.isActive) {
-         const url = `${window._env_.REACT_APP_TEMPLATE_URL}?template={"name":"${product?.cartItemView?.operationConfig?.labelTemplate?.name}","type":"label","format":"html"}&data={"id":${product?.id}}`
+         const url = `${window._env_.REACT_APP_TEMPLATE_URL}?template={"name":"${product?.operationConfig?.labelTemplate?.name}","type":"label","format":"html"}&data={"id":${product?.id}}`
          setLabel(url)
       } else {
          const url = `${
@@ -92,8 +92,7 @@ export const ProcessProduct = () => {
       )
 
    const isOrderConfirmed = Boolean(
-      product?.cartItemView?.cart?.order?.isAccepted &&
-         !product?.cartItemView?.cart?.order?.isRejected
+      product?.cart?.order?.isAccepted && !product?.cart?.order?.isRejected
    )
    const hasStationAccess = () => {
       let access = false
@@ -104,8 +103,7 @@ export const ProcessProduct = () => {
          access = true
          return access
       } else if (
-         product?.cartItemView?.operationConfig?.stationId ===
-         config.current_station?.id
+         product?.operationConfig?.stationId === config.current_station?.id
       ) {
          access = true
       } else {
@@ -117,22 +115,20 @@ export const ProcessProduct = () => {
       <Wrapper>
          <ViewSwitcher view={state.current_view} setView={switchView} />
          <StyledHeader>
-            <h3 title={product.cartItemView?.displayName}>
-               {product.cartItemView?.displayName.split('->').pop().trim()}
+            <h3 title={product?.displayName}>
+               {product?.displayName.split('->').pop().trim()}
             </h3>
          </StyledHeader>
          <main>
-            <StyledStat status={product.cartItemView?.status}>
+            <StyledStat status={product?.status}>
                <span>Status</span>
-               <span>{product.cartItemView?.status}</span>
+               <span>{product?.status}</span>
             </StyledStat>
             <ActionsWrapper container alignItems="center">
                <TextButton
                   size="sm"
                   type="solid"
-                  disabled={['READY', 'PACKED'].includes(
-                     product?.cartItemView?.status
-                  )}
+                  disabled={['READY', 'PACKED'].includes(product?.status)}
                   hasAccess={hasStationAccess()}
                   onClick={() =>
                      updateCartItem({
@@ -145,7 +141,7 @@ export const ProcessProduct = () => {
                      })
                   }
                >
-                  {['READY', 'PACKED'].includes(product?.cartItemView?.status)
+                  {['READY', 'PACKED'].includes(product?.status)
                      ? 'Ready'
                      : 'Mark Ready'}
                </TextButton>
@@ -154,7 +150,7 @@ export const ProcessProduct = () => {
                   size="sm"
                   type="solid"
                   hasAccess={hasStationAccess()}
-                  disabled={product?.cartItemView?.status === 'PACKED'}
+                  disabled={product?.status === 'PACKED'}
                   onClick={() =>
                      updateCartItem({
                         variables: {
@@ -166,9 +162,7 @@ export const ProcessProduct = () => {
                      })
                   }
                >
-                  {product?.cartItemView?.status === 'PACKED'
-                     ? 'Packed'
-                     : 'Mark Packed'}
+                  {product?.status === 'PACKED' ? 'Packed' : 'Mark Packed'}
                </TextButton>
             </ActionsWrapper>
             <Spacer size="16px" />

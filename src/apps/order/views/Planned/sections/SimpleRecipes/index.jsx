@@ -49,7 +49,7 @@ const Listing = ({ setTotal, setServings }) => {
                a.simpleRecipeYields_aggregate.nodes.reduce(
                   (y, x) =>
                      y +
-                        x.simpleRecipeCartItemViews_aggregate.aggregate.sum
+                        x.simpleRecipeCartItems_aggregate.aggregate.sum
                            .displayServing || 0,
                   0
                ),
@@ -61,7 +61,7 @@ const Listing = ({ setTotal, setServings }) => {
                b +
                a.simpleRecipeYields_aggregate.nodes.reduce(
                   (y, x) =>
-                     y + x.simpleRecipeCartItemViews_aggregate.aggregate.count,
+                     y + x.simpleRecipeCartItems_aggregate.aggregate.count,
                   0
                ),
             0
@@ -116,13 +116,13 @@ const Yields = ({ nodes }) => {
                   <StyledTab key={node.id}>
                      <span>
                         {node.serving} Serving{' '}
-                        {node.simpleRecipeCartItemViews_aggregate.aggregate.sum
+                        {node.simpleRecipeCartItems_aggregate.aggregate.sum
                            .displayServing && (
                            <span title="Total Servings">
                               (
                               {
-                                 node.simpleRecipeCartItemViews_aggregate
-                                    .aggregate.sum.displayServing
+                                 node.simpleRecipeCartItems_aggregate.aggregate
+                                    .sum.displayServing
                               }
                               )
                            </span>
@@ -130,8 +130,8 @@ const Yields = ({ nodes }) => {
                      </span>
                      <span title="Total Quantity">
                         {
-                           node.simpleRecipeCartItemViews_aggregate.aggregate
-                              .sum.displayUnitQuantity
+                           node.simpleRecipeCartItems_aggregate.aggregate.sum
+                              .displayUnitQuantity
                         }
                      </span>
                   </StyledTab>
@@ -141,7 +141,7 @@ const Yields = ({ nodes }) => {
                {nodes.map(node => (
                   <StyledTabPanel>
                      <Cards
-                        nodes={node.simpleRecipeCartItemViews_aggregate.nodes}
+                        nodes={node.simpleRecipeCartItems_aggregate.nodes}
                      />
                   </StyledTabPanel>
                ))}

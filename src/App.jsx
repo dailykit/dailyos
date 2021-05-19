@@ -1,14 +1,20 @@
 import React from 'react'
 import gql from 'graphql-tag'
 import Loadable from 'react-loadable'
-import { Loader } from '@dailykit/ui'
+import { Loader, useTunnel } from '@dailykit/ui'
 import styled from 'styled-components'
 import { useSubscription } from '@apollo/react-hooks'
 import { Switch, Route, Link, useLocation } from 'react-router-dom'
 
 import { useTabs } from './shared/providers'
 import { isKeycloakSupported } from './shared/utils'
-import { TabBar, Lang, RedirectBanner, Sidebar } from './shared/components'
+import {
+   TabBar,
+   Lang,
+   RedirectBanner,
+   Sidebar,
+   AddressTunnel,
+} from './shared/components'
 
 const APPS = gql`
    subscription apps {

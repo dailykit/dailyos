@@ -101,7 +101,7 @@ export const ORDERS_LISTING = gql`
                      source
                      walletAmountUsed
                      loyaltyPointsUsed
-                     cartItemViews(where: { levelType: { _eq: "orderItem" } }) {
+                     cartItems(where: { levelType: { _eq: "orderItem" } }) {
                         displayName
                      }
                   }
@@ -204,7 +204,7 @@ export const ORDER = gql`
                billingDetails
                walletAmountUsed
                loyaltyPointsUsed
-               cartItemViews(where: { level: { _eq: 1 } }) {
+               cartItems(where: { level: { _eq: 1 } }) {
                   id
                   displayName
                   displayImage
@@ -245,9 +245,14 @@ export const ALL_DATA = gql`
                      line1
                      line2
                      city
-                     zipcode
                      state
                      country
+                     zipcode
+                     notes
+                     label
+                     searched
+                     landmark
+                     keycloakId
                   }
                   stripePaymentMethods {
                      stripePaymentMethodId
