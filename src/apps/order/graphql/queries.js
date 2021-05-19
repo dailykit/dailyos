@@ -966,6 +966,25 @@ export const QUERIES = {
          }
       }
    `,
+   MANUAL: {
+      BRAND: {
+         LIST: gql`
+            query brands {
+               brands(
+                  where: {
+                     isArchived: { _eq: false }
+                     isPublished: { _eq: true }
+                  }
+                  order_by: { title: asc }
+               ) {
+                  id
+                  title
+                  domain
+               }
+            }
+         `,
+      },
+   },
 }
 
 export const DEVICES = {

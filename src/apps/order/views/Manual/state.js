@@ -1,30 +1,32 @@
 import React from 'react'
-import { Filler } from '@dailykit/ui'
+import { Filler, useTunnel } from '@dailykit/ui'
 
+import { BrandTunnel } from './tunnels'
 import { InlineLoader } from '../../../../shared/components'
 
 const Context = React.createContext()
 
 const initial = {
    mode: '',
-   brand: {
-      id: null,
-   },
-   customer: {
-      id: null,
-   },
-   address: {
-      id: null,
-   },
-   paymentMethod: {
-      id: null,
-   },
+   brand: { id: null },
+   customer: { id: null },
+   address: { id: null },
+   paymentMethod: { id: null },
 }
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
       case 'SET_MODE':
          return { ...state, mode: payload }
+      case 'SET_BRAND':
+         return {
+            ...state,
+            brand: {
+               id: payload.id,
+               title: payload?.title || '',
+               domain: payload?.domain || 'N/A',
+            },
+         }
       default:
          return state
    }
@@ -33,6 +35,7 @@ const reducers = (state, { type, payload }) => {
 export const ManualProvider = ({ children }) => {
    const [isModeLoading, setIsModeLoading] = React.useState(true)
    const [state, dispatch] = React.useReducer(reducers, initial)
+   const brandTunnels = useTunnel(1)
 
    React.useEffect(() => {
       const mode = new URL(window.location.href).searchParams.get('mode')
@@ -57,9 +60,11 @@ export const ManualProvider = ({ children }) => {
             address: state.address,
             customer: state.customer,
             paymentMethod: state.paymentMethod,
+            tunnels: { brand: brandTunnels },
          }}
       >
          {children}
+         <BrandTunnel panel={brandTunnels} />
       </Context.Provider>
    )
 }

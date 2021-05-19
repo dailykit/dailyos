@@ -5,6 +5,7 @@ import {
    Flex,
    Spacer,
    Filler,
+   Avatar,
    TextButton,
    IconButton,
 } from '@dailykit/ui'
@@ -14,18 +15,25 @@ import EmptyIllo from '../../../../assets/svgs/Empty'
 import * as Icon from '../../../../../../shared/assets/icons'
 
 export const Aside = () => {
-   const { brand, address, customer, paymentMethod } = useManual()
+   const { brand, tunnels, address, customer, paymentMethod } = useManual()
    return (
       <Styles.Aside>
          <main>
             <section></section>
             <section>
                <Styles.Card>
-                  <Header title="Store" />
-                  <Spacer size="8px" />
+                  <Header title="Store" onEdit={() => tunnels.brand[1](1)} />
                   <Flex as="main" padding="0 8px 8px 8px">
                      {brand?.id ? (
-                        <>{brand.id}</>
+                        <>
+                           {brand?.title && (
+                              <>
+                                 <Avatar withName title={brand.title} />
+                                 <Spacer size="8px" />
+                              </>
+                           )}
+                           <Text as="subtitle">{brand?.domain}</Text>
+                        </>
                      ) : (
                         <Styles.Filler
                            height="100px"
@@ -38,7 +46,6 @@ export const Aside = () => {
                <Spacer size="8px" />
                <Styles.Card>
                   <Header title="Customer Details" />
-                  <Spacer size="8px" />
                   <Flex as="main" padding="0 8px 8px 8px">
                      {customer?.id ? (
                         <>{customer.id}</>
@@ -54,7 +61,6 @@ export const Aside = () => {
                <Spacer size="8px" />
                <Styles.Card>
                   <Header title="Fulfillment" />
-                  <Spacer size="8px" />
                   <Flex as="main" padding="0 8px 8px 8px">
                      {address?.id ? (
                         <>{address.id}</>
@@ -70,7 +76,6 @@ export const Aside = () => {
                <Spacer size="8px" />
                <Styles.Card>
                   <Header title="Payment Details" />
-                  <Spacer size="8px" />
                   <Flex as="main" padding="0 8px 8px 8px">
                      {paymentMethod?.id ? (
                         <>{paymentMethod.id}</>
