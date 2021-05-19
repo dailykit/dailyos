@@ -1317,10 +1317,10 @@
     react-tag-autocomplete "^5.7.1"
     tabulator-tables "4.7.2"
 
-"@dailykit/ui@0.8.39":
-  version "0.8.39"
-  resolved "https://registry.yarnpkg.com/@dailykit/ui/-/ui-0.8.39.tgz#87c902008acc16c334ee2b8472922e81ee810b53"
-  integrity sha512-WhPSYbQhX5CPxrA794VJBnhbTvBWuZMn71FR7hM0BB/Abwz4E9IuZ95+Y5RXc9iolo6WJImhuVq/dY6IsydZMQ==
+"@dailykit/ui@0.8.42":
+  version "0.8.42"
+  resolved "https://registry.yarnpkg.com/@dailykit/ui/-/ui-0.8.42.tgz#bbaf2c635f2c221c173c4858ba1d0ad9bd799be8"
+  integrity sha512-VzecYx0kscuBm3Bcq89BY2hvFtbhv/iCHfigXSc80CkXQG1HaTdpMwIbtonKopF+cQW/vTL+uC0XAA+4JN/LIA==
   dependencies:
     "@storybook/cli" "^6.1.18"
     concurrently "^5.3.0"
