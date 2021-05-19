@@ -278,7 +278,7 @@ const Servings = ({ state }) => {
          }
          let ProcessingOptions = []
          return (
-            <table style={{ textAlign: 'left' }}>
+            <table style={{ marginLeft: '35px', textAlign: 'left' }}>
                <tr>
                   <td>
                      <StyledCardIngredient>
@@ -475,27 +475,61 @@ const Servings = ({ state }) => {
 
             {options.length ? (
                <>
-                  <table style={{ textAlign: 'left' }}>
+                  <table>
                      <tr>
                         <th>
-                           <IconButton
-                              variant="secondary"
-                              onClick={() => {
-                                 openTunnel(1)
-                              }}
+                           <button
                               style={{
-                                 display: 'inline-block',
-                                 width: '238px',
-                                 height: '80px',
-                                 marginTop: '0px',
-                                 paddingTop: '0px',
+                                 width: '30px',
+                                 height: '30px',
+                                 border: 'none',
+                                 background: '#FFFFFF',
+                                 boxShadow: '-2px 2px 6px rgba(0, 0, 0, 0.15)',
+                                 borderRadius: '50%',
                               }}
-                              type="solid"
                            >
-                              <PlusIcon color="#367BF5" />
-                           </IconButton>
+                              Prev
+                           </button>
                         </th>
-                        {options}
+                        <th>
+                           <table style={{ textAlign: 'left' }}>
+                              <tr>
+                                 <th>
+                                    <IconButton
+                                       variant="secondary"
+                                       onClick={() => {
+                                          openTunnel(1)
+                                       }}
+                                       style={{
+                                          display: 'inline-block',
+                                          width: '238px',
+                                          height: '80px',
+                                          marginTop: '0px',
+                                          paddingTop: '0px',
+                                       }}
+                                       type="solid"
+                                    >
+                                       <PlusIcon color="#367BF5" />
+                                    </IconButton>
+                                 </th>
+                                 {options}
+                              </tr>
+                           </table>
+                        </th>
+                        <th>
+                           <button
+                              style={{
+                                 width: '30px',
+                                 height: '30px',
+                                 border: 'none',
+                                 background: '#FFFFFF',
+                                 boxShadow: '-2px 2px 6px rgba(0, 0, 0, 0.15)',
+                                 borderRadius: '50%',
+                              }}
+                           >
+                              Next
+                           </button>
+                        </th>
                      </tr>
                   </table>
                   {loading && ingredientsOptions.length && loadingSachets ? (
