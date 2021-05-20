@@ -984,20 +984,38 @@ export const QUERIES = {
             }
          `,
       },
+      ORGANIZATION: gql`
+         query organizations {
+            organizations {
+               id
+               stripeAccountId
+               stripeAccountType
+               stripePublishableKey
+            }
+         }
+      `,
       CUSTOMER: {
          LIST: gql`
             query customers($where: crm_brand_customer_bool_exp = {}) {
                customers: brandCustomers(where: $where) {
                   id
                   keycloakId
+                  subscriptionPaymentMethodId
                   customer {
                      id
                      email
                      platform_customer {
+                        id: keycloakId
                         firstName
                         lastName
                         phoneNumber
                         fullName
+                        stripeCustomerId
+                        customerByClients: CustomerByClients {
+                           id: keycloakId
+                           clientId
+                           organizationStripeCustomerId
+                        }
                      }
                   }
                }
@@ -1019,6 +1037,21 @@ export const QUERIES = {
                      label
                      notes
                      landmark
+                  }
+               }
+            `,
+         },
+         PAYMENT_METHODS: {
+            LIST: gql`
+               query paymentMethods(
+                  $where: platform_stripePaymentMethod_bool_exp = {}
+               ) {
+                  paymentMethods: platform_stripePaymentMethods(where: $where) {
+                     id: stripePaymentMethodId
+                     last4
+                     expMonth
+                     expYear
+                     name: cardHolderName
                   }
                }
             `,

@@ -59,21 +59,11 @@ export const Aside = () => {
                      {customer?.id ? (
                         <>
                            <Flex container alignItems="center">
-                              <Avatar
-                                 title={
-                                    customer?.customer?.platform_customer
-                                       ?.fullName || ''
-                                 }
-                              />
+                              <Avatar title={customer?.fullName || ''} />
                               <Spacer size="22px" xAxis />
                               <Flex>
-                                 <Text as="p">{customer?.customer?.email}</Text>
-                                 <Text as="p">
-                                    {
-                                       customer?.customer?.platform_customer
-                                          ?.phoneNumber
-                                    }
-                                 </Text>
+                                 <Text as="p">{customer?.email}</Text>
+                                 <Text as="p">{customer?.phoneNumber}</Text>
                               </Flex>
                            </Flex>
                         </>
@@ -106,10 +96,20 @@ export const Aside = () => {
                </Styles.Card>
                <Spacer size="8px" />
                <Styles.Card>
-                  <Header title="Payment Details" />
+                  <Header
+                     title="Payment Details"
+                     onEdit={() => tunnels.payment[1](1)}
+                  />
                   <Flex as="main" padding="0 8px 8px 8px">
                      {paymentMethod?.id ? (
-                        <>{paymentMethod.id}</>
+                        <div>
+                           <Text as="p">Name: {paymentMethod.name}</Text>
+                           <Text as="p">
+                              Expiry: {paymentMethod.expMonth}/
+                              {paymentMethod.expYear}
+                           </Text>
+                           <Text as="p">Last 4: {paymentMethod.last4}</Text>
+                        </div>
                      ) : (
                         <Styles.Filler
                            height="100px"
