@@ -4,6 +4,7 @@ import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import {
+   Tag,
    Form,
    Text,
    Flex,
@@ -174,6 +175,7 @@ const Title = () => {
                      <Form.Error key={index}>{node}</Form.Error>
                   ))}
             </Form.Group>
+            {title?.isDemo && <Tag>Demo</Tag>}
             <Flex container alignItems="center">
                {title.isValid ? (
                   <Flex container flex="1" alignItems="center">

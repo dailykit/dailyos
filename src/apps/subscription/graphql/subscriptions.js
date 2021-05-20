@@ -153,6 +153,7 @@ export const TITLES = gql`
       titles: subscription_subscriptionTitle {
          id
          title
+         isDemo
       }
    }
 `
@@ -162,6 +163,7 @@ export const TITLE = gql`
       title: subscription_subscriptionTitle_by_pk(id: $id) {
          id
          title
+         isDemo
          isValid
          isActive
          defaultSubscriptionServingId
@@ -178,6 +180,7 @@ export const SERVING = gql`
    subscription serving($id: Int!) {
       serving: subscription_subscriptionServing_by_pk(id: $id) {
          id
+         isDemo
          isValid
          isActive
          size: servingSize
@@ -197,6 +200,7 @@ export const ITEM_COUNT = gql`
          tax
          count
          price
+         isDemo
          isValid
          isActive
          isTaxIncluded
@@ -276,6 +280,7 @@ export const SUBSCRIPTION_ZIPCODES = gql`
          where: { subscriptionId: { _eq: $id } }
          order_by: { zipcode: asc }
       ) {
+         isDemo
          zipcode
          isActive
          deliveryTime
@@ -328,6 +333,7 @@ export const SUBSCRIPTION = gql`
    subscription subscription($id: Int!) {
       subscription: subscription_subscription_by_pk(id: $id) {
          id
+         isDemo
          endDate
          startDate
       }

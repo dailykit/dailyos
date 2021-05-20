@@ -53,8 +53,12 @@ export default function ConfirmationPopup({
       }
    }
    const onClosePopup = () => {
-      setShowPopup(false)
-      setBulkActions({})
+      if (showPopup) {
+         setShowPopup(false)
+         if ('isArchived' in bulkActions) {
+            setBulkActions({})
+         }
+      }
    }
    return (
       <Popup show={showPopup} clickOutsidePopup={() => onClosePopup()}>
@@ -75,7 +79,7 @@ export default function ConfirmationPopup({
                   onBlur={onBlur}
                   onChange={onChange}
                   value={inputValue}
-                  placeholder="Enter number of recipes"
+                  placeholder={selectedRows.length}
                />
                {isValid && <Form.Error>Wrong Input, Enter again</Form.Error>}
             </Form.Group>

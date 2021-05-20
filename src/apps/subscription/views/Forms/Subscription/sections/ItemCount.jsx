@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { toast } from 'react-toastify'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import {
+   Tag,
    Text,
    Form,
    Tunnel,
@@ -127,7 +128,11 @@ const ItemCount = ({ id, toggleItemCountTunnel }) => {
             alignItems="center"
             justifyContent="space-between"
          >
-            <Text as="p">Price per week: {itemCount.price}</Text>
+            <Flex container alignItems="center">
+               <Text as="p">Price per week: {itemCount.price}</Text>
+               <Spacer size="14px" xAxis />
+               {itemCount.isDemo && <Tag>Demo</Tag>}
+            </Flex>
             <Flex container>
                {itemCount.isValid ? (
                   <Flex container flex="1" alignItems="center">

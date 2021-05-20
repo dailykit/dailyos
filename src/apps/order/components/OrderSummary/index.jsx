@@ -27,7 +27,10 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
    const { state, dispatch } = useOrder()
 
    const { data: { orders = {} } = {} } = useSubscription(
-      QUERIES.ORDERS.AGGREGATE.TOTAL
+      QUERIES.ORDERS.AGGREGATE.TOTAL,
+      {
+         variables: { where: { isArchived: { _eq: false } } },
+      }
    )
    const { data: { orders: cancelledOrders = {} } = {} } = useSubscription(
       QUERIES.ORDERS.AGGREGATE.CANCELLED

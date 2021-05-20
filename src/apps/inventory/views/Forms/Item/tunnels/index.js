@@ -3,6 +3,7 @@ import InfoTunnel from './Info'
 import ProcessingTunnel from './Processing'
 import ConfigTunnel from './Config'
 import AllergensTunnel from './Allergens'
+import CreateSachetTunnel from './CreateSachetTunnel'
 import ConfigureSachetTunnel from './ConfigureSachetTunnel'
 
 export {
@@ -11,5 +12,6 @@ export {
    ProcessingTunnel,
    ConfigTunnel,
    AllergensTunnel,
+   CreateSachetTunnel,
    ConfigureSachetTunnel,
 }

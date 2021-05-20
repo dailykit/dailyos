@@ -9,7 +9,7 @@ export const INGREDIENTS_COUNT = gql`
       }
    }
 `
-export const CUISINES = gql`
+export const CUISINES_NAMES = gql`
    subscription Cuisines {
       cuisineNames {
          id
@@ -201,6 +201,7 @@ export const S_RECIPE = gql`
          image
          assets
          isValid
+         isSubRecipe
          isPublished
          author
          type
@@ -459,3 +460,19 @@ export const S_SIMPLE_RECIPES_FROM_INGREDIENT_AGGREGATE = gql`
       }
    }
 `
+
+export const INGREDIENT_CATEGORIES_INGREDIENTS_AGGREGATE = gql`
+subscription IngredientCategoryIngredientsAggregate {
+   ingredientCategories {
+     name 
+     title: name
+     ingredients_aggregate {
+       aggregate {
+         count
+         description : count
+       }
+     }
+   }
+ }
+`
+

@@ -4,6 +4,8 @@ import {
    Flex,
    Form,
    IconButton,
+   Select,
+   Spacer,
    Tag,
    TagGroup,
    Tunnel,
@@ -17,6 +19,7 @@ import { toast } from 'react-toastify'
 import { EditIcon } from '../../../../../../../shared/assets/icons'
 import {
    Gallery,
+   InlineLoader,
    NutritionTunnel,
    Tooltip,
 } from '../../../../../../../shared/components'
@@ -39,12 +42,20 @@ import {
    TunnelBody,
 } from '../styled'
 import PhotoTunnel from './PhotoTunnel'
+import { DELETE_BULK_ITEM_UNIT_CONVERSION } from '../../../../../graphql/mutations'
+import { BULK_ITEM_UNIT_CONVERSIONS } from '../../../../../graphql/subscriptions'
 
 const address = 'apps.inventory.views.forms.item.tunnels.config.'
 
-export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
+export default function ConfigTunnel({
+   close,
+   proc: bulkItem = {},
+   id,
+   openLinkConversionTunnel,
+}) {
    const { t } = useTranslation()
    const [units, setUnits] = useState([])
+   const [selectedConversions, setSelectedConversions] = useState([])
 
    const [parLevel, setParLevel] = useState({
       value: bulkItem?.parLevel || '',
@@ -98,6 +109,27 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
          if (!unit) setUnit(data[0].name)
       },
    })
+   const { loading: conversionsLoading, error } = useSubscription(
+      BULK_ITEM_UNIT_CONVERSIONS,
+      {
+         variables: {
+            id: bulkItem?.id || id,
+         },
+         onSubscriptionData: data => {
+            const { bulkItem } = data.subscriptionData.data
+            if (bulkItem.bulkItemUnitConversions) {
+               const updatedConversions = bulkItem.bulkItemUnitConversions.map(
+                  ({ unitConversion: c, id }) => ({
+                     title: `1 ${c.inputUnitName} = ${c.conversionFactor} ${c.outputUnitName}`,
+                     id,
+                  })
+               )
+               setSelectedConversions([...updatedConversions])
+            }
+         },
+      }
+   )
+   if (error) console.log(error)
 
    const [
       allergensTunnel,
@@ -123,6 +155,19 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
          close(1)
       },
    })
+
+   const [removeLinkedConversion] = useMutation(
+      DELETE_BULK_ITEM_UNIT_CONVERSION,
+      {
+         onCompleted: () => {
+            toast.success('Conversion removed!')
+         },
+         onError: error => {
+            logger(error)
+            toast.error('Something went wrong!')
+         },
+      }
+   )
 
    const checkValidation = () => {
       if (!parLevel.value || !parLevel.meta.isValid)
@@ -189,6 +234,7 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
       })
    }
 
+   if (conversionsLoading) return <InlineLoader />
    return (
       <>
          <Tunnels tunnels={allergensTunnel}>
@@ -330,6 +376,23 @@ export default function ConfigTunnel({ close, proc: bulkItem = {}, id }) {
                      />
                   </Form.Group>
                </StyledInputGroup>
+               <Spacer size="16px" />
+               <Select
+                  options={selectedConversions}
+                  addOption={() =>
+                     openLinkConversionTunnel({
+                        schema: 'inventory',
+                        table: 'bulkItem',
+                        entityId: bulkItem?.id || id,
+                     })
+                  }
+                  placeholder="Link Conversions"
+                  removeOption={option =>
+                     removeLinkedConversion({
+                        variables: { id: option.id },
+                     })
+                  }
+               />
             </StyledRow>
 
             <StyledRow>

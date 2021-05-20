@@ -8,6 +8,7 @@ import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import tableOptions from '../../../../tableOption'
 import { logger } from '../../../../../../shared/utils'
 import { useTooltip } from '../../../../../../shared/providers'
+import { ActivityLogs } from '../../../../../../shared/components'
 import { SUBSCRIPTION_OCCURENCES_LIST } from '../../../../graphql'
 import {
    Tooltip,
@@ -23,6 +24,8 @@ const Occurences = ({ id, setOccurencesTotal }) => {
    const [subscriptionId, setSubscriptionId] = React.useState(null)
    const [addOnTunnels, openAddOnTunnel, closeAddOnTunnel] = useTunnel(1)
    const [menuTunnels, openMenuTunnel, closeMenuTunnel] = useTunnel(1)
+   const [logTunnels, openLogTunnel, closeLogTunnel] = useTunnel(1)
+   const [logOccurenceId, setLogOccurenceId] = React.useState(null)
    const {
       error,
       loading,
@@ -55,6 +58,14 @@ const Occurences = ({ id, setOccurencesTotal }) => {
       {
          title: 'Fulfillment Date',
          field: 'fulfillmentDate',
+         cssClass: 'cell',
+         cellClick: (e, cell) => {
+            const data = cell.getData()
+            if (data?.id) {
+               setLogOccurenceId(data?.id)
+               openLogTunnel(1)
+            }
+         },
          formatter: ({ _cell: { value } }) =>
             moment(value).format('MMM DD, YYYY'),
          headerTooltip: column => {
@@ -149,6 +160,12 @@ const Occurences = ({ id, setOccurencesTotal }) => {
             occurenceId={occurenceId}
             subscriptionId={subscriptionId}
             tunnel={{ list: menuTunnels, close: closeMenuTunnel }}
+         />
+         <ActivityLogs
+            tunnels={logTunnels}
+            openTunnel={openLogTunnel}
+            closeTunnel={closeLogTunnel}
+            subscriptionOccurenceId={logOccurenceId}
          />
       </>
    )

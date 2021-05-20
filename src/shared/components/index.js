@@ -13,6 +13,7 @@ import WebBuilder from './WebBuilder'
 import DragNDrop from './DragNDrop'
 import Popup from './Popup'
 import RichTextEditor from './RichTextEditor'
+import LinkUnitConversionTunnels from './LinkUnitConversionTunnels'
 
 export {
    Lang,
@@ -30,6 +31,7 @@ export {
    DragNDrop,
    Popup,
    RichTextEditor,
+   LinkUnitConversionTunnels,
 }
 export * from './AssetUploader'
 export * from './InlineLoader'
@@ -42,3 +44,4 @@ export * from './ErrorState'
 export * from './RedirectBanner'
 export * from './Sidebar'
 export * from './TabBar'
+export * from './ActivityLogs'
