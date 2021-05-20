@@ -13,6 +13,7 @@ import {
 import { useManual } from '../../state'
 import EmptyIllo from '../../../../assets/svgs/Empty'
 import * as Icon from '../../../../../../shared/assets/icons'
+import { parseAddress } from '../../../../../../shared/utils'
 
 export const Aside = () => {
    const { brand, tunnels, address, customer, paymentMethod } = useManual()
@@ -87,10 +88,13 @@ export const Aside = () => {
                </Styles.Card>
                <Spacer size="8px" />
                <Styles.Card>
-                  <Header title="Fulfillment" />
+                  <Header
+                     title="Fulfillment"
+                     onEdit={() => tunnels.address[1](1)}
+                  />
                   <Flex as="main" padding="0 8px 8px 8px">
                      {address?.id ? (
-                        <>{address.id}</>
+                        <Text as="p">{parseAddress(address)}</Text>
                      ) : (
                         <Styles.Filler
                            height="100px"
@@ -137,7 +141,7 @@ const Header = ({ title = '', onEdit = () => {} }) => {
       >
          <Text as="text2">{title}</Text>
          <IconButton type="ghost" size="sm" onClick={onEdit}>
-            <Icon.EditIcon size="14px" />
+            <Icon.EditIcon size="12px" />
          </IconButton>
       </Flex>
    )

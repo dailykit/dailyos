@@ -1003,6 +1003,26 @@ export const QUERIES = {
                }
             }
          `,
+         ADDRESS: {
+            LIST: gql`
+               query addresses($where: platform_customerAddress_bool_exp = {}) {
+                  addresses: platform_customerAddresses(where: $where) {
+                     id
+                     lat
+                     lng
+                     line1
+                     line2
+                     city
+                     state
+                     country
+                     zipcode
+                     label
+                     notes
+                     landmark
+                  }
+               }
+            `,
+         },
       },
    },
 }
