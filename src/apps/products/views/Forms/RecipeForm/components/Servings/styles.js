@@ -126,6 +126,10 @@ export const StyledCardIngredient = styled.div(
          text-align: center;
         
       }
+      div#menu {
+         text-align: right;
+         display: inline-block;
+      }
       div#dropdown {
          padding: 0px 0px 12px 45px;
       }

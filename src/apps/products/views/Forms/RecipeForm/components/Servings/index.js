@@ -52,10 +52,12 @@ import {
    CREATE_SACHET,
    UPSERT_SIMPLE_RECIPE_YIELD_SACHET,
    UPDATE_SIMPLE_RECIPE_YIELD_SACHET,
+   DELETE_SIMPLE_RECIPE_INGREDIENT_PROCESSINGS,
 } from '../../../../../graphql'
 import { ServingsTunnel, IngredientsTunnel } from '../../tunnels'
 import { RecipeContext } from '../../../../../context/recipe'
 import { Button } from 'react-scroll'
+import { stubFalse } from 'lodash'
 
 const Servings = ({ state }) => {
    const { recipeState } = React.useContext(RecipeContext)
@@ -203,6 +205,19 @@ const Servings = ({ state }) => {
       }
    )
 
+   const [deleteSimpleRecipeIngredientProcessings] = useMutation(
+      DELETE_SIMPLE_RECIPE_INGREDIENT_PROCESSINGS,
+      {
+         onCompleted: () => {
+            toast.success('Ingredient deleted!')
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
+
    const options =
       state.simpleRecipeYields?.map((option, index) => {
          //console.log(option, 'Adrish option')
@@ -274,6 +289,19 @@ const Servings = ({ state }) => {
                },
             })
          }
+         const deleteIngredientProcessing = id => {
+            const isConfirmed = window.confirm(
+               'Are you sure you want to delete this ingredient?'
+            )
+            if (isConfirmed) {
+               // TODO: add a trigger in DB to set sachet_yield records' isArchived : false - not necessary tho
+               deleteSimpleRecipeIngredientProcessings({
+                  variables: {
+                     ids: [id],
+                  },
+               })
+            }
+         }
          let ProcessingOptions = []
          return (
             <div
@@ -286,7 +314,17 @@ const Servings = ({ state }) => {
                <StyledCardIngredient>
                   <div id="index">{index + 1}</div>
 
-                  <Link to="#">{option.ingredient.name}</Link>
+                  <Link style={{display: 'inline-block', width: '156px'}} to="#">{option.ingredient.name}</Link>
+                  <div id="menu">
+                     <ContextualMenu>
+                        <Context
+                           title="Delete"
+                           handleClick={() =>
+                              deleteIngredientProcessing(option.id)
+                           }
+                        ></Context>
+                     </ContextualMenu>
+                  </div>
 
                   {ingredientProcessings.map((item, index) => {
                      if (option.ingredient.id == item.ingredientId) {
@@ -452,12 +490,22 @@ const Servings = ({ state }) => {
          )
       }) || []
    const recipeForm = useRef(null)
+
+   let [buttonClickRightRender, setButtonClickRightRender] = React.useState(
+      state.simpleRecipeYields?.length > 5 ? false : true
+   )
+   let buttonClickRight = 0
    const onButtonClickLeft = () => {
       recipeForm.current.scrollLeft -= 160
    }
    const onButtonClickRight = () => {
+      buttonClickRight += 1
       recipeForm.current.scrollLeft += 160
+      if (state.simpleRecipeYields.length - buttonClickRight == 5) {
+         setButtonClickRightRender(false)
+      }
    }
+
    return (
       <>
          {/* {console.log(ingredientProcessings, 'Adrish Processings')} */}
@@ -507,7 +555,7 @@ const Servings = ({ state }) => {
                         overflow: 'auto',
                         whiteSpace: 'nowrap',
                         overflowY: 'hidden',
-                        overflowX: 'hidden'
+                        overflowX: 'hidden',
                      }}
                   >
                      <div
@@ -526,9 +574,9 @@ const Servings = ({ state }) => {
                               height: '80px',
                               marginTop: '0px',
                               paddingTop: '0px',
-                              left:'0', 
+                              left: '0',
                               position: 'sticky',
-                              zIndex: '+10'
+                              zIndex: '+10',
                            }}
                            type="solid"
                         >
@@ -558,24 +606,27 @@ const Servings = ({ state }) => {
                         type="secondary"
                         text="Add Ingredient"
                         onClick={() => openingredientTunnel(1)}
-                        style={{left:'0', position: 'sticky'}}
+                        style={{ left: '0', position: 'sticky' }}
                      />
                   </div>
-
-                  <button
-                     style={{
-                        width: '30px',
-                        height: '30px',
-                        border: 'none',
-                        background: '#FFFFFF',
-                        boxShadow: '-2px 2px 6px rgba(0, 0, 0, 0.15)',
-                        borderRadius: '50%',
-                        marginTop: '25px',
-                     }}
-                     onClick={onButtonClickRight}
-                  >
-                     Next
-                  </button>
+                  {buttonClickRightRender ? (
+                     <button
+                        style={{
+                           width: '30px',
+                           height: '30px',
+                           border: 'none',
+                           background: '#FFFFFF',
+                           boxShadow: '-2px 2px 6px rgba(0, 0, 0, 0.15)',
+                           borderRadius: '50%',
+                           marginTop: '25px',
+                        }}
+                        onClick={onButtonClickRight}
+                     >
+                        Next
+                     </button>
+                  ) : (
+                     <></>
+                  )}
                </div>
             ) : (
                <ButtonTile
