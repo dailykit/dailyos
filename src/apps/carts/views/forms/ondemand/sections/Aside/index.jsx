@@ -202,7 +202,7 @@ const Header = ({ title = '', onEdit = null }) => {
       <Flex
          container
          as="header"
-         height="40px"
+         height="36px"
          padding="0 8px"
          alignItems="center"
          justifyContent="space-between"
@@ -244,6 +244,12 @@ const Styles = {
       border-radius: 2px;
       background: #ffffff;
       box-shadow: 0 2px 40px 2px rgb(222 218 218);
+      > header {
+         button {
+            width: 28px;
+            height: 28px;
+         }
+      }
    `,
    Filler: styled(Filler)`
       p {

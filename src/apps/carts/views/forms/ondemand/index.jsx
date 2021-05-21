@@ -37,7 +37,7 @@ const Styles = {
       height: 100%;
       display: grid;
       grid-template-rows: 1fr 40px;
-      grid-template-columns: 1fr 460px;
+      grid-template-columns: repeat(2, 1fr);
       grid-template-areas: 'main aside' 'footer aside';
    `,
 }
