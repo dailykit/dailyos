@@ -1,14 +1,16 @@
 import React from 'react'
 import styled from 'styled-components'
-import { TextButton } from '@dailykit/ui'
+import { Spacer, TextButton } from '@dailykit/ui'
 
 import CartInfo from './CartInfo'
+import CartProducts from './CartProducts'
 
 export const Aside = () => {
    return (
       <Styles.Aside>
          <main>
-            <section></section>
+            <CartProducts />
+            <Spacer size="8px" xAxis />
             <CartInfo />
          </main>
          <footer>

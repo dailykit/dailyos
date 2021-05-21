@@ -6,9 +6,16 @@ export const QUERIES = {
          subscription cart($id: Int!) {
             cart(id: $id) {
                id
+               tax
+               discount
+               itemTotal
+               totalPrice
                customerId
                customerInfo
+               deliveryPrice
                paymentMethodId
+               walletAmountUsed
+               loyaltyPointsUsed
                customerKeycloakId
                brand {
                   id
@@ -17,6 +24,22 @@ export const QUERIES = {
                }
                address
                fulfillmentInfo
+               products: cartItems_aggregate(
+                  where: { levelType: { _eq: "orderItem" } }
+               ) {
+                  aggregate {
+                     count
+                  }
+                  nodes {
+                     id
+                     price: unitPrice
+                     image: displayImage
+                     productOption: productOptionView {
+                        id
+                        name: displayName
+                     }
+                  }
+               }
             }
          }
       `,

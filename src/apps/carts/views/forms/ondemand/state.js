@@ -24,6 +24,8 @@ const initial = {
    address: { id: null },
    paymentMethod: { id: null },
    organization: { id: null },
+   products: { aggregate: { count: 0 } },
+   billing: {},
 }
 
 const reducers = (state, { type, payload }) => {
@@ -32,9 +34,11 @@ const reducers = (state, { type, payload }) => {
          return {
             ...state,
             brand: payload.brand,
-            customer: payload.customer,
             address: payload.address,
+            customer: payload.customer,
+            products: payload.products,
             paymentMethod: payload.paymentMethod,
+            billing: payload.billing,
          }
       case 'SET_BRAND':
          return {
@@ -126,9 +130,19 @@ export const ManualProvider = ({ children }) => {
                type: 'SET_INITIAL',
                payload: {
                   brand: cart.brand,
+                  products: cart.products,
                   customer: { id: cart?.customerId },
                   paymentMethod: { id: cart.paymentMethodId },
                   ...(cart.address?.id && { address: cart.address }),
+                  billing: {
+                     tax: cart?.tax || 0,
+                     discount: cart?.discount || 0,
+                     itemTotal: cart?.itemTotal || 0,
+                     totalPrice: cart?.totalPrice || 0,
+                     deliveryPrice: cart?.deliveryPrice || 0,
+                     walletAmountUsed: cart?.walletAmountUsed || 0,
+                     loyaltyPointsUsed: cart?.loyaltyPointsUsed || 0,
+                  },
                },
             })
             setCartError('')
@@ -176,6 +190,8 @@ export const ManualProvider = ({ children }) => {
             dispatch,
             brand: state.brand,
             address: state.address,
+            billing: state.billing,
+            products: state.products,
             customer: state.customer,
             organization: state.organization,
             paymentMethod: state.paymentMethod,
