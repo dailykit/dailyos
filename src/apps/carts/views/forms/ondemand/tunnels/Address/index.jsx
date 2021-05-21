@@ -15,13 +15,13 @@ import {
 } from '@dailykit/ui'
 
 import { useManual } from '../../state'
-import { QUERIES } from '../../../../graphql'
-import EmptyIllo from '../../../../assets/svgs/Empty'
-import { parseAddress } from '../../../../../../shared/utils'
+import { QUERIES } from '../../../../../graphql'
+import EmptyIllo from '../../../../../assets/svgs/EmptyIllo'
+import { parseAddress } from '../../../../../../../shared/utils'
 import {
    InlineLoader,
    AddressTunnel as AddTunnel,
-} from '../../../../../../shared/components'
+} from '../../../../../../../shared/components'
 
 export const AddressTunnel = ({ panel }) => {
    const [tunnels, , closeTunnel] = panel
@@ -29,16 +29,17 @@ export const AddressTunnel = ({ panel }) => {
    const { customer, state, dispatch } = useManual()
    const [address, setAddress] = React.useState(null)
    const { loading, data: { addresses = [] } = {}, refetch } = useQuery(
-      QUERIES.MANUAL.CUSTOMER.ADDRESS.LIST,
+      QUERIES.CUSTOMER.ADDRESS.LIST,
       {
          skip: !customer?.id,
          variables: {
             where: {
                keycloakId: { _eq: customer.keycloakId },
                clientId: {
-                  _eq: `${window._env_.REACT_APP_KEYCLOAK_REALM}${
-                     state.mode === 'subscription' ? '-subscription' : ''
-                  }`,
+                  _in: [
+                     window._env_.REACT_APP_KEYCLOAK_REALM,
+                     `${window._env_.REACT_APP_KEYCLOAK_REALM}-subscription`,
+                  ],
                },
             },
          },
@@ -111,9 +112,7 @@ export const AddressTunnel = ({ panel }) => {
             onSave={() => refetch()}
             closeTunnel={closeAddTunnel}
             keycloakId={customer?.keycloakId}
-            clientId={`${window._env_.REACT_APP_KEYCLOAK_REALM}${
-               state.mode === 'subscription' ? '-subscription' : ''
-            }`}
+            clientId={window._env_.REACT_APP_KEYCLOAK_REALM}
          />
       </>
    )

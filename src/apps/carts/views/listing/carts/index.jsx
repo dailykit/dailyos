@@ -28,12 +28,23 @@ export const Carts = () => {
 }
 
 const Listing = () => {
+   const { addTab } = useTabs()
    const { tooltip } = useTooltip()
    const tableRef = React.createRef()
    const { loading, data: { carts = {} } = {} } = useSubscription(
       QUERIES.CART.LIST,
       { variables: { where: { status: { _eq: 'CART_PENDING' } } } }
    )
+
+   const rowClick = (e, cell) => {
+      e.stopPropagation()
+      const { id = null, source = '' } = cell.getData() || {}
+      if (id && source) {
+         let path = source === 'subscription' ? 'subscription' : 'ondemand'
+         addTab(id, `/carts/${path}/${id}`)
+      }
+   }
+
    const columns = React.useMemo(
       () => [
          {
@@ -41,6 +52,8 @@ const Listing = () => {
             title: 'ID',
             field: 'id',
             headerFilter: true,
+            cssClass: 'linkCell',
+            cellClick: (e, cell) => rowClick(e, cell),
             headerTooltip: column => {
                const identifier = 'carts_listing_column_id'
                return (
@@ -52,7 +65,6 @@ const Listing = () => {
          {
             title: 'Customer Name',
             formatter: cell => {
-               console.log('cell.getData()', cell.getData())
                const { customerInfo = {} } = cell.getData()
                let name = customerInfo?.customerFirstName
                if (customerInfo?.customerLastName) {
@@ -75,6 +87,18 @@ const Listing = () => {
             headerFilter: true,
             headerTooltip: column => {
                const identifier = 'carts_listing_column_customerEmail'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+         },
+         {
+            title: 'Source',
+            field: 'source',
+            headerFilter: true,
+            headerTooltip: column => {
+               const identifier = 'carts_listing_column_source'
                return (
                   tooltip(identifier)?.description ||
                   column.getDefinition().title

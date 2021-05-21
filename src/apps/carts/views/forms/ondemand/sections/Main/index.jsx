@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { Flex, Filler } from '@dailykit/ui'
 
-import EmptyIllo from '../../../../assets/svgs/Empty'
+import EmptyIllo from '../../../../../assets/svgs/EmptyIllo'
 
 export const Main = () => {
    return (

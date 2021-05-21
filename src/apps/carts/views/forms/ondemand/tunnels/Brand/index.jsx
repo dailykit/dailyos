@@ -14,16 +14,14 @@ import {
 } from '@dailykit/ui'
 
 import { useManual } from '../../state'
-import { QUERIES } from '../../../../graphql/queries'
-import { InlineLoader } from '../../../../../../shared/components'
+import { QUERIES } from '../../../../../graphql'
+import { InlineLoader } from '../../../../../../../shared/components'
 
 export const BrandTunnel = ({ panel }) => {
    const { dispatch } = useManual()
    const [tunnels, , closeTunnel] = panel
    const [search, setSearch] = React.useState('')
-   const { loading, data: { brands = [] } = {} } = useQuery(
-      QUERIES.MANUAL.BRAND.LIST
-   )
+   const { loading, data: { brands = [] } = {} } = useQuery(QUERIES.BRAND.LIST)
    const [list, current, selectOption] = useSingleList(brands)
 
    return (

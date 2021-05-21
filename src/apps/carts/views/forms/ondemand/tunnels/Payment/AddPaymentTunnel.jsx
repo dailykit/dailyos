@@ -12,8 +12,8 @@ import {
 } from '@stripe/react-stripe-js'
 
 import { useManual } from '../../state'
-import { MUTATIONS } from '../../../../graphql'
-import { InlineLoader } from '../../../../../../shared/components'
+import { MUTATIONS } from '../../../../../graphql'
+import { InlineLoader } from '../../../../../../../shared/components'
 
 const AddPaymentTunnel = ({ tunnels, closeTunnel, onSave }) => {
    const { customer, organization } = useManual()
@@ -55,11 +55,9 @@ export default AddPaymentTunnel
 const FormWrapper = ({ intent, onSave, closeTunnel }) => {
    const { customer, brand, organization } = useManual()
 
-   const [updateBrandCustomer] = useMutation(
-      MUTATIONS.MANUAL.BRAND.CUSTOMER.UPDATE
-   )
+   const [updateBrandCustomer] = useMutation(MUTATIONS.BRAND.CUSTOMER.UPDATE)
    const [createPaymentMethod] = useMutation(
-      MUTATIONS.MANUAL.STRIPE.PAYMENT_METHOD.CREATE
+      MUTATIONS.STRIPE.PAYMENT_METHOD.CREATE
    )
    const handleResult = async ({ setupIntent }) => {
       try {

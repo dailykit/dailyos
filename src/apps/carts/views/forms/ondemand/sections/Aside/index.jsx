@@ -12,9 +12,9 @@ import {
 } from '@dailykit/ui'
 
 import { useManual } from '../../state'
-import EmptyIllo from '../../../../assets/svgs/Empty'
-import * as Icon from '../../../../../../shared/assets/icons'
-import { parseAddress } from '../../../../../../shared/utils'
+import EmptyIllo from '../../../../../assets/svgs/EmptyIllo'
+import * as Icon from '../../../../../../../shared/assets/icons'
+import { parseAddress } from '../../../../../../../shared/utils'
 
 export const Aside = () => {
    const { brand, tunnels, address, customer, paymentMethod } = useManual()

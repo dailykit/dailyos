@@ -59,13 +59,6 @@ const Home = () => {
                conf="All available"
                onClick={() => addTab('Planned', '/order/planned')}
             />
-            <Spacer size="16px" xAxis />
-            <DashboardTile
-               count={0}
-               title="Manual Order"
-               conf=""
-               onClick={() => addTab('Manual Order', '/order/manual')}
-            />
          </Flex>
       </Flex>
    )

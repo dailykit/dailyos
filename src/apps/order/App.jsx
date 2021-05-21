@@ -1,5 +1,4 @@
 import React from 'react'
-import { useLocation } from 'react-router'
 import { Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
 
 // Context
@@ -27,7 +26,6 @@ import { ErrorBoundary } from '../../shared/components'
 import BottomQuickInfoBar from './components/BottomQuickInfoBar'
 
 const App = () => {
-   const location = useLocation()
    const { state, dispatch } = useOrder()
    const { addTab, setRoutes } = useTabs()
    const { state: configState } = useConfig()
@@ -59,11 +57,6 @@ const App = () => {
             id: 3,
             title: 'Planned',
             onClick: () => addTab('Planned', '/order/planned'),
-         },
-         {
-            id: 4,
-            title: 'Manual Order',
-            onClick: () => addTab('Manual Order', '/order/manual'),
          },
       ])
    }, [])
@@ -123,23 +116,14 @@ const App = () => {
    }, [state.filter.tunnel])
 
    return (
-      <StyledWrapper
-         position={position}
-         hideSummary={
-            location?.pathname && location?.pathname?.includes('manual')
-         }
-      >
-         {location?.pathname && !location?.pathname?.includes('manual') && (
-            <ErrorBoundary rootRoute="/apps/order">
-               {state.current_view === 'SUMMARY' && <OrderSummary />}
-               {state.current_view === 'SACHET_ITEM' && <ProcessSachet />}
-               {state.current_view === 'PRODUCT' && <ProcessProduct />}
-            </ErrorBoundary>
-         )}
+      <StyledWrapper position={position}>
+         <ErrorBoundary rootRoute="/apps/order">
+            {state.current_view === 'SUMMARY' && <OrderSummary />}
+            {state.current_view === 'SACHET_ITEM' && <ProcessSachet />}
+            {state.current_view === 'PRODUCT' && <ProcessProduct />}
+         </ErrorBoundary>
          <Main />
-         {location?.pathname && !location?.pathname?.includes('manual') && (
-            <Footer openTunnel={openNotifTunnel} setPosition={setPosition} />
-         )}
+         <Footer openTunnel={openNotifTunnel} setPosition={setPosition} />
          <BottomQuickInfoBar openOrderSummaryTunnel={openOrderSummaryTunnel} />
          <ErrorBoundary>
             <Tunnels mt={0} tunnels={orderSummaryTunnels}>

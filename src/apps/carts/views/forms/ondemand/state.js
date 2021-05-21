@@ -1,21 +1,20 @@
 import React from 'react'
-import { Filler, useTunnel } from '@dailykit/ui'
+import { toast } from 'react-toastify'
+import { useTunnel } from '@dailykit/ui'
+import { useQuery } from '@apollo/react-hooks'
 
-import { InlineLoader } from '../../../../shared/components'
 import {
    BrandTunnel,
    CustomerTunnel,
    AddressTunnel,
    PaymentTunnel,
 } from './tunnels'
-import { useQuery } from '@apollo/react-hooks'
-import { QUERIES } from '../../graphql'
-import { toast } from 'react-toastify'
+import { QUERIES } from '../../../graphql'
+import { InlineLoader } from '../../../../../shared/components'
 
 const Context = React.createContext()
 
 const initial = {
-   mode: '',
    brand: { id: null },
    customer: { id: null },
    address: { id: null },
@@ -25,8 +24,6 @@ const initial = {
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
-      case 'SET_MODE':
-         return { ...state, mode: payload }
       case 'SET_BRAND':
          return {
             ...state,
@@ -98,35 +95,27 @@ const reducers = (state, { type, payload }) => {
 }
 
 export const ManualProvider = ({ children }) => {
-   const [isModeLoading, setIsModeLoading] = React.useState(true)
    const [state, dispatch] = React.useReducer(reducers, initial)
+   const [organizationLoading, setOrganizationLoading] = React.useState(true)
    const brandTunnels = useTunnel(1)
    const customerTunnels = useTunnel(1)
    const addressTunnels = useTunnel(1)
    const paymentTunnels = useTunnel(1)
-   useQuery(QUERIES.MANUAL.ORGANIZATION, {
+   useQuery(QUERIES.ORGANIZATION, {
       onCompleted: ({ organizations = [] }) => {
          if (organizations.length > 0) {
             const [organization] = organizations
             dispatch({ type: 'SET_ORGANIZATION', payload: organization })
          }
+         setOrganizationLoading(false)
       },
-      onError: () => toast.error('Failed to fetch organization details!'),
+      onError: () => {
+         setOrganizationLoading(false)
+         toast.error('Failed to fetch organization details!')
+      },
    })
 
-   React.useEffect(() => {
-      const mode = new URL(window.location.href).searchParams.get('mode')
-      if (mode && mode.trim()) {
-         dispatch({ type: 'SET_MODE', payload: mode })
-      }
-      setIsModeLoading(false)
-   }, [])
-
-   if (isModeLoading) return <InlineLoader />
-   if (!state.mode)
-      return (
-         <Filler message="Please select either ondemand store or subscription store." />
-      )
+   if (organizationLoading) return <InlineLoader />
    return (
       <Context.Provider
          value={{

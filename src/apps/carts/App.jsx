@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route } from 'react-router-dom'
 
-import { Carts } from './views'
+import { Carts, OnDemand } from './views'
 import { useTabs } from '../../shared/providers'
 import { ErrorBoundary } from '../../shared/components'
 
@@ -21,6 +21,9 @@ const App = () => {
       <ErrorBoundary rootRoute="/apps/carts">
          <Route exact path="/carts">
             <Carts />
+         </Route>
+         <Route exact path="/carts/ondemand/:id">
+            <OnDemand />
          </Route>
       </ErrorBoundary>
    )

@@ -15,8 +15,8 @@ import {
 } from '@dailykit/ui'
 
 import { useManual } from '../../state'
-import { QUERIES } from '../../../../graphql/queries'
-import { InlineLoader } from '../../../../../../shared/components'
+import { QUERIES } from '../../../../../graphql'
+import { InlineLoader } from '../../../../../../../shared/components'
 
 export const CustomerTunnel = ({ panel }) => {
    const { brand, dispatch } = useManual()
@@ -24,7 +24,7 @@ export const CustomerTunnel = ({ panel }) => {
    const [search, setSearch] = React.useState('')
    const [customers, setCustomers] = React.useState([])
    const [isCustomersLoading, setIsCustomersLoading] = React.useState(true)
-   useQuery(QUERIES.MANUAL.CUSTOMER.LIST, {
+   useQuery(QUERIES.CUSTOMER.LIST, {
       variables: {
          where: { ...(brand?.id && { brandId: { _eq: brand?.id } }) },
       },

@@ -15,10 +15,10 @@ import {
 } from '@dailykit/ui'
 
 import { useManual } from '../../state'
-import { QUERIES } from '../../../../graphql'
+import { QUERIES } from '../../../../../graphql'
 import AddPaymentTunnel from './AddPaymentTunnel'
-import EmptyIllo from '../../../../assets/svgs/Empty'
-import { InlineLoader } from '../../../../../../shared/components'
+import EmptyIllo from '../../../../../assets/svgs/EmptyIllo'
+import { InlineLoader } from '../../../../../../../shared/components'
 
 export const PaymentTunnel = ({ panel }) => {
    const [tunnels, , closeTunnel] = panel
@@ -26,7 +26,7 @@ export const PaymentTunnel = ({ panel }) => {
    const [payment, setPayment] = React.useState(null)
    const [addTunnels, openAddTunnel, closeAddTunnel] = useTunnel(1)
    const { loading, data: { paymentMethods = [] } = {}, refetch } = useQuery(
-      QUERIES.MANUAL.CUSTOMER.PAYMENT_METHODS.LIST,
+      QUERIES.CUSTOMER.PAYMENT_METHODS.LIST,
       {
          skip: !customer?.keycloakId,
          variables: {
