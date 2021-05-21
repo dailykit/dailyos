@@ -80,6 +80,10 @@ const Editor = Loadable({
    loader: () => import('./apps/editor'),
    loading: Loader,
 })
+const Carts = Loadable({
+   loader: () => import('./apps/carts'),
+   loading: Loader,
+})
 
 const App = () => {
    const location = useLocation()
@@ -126,6 +130,7 @@ const App = () => {
                <Route path="/brands" component={Brands} />
                <Route path="/content" component={Content} />
                <Route path="/editor" component={Editor} />
+               <Route path="/carts" component={Carts} />
             </Switch>
          </main>
          {/* {!isKeycloakSupported() && <RedirectBanner />} */}
