@@ -2,6 +2,24 @@ import gql from 'graphql-tag'
 
 export const QUERIES = {
    CART: {
+      ONE: gql`
+         subscription cart($id: Int!) {
+            cart(id: $id) {
+               id
+               customerId
+               customerInfo
+               paymentMethodId
+               customerKeycloakId
+               brand {
+                  id
+                  title
+                  domain
+               }
+               address
+               fulfillmentInfo
+            }
+         }
+      `,
       LIST: gql`
          subscription carts($where: order_cart_bool_exp = {}) {
             carts: cartsAggregate(where: $where) {
@@ -94,6 +112,19 @@ export const QUERIES = {
          `,
       },
       PAYMENT_METHODS: {
+         ONE: gql`
+            query paymentMethod($id: String!) {
+               paymentMethod: platform_stripePaymentMethod(
+                  stripePaymentMethodId: $id
+               ) {
+                  id: stripePaymentMethodId
+                  last4
+                  expMonth
+                  expYear
+                  name: cardHolderName
+               }
+            }
+         `,
          LIST: gql`
             query paymentMethods(
                $where: platform_stripePaymentMethod_bool_exp = {}

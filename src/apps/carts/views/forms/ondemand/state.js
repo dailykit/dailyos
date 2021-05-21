@@ -1,7 +1,9 @@
 import React from 'react'
+import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
-import { useTunnel } from '@dailykit/ui'
-import { useQuery } from '@apollo/react-hooks'
+import { useParams } from 'react-router'
+import { Flex, Filler, useTunnel } from '@dailykit/ui'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
 
 import {
    BrandTunnel,
@@ -10,6 +12,8 @@ import {
    PaymentTunnel,
 } from './tunnels'
 import { QUERIES } from '../../../graphql'
+import { logger } from '../../../../../shared/utils'
+import EmptyIllo from '../../../assets/svgs/EmptyIllo'
 import { InlineLoader } from '../../../../../shared/components'
 
 const Context = React.createContext()
@@ -24,6 +28,14 @@ const initial = {
 
 const reducers = (state, { type, payload }) => {
    switch (type) {
+      case 'SET_INITIAL':
+         return {
+            ...state,
+            brand: payload.brand,
+            customer: payload.customer,
+            address: payload.address,
+            paymentMethod: payload.paymentMethod,
+         }
       case 'SET_BRAND':
          return {
             ...state,
@@ -95,12 +107,37 @@ const reducers = (state, { type, payload }) => {
 }
 
 export const ManualProvider = ({ children }) => {
-   const [state, dispatch] = React.useReducer(reducers, initial)
-   const [organizationLoading, setOrganizationLoading] = React.useState(true)
+   const params = useParams()
    const brandTunnels = useTunnel(1)
    const customerTunnels = useTunnel(1)
    const addressTunnels = useTunnel(1)
    const paymentTunnels = useTunnel(1)
+   const [cartError, setCartError] = React.useState('')
+   const [isCartLoading, setIsCartLoading] = React.useState(true)
+   const [state, dispatch] = React.useReducer(reducers, initial)
+   const [organizationLoading, setOrganizationLoading] = React.useState(true)
+   const { loading, error } = useSubscription(QUERIES.CART.ONE, {
+      variables: { id: params.id },
+      onSubscriptionData: ({
+         subscriptionData: { data: { cart = {} } = {} } = {},
+      }) => {
+         if (cart && !isEmpty(cart)) {
+            dispatch({
+               type: 'SET_INITIAL',
+               payload: {
+                  brand: cart.brand,
+                  customer: { id: cart?.customerId },
+                  paymentMethod: { id: cart.paymentMethodId },
+                  ...(cart.address?.id && { address: cart.address }),
+               },
+            })
+            setCartError('')
+         } else {
+            setCartError('No such cart exists!')
+         }
+         setIsCartLoading(false)
+      },
+   })
    useQuery(QUERIES.ORGANIZATION, {
       onCompleted: ({ organizations = [] }) => {
          if (organizations.length > 0) {
@@ -115,7 +152,23 @@ export const ManualProvider = ({ children }) => {
       },
    })
 
-   if (organizationLoading) return <InlineLoader />
+   if (!loading && error) {
+      setIsCartLoading(false)
+      logger(error)
+      toast.error('Something went wrong, please refresh the page.')
+      return
+   }
+   if (organizationLoading || isCartLoading) return <InlineLoader />
+   if (cartError.trim())
+      return (
+         <Flex container alignItems="center" justifyContent="center">
+            <Filler
+               width="360px"
+               message="There's no cart linked to this cart id"
+               illustration={<EmptyIllo />}
+            />
+         </Flex>
+      )
    return (
       <Context.Provider
          value={{
