@@ -52,6 +52,10 @@ export default function BulkActionsTunnel({
       author: '',
       cookingTime: '',
       utensils: '',
+      utensilsConcat: {
+         forAppend: '',
+         forPrepend: '',
+      },
    })
    const [bulkActions, setBulkActions] = React.useState({})
    const [cuisineNames, setCuisineNames] = React.useState([])
@@ -119,16 +123,57 @@ export default function BulkActionsTunnel({
          dropdownDefaultOption: null,
          type: !prevState.type,
          author: '',
-         cookingTime: '30',
+         cookingTime: '',
          utensils: '',
          cuisineName: '',
+         utensilsConcat: {
+            forAppend: '',
+            forPrepend: '',
+         },
       }))
       setBulkActions({})
+   }
+   const checkNested = (obj, level, ...rest) => {
+      if (obj === undefined) return false
+      if (rest.length == 0 && obj.hasOwnProperty(level)) return true
+      return checkNested(obj[level], ...rest)
+   }
+   const commonRemove = (column, positionPrimary, positionSecondary) => {
+      //positionPrimary use for changing field
+      //positionSecondary use for another field
+      const nestedCheckPrepend = checkNested(
+         bulkActions,
+         'concatData',
+         column,
+         positionSecondary
+      )
+      console.log('im in', nestedCheckPrepend)
+      if (nestedCheckPrepend) {
+         const newBulkAction = { ...bulkActions }
+         delete newBulkAction.concatData.utensils[positionPrimary]
+         setBulkActions(newBulkAction)
+         return
+      }
+      const checkNestedUtensils = checkNested(bulkActions, 'concatData', column)
+      if (checkNestedUtensils) {
+         const newBulkAction = { ...bulkActions }
+         delete newBulkAction.concatData[column]
+         setBulkActions(newBulkAction)
+      }
+      if ('concatData' in bulkActions) {
+         if (Object.keys(bulkActions.concatData).length === 0) {
+            const newBulkAction = { ...bulkActions }
+            delete newBulkAction.concatData
+            setBulkActions(newBulkAction)
+         }
+      }
    }
    return (
       <>
          <BulkActions
             table="Recipe"
+            schemaName="simpleRecipe"
+            tableName="simpleRecipe"
             selectedRows={selectedRows}
             removeSelectedRow={removeRecipe}
             bulkActions={bulkActions}
@@ -331,7 +376,7 @@ export default function BulkActionsTunnel({
                            onClick={() => {
                               setInitialBulkAction({
                                  ...initialBulkAction,
-                                 cookingTime: '30',
+                                 cookingTime: '',
                               })
                               setBulkActions(prevState => {
                                  const newOption = { ...prevState }
@@ -436,6 +481,239 @@ export default function BulkActionsTunnel({
             <Form.Error>
                Changing utensils will overwrite already existing utensils
             </Form.Error>
+            <HelperText
+               type="hint"
+               message="Enter comma separated values, for example: Pan, Spoon, Bowl"
+            />
+            <Spacer size="10px" />
+            <Form.Group>
+               <Form.Label htmlFor="utensils" title="utensils">
+                  <Flex container alignItems="center">
+                     <Text as="text1">Utensils Append</Text>
+                     <TextButton
+                        type="ghost"
+                        size="sm"
+                        onClick={() => {
+                           setInitialBulkAction({
+                              ...initialBulkAction,
+                              utensilsConcat: {
+                                 ...initialBulkAction.utensils,
+                                 forAppend: '',
+                              },
+                           })
+                           commonRemove(
+                              'utensils',
+                              'appendvalue',
+                              'prependvalue'
+                           )
+                           // const nestedCheckPrepend = checkNested(
+                           //    bulkActions,
+                           //    'concatData',
+                           //    'utensils',
+                           //    'prepend'
+                           // )
+                           // if (nestedCheckPrepend) {
+                           //    const newBulkAction = { ...bulkActions }
+                           //    delete newBulkAction.concatData.utensils['append']
+                           //    setBulkActions(newBulkAction)
+                           //    return
+                           // }
+                           // const checkNestedUtensils = checkNested(
+                           //    bulkActions,
+                           //    'concatData',
+                           //    'utensils'
+                           // )
+                           // if (checkNestedUtensils) {
+                           //    const newBulkAction = { ...bulkActions }
+                           //    delete newBulkAction.concatData.utensils
+                           //    setBulkActions(newBulkAction)
+                           // }
+                        }}
+                     >
+                        Clear
+                     </TextButton>
+                     <Tooltip identifier="recipe_utensils" />
+                  </Flex>
+               </Form.Label>
+               <Form.Text
+                  id="utensilsAppend"
+                  name="utensilsConcat"
+                  value={initialBulkAction.utensilsConcat.forAppend}
+                  onChange={e =>
+                     setInitialBulkAction({
+                        ...initialBulkAction,
+                        utensilsConcat: {
+                           ...initialBulkAction.utensilsConcat,
+                           forAppend: e.target.value,
+                        },
+                     })
+                  }
+                  onBlur={() => {
+                     if (initialBulkAction.utensilsConcat.forAppend) {
+                        const newUtensils = initialBulkAction.utensilsConcat.forAppend
+                           .split(',')
+                           .map(tag => {
+                              const newTag = tag.trim()
+                              return capitalize(newTag)
+                           })
+                        const concatData = { ...bulkActions.concatData }
+                        const newUtensil = { ...concatData.utensils }
+                        newUtensil.columnname = 'utensils'
+                        newUtensil.appendvalue = newUtensils
+                        newUtensil.schemaname = 'simpleRecipe'
+                        newUtensil.tablename = 'simpleRecipe'
+                        concatData.utensils = newUtensil
+                        setBulkActions({
+                           ...bulkActions,
+                           concatData,
+                        })
+                        return
+                     }
+                     commonRemove('utensils', 'appendvalue', 'prependvalue')
+                     // const nestedCheckPrepend = checkNested(
+                     //    bulkActions,
+                     //    'concatData',
+                     //    'utensils',
+                     //    'prepend'
+                     // )
+                     // if (nestedCheckPrepend) {
+                     //    const newBulkAction = { ...bulkActions }
+                     //    delete newBulkAction.concatData.utensils['append']
+                     //    setBulkActions(newBulkAction)
+                     //    return
+                     // }
+                     // const checkNestedUtensils = checkNested(
+                     //    bulkActions,
+                     //    'concatData',
+                     //    'utensils'
+                     // )
+                     // if (checkNestedUtensils) {
+                     //    const newBulkAction = { ...bulkActions }
+                     //    delete newBulkAction.concatData.utensils
+                     //    setBulkActions(newBulkAction)
+                     // }
+                  }}
+                  placeholder="Enter append utensils"
+               />
+            </Form.Group>
+            <HelperText
+               type="hint"
+               message="Enter comma separated values, for example: Pan, Spoon, Bowl"
+            />
+            <Spacer size="10px" />
+            <Form.Group>
+               <Form.Label htmlFor="utensils" title="utensils">
+                  <Flex container alignItems="center">
+                     <Text as="text1">Utensils Prepend</Text>
+                     <TextButton
+                        type="ghost"
+                        size="sm"
+                        onClick={() => {
+                           setInitialBulkAction({
+                              ...initialBulkAction,
+                              utensilsConcat: {
+                                 ...initialBulkAction.utensils,
+                                 forPrepend: '',
+                              },
+                           })
+                           commonRemove(
+                              'utensils',
+                              'prependvalue',
+                              'appendvalue'
+                           )
+                           // const checkNestedAppend = checkNested(
+                           //    bulkActions,
+                           //    'concatData',
+                           //    'utensils',
+                           //    'append'
+                           // )
+                           // if (checkNestedAppend) {
+                           //    const newBulkAction = { ...bulkActions }
+                           //    delete newBulkAction.concatData.utensils[
+                           //       'prepend'
+                           //    ]
+                           //    setBulkActions(newBulkAction)
+                           //    return
+                           // }
+                           // const checkNestedUtensils = checkNested(
+                           //    bulkActions,
+                           //    'concatData',
+                           //    'utensils'
+                           // )
+                           // if (checkNestedUtensils) {
+                           //    const newBulkAction = { ...bulkActions }
+                           //    delete newBulkAction.concatData.utensils
+                           //    setBulkActions(newBulkAction)
+                           // }
+                        }}
+                     >
+                        Clear
+                     </TextButton>
+                     <Tooltip identifier="recipe_utensils" />
+                  </Flex>
+               </Form.Label>
+               <Form.Text
+                  id="utensilsPrepend"
+                  name="utensilsPrepend"
+                  value={initialBulkAction.utensilsConcat.forPrepend}
+                  onChange={e =>
+                     setInitialBulkAction({
+                        ...initialBulkAction,
+                        utensilsConcat: {
+                           ...initialBulkAction.utensilsConcat,
+                           forPrepend: e.target.value,
+                        },
+                     })
+                  }
+                  onBlur={() => {
+                     if (initialBulkAction.utensilsConcat.forPrepend) {
+                        const newUtensils = initialBulkAction.utensilsConcat.forPrepend
+                           .split(',')
+                           .map(tag => {
+                              const newTag = tag.trim()
+                              return capitalize(newTag)
+                           })
+                        const concatData = { ...bulkActions.concatData }
+                        const newUtensil = { ...concatData.utensils }
+                        newUtensil.columnname = 'utensils'
+                        newUtensil.prependvalue = newUtensils
+                        newUtensil.schemaname = 'simpleRecipe'
+                        newUtensil.tablename = 'simpleRecipe'
+                        concatData.utensils = newUtensil
+                        setBulkActions({
+                           ...bulkActions,
+                           concatData,
+                        })
+                        return
+                     }
+                     commonRemove('utensils', 'prependvalue', 'appendvalue')
+
+                     // const checkNestedAppend = checkNested(
+                     //    bulkActions,
+                     //    'concatData',
+                     //    'utensils',
+                     //    'append'
+                     // )
+                     // if (checkNestedAppend) {
+                     //    const newBulkAction = { ...bulkActions }
+                     //    delete newBulkAction.concatData.utensils['prepend']
+                     //    setBulkActions(newBulkAction)
+                     //    return
+                     // }
+                     // const checkNestedUtensils = checkNested(
+                     //    bulkActions,
+                     //    'concatData',
+                     //    'utensils'
+                     // )
+                     // if (checkNestedUtensils) {
+                     //    const newBulkAction = { ...bulkActions }
+                     //    delete newBulkAction.concatData.utensils
+                     //    setBulkActions(newBulkAction)
+                     // }
+                  }}
+                  placeholder="Enter prepend utensils"
+               />
+            </Form.Group>
             <HelperText
                type="hint"
                message="Enter comma separated values, for example: Pan, Spoon, Bowl"

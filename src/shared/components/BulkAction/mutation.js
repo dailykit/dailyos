@@ -20,3 +20,11 @@ export const UPDATE_INGREDIENTS = gql`
       }
    }
 `
+export const CONCATENATE_ARRAY_COLUMN = gql`
+   query ConcatenateArrayColumn($concatData: concatenateArrayColumn_args!) {
+      concatenateArrayColumn(args: $concatData) {
+         message
+         success
+      }
+   }
+`

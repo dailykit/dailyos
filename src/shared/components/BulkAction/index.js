@@ -1,5 +1,5 @@
 import React from 'react'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import {
    Spacer,
    TunnelHeader,
@@ -14,7 +14,11 @@ import { TunnelBody } from './styled'
 
 import { RemoveIcon } from '../../../apps/products/assets/icons'
 import ConfirmationPopup from './confirmationPopup'
-import { SIMPLE_RECIPE_UPDATE, UPDATE_INGREDIENTS } from './mutation'
+import {
+   SIMPLE_RECIPE_UPDATE,
+   UPDATE_INGREDIENTS,
+   CONCATENATE_ARRAY_COLUMN,
+} from './mutation'
 
 const BulkActions = ({
    children,
@@ -49,6 +53,18 @@ const BulkActions = ({
          //  logger(error)
       },
    })
+   const [concatenateArrayColumn, { loading, error }] = useLazyQuery(
+      CONCATENATE_ARRAY_COLUMN,
+      {
+         onCompleted: () => {
+            console.log('this is complete')
+         },
+         onError: () => {
+            console.log('this is error')
+         },
+      }
+   )
+
    const getMutation = table => {
       switch (table) {
          case 'Recipe':
@@ -60,11 +76,35 @@ const BulkActions = ({
    }
    const handleOnUpdate = () => {
       const fn = getMutation(table)
+      if ('concatData' in bulkActions) {
+         const toBeConcat = Object.keys(bulkActions.concatData)
+         if (toBeConcat.length > 0) {
+            const newConcatData = { ...bulkActions.concatData }
+            toBeConcat.forEach(data => {
+               newConcatData[data].arrayofids =
+                  '(' + selectedRows.map(idx => idx.id).join(',') + ')'
+               newConcatData[data].appendvalue = newConcatData[data].appendvalue
+                  ? newConcatData[data].appendvalue
+                  : []
+               newConcatData[data].prependvalue = newConcatData[data]
+                  .prependvalue
+                  ? newConcatData[data].prependvalue
+                  : []
+               concatenateArrayColumn({
+                  variables: {
+                     concatData: newConcatData[data],
+                  },
+               })
+            })
+         }
+      }
       if (fn) {
+         const newBulkAction = { ...bulkActions }
+         delete newBulkAction.concatData
          fn({
             variables: {
                ids: selectedRows.map(idx => idx.id),
-               _set: bulkActions,
+               _set: newBulkAction,
             },
          })
       } else {
@@ -108,6 +148,7 @@ const BulkActions = ({
                      as="header"
                      alignItems="center"
                      justifyContent="space-between"
+                     padding="0px 0px 10px 0px"
                   >
                      <Text as="h3">{table}</Text>
                      <span
@@ -122,7 +163,13 @@ const BulkActions = ({
                         {selectedRows.length > 1 ? table + 's' : table} selected{' '}
                      </span>
                   </Flex>
-                  <div style={{ height: '400px', overflowY: 'auto' }}>
+                  <div
+                     style={{
+                        height: '48vh',
+                        overflowY: 'auto',
+                        scrollbarWidth: 'thin',
+                     }}
+                  >
                      {selectedRows.map((item, id) => (
                         <div
                            as="title"
@@ -154,7 +201,7 @@ const BulkActions = ({
                      ))}
                   </div>
                </Flex>
-               <Flex width="50%" padding="0px 0px 20px 20px">
+               <Flex width="50%" padding="0px 0px 0px 20px">
                   <Flex
                      container
                      justifyContent="space-between"
@@ -171,8 +218,10 @@ const BulkActions = ({
                         Clear All Actions
                      </TextButton>
                   </Flex>
-                  <Spacer size="16px" />
-                  {children}
+                  <Spacer size="8px" />
+                  <Flex height="44vh" overflowY="auto">
+                     {children}
+                  </Flex>
                   <Spacer size="16px" />
                   <Flex container alignItems="center" justifyContent="flex-end">
                      <TextButton
@@ -187,6 +236,7 @@ const BulkActions = ({
                         onClick={() => {
                            setShowPopup(true)
                            setPopupHeading('Save All Changes')
+                           console.log(bulkActions)
                         }}
                      >
                         Save Changes
