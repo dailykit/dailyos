@@ -13,7 +13,7 @@ export const Carts = () => {
 
    React.useEffect(() => {
       if (!tab) {
-         addTab('Carts', '/')
+         addTab('Carts', '/carts')
       }
    }, [tab, addTab])
 
