@@ -94,7 +94,7 @@ export const QUERIES = {
                         title
                      }
                   }
-                  assembledProducts: cartItemViews_aggregate(
+                  assembledProducts: cartItems_aggregate(
                      where: {
                         levelType: { _eq: "orderItem" }
                         status: { _eq: "PACKED" }
@@ -104,7 +104,7 @@ export const QUERIES = {
                         count
                      }
                   }
-                  packedProducts: cartItemViews_aggregate(
+                  packedProducts: cartItems_aggregate(
                      where: {
                         levelType: { _eq: "orderItem" }
                         status: { _in: ["READY", "PACKED"] }
@@ -114,7 +114,7 @@ export const QUERIES = {
                         count
                      }
                   }
-                  totalProducts: cartItemViews_aggregate(
+                  totalProducts: cartItems_aggregate(
                      where: { levelType: { _eq: "orderItem" } }
                   ) {
                      aggregate {
@@ -126,11 +126,8 @@ export const QUERIES = {
          }
       `,
       PRODUCTS: gql`
-         subscription products($where: order_cartItemView_bool_exp!) {
-            products: order_cartItemView(
-               where: $where
-               order_by: { created_at: desc }
-            ) {
+         subscription products($where: order_cartItem_bool_exp = {}) {
+            products: cartItems(where: $where, order_by: { created_at: desc }) {
                id
                status
                isAddOn
@@ -188,54 +185,52 @@ export const QUERIES = {
          subscription product($id: Int!) {
             product: cartItem(id: $id) {
                id
-               cartItemView {
+               id
+               cart {
                   id
-                  cart {
+                  order {
                      id
-                     order {
-                        id
-                        isAccepted
-                        isRejected
-                     }
+                     isAccepted
+                     isRejected
                   }
-                  position
+               }
+               position
+               stationId
+               isModifier
+               status
+               displayName
+               displayUnit
+               processingName
+               displayBulkDensity
+               displayUnitQuantity
+               supplierItemId
+               supplierItem {
+                  id
+                  supplierItemName
+                  supplierId
+                  supplier {
+                     id
+                     name
+                  }
+               }
+               operationConfigId
+               operationConfig {
+                  id
                   stationId
-                  isModifier
-                  status
-                  displayName
-                  displayUnit
-                  processingName
-                  displayBulkDensity
-                  displayUnitQuantity
-                  supplierItemId
-                  supplierItem {
+                  station {
                      id
-                     supplierItemName
-                     supplierId
-                     supplier {
-                        id
-                        name
-                     }
+                     name
                   }
-                  operationConfigId
-                  operationConfig {
+                  labelTemplateId
+                  labelTemplate {
                      id
-                     stationId
-                     station {
-                        id
-                        name
-                     }
-                     labelTemplateId
-                     labelTemplate {
-                        id
-                        name
-                     }
-                     packagingId
-                     packaging {
-                        id
-                        name
-                        assets
-                     }
+                     name
+                  }
+                  packagingId
+                  packaging {
+                     id
+                     name
+                     assets
                   }
                }
             }
@@ -243,8 +238,8 @@ export const QUERIES = {
       `,
       SACHET: {
          MULTIPLE: gql`
-            subscription sachets($where: order_cartItemView_bool_exp!) {
-               sachets: order_cartItemView(
+            subscription sachets($where: order_cartItem_bool_exp = {}) {
+               sachets: cartItems(
                   where: $where
                   order_by: { position: desc, created_at: desc }
                ) {
@@ -387,7 +382,7 @@ export const QUERIES = {
                         logo: value(path: "logo.url")
                      }
                   }
-                  cartItemViews_aggregate(
+                  cartItems_aggregate(
                      where: { levelType: { _eq: "orderItem" } }
                   ) {
                      aggregate {
@@ -405,7 +400,7 @@ export const QUERIES = {
                            }
                         }
                         packedSachets: childs_aggregate(
-                           where: { status: { _eq: "READY" } }
+                           where: { status: { _in: ["READY", "PACKED"] } }
                         ) {
                            aggregate {
                               count
@@ -585,8 +580,8 @@ export const QUERIES = {
    PLANNED: {
       PRODUCTS: gql`
          subscription plannedProducts(
-            $type: String_comparison_exp!
-            $cart: order_cart_bool_exp!
+            $type: String_comparison_exp = {}
+            $cart: order_cart_bool_exp = {}
          ) {
             plannedProducts: productsAggregate(
                where: { type: $type, cartItems: { cart: $cart } }
@@ -616,13 +611,13 @@ export const QUERIES = {
       `,
       PRODUCT_OPTIONS: gql`
          subscription productOptions(
-            $type: String_comparison_exp!
-            $cart: order_cart_bool_exp!
+            $type: String_comparison_exp = {}
+            $cart: order_cart_bool_exp = {}
          ) {
             productOptions: products_productOptionView_aggregate(
                where: {
                   type: $type
-                  cartItemViews: { level: { _eq: 2 }, cart: $cart }
+                  cartItems: { level: { _eq: 2 }, cart: $cart }
                }
             ) {
                aggregate {
@@ -631,7 +626,7 @@ export const QUERIES = {
                nodes {
                   id
                   displayName
-                  cartItemViews_aggregate(
+                  cartItems_aggregate(
                      where: { level: { _eq: 2 }, cart: $cart }
                   ) {
                      aggregate {
@@ -650,14 +645,11 @@ export const QUERIES = {
          }
       `,
       SIMPLE_RECIPES: gql`
-         subscription simpleRecipes($cart: order_cart_bool_exp!) {
+         subscription simpleRecipes($cart: order_cart_bool_exp = {}) {
             simpleRecipes: simpleRecipesAggregate(
                where: {
                   simpleRecipeYields: {
-                     simpleRecipeCartItemViews: {
-                        level: { _eq: 3 }
-                        cart: $cart
-                     }
+                     simpleRecipecartItems: { level: { _eq: 3 }, cart: $cart }
                   }
                }
             ) {
@@ -669,7 +661,7 @@ export const QUERIES = {
                   name
                   simpleRecipeYields_aggregate(
                      where: {
-                        simpleRecipeCartItemViews: {
+                        simpleRecipeCartItems: {
                            level: { _eq: 3 }
                            cart: $cart
                         }
@@ -681,7 +673,7 @@ export const QUERIES = {
                      nodes {
                         id
                         serving
-                        simpleRecipeCartItemViews_aggregate(
+                        simpleRecipeCartItems_aggregate(
                            where: { level: { _eq: 3 }, cart: $cart }
                         ) {
                            aggregate {
@@ -708,11 +700,11 @@ export const QUERIES = {
          }
       `,
       SUB_RECIPES: gql`
-         subscription subRecipes($cart: order_cart_bool_exp!) {
+         subscription subRecipes($cart: order_cart_bool_exp = {}) {
             subRecipes: simpleRecipesAggregate(
                where: {
                   simpleRecipeYields: {
-                     subRecipeCartItemViews: { level: { _gte: 4 }, cart: $cart }
+                     subRecipeCartItems: { level: { _gte: 4 }, cart: $cart }
                   }
                }
             ) {
@@ -724,10 +716,7 @@ export const QUERIES = {
                   name
                   simpleRecipeYields_aggregate(
                      where: {
-                        subRecipeCartItemViews: {
-                           level: { _gte: 4 }
-                           cart: $cart
-                        }
+                        subRecipeCartItems: { level: { _gte: 4 }, cart: $cart }
                      }
                   ) {
                      aggregate {
@@ -736,7 +725,7 @@ export const QUERIES = {
                      nodes {
                         id
                         serving
-                        subRecipeCartItemViews_aggregate(
+                        subRecipeCartItems_aggregate(
                            where: { level: { _gte: 4 }, cart: $cart }
                         ) {
                            aggregate {
@@ -763,11 +752,11 @@ export const QUERIES = {
          }
       `,
       INGREDIENTS: gql`
-         subscription ingredients($cart: order_cart_bool_exp!) {
+         subscription ingredients($cart: order_cart_bool_exp = {}) {
             ingredients: ingredientsAggregate(
                where: {
                   ingredientSachetViews: {
-                     cartItemViews: {
+                     cartItems: {
                         level: { _eq: 4 }
                         orderMode: {
                            _in: ["assembledTogether", "assembledSeparately"]
@@ -783,7 +772,7 @@ export const QUERIES = {
                nodes {
                   id
                   name
-                  cartItemViews_aggregate(
+                  cartItems_aggregate(
                      where: {
                         level: { _eq: 4 }
                         orderMode: {
@@ -801,7 +790,7 @@ export const QUERIES = {
                   ingredientProcessings_aggregate(
                      where: {
                         ingredientSachetViews: {
-                           cartItemViews: {
+                           cartItems: {
                               level: { _eq: 4 }
                               orderMode: {
                                  _in: [
@@ -820,7 +809,7 @@ export const QUERIES = {
                      nodes {
                         id
                         processingName
-                        cartItemViews_aggregate(
+                        cartItems_aggregate(
                            where: {
                               level: { _eq: 4 }
                               orderMode: {
@@ -841,7 +830,7 @@ export const QUERIES = {
                         }
                         ingredientSachets_aggregate(
                            where: {
-                              cartItemViews: {
+                              cartItems: {
                                  level: { _eq: 4 }
                                  orderMode: {
                                     _in: [
@@ -860,7 +849,7 @@ export const QUERIES = {
                               id
                               unit
                               quantity
-                              cartItemViews_aggregate(
+                              cartItems_aggregate(
                                  where: {
                                     level: { _eq: 4 }
                                     orderMode: {
@@ -903,7 +892,7 @@ export const QUERIES = {
       SACHET_ITEMS: gql`
          subscription sachetItems($cart: order_cart_bool_exp) {
             sachetItems: inventory_sachetItemView_aggregate(
-               where: { cartItemViews: { level: { _eq: 4 }, cart: $cart } }
+               where: { cartItems: { level: { _eq: 4 }, cart: $cart } }
             ) {
                aggregate {
                   count
@@ -911,7 +900,7 @@ export const QUERIES = {
                nodes {
                   id
                   processingName
-                  cartItemViews_aggregate(
+                  cartItems_aggregate(
                      where: { level: { _eq: 4 }, cart: $cart }
                   ) {
                      aggregate {

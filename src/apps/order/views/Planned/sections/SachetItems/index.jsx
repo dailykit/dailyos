@@ -43,12 +43,11 @@ const Listing = ({ setTotal, setQuantity }) => {
          }) => {
             const quantity = items.nodes.reduce(
                (b, a) =>
-                  b +
-                  a.cartItemViews_aggregate.aggregate.sum.displayUnitQuantity,
+                  b + a.cartItems_aggregate.aggregate.sum.displayUnitQuantity,
                0
             )
             const count = items.nodes.reduce(
-               (b, a) => b + a.cartItemViews_aggregate.aggregate.count,
+               (b, a) => b + a.cartItems_aggregate.aggregate.count,
                0
             )
             setQuantity(quantity)
@@ -81,13 +80,13 @@ const Listing = ({ setTotal, setQuantity }) => {
                   <Text as="subtitle">
                      Total Quantity:{' '}
                      {
-                        node.cartItemViews_aggregate?.aggregate?.sum
+                        node.cartItems_aggregate?.aggregate?.sum
                            ?.displayUnitQuantity
                      }
                   </Text>
                </aside>
                <main>
-                  <Cards nodes={node.cartItemViews_aggregate.nodes} />
+                  <Cards nodes={node.cartItems_aggregate.nodes} />
                </main>
             </Item>
          ))}
