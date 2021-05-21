@@ -6,7 +6,7 @@ export const StyledWrapper = styled.div(
       display: grid;
       height: calc(100vh - 110px);
       overflow: hidden;
-      grid-template-rows: 1fr 40px;
+      grid-template-rows: ${hideSummary ? '1fr' : '1fr 40px'};
       grid-template-areas: ${position === 'left'
          ? '"aside main" "footer footer"'
          : '"main aside" "footer footer"'};

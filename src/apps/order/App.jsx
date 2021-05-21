@@ -137,7 +137,9 @@ const App = () => {
             </ErrorBoundary>
          )}
          <Main />
-         <Footer openTunnel={openNotifTunnel} setPosition={setPosition} />
+         {location?.pathname && !location?.pathname?.includes('manual') && (
+            <Footer openTunnel={openNotifTunnel} setPosition={setPosition} />
+         )}
          <BottomQuickInfoBar openOrderSummaryTunnel={openOrderSummaryTunnel} />
          <ErrorBoundary>
             <Tunnels mt={0} tunnels={orderSummaryTunnels}>

@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { toast } from 'react-toastify'
 import {
    Text,
    Flex,
@@ -53,7 +54,12 @@ export const Aside = () => {
                <Styles.Card>
                   <Header
                      title="Customer"
-                     onEdit={() => tunnels.customer[1](1)}
+                     onEdit={() => {
+                        if (!brand?.id) {
+                           return toast.warning('Please select a brand first.')
+                        }
+                        tunnels.customer[1](1)
+                     }}
                   />
                   <Flex as="main" padding="0 8px 8px 8px">
                      {customer?.id ? (
@@ -80,7 +86,14 @@ export const Aside = () => {
                <Styles.Card>
                   <Header
                      title="Fulfillment"
-                     onEdit={() => tunnels.address[1](1)}
+                     onEdit={() => {
+                        if (!customer?.id) {
+                           return toast.warning(
+                              'Please select a customer first.'
+                           )
+                        }
+                        tunnels.address[1](1)
+                     }}
                   />
                   <Flex as="main" padding="0 8px 8px 8px">
                      {address?.id ? (
@@ -98,7 +111,14 @@ export const Aside = () => {
                <Styles.Card>
                   <Header
                      title="Payment Details"
-                     onEdit={() => tunnels.payment[1](1)}
+                     onEdit={() => {
+                        if (!customer?.id) {
+                           return toast.warning(
+                              'Please select a customer first.'
+                           )
+                        }
+                        tunnels.payment[1](1)
+                     }}
                   />
                   <Flex as="main" padding="0 8px 8px 8px">
                      {paymentMethod?.id ? (
