@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components'
 
 export const StyledCardEven = styled.div(
-   ({ index }) => css`
-      height: 80px;
+   ({ index, baseYieldId }) => css`
+      height: 85px;
       width: 160px;
       padding: 5px 5px 5px 5px;
       marginbottom: 22px;
@@ -18,7 +18,7 @@ export const StyledCardEven = styled.div(
       div#Serving {
          padding-left: 5px;
          display: inline-block;
-         width: 86px;
+         width: ${baseYieldId ? `56px` : `86px`};
       }
       div#menu {
          text-align: right;

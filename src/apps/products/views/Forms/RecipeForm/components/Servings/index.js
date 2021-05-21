@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { useMutation, useSubscription, useLazyQuery } from '@apollo/react-hooks'
 import { Link } from 'react-router-dom'
 import Skeleton from 'react-loading-skeleton'
 import {
@@ -17,6 +17,7 @@ import {
    Dropdown,
    Form,
    Spacer,
+   ComboButton,
 } from '@dailykit/ui'
 import {
    Serving,
@@ -26,6 +27,9 @@ import {
    ChefPay,
    VisibiltyOn,
    VisibiltyOff,
+   AutoGenerate,
+   NextArrow,
+   PreviousArrow,
 } from '../../../../../assets/icons'
 import { toast } from 'react-toastify'
 import {
@@ -53,11 +57,12 @@ import {
    UPSERT_SIMPLE_RECIPE_YIELD_SACHET,
    UPDATE_SIMPLE_RECIPE_YIELD_SACHET,
    DELETE_SIMPLE_RECIPE_INGREDIENT_PROCESSINGS,
+   DERIVE_SACHETS_FROM_BASE_YIELD,
 } from '../../../../../graphql'
 import { ServingsTunnel, IngredientsTunnel } from '../../tunnels'
 import { RecipeContext } from '../../../../../context/recipe'
 import { Button } from 'react-scroll'
-import { stubFalse } from 'lodash'
+import { constant, stubFalse } from 'lodash'
 
 const Servings = ({ state }) => {
    const { recipeState } = React.useContext(RecipeContext)
@@ -217,21 +222,117 @@ const Servings = ({ state }) => {
          },
       }
    )
+   const retryInfo = React.useRef(null)
+
+   const [
+      deriveSachetsFromBaseYield,
+      { loading: generating, refetch },
+   ] = useLazyQuery(DERIVE_SACHETS_FROM_BASE_YIELD, {
+      onCompleted: data => {
+         const [response] = data.simpleRecipe_deriveIngredientSachets
+         console.log({ response })
+         if (response && response.success) {
+            toast.success(response.message)
+         } else {
+            toast.warn('Something is not right!')
+         }
+      },
+      onError: error => {
+         retryInfo.current = {
+            ...retryInfo.current,
+            tries: 1 + retryInfo.current.tries,
+         }
+         if (
+            error.message ===
+               'GraphQL error: invalid input syntax for type json' &&
+            retryInfo.current.tries < 15
+         ) {
+            console.log('Retrying...')
+            refetch({
+               variables: {
+                  args: {
+                     sourceyieldid: retryInfo.current.recipeYield.baseYieldId,
+                     targetyieldid: retryInfo.current.recipeYield.id,
+                  },
+               },
+            })
+         } else {
+            toast.error('Failed to generate sachets!')
+            console.log(error)
+         }
+      },
+      fetchPolicy: 'cache-and-network',
+   })
 
    const options =
       state.simpleRecipeYields?.map((option, index) => {
          //console.log(option, 'Adrish option')
-
+         const autoGenerate = recipeYield => {
+            console.log({ recipeYield })
+            if (recipeYield.id && recipeYield.baseYieldId) {
+               retryInfo.current = {
+                  recipeYield,
+                  tries: 1,
+               }
+               deriveSachetsFromBaseYield({
+                  variables: {
+                     args: {
+                        sourceyieldid: recipeYield.baseYieldId,
+                        targetyieldid: recipeYield.id,
+                     },
+                  },
+               })
+            }
+         }
          return (
-            <StyledCardEven index={index} id={option.id}>
+            <StyledCardEven
+               baseYieldId={option.baseYieldId}
+               index={index}
+               id={option.id}
+            >
                <Serving />
                <div id="Serving">{option.yield.serving}</div>
+               {option.baseYieldId ? (
+                  <div id="menu">
+                     <IconButton
+                        type="ghost"
+                        size="sm"
+                        onClick={() => autoGenerate(option)}
+                        isLoading={
+                           generating &&
+                           option.id === retryInfo.current.recipeYield.id
+                        }
+                     >
+                        <AutoGenerate />
+                     </IconButton>
+                  </div>
+               ) : (
+                  <></>
+               )}
                <div id="menu">
                   <ContextualMenu>
                      <Context
                         title="Delete"
                         handleClick={() => remove(option)}
                      ></Context>
+                     {option.baseYieldId ? (
+                        <Context>
+                           <ComboButton
+                              type="ghost"
+                              size="sm"
+                              onClick={() => autoGenerate(option)}
+                              isLoading={
+                                 generating &&
+                                 option.id === retryInfo.current.recipeYield.id
+                              }
+                           >
+                              <AutoGenerate />
+                              Auto-generate
+                           </ComboButton>
+                        </Context>
+                     ) : (
+                        <></>
+                     )}
                   </ContextualMenu>
                </div>
 
@@ -251,7 +352,7 @@ const Servings = ({ state }) => {
 
    const ingredientsOptions =
       state.simpleRecipeIngredients?.map((option, index) => {
-         //console.log(option, 'Adrish selected processing')
+         //console.log(option, 'Adrish option')
          let dropDownReadOnly = true
          let sachetDisabled = false
          let optionsWithoutDescription = []
@@ -314,7 +415,12 @@ const Servings = ({ state }) => {
                <StyledCardIngredient>
                   <div id="index">{index + 1}</div>
 
-                  <Link style={{display: 'inline-block', width: '156px'}} to="#">{option.ingredient.name}</Link>
+                  <Link
+                     style={{ display: 'inline-block', width: '156px' }}
+                     to="#"
+                  >
+                     {option.ingredient.name}
+                  </Link>
                   <div id="menu">
                      <ContextualMenu>
                         <Context
@@ -382,7 +488,7 @@ const Servings = ({ state }) => {
                      }
                   })
                   let defaultSachetOption = {}
-                  //console.log(option , "Adrish Ingredient options")
+                  //console.log(object , "Adrish Ingredient options")
                   option.linkedSachets.map((item, index) => {
                      if (item.simpleRecipeYield.id == object.id) {
                         loader = true
@@ -490,19 +596,51 @@ const Servings = ({ state }) => {
          )
       }) || []
    const recipeForm = useRef(null)
-
-   let [buttonClickRightRender, setButtonClickRightRender] = React.useState(
-      state.simpleRecipeYields?.length > 5 ? false : true
+   const [buttonClickRightRender, setButtonClickRightRender] = React.useState(
+      false
    )
-   let buttonClickRight = 0
+   const [buttonClickLeftRender, setButtonClickLeftRender] = React.useState(
+      false
+   )
+   useEffect(() => {
+      if (state.simpleRecipeYields?.length > 5) {
+         setButtonClickRightRender(true)
+      } else {
+         setButtonClickRightRender(false)
+         setButtonClickLeftRender(false)
+      }
+   }, state.simpleRecipeYields)
+
+   
+   let [buttonClickRight, setButtonClickRight] = React.useState(0)
+   let [buttonClickLeft, setButtonClickLeft] = React.useState(0)
+
    const onButtonClickLeft = () => {
+      setButtonClickLeft(++buttonClickLeft)
+      console.log(buttonClickLeft, "buttonClickLeft")
+      console.log(buttonClickRight, "buttonClickRight")
       recipeForm.current.scrollLeft -= 160
+      if (buttonClickLeft > 0) {
+         setButtonClickRightRender(true)
+         
+      }
+      if (buttonClickLeft - buttonClickRight === 0) {
+         setButtonClickLeftRender(false)
+         setButtonClickRight(0)
+         setButtonClickLeft(0)
+      }
    }
    const onButtonClickRight = () => {
-      buttonClickRight += 1
+      setButtonClickRight(++buttonClickRight)
+     
       recipeForm.current.scrollLeft += 160
-      if (state.simpleRecipeYields.length - buttonClickRight == 5) {
+      if (state.simpleRecipeYields.length - buttonClickRight + buttonClickLeft === 5) {
          setButtonClickRightRender(false)
+         
+      }
+      if (buttonClickRight > 0) {
+         setButtonClickLeftRender(true)
+         
       }
    }
 
@@ -535,20 +673,25 @@ const Servings = ({ state }) => {
                      gridTemplateColumns: '30px 1038px 30px',
                   }}
                >
-                  <button
-                     style={{
-                        width: '30px',
-                        height: '30px',
-                        border: 'none',
-                        background: '#FFFFFF',
-                        boxShadow: '-2px 2px 6px rgba(0, 0, 0, 0.15)',
-                        borderRadius: '50%',
-                        marginTop: '25px',
-                     }}
-                     onClick={onButtonClickLeft}
-                  >
-                     Prev
-                  </button>
+                  {buttonClickLeftRender ? (
+                     <button
+                        style={{
+                           width: '30px',
+                           height: '30px',
+                           border: 'none',
+                           background: '#FFFFFF',
+                           boxShadow: '-2px 2px 6px rgba(0, 0, 0, 0.15)',
+                           borderRadius: '50%',
+                           marginTop: '25px',
+                        }}
+                        onClick={onButtonClickLeft}
+                     >
+                        <PreviousArrow />
+                     </button>
+                  ) : (
+                     <div></div>
+                  )}
+
                   <div
                      ref={recipeForm}
                      style={{
@@ -571,7 +714,7 @@ const Servings = ({ state }) => {
                            }}
                            style={{
                               width: '238px',
-                              height: '80px',
+                              height: '85px',
                               marginTop: '0px',
                               paddingTop: '0px',
                               left: '0',
@@ -601,7 +744,7 @@ const Servings = ({ state }) => {
                         </>
                      )}
 
-                     <Spacer size="20px" />
+                     <Spacer size="50px" />
                      <ButtonTile
                         type="secondary"
                         text="Add Ingredient"
@@ -609,7 +752,7 @@ const Servings = ({ state }) => {
                         style={{ left: '0', position: 'sticky' }}
                      />
                   </div>
-                  {buttonClickRightRender ? (
+                  {buttonClickRightRender && (
                      <button
                         style={{
                            width: '30px',
@@ -622,10 +765,8 @@ const Servings = ({ state }) => {
                         }}
                         onClick={onButtonClickRight}
                      >
-                        Next
+                        <NextArrow />
                      </button>
-                  ) : (
-                     <></>
                   )}
                </div>
             ) : (

@@ -22,9 +22,10 @@ import FoodCost from './FoodCost'
 import Yield from './Yield'
 import ChefPay from './ChefPay'
 import VisibiltyOn from './VisibilityOn';
-import VisibiltyOff from './VisibilityOff';
-
-
+import VisibiltyOff from './VisibilityOff'
+import AutoGenerate from './AutoGenerate'
+import NextArrow from './NextArrow'
+import PreviousArrow from './PreviousArrow'
 
 export {
    MenuIcon,
@@ -51,5 +52,8 @@ export {
    Yield,
    ChefPay,
    VisibiltyOn,
-   VisibiltyOff
+   VisibiltyOff,
+   AutoGenerate,
+   NextArrow,
+   PreviousArrow
 }
