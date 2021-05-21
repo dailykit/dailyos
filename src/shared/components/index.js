@@ -14,6 +14,7 @@ import DragNDrop from './DragNDrop'
 import Popup from './Popup'
 import RichTextEditor from './RichTextEditor'
 import LinkUnitConversionTunnels from './LinkUnitConversionTunnels'
+import Banner from './Banner'
 
 export {
    Lang,
@@ -32,6 +33,7 @@ export {
    Popup,
    RichTextEditor,
    LinkUnitConversionTunnels,
+   Banner,
 }
 export * from './AssetUploader'
 export * from './InlineLoader'

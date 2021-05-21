@@ -14,6 +14,7 @@ import {
    RedirectBanner,
    Sidebar,
    AddressTunnel,
+   Banner,
 } from './shared/components'
 
 const APPS = gql`
@@ -101,6 +102,7 @@ const App = () => {
          <main>
             <Switch>
                <Route path="/" exact>
+                  <Banner id="app-home-top" />
                   <AppList open={open}>
                      {apps.map(app => (
                         <AppItem key={app.id}>
@@ -113,6 +115,7 @@ const App = () => {
                         </AppItem>
                      ))}
                   </AppList>
+                  <Banner id="app-home-bottom" />
                </Route>
                <Route path="/inventory" component={Inventory} />
                <Route path="/safety" component={Safety} />
