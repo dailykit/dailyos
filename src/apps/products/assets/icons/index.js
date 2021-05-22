@@ -26,6 +26,7 @@ import VisibiltyOff from './VisibilityOff'
 import AutoGenerate from './AutoGenerate'
 import NextArrow from './NextArrow'
 import PreviousArrow from './PreviousArrow'
+import PlusIconLarge from './PlusIconLarge'
 
 export {
    MenuIcon,
@@ -55,5 +56,6 @@ export {
    VisibiltyOff,
    AutoGenerate,
    NextArrow,
-   PreviousArrow
+   PreviousArrow,
+   PlusIconLarge
 }

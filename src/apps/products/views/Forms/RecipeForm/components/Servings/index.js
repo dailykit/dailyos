@@ -30,6 +30,7 @@ import {
    AutoGenerate,
    NextArrow,
    PreviousArrow,
+   PlusIconLarge
 } from '../../../../../assets/icons'
 import { toast } from 'react-toastify'
 import {
@@ -58,6 +59,7 @@ import {
    UPDATE_SIMPLE_RECIPE_YIELD_SACHET,
    DELETE_SIMPLE_RECIPE_INGREDIENT_PROCESSINGS,
    DERIVE_SACHETS_FROM_BASE_YIELD,
+   UPDATE_RECIPE,
 } from '../../../../../graphql'
 import { ServingsTunnel, IngredientsTunnel } from '../../tunnels'
 import { RecipeContext } from '../../../../../context/recipe'
@@ -110,8 +112,18 @@ const Servings = ({ state }) => {
          setSachets([...updatedSachets])
       },
    })
-   //console.log(sachets, 'Adrish updated sachets')
+
    // Mutation
+   const [updateRecipe] = useMutation(UPDATE_RECIPE, {
+      onCompleted: () => {
+         toast.success('Updated!')
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
    const [deleteYield] = useMutation(DELETE_SIMPLE_RECIPE_YIELD, {
       onCompleted: () => {
          toast.success('Deleted!')
@@ -327,7 +339,7 @@ const Servings = ({ state }) => {
                               }
                            >
                               <AutoGenerate />
-                              Auto-generate
+                              <div style={{color:'#202020'}}>Auto-generate</div>
                            </ComboButton>
                         </Context>
                      ) : (
@@ -611,18 +623,16 @@ const Servings = ({ state }) => {
       }
    }, state.simpleRecipeYields)
 
-   
    let [buttonClickRight, setButtonClickRight] = React.useState(0)
    let [buttonClickLeft, setButtonClickLeft] = React.useState(0)
 
    const onButtonClickLeft = () => {
       setButtonClickLeft(++buttonClickLeft)
-      console.log(buttonClickLeft, "buttonClickLeft")
-      console.log(buttonClickRight, "buttonClickRight")
+      console.log(buttonClickLeft, 'buttonClickLeft')
+      console.log(buttonClickRight, 'buttonClickRight')
       recipeForm.current.scrollLeft -= 160
       if (buttonClickLeft > 0) {
          setButtonClickRightRender(true)
-         
       }
       if (buttonClickLeft - buttonClickRight === 0) {
          setButtonClickLeftRender(false)
@@ -632,15 +642,18 @@ const Servings = ({ state }) => {
    }
    const onButtonClickRight = () => {
       setButtonClickRight(++buttonClickRight)
-     
+
       recipeForm.current.scrollLeft += 160
-      if (state.simpleRecipeYields.length - buttonClickRight + buttonClickLeft === 5) {
+      if (
+         state.simpleRecipeYields.length -
+            buttonClickRight +
+            buttonClickLeft ===
+         5
+      ) {
          setButtonClickRightRender(false)
-         
       }
       if (buttonClickRight > 0) {
          setButtonClickLeftRender(true)
-         
       }
    }
 
@@ -661,10 +674,97 @@ const Servings = ({ state }) => {
                   />
                </Tunnel>
             </Tunnels>
-            <Flex container alignItems="center">
-               <Heading>Servings & Ingredients</Heading>
+            <div
+               style={{
+                  padding: '18px 0px 12.5px 30px',
+                  fontFamily: 'Roboto',
+                  fontStyle: 'normal',
+                  fontWeight: '500',
+                  fontSize: '28px',
+                  lineHeight: '36px',
+                  letterSpacing: '0.32px',
+                  color: '#202020',
+               }}
+            >
+               Servings & Ingredients
                <Tooltip identifier="recipe_servings" />
-            </Flex>
+            </div>
+            <div
+               style={{
+                  padding: '12.5px 0px 31px 30px',
+                  display: 'inline-block',
+               }}
+            >
+               <Form.Toggle
+                  name="showIngredients"
+                  onChange={() =>
+                     updateRecipe({
+                        variables: {
+                           id: state.id,
+                           set: {
+                              showIngredients: !state.showIngredients,
+                           },
+                        },
+                     })
+                  }
+                  iconWithText
+                  value={state.showIngredients}
+                  size={48}
+               >
+                  <div
+                     style={{
+                        fontFamily: 'Roboto',
+                        fontStyle: 'normal',
+                        fontWeight: '500',
+                        fontSize: '16px',
+                        lineHeight: '16px',
+                        letterSpacing: '0.32px',
+                        color: '#202020',
+                     }}
+                  >
+                     Show Ingredients on Store
+                  </div>
+               </Form.Toggle>
+            </div>
+
+            <div
+               style={{
+                  padding: '12.5px 0px 31px 30px',
+                  display: 'inline-block',
+                  marginLeft: '434px',
+               }}
+            >
+               <Form.Toggle
+                  name="showIngredientsQuantity"
+                  onChange={() =>
+                     updateRecipe({
+                        variables: {
+                           id: state.id,
+                           set: {
+                              showIngredientsQuantity: !state.showIngredientsQuantity,
+                           },
+                        },
+                     })
+                  }
+                  iconWithText
+                  value={state.showIngredientsQuantity}
+                  size={48}
+               >
+                  <div
+                     style={{
+                        fontFamily: 'Roboto',
+                        fontStyle: 'normal',
+                        fontWeight: '500',
+                        fontSize: '16px',
+                        lineHeight: '16px',
+                        letterSpacing: '0.32px',
+                        color: '#202020',
+                     }}
+                  >
+                     Show Ingredient Quantity on Store
+                  </div>
+               </Form.Toggle>
+            </div>
 
             {options.length ? (
                <div
@@ -698,7 +798,7 @@ const Servings = ({ state }) => {
                         overflow: 'auto',
                         whiteSpace: 'nowrap',
                         overflowY: 'hidden',
-                        overflowX: 'hidden',
+                        scrollBehavior: 'smooth',
                      }}
                   >
                      <div
@@ -720,10 +820,11 @@ const Servings = ({ state }) => {
                               left: '0',
                               position: 'sticky',
                               zIndex: '+10',
+                              background: '#F4F4F4'
                            }}
                            type="solid"
                         >
-                           <PlusIcon color="#367BF5" />
+                           <PlusIconLarge/>
                         </IconButton>
 
                         {options}
