@@ -113,6 +113,43 @@ export const ManualProvider = ({ children }) => {
    const [isCartLoading, setIsCartLoading] = React.useState(true)
    const [state, dispatch] = React.useReducer(reducers, initial)
    const [organizationLoading, setOrganizationLoading] = React.useState(true)
+   const { refetch: refetchCustomer } = useQuery(QUERIES.CUSTOMER.LIST, {
+      skip: !state.brand?.id || !state.customer?.id,
+      notifyOnNetworkStatusChange: true,
+      variables: {
+         where: {
+            brandId: { _eq: state.brand?.id },
+            customer: { id: { _eq: state.customer?.id } },
+         },
+      },
+      onCompleted: ({ customers = [] } = {}) => {
+         if (!isEmpty(customers)) {
+            const [node] = customers
+            dispatch({ type: 'SET_CUSTOMER', payload: node })
+         }
+      },
+      onError: () => {
+         toast.error('Failed to get customer details, please refresh the page.')
+      },
+   })
+   const { refetch: refetchPaymentMethod } = useQuery(
+      QUERIES.CUSTOMER.PAYMENT_METHODS.ONE,
+      {
+         skip: !state.paymentMethod?.id,
+         notifyOnNetworkStatusChange: true,
+         variables: { id: state.paymentMethod?.id },
+         onCompleted: ({ paymentMethod = {} } = {}) => {
+            if (!isEmpty(paymentMethod)) {
+               dispatch({ type: 'SET_PAYMENT', payload: paymentMethod })
+            }
+         },
+         onError: () => {
+            toast.error(
+               'Failed to get payment method details, please refresh the page.'
+            )
+         },
+      }
+   )
    const { loading, error } = useSubscription(QUERIES.CART.ONE, {
       variables: { id: params.id },
       onSubscriptionData: ({
@@ -138,6 +175,8 @@ export const ManualProvider = ({ children }) => {
                   },
                },
             })
+            refetchCustomer()
+            refetchPaymentMethod()
             setCartError('')
          } else {
             setCartError('No such cart exists!')

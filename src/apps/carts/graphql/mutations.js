@@ -11,6 +11,13 @@ export const MUTATIONS = {
             }
          `,
       },
+      UPDATE: gql`
+         mutation updateCart($id: Int!, $_set: order_cart_set_input = {}) {
+            updateCart(pk_columns: { id: $id }, _set: $_set) {
+               id
+            }
+         }
+      `,
    },
    BRAND: {
       CUSTOMER: {

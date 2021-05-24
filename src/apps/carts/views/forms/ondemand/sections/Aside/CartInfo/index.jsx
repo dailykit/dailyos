@@ -1,63 +1,17 @@
 import React from 'react'
-import { isEmpty } from 'lodash'
 import styled from 'styled-components'
 import { toast } from 'react-toastify'
-import { useQuery } from '@apollo/react-hooks'
 import { Text, Flex, Spacer, Avatar, Filler, IconButton } from '@dailykit/ui'
 
 import { useManual } from '../../../state'
-import { QUERIES } from '../../../../../../graphql'
 import EmptyIllo from '../../../../../../assets/svgs/EmptyIllo'
 import * as Icon from '../../../../../../../../shared/assets/icons'
 import { parseAddress } from '../../../../../../../../shared/utils'
 import { InlineLoader } from '../../../../../../../../shared/components'
 
 const CartInfo = () => {
-   const {
-      brand,
-      tunnels,
-      address,
-      customer,
-      paymentMethod,
-      dispatch,
-   } = useManual()
-   const [isCustomerLoading, setIsCustomerLoading] = React.useState(true)
-   const [isPaymentLoading, setIsPaymentLoading] = React.useState(true)
-   useQuery(QUERIES.CUSTOMER.LIST, {
-      skip: !brand?.id || !customer?.id,
-      variables: {
-         where: {
-            brandId: { _eq: brand?.id },
-            customer: { id: { _eq: customer?.id } },
-         },
-      },
-      onCompleted: ({ customers = [] } = {}) => {
-         if (isEmpty(customers)) return
-         const [node] = customers
-         dispatch({ type: 'SET_CUSTOMER', payload: node })
-         setIsCustomerLoading(false)
-      },
-      onError: () => {
-         setIsCustomerLoading(false)
-         toast.error('Failed to get customer details, please refresh the page.')
-      },
-   })
-   useQuery(QUERIES.CUSTOMER.PAYMENT_METHODS.ONE, {
-      skip: !paymentMethod?.id,
-      variables: { id: paymentMethod?.id },
-      onCompleted: ({ paymentMethod = {} } = {}) => {
-         if (!isEmpty(paymentMethod)) {
-            dispatch({ type: 'SET_PAYMENT', payload: paymentMethod })
-         }
-         setIsPaymentLoading(false)
-      },
-      onError: () => {
-         setIsPaymentLoading(false)
-         toast.error(
-            'Failed to get payment method details, please refresh the page.'
-         )
-      },
-   })
+   const { brand, tunnels, address, customer, paymentMethod } = useManual()
+
    return (
       <section>
          <Styles.Card>
@@ -90,30 +44,26 @@ const CartInfo = () => {
          <Spacer size="8px" />
          <Styles.Card>
             <Header title="Customer" />
-            {isCustomerLoading ? (
-               <InlineLoader />
-            ) : (
-               <Flex as="main" padding="0 8px 8px 8px">
-                  {customer?.id ? (
-                     <>
-                        <Flex container alignItems="center">
-                           <Avatar title={customer?.fullName || ''} />
-                           <Spacer size="22px" xAxis />
-                           <Flex>
-                              <Text as="p">{customer?.email}</Text>
-                              <Text as="p">{customer?.phoneNumber}</Text>
-                           </Flex>
+            <Flex as="main" padding="0 8px 8px 8px">
+               {customer?.id && customer?.email ? (
+                  <>
+                     <Flex container alignItems="center">
+                        <Avatar title={customer?.fullName || ''} />
+                        <Spacer size="22px" xAxis />
+                        <Flex>
+                           <Text as="p">{customer?.email}</Text>
+                           <Text as="p">{customer?.phoneNumber}</Text>
                         </Flex>
-                     </>
-                  ) : (
-                     <Styles.Filler
-                        height="100px"
-                        message="Please select a customer"
-                        illustration={<EmptyIllo width="120px" />}
-                     />
-                  )}
-               </Flex>
-            )}
+                     </Flex>
+                  </>
+               ) : (
+                  <Styles.Filler
+                     height="100px"
+                     message="Please select a customer"
+                     illustration={<EmptyIllo width="120px" />}
+                  />
+               )}
+            </Flex>
          </Styles.Card>
          <Spacer size="8px" />
          <Styles.Card>
@@ -149,28 +99,24 @@ const CartInfo = () => {
                   tunnels.payment[1](1)
                }}
             />
-            {isPaymentLoading ? (
-               <InlineLoader />
-            ) : (
-               <Flex as="main" padding="0 8px 8px 8px">
-                  {paymentMethod?.id ? (
-                     <div>
-                        <Text as="p">Name: {paymentMethod.name}</Text>
-                        <Text as="p">
-                           Expiry: {paymentMethod.expMonth}/
-                           {paymentMethod.expYear}
-                        </Text>
-                        <Text as="p">Last 4: {paymentMethod.last4}</Text>
-                     </div>
-                  ) : (
-                     <Styles.Filler
-                        height="100px"
-                        message="Please select a payment method"
-                        illustration={<EmptyIllo width="120px" />}
-                     />
-                  )}
-               </Flex>
-            )}
+            <Flex as="main" padding="0 8px 8px 8px">
+               {paymentMethod?.id && paymentMethod?.last4 ? (
+                  <div>
+                     <Text as="p">Name: {paymentMethod?.name}</Text>
+                     <Text as="p">
+                        Expiry: {paymentMethod?.expMonth}/
+                        {paymentMethod?.expYear}
+                     </Text>
+                     <Text as="p">Last 4: {paymentMethod?.last4}</Text>
+                  </div>
+               ) : (
+                  <Styles.Filler
+                     height="100px"
+                     message="Please select a payment method"
+                     illustration={<EmptyIllo width="120px" />}
+                  />
+               )}
+            </Flex>
          </Styles.Card>
          <Spacer size="8px" />
       </section>

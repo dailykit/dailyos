@@ -1,23 +1,24 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import styled from 'styled-components'
-import { useQuery } from '@apollo/react-hooks'
+import { useParams } from 'react-router'
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import {
    Text,
    Flex,
    Tunnel,
    Filler,
+   Spacer,
    Tunnels,
+   useTunnel,
    ButtonTile,
    TunnelHeader,
-   Spacer,
-   useTunnel,
 } from '@dailykit/ui'
 
 import { useManual } from '../../state'
-import { QUERIES } from '../../../../../graphql'
+import { QUERIES, MUTATIONS } from '../../../../../graphql'
 import EmptyIllo from '../../../../../assets/svgs/EmptyIllo'
-import { parseAddress } from '../../../../../../../shared/utils'
+import { logger, parseAddress } from '../../../../../../../shared/utils'
 import {
    InlineLoader,
    AddressTunnel as AddTunnel,
@@ -35,10 +36,24 @@ export const AddressTunnel = ({ panel }) => {
 }
 
 const Content = ({ panel }) => {
+   const params = useParams()
    const [, , closeTunnel] = panel
-   const { customer, dispatch } = useManual()
+   const { customer } = useManual()
    const [address, setAddress] = React.useState(null)
    const [addTunnels, openAddTunnel, closeAddTunnel] = useTunnel(1)
+   const [update, { loading: updatingCart }] = useMutation(
+      MUTATIONS.CART.UPDATE,
+      {
+         onCompleted: () => {
+            closeTunnel(1)
+            toast.success('Successfully updated address.')
+         },
+         onError: error => {
+            logger(error)
+            toast.success('Successfully updated address.')
+         },
+      }
+   )
    const { loading, data: { addresses = [] } = {}, refetch } = useQuery(
       QUERIES.CUSTOMER.ADDRESS.LIST,
       {
@@ -67,9 +82,11 @@ const Content = ({ panel }) => {
             right={{
                title: 'Save',
                disabled: !address?.id,
+               isLoading: updatingCart,
                action: () => {
-                  dispatch({ type: 'SET_ADDRESS', payload: address })
-                  closeTunnel(1)
+                  update({
+                     variables: { id: params.id, _set: { address } },
+                  })
                },
             }}
          />
