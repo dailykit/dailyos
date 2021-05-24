@@ -24,10 +24,21 @@ import {
 } from '../../../../../../../shared/components'
 
 export const AddressTunnel = ({ panel }) => {
-   const [tunnels, , closeTunnel] = panel
-   const [addTunnels, openAddTunnel, closeAddTunnel] = useTunnel(1)
-   const { customer, state, dispatch } = useManual()
+   const [tunnels] = panel
+   return (
+      <Tunnels tunnels={tunnels}>
+         <Tunnel size="md">
+            <Content panel={panel} />
+         </Tunnel>
+      </Tunnels>
+   )
+}
+
+const Content = ({ panel }) => {
+   const [, , closeTunnel] = panel
+   const { customer, dispatch } = useManual()
    const [address, setAddress] = React.useState(null)
+   const [addTunnels, openAddTunnel, closeAddTunnel] = useTunnel(1)
    const { loading, data: { addresses = [] } = {}, refetch } = useQuery(
       QUERIES.CUSTOMER.ADDRESS.LIST,
       {
@@ -48,65 +59,56 @@ export const AddressTunnel = ({ panel }) => {
          },
       }
    )
-
    return (
       <>
-         <Tunnels tunnels={tunnels}>
-            <Tunnel size="md">
-               <TunnelHeader
-                  title="Select Address"
-                  close={() => closeTunnel(1)}
-                  right={{
-                     title: 'Save',
-                     disabled: !address?.id,
-                     action: () => {
-                        dispatch({ type: 'SET_ADDRESS', payload: address })
-                        closeTunnel(1)
-                     },
-                  }}
-               />
-               <Flex
-                  padding="16px"
-                  overflowY="auto"
-                  height="calc(100vh - 196px)"
-               >
-                  <ButtonTile
-                     noIcon
-                     type="secondary"
-                     text="Add Address"
-                     onClick={() => openAddTunnel(1)}
-                  />
-                  <Spacer size="16px" />
-                  {loading ? (
-                     <InlineLoader />
+         <TunnelHeader
+            title="Select Address"
+            close={() => closeTunnel(1)}
+            right={{
+               title: 'Save',
+               disabled: !address?.id,
+               action: () => {
+                  dispatch({ type: 'SET_ADDRESS', payload: address })
+                  closeTunnel(1)
+               },
+            }}
+         />
+         <Flex padding="16px" overflowY="auto" height="calc(100vh - 196px)">
+            <ButtonTile
+               noIcon
+               type="secondary"
+               text="Add Address"
+               onClick={() => openAddTunnel(1)}
+            />
+            <Spacer size="16px" />
+            {loading ? (
+               <InlineLoader />
+            ) : (
+               <>
+                  {addresses.length === 0 ? (
+                     <Filler
+                        height="280px"
+                        illustration={<EmptyIllo />}
+                        message="No addressess linked to this customer yet!"
+                     />
                   ) : (
-                     <>
-                        {addresses.length === 0 ? (
-                           <Filler
-                              height="280px"
-                              illustration={<EmptyIllo />}
-                              message="No addressess linked to this customer yet!"
-                           />
-                        ) : (
-                           <ul>
-                              {addresses.map(node => (
-                                 <Styles.Address
-                                    key={node.id}
-                                    onClick={() => setAddress(node)}
-                                    className={
-                                       node.id === address?.id ? 'active' : ''
-                                    }
-                                 >
-                                    <Text as="p">{parseAddress(node)}</Text>
-                                 </Styles.Address>
-                              ))}
-                           </ul>
-                        )}
-                     </>
+                     <ul>
+                        {addresses.map(node => (
+                           <Styles.Address
+                              key={node.id}
+                              onClick={() => setAddress(node)}
+                              className={
+                                 node.id === address?.id ? 'active' : ''
+                              }
+                           >
+                              <Text as="p">{parseAddress(node)}</Text>
+                           </Styles.Address>
+                        ))}
+                     </ul>
                   )}
-               </Flex>
-            </Tunnel>
-         </Tunnels>
+               </>
+            )}
+         </Flex>
          <AddTunnel
             tunnels={addTunnels}
             onSave={() => refetch()}

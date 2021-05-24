@@ -16,6 +16,18 @@ import { MUTATIONS } from '../../../../../graphql'
 import { InlineLoader } from '../../../../../../../shared/components'
 
 const AddPaymentTunnel = ({ tunnels, closeTunnel, onSave }) => {
+   return (
+      <Tunnels tunnels={tunnels}>
+         <Tunnel size="sm">
+            <Content onSave={onSave} closeTunnel={closeTunnel} />
+         </Tunnel>
+      </Tunnels>
+   )
+}
+
+export default AddPaymentTunnel
+
+const Content = ({ onSave, closeTunnel }) => {
    const { customer, organization } = useManual()
    const [intent, setIntent] = React.useState(null)
    React.useEffect(() => {
@@ -29,28 +41,23 @@ const AddPaymentTunnel = ({ tunnels, closeTunnel, onSave }) => {
          })()
       }
    }, [customer, organization])
-
    return (
-      <Tunnels tunnels={tunnels}>
-         <Tunnel size="sm">
-            <TunnelHeader title="Add Method" close={() => closeTunnel(1)} />
-            <Flex padding="16px" overflowY="auto" height="calc(100vh - 196px)">
-               {!intent ? (
-                  <InlineLoader />
-               ) : (
-                  <FormWrapper
-                     intent={intent}
-                     onSave={onSave}
-                     closeTunnel={closeTunnel}
-                  />
-               )}
-            </Flex>
-         </Tunnel>
-      </Tunnels>
+      <>
+         <TunnelHeader title="Add Method" close={() => closeTunnel(1)} />
+         <Flex padding="16px" overflowY="auto" height="calc(100vh - 196px)">
+            {!intent ? (
+               <InlineLoader />
+            ) : (
+               <FormWrapper
+                  intent={intent}
+                  onSave={onSave}
+                  closeTunnel={closeTunnel}
+               />
+            )}
+         </Flex>
+      </>
    )
 }
-
-export default AddPaymentTunnel
 
 const FormWrapper = ({ intent, onSave, closeTunnel }) => {
    const { customer, brand, organization } = useManual()

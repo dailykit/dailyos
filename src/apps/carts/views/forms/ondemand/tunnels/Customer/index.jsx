@@ -19,8 +19,20 @@ import { QUERIES } from '../../../../../graphql'
 import { InlineLoader } from '../../../../../../../shared/components'
 
 export const CustomerTunnel = ({ panel }) => {
+   const [tunnels] = panel
+
+   return (
+      <Tunnels tunnels={tunnels}>
+         <Tunnel size="md">
+            <Content panel={panel} />
+         </Tunnel>
+      </Tunnels>
+   )
+}
+
+const Content = ({ panel }) => {
+   const [, , closeTunnel] = panel
    const { brand, dispatch } = useManual()
-   const [tunnels, , closeTunnel] = panel
    const [search, setSearch] = React.useState('')
    const [customers, setCustomers] = React.useState([])
    const [isCustomersLoading, setIsCustomersLoading] = React.useState(true)
@@ -40,74 +52,68 @@ export const CustomerTunnel = ({ panel }) => {
       },
    })
    const [list, current, selectOption] = useSingleList(customers)
-
    return (
-      <Tunnels tunnels={tunnels}>
-         <Tunnel size="md">
-            <TunnelHeader
-               title="Select Customer"
-               close={() => closeTunnel(1)}
-               right={{
-                  title: 'Save',
-                  disabled: !current?.id,
-                  action: () => {
-                     dispatch({
-                        type: 'SET_CUSTOMER',
-                        payload: current,
-                     })
-                     closeTunnel(1)
-                  },
-               }}
-            />
-            <Flex padding="16px" overflowY="auto" height="calc(100vh - 196px)">
-               {isCustomersLoading ? (
-                  <InlineLoader />
-               ) : (
-                  <List>
-                     {Object.keys(current).length > 0 ? (
-                        <ListItem
-                           type="SSL2"
-                           content={{
-                              description: current.customer?.email,
-                              title:
-                                 current.customer?.platform_customer?.fullName,
-                           }}
-                        />
-                     ) : (
-                        <ListSearch
-                           onChange={value => setSearch(value)}
-                           placeholder="type what you’re looking for..."
-                        />
-                     )}
-                     <ListHeader type="SSL2" label="Customers" />
-                     <ListOptions
-                        style={{ height: '320px', overflowY: 'auto' }}
-                     >
-                        {list
-                           .filter(option =>
-                              option?.customer?.platform_customer?.fullName
-                                 .toLowerCase()
-                                 .includes(search)
-                           )
-                           .map(option => (
-                              <ListItem
-                                 type="SSL2"
-                                 key={option.id}
-                                 isActive={option.id === current.id}
-                                 onClick={() => selectOption('id', option.id)}
-                                 content={{
-                                    description: option.customer?.email,
-                                    title:
-                                       option.customer?.platform_customer
-                                          ?.fullName,
-                                 }}
-                              />
-                           ))}
-                     </ListOptions>
-                  </List>
-               )}
-            </Flex>
-         </Tunnel>
-      </Tunnels>
+      <>
+         <TunnelHeader
+            title="Select Customer"
+            close={() => closeTunnel(1)}
+            right={{
+               title: 'Save',
+               disabled: !current?.id,
+               action: () => {
+                  dispatch({
+                     type: 'SET_CUSTOMER',
+                     payload: current,
+                  })
+                  closeTunnel(1)
+               },
+            }}
+         />
+         <Flex padding="16px" overflowY="auto" height="calc(100vh - 196px)">
+            {isCustomersLoading ? (
+               <InlineLoader />
+            ) : (
+               <List>
+                  {Object.keys(current).length > 0 ? (
+                     <ListItem
+                        type="SSL2"
+                        content={{
+                           description: current.customer?.email,
+                           title: current.customer?.platform_customer?.fullName,
+                        }}
+                     />
+                  ) : (
+                     <ListSearch
+                        onChange={value => setSearch(value)}
+                        placeholder="type what you’re looking for..."
+                     />
+                  )}
+                  <ListHeader type="SSL2" label="Customers" />
+                  <ListOptions style={{ height: '320px', overflowY: 'auto' }}>
+                     {list
+                        .filter(option =>
+                           option?.customer?.platform_customer?.fullName
+                              .toLowerCase()
+                              .includes(search)
+                        )
+                        .map(option => (
+                           <ListItem
+                              type="SSL2"
+                              key={option.id}
+                              isActive={option.id === current.id}
+                              onClick={() => selectOption('id', option.id)}
+                              content={{
+                                 description: option.customer?.email,
+                                 title:
+                                    option.customer?.platform_customer
+                                       ?.fullName,
+                              }}
+                           />
+                        ))}
+                  </ListOptions>
+               </List>
+            )}
+         </Flex>
+      </>
    )
 }
