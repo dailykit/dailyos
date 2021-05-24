@@ -97,6 +97,7 @@ export const QUERIES = {
                customer {
                   id
                   email
+                  isTest
                   platform_customer {
                      id: keycloakId
                      firstName

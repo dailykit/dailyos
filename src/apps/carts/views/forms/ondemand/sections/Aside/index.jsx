@@ -117,7 +117,12 @@ export const Aside = () => {
                      </Flex>
                   </Styles.Card>
                   <Spacer size="16px" />
-                  <TextButton type="solid" size="sm" onClick={handlePayment}>
+                  <TextButton
+                     size="sm"
+                     type="solid"
+                     disabled={!card?.id}
+                     onClick={handlePayment}
+                  >
                      Pay
                   </TextButton>
                </Flex>

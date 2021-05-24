@@ -35,6 +35,11 @@ const reducers = (state, { type, payload }) => {
             paymentMethod: payload.paymentMethod,
             billing: payload.billing,
          }
+      case 'SET_CUSTOMER':
+         return {
+            ...state,
+            customer: payload,
+         }
       case 'SET_PAYMENT':
          return {
             ...state,
@@ -75,6 +80,28 @@ export const ManualProvider = ({ children }) => {
          },
       }
    )
+   const { refetch: refetchCustomer } = useQuery(QUERIES.CUSTOMER.LIST, {
+      skip: !state.brand?.id || !state.customer?.id,
+      notifyOnNetworkStatusChange: true,
+      variables: {
+         where: {
+            brandId: { _eq: state.brand?.id },
+            customer: { id: { _eq: state.customer?.id } },
+         },
+      },
+      onCompleted: ({ customers = [] } = {}) => {
+         if (!isEmpty(customers)) {
+            const [node] = customers
+            dispatch({
+               type: 'SET_CUSTOMER',
+               payload: processCustomer(node, state.organization),
+            })
+         }
+      },
+      onError: () => {
+         toast.error('Failed to get customer details, please refresh the page.')
+      },
+   })
    const { loading, error } = useSubscription(QUERIES.CART.ONE, {
       variables: { id: params.id },
       onSubscriptionData: ({
@@ -88,13 +115,6 @@ export const ManualProvider = ({ children }) => {
                   products: cart.products,
                   customer: {
                      id: cart?.customerId,
-                     keycloakId: cart?.customerKeycloakId,
-                     email: cart.customerInfo?.customerEmail,
-                     phoneNumber: cart.customerInfo?.customerPhone,
-                     fullName: `${
-                        (cart.customerInfo?.customerFirstName || '') +
-                        (' ' + cart.customerInfo?.customerLastName || '')
-                     }`.trim(),
                   },
                   paymentMethod: { id: cart.paymentMethodId },
                   ...(cart.address?.id && { address: cart.address }),
@@ -109,6 +129,7 @@ export const ManualProvider = ({ children }) => {
                   },
                },
             })
+            refetchCustomer()
             refetchPaymentMethod()
             setCartError('')
          } else {
@@ -172,3 +193,37 @@ export const ManualProvider = ({ children }) => {
 }
 
 export const useManual = () => React.useContext(Context)
+
+const processCustomer = (user, organization) => {
+   let customer = {}
+
+   customer.brand_customerId = user.id
+   customer.keycloakId = user.keycloakId
+   customer.subscriptionPaymentMethodId = user.subscriptionPaymentMethodId
+
+   customer.id = user.customer.id
+   customer.email = user.customer.email
+   customer.isTest = user.customer.isTest
+
+   customer.firstName = user.customer.platform_customer?.firstName || ''
+   customer.lastName = user.customer.platform_customer?.lastName || ''
+   customer.fullName = user.customer.platform_customer?.fullName || ''
+   customer.phoneNumber = user.customer.platform_customer?.phoneNumber || ''
+   customer.stripeCustomerId =
+      user.customer.platform_customer?.stripeCustomerId || ''
+
+   if (
+      organization.id &&
+      organization?.stripeAccountType === 'standard' &&
+      organization?.stripeAccountId
+   ) {
+      if (user.customer.platform_customer?.customerByClients.length > 0) {
+         const [node = {}] =
+            user.customer.platform_customer?.customerByClients || []
+         if (node?.organizationStripeCustomerId) {
+            customer.stripeCustomerId = node?.organizationStripeCustomerId
+         }
+      }
+   }
+   return customer
+}
