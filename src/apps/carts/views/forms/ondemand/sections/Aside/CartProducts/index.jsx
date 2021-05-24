@@ -114,23 +114,19 @@ const Styles = {
       }
       aside {
          width: 56px;
-         position: relative;
-         background: #eaeaea;
-         padding-top: 56.25%;
+         height: 42px;
          display: flex;
+         background: #eaeaea;
          align-items: center;
          justify-content: center;
          > span {
             font-size: 14px;
             color: #ab9e9e;
-            transform: translateY(-78%);
          }
          > img {
-            top: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            position: absolute;
             border-radius: 2px;
          }
       }

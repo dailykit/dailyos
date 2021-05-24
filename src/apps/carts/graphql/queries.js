@@ -163,4 +163,31 @@ export const QUERIES = {
          `,
       },
    },
+   MENU: gql`
+      query menu($params: jsonb!) {
+         menu: onDemand_getMenuV2(args: { params: $params }) {
+            data
+         }
+      }
+   `,
+   PRODUCTS: {
+      LIST: gql`
+         query products($where: products_product_bool_exp = {}) {
+            products(where: $where) {
+               id
+               name
+               type
+               assets
+               tags
+               additionalText
+               description
+               price
+               discount
+               isPopupAllowed
+               isPublished
+               defaultProductOptionId
+            }
+         }
+      `,
+   },
 }
