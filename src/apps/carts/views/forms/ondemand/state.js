@@ -88,6 +88,7 @@ export const ManualProvider = ({ children }) => {
                   products: cart.products,
                   customer: {
                      id: cart?.customerId,
+                     keycloakId: cart?.customerKeycloakId,
                      email: cart.customerInfo?.customerEmail,
                      phoneNumber: cart.customerInfo?.customerPhone,
                      fullName: `${

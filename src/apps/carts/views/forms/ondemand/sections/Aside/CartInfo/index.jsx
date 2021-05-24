@@ -7,7 +7,6 @@ import { useManual } from '../../../state'
 import EmptyIllo from '../../../../../../assets/svgs/EmptyIllo'
 import * as Icon from '../../../../../../../../shared/assets/icons'
 import { parseAddress } from '../../../../../../../../shared/utils'
-import { InlineLoader } from '../../../../../../../../shared/components'
 
 const CartInfo = () => {
    const { brand, tunnels, address, customer, paymentMethod } = useManual()
@@ -51,6 +50,7 @@ const CartInfo = () => {
                         <Avatar title={customer?.fullName || ''} />
                         <Spacer size="22px" xAxis />
                         <Flex>
+                           <Text as="p">{customer?.fullName}</Text>
                            <Text as="p">{customer?.email}</Text>
                            <Text as="p">{customer?.phoneNumber}</Text>
                         </Flex>
@@ -89,36 +89,24 @@ const CartInfo = () => {
             </Flex>
          </Styles.Card>
          <Spacer size="8px" />
-         <Styles.Card>
-            <Header
-               title="Payment Details"
-               onEdit={() => {
-                  if (!customer?.id) {
-                     return toast.warning('Please select a customer first.')
-                  }
-                  tunnels.payment[1](1)
-               }}
-            />
-            <Flex as="main" padding="0 8px 8px 8px">
-               {paymentMethod?.id && paymentMethod?.last4 ? (
-                  <div>
-                     <Text as="p">Name: {paymentMethod?.name}</Text>
-                     <Text as="p">
-                        Expiry: {paymentMethod?.expMonth}/
-                        {paymentMethod?.expYear}
-                     </Text>
-                     <Text as="p">Last 4: {paymentMethod?.last4}</Text>
-                  </div>
-               ) : (
-                  <Styles.Filler
-                     height="100px"
-                     message="Please select a payment method"
-                     illustration={<EmptyIllo width="120px" />}
-                  />
-               )}
-            </Flex>
-         </Styles.Card>
-         <Spacer size="8px" />
+         {paymentMethod?.id && paymentMethod?.last4 && (
+            <>
+               <Styles.Card>
+                  <Header title="Payment Details" />
+                  <Flex as="main" padding="0 8px 8px 8px">
+                     <div>
+                        <Text as="p">Name: {paymentMethod?.name}</Text>
+                        <Text as="p">
+                           Expiry: {paymentMethod?.expMonth}/
+                           {paymentMethod?.expYear}
+                        </Text>
+                        <Text as="p">Last 4: {paymentMethod?.last4}</Text>
+                     </div>
+                  </Flex>
+               </Styles.Card>
+               <Spacer size="8px" />
+            </>
+         )}
       </section>
    )
 }

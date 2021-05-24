@@ -1,60 +1,27 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import styled from 'styled-components'
-import { useParams } from 'react-router'
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/react-hooks'
 import {
    Text,
    Flex,
-   Tunnel,
    Filler,
    Spacer,
-   Tunnels,
    useTunnel,
    ButtonTile,
    TunnelHeader,
 } from '@dailykit/ui'
 
 import { useManual } from '../../state'
+import { QUERIES } from '../../../../../graphql'
 import AddPaymentTunnel from './AddPaymentTunnel'
-import { logger } from '../../../../../../../shared/utils'
-import { QUERIES, MUTATIONS } from '../../../../../graphql'
 import EmptyIllo from '../../../../../assets/svgs/EmptyIllo'
 import { InlineLoader } from '../../../../../../../shared/components'
 
-export const PaymentTunnel = ({ panel }) => {
-   const [tunnels] = panel
-
-   return (
-      <>
-         <Tunnels tunnels={tunnels}>
-            <Tunnel size="md">
-               <Content panel={panel} />
-            </Tunnel>
-         </Tunnels>
-      </>
-   )
-}
-
-const Content = ({ panel }) => {
-   const params = useParams()
-   const [, , closeTunnel] = panel
-   const { customer, dispatch } = useManual()
+export const PaymentTunnel = ({ setCard, closeTunnel }) => {
+   const { customer } = useManual()
    const [payment, setPayment] = React.useState(null)
    const [addTunnels, openAddTunnel, closeAddTunnel] = useTunnel(1)
-   const [update, { loading: updatingCart }] = useMutation(
-      MUTATIONS.CART.UPDATE,
-      {
-         onCompleted: () => {
-            closeTunnel(1)
-            toast.success('Successfully updated payment method.')
-         },
-         onError: error => {
-            logger(error)
-            toast.success('Successfully updated payment method.')
-         },
-      }
-   )
    const { loading, data: { paymentMethods = [] } = {}, refetch } = useQuery(
       QUERIES.CUSTOMER.PAYMENT_METHODS.LIST,
       {
@@ -82,18 +49,13 @@ const Content = ({ panel }) => {
       <>
          <TunnelHeader
             title="Select Payment Method"
-            close={() => closeTunnel(1)}
+            close={() => closeTunnel(3)}
             right={{
                title: 'Save',
                disabled: !payment?.id,
-               isLoading: updatingCart,
                action: () => {
-                  update({
-                     variables: {
-                        id: params.id,
-                        _set: { paymentMethodId: payment?.id },
-                     },
-                  })
+                  setCard(payment)
+                  closeTunnel(3)
                },
             }}
          />

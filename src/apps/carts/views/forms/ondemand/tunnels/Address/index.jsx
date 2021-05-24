@@ -50,7 +50,7 @@ const Content = ({ panel }) => {
          },
          onError: error => {
             logger(error)
-            toast.success('Successfully updated address.')
+            toast.error('Failed to update the address.')
          },
       }
    )
