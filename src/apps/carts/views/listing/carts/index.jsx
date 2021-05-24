@@ -1,15 +1,19 @@
 import React from 'react'
-import { Flex, Text } from '@dailykit/ui'
+import { TextButton, Flex, Text } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 import { ReactTabulator } from '@dailykit/react-tabulator'
 
 import { QUERIES } from '../../../graphql'
 import tableOptions from '../../../tableOptions'
-import { InlineLoader } from '../../../../../shared/components'
 import { useTabs, useTooltip } from '../../../../../shared/providers'
+import {
+   InlineLoader,
+   CreateManualOrder,
+} from '../../../../../shared/components'
 
 export const Carts = () => {
    const { tab, addTab } = useTabs()
+   const [isModeTunnelOpen, setIsModeTunnelOpen] = React.useState(false)
 
    React.useEffect(() => {
       if (!tab) {
@@ -19,10 +23,24 @@ export const Carts = () => {
 
    return (
       <Flex padding="0 16px">
-         <Flex as="header" container height="80px" alignItems="center">
+         <Flex
+            as="header"
+            container
+            height="80px"
+            alignItems="center"
+            justifyContent="space-between"
+         >
             <Text as="h3">Carts</Text>
+            <TextButton
+               type="solid"
+               size="sm"
+               onClick={() => setIsModeTunnelOpen(true)}
+            >
+               Create Order
+            </TextButton>
          </Flex>
          <Listing />
+         <CreateManualOrder isModeTunnelOpen={isModeTunnelOpen} />
       </Flex>
    )
 }

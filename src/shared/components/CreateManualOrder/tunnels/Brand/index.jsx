@@ -2,35 +2,22 @@ import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import {
    Flex,
-   Tunnel,
-   Tunnels,
-   TunnelHeader,
    List,
    ListItem,
    ListSearch,
    ListHeader,
    ListOptions,
+   TunnelHeader,
    useSingleList,
 } from '@dailykit/ui'
 
+import { InlineLoader } from '../../..'
 import { useManual } from '../../state'
-import { QUERIES } from '../../../../../graphql'
-import { InlineLoader } from '../../../../../../../shared/components'
+import { QUERIES } from '../../graphql'
 
-export const BrandTunnel = ({ panel }) => {
-   const [tunnels] = panel
-   return (
-      <Tunnels tunnels={tunnels}>
-         <Tunnel size="md">
-            <Content panel={panel} />
-         </Tunnel>
-      </Tunnels>
-   )
-}
-
-const Content = ({ panel }) => {
+export const BrandTunnel = () => {
+   const { tunnels } = useManual()
    const { dispatch } = useManual()
-   const [, , closeTunnel] = panel
    const [search, setSearch] = React.useState('')
    const { loading, data: { brands = [] } = {} } = useQuery(QUERIES.BRAND.LIST)
    const [list, current, selectOption] = useSingleList(brands)
@@ -38,9 +25,9 @@ const Content = ({ panel }) => {
       <>
          <TunnelHeader
             title="Select Brand"
-            close={() => closeTunnel(1)}
+            close={() => tunnels.close(2)}
             right={{
-               title: 'Save',
+               title: 'Next',
                disabled: !current?.id,
                action: () => {
                   dispatch({
@@ -51,7 +38,7 @@ const Content = ({ panel }) => {
                         domain: current?.domain || '',
                      },
                   })
-                  closeTunnel(1)
+                  tunnels.open(3)
                },
             }}
          />

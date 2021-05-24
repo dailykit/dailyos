@@ -5,15 +5,10 @@ import { useParams } from 'react-router'
 import { Flex, Filler, useTunnel } from '@dailykit/ui'
 import { useQuery, useSubscription } from '@apollo/react-hooks'
 
-import {
-   BrandTunnel,
-   CustomerTunnel,
-   AddressTunnel,
-   PaymentTunnel,
-} from './tunnels'
 import { QUERIES } from '../../../graphql'
 import { logger } from '../../../../../shared/utils'
 import EmptyIllo from '../../../assets/svgs/EmptyIllo'
+import { AddressTunnel, PaymentTunnel } from './tunnels'
 import { InlineLoader } from '../../../../../shared/components'
 
 const Context = React.createContext()
@@ -112,8 +107,6 @@ const reducers = (state, { type, payload }) => {
 
 export const ManualProvider = ({ children }) => {
    const params = useParams()
-   const brandTunnels = useTunnel(1)
-   const customerTunnels = useTunnel(1)
    const addressTunnels = useTunnel(1)
    const paymentTunnels = useTunnel(1)
    const [cartError, setCartError] = React.useState('')
@@ -196,16 +189,12 @@ export const ManualProvider = ({ children }) => {
             organization: state.organization,
             paymentMethod: state.paymentMethod,
             tunnels: {
-               brand: brandTunnels,
-               customer: customerTunnels,
                address: addressTunnels,
                payment: paymentTunnels,
             },
          }}
       >
          {children}
-         <BrandTunnel panel={brandTunnels} />
-         <CustomerTunnel panel={customerTunnels} />
          <AddressTunnel panel={addressTunnels} />
          <PaymentTunnel panel={paymentTunnels} />
       </Context.Provider>
