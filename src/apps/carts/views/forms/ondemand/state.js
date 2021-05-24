@@ -35,61 +35,6 @@ const reducers = (state, { type, payload }) => {
             paymentMethod: payload.paymentMethod,
             billing: payload.billing,
          }
-      case 'SET_BRAND':
-         return {
-            ...state,
-            brand: {
-               id: payload.id,
-               title: payload?.title || '',
-               domain: payload?.domain || 'N/A',
-            },
-         }
-      case 'SET_CUSTOMER': {
-         let customer = {}
-
-         customer.brand_customerId = payload.id
-         customer.keycloakId = payload.keycloakId
-         customer.subscriptionPaymentMethodId =
-            payload.subscriptionPaymentMethodId
-
-         customer.id = payload.customer.id
-         customer.email = payload.customer.email
-
-         customer.firstName =
-            payload.customer.platform_customer?.firstName || ''
-         customer.lastName = payload.customer.platform_customer?.lastName || ''
-         customer.fullName = payload.customer.platform_customer?.fullName || ''
-         customer.phoneNumber =
-            payload.customer.platform_customer?.phoneNumber || ''
-         customer.stripeCustomerId =
-            payload.customer.platform_customer?.stripeCustomerId || ''
-
-         if (
-            state.organization.id &&
-            state.organization?.stripeAccountType === 'standard' &&
-            state.organization?.stripeAccountId
-         ) {
-            if (
-               payload.customer.platform_customer?.customerByClients.length > 0
-            ) {
-               const [node = {}] =
-                  payload.customer.platform_customer?.customerByClients || []
-               if (node?.organizationStripeCustomerId) {
-                  customer.stripeCustomerId = node?.organizationStripeCustomerId
-               }
-            }
-         }
-
-         return {
-            ...state,
-            customer,
-         }
-      }
-      case 'SET_ADDRESS':
-         return {
-            ...state,
-            address: payload,
-         }
       case 'SET_PAYMENT':
          return {
             ...state,
@@ -108,30 +53,10 @@ const reducers = (state, { type, payload }) => {
 export const ManualProvider = ({ children }) => {
    const params = useParams()
    const addressTunnels = useTunnel(1)
-   const paymentTunnels = useTunnel(1)
    const [cartError, setCartError] = React.useState('')
    const [isCartLoading, setIsCartLoading] = React.useState(true)
    const [state, dispatch] = React.useReducer(reducers, initial)
    const [organizationLoading, setOrganizationLoading] = React.useState(true)
-   const { refetch: refetchCustomer } = useQuery(QUERIES.CUSTOMER.LIST, {
-      skip: !state.brand?.id || !state.customer?.id,
-      notifyOnNetworkStatusChange: true,
-      variables: {
-         where: {
-            brandId: { _eq: state.brand?.id },
-            customer: { id: { _eq: state.customer?.id } },
-         },
-      },
-      onCompleted: ({ customers = [] } = {}) => {
-         if (!isEmpty(customers)) {
-            const [node] = customers
-            dispatch({ type: 'SET_CUSTOMER', payload: node })
-         }
-      },
-      onError: () => {
-         toast.error('Failed to get customer details, please refresh the page.')
-      },
-   })
    const { refetch: refetchPaymentMethod } = useQuery(
       QUERIES.CUSTOMER.PAYMENT_METHODS.ONE,
       {
@@ -161,7 +86,15 @@ export const ManualProvider = ({ children }) => {
                payload: {
                   brand: cart.brand,
                   products: cart.products,
-                  customer: { id: cart?.customerId },
+                  customer: {
+                     id: cart?.customerId,
+                     email: cart.customerInfo?.customerEmail,
+                     phoneNumber: cart.customerInfo?.customerPhone,
+                     fullName: `${
+                        (cart.customerInfo?.customerFirstName || '') +
+                        (' ' + cart.customerInfo?.customerLastName || '')
+                     }`.trim(),
+                  },
                   paymentMethod: { id: cart.paymentMethodId },
                   ...(cart.address?.id && { address: cart.address }),
                   billing: {
@@ -175,7 +108,6 @@ export const ManualProvider = ({ children }) => {
                   },
                },
             })
-            refetchCustomer()
             refetchPaymentMethod()
             setCartError('')
          } else {
@@ -229,13 +161,11 @@ export const ManualProvider = ({ children }) => {
             paymentMethod: state.paymentMethod,
             tunnels: {
                address: addressTunnels,
-               payment: paymentTunnels,
             },
          }}
       >
          {children}
          <AddressTunnel panel={addressTunnels} />
-         <PaymentTunnel panel={paymentTunnels} />
       </Context.Provider>
    )
 }
