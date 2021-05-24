@@ -1,6 +1,17 @@
 import gql from 'graphql-tag'
 
 export const MUTATIONS = {
+   CART: {
+      ITEM: {
+         DELETE: gql`
+            mutation deleteCartItem($id: Int!) {
+               deleteCartItem(id: $id) {
+                  id
+               }
+            }
+         `,
+      },
+   },
    BRAND: {
       CUSTOMER: {
          UPDATE: gql`

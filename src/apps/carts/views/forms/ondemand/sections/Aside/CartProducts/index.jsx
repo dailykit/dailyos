@@ -1,12 +1,20 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Flex, Spacer, Text } from '@dailykit/ui'
+import { toast } from 'react-toastify'
+import { useMutation } from '@apollo/react-hooks'
+import { Flex, IconButton, Spacer, Text } from '@dailykit/ui'
 
 import { useManual } from '../../../state'
+import { MUTATIONS } from '../../../../../../graphql'
 import { currencyFmt } from '../../../../../../../../shared/utils'
+import { DeleteIcon } from '../../../../../../../../shared/assets/icons'
 
 const CartProducts = () => {
    const { billing, products } = useManual()
+   const [remove] = useMutation(MUTATIONS.CART.ITEM.DELETE, {
+      onCompleted: () => toast.success('Successfully deleted the product.'),
+      onError: () => toast.error('Failed to delete the product.'),
+   })
    return (
       <section>
          <Text as="text2">Products({products.aggregate.count})</Text>
@@ -24,9 +32,26 @@ const CartProducts = () => {
                         <span>N/A</span>
                      )}
                   </aside>
-                  <Flex as="main" container flexDirection="column">
-                     <Text as="text2">{product.productOption.name}</Text>
-                     <Text as="text3">Price: {currencyFmt(product.price)}</Text>
+                  <Flex
+                     container
+                     alignItems="center"
+                     justifyContent="space-between"
+                  >
+                     <Flex as="main" container flexDirection="column">
+                        <Text as="text2">{product.productOption.name}</Text>
+                        <Text as="text3">
+                           Price: {currencyFmt(product.price)}
+                        </Text>
+                     </Flex>
+                     <IconButton
+                        size="sm"
+                        type="ghost"
+                        onClick={() =>
+                           remove({ variables: { id: product.id } })
+                        }
+                     >
+                        <DeleteIcon color="#ec3333" />
+                     </IconButton>
                   </Flex>
                </Styles.Card>
             ))}
