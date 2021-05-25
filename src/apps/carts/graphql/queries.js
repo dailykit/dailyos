@@ -95,6 +95,7 @@ export const QUERIES = {
             customers: brandCustomers(where: $where) {
                id
                keycloakId
+               subscriptionAddressId
                subscriptionPaymentMethodId
                customer {
                   id

@@ -53,6 +53,11 @@ const reducers = (state, { type, payload }) => {
             ...state,
             customer: payload,
          }
+      case 'SET_ADDRESS':
+         return {
+            ...state,
+            address: payload,
+         }
       case 'SET_PAYMENT':
          return {
             ...state,
@@ -75,6 +80,19 @@ export const ManualProvider = ({ children }) => {
    const [isCartLoading, setIsCartLoading] = React.useState(true)
    const [state, dispatch] = React.useReducer(reducers, initial)
    const [organizationLoading, setOrganizationLoading] = React.useState(true)
+   const { refetch: refetchAddress } = useQuery(QUERIES.CUSTOMER.ADDRESS.LIST, {
+      skip: !state.customer?.subscriptionAddressId,
+      notifyOnNetworkStatusChange: true,
+      variables: {
+         where: { id: { _eq: state.customer?.subscriptionAddressId } },
+      },
+      onCompleted: ({ addresses = [] } = {}) => {
+         if (addresses.length > 0) {
+            const [address] = addresses
+            dispatch({ type: 'SET_ADDRESS', payload: address })
+         }
+      },
+   })
    const { refetch: refetchPaymentMethod } = useQuery(
       QUERIES.CUSTOMER.PAYMENT_METHODS.ONE,
       {
@@ -136,6 +154,7 @@ export const ManualProvider = ({ children }) => {
             })
             refetchCustomer()
             refetchPaymentMethod()
+            refetchAddress()
             setCartError('')
          } else {
             setCartError('No such cart exists!')
@@ -197,6 +216,7 @@ const processCustomer = (user, organization) => {
 
    customer.brand_customerId = user.id
    customer.keycloakId = user.keycloakId
+   customer.subscriptionAddressId = user.subscriptionAddressId
    customer.subscriptionPaymentMethodId = user.subscriptionPaymentMethodId
 
    customer.id = user.customer.id
