@@ -6,17 +6,19 @@ export const QUERIES = {
          subscription cart($id: Int!) {
             cart(id: $id) {
                id
-               tax
-               discount
-               itemTotal
-               totalPrice
                customerId
                customerInfo
-               deliveryPrice
                paymentMethodId
-               walletAmountUsed
-               loyaltyPointsUsed
                customerKeycloakId
+               billing: billingDetails
+               subscriptionOccurenceId
+               occurenceCustomer: subscriptionOccurenceCustomer {
+                  itemCountValid: validStatus(path: "itemCountValid")
+                  addedProductsCount: validStatus(path: "addedProductsCount")
+                  pendingProductsCount: validStatus(
+                     path: "pendingProductsCount"
+                  )
+               }
                brand {
                   id
                   title

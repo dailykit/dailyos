@@ -1,8 +1,8 @@
 import React from 'react'
 import { Route } from 'react-router-dom'
 
-import { Carts, OnDemand } from './views'
 import { useTabs } from '../../shared/providers'
+import { Carts, OnDemand, Subscription } from './views'
 import { ErrorBoundary } from '../../shared/components'
 
 const App = () => {
@@ -24,6 +24,9 @@ const App = () => {
          </Route>
          <Route exact path="/carts/ondemand/:id">
             <OnDemand />
+         </Route>
+         <Route exact path="/carts/subscription/:id">
+            <Subscription />
          </Route>
       </ErrorBoundary>
    )
