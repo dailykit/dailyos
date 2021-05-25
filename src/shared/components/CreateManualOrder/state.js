@@ -59,6 +59,14 @@ export const Provider = ({
    const [state, dispatch] = React.useReducer(reducers, initial)
    const [customerLoading, setIsCustomerLoading] = React.useState(true)
    const [organizationLoading, setOrganizationLoading] = React.useState(true)
+   const [insertSubscriptionOccurenceCustomer] = useMutation(
+      MUTATIONS.SUBSCRIPTION.OCCURENCE.CREATE,
+      {
+         onError: error => {
+            logger(error)
+         },
+      }
+   )
    useQuery(QUERIES.CUSTOMER.LIST, {
       skip: organizationLoading || !brandId || !keycloakId,
       variables: {
@@ -85,9 +93,22 @@ export const Provider = ({
    const [insert, { loading: creatingCart }] = useMutation(
       MUTATIONS.CART.INSERT,
       {
-         onCompleted: ({ createCart = {} }) => {
-            toast.success('Successfully created the cart.')
+         onCompleted: async ({ createCart = {} }) => {
             if (createCart?.id) {
+               if (state.mode === 'SUBSCRIPTION') {
+                  await insertSubscriptionOccurenceCustomer({
+                     variables: {
+                        object: {
+                           cartId: createCart?.id,
+                           keycloakId: state.customer.keycloakId,
+                           brand_customerId: state.customer.brand_customerId,
+                           subscriptionOccurenceId:
+                              createCart?.subscriptionOccurenceId,
+                        },
+                     },
+                  })
+               }
+               toast.success('Successfully created the cart.')
                const path = `/carts/${
                   state.mode === 'SUBSCRIPTION' ? 'subscription' : 'ondemand'
                }/${createCart?.id}`

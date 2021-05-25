@@ -36,9 +36,25 @@ export const MUTATIONS = {
          mutation createCart($object: order_cart_insert_input!) {
             createCart(object: $object) {
                id
+               subscriptionOccurenceId
             }
          }
       `,
+   },
+   SUBSCRIPTION: {
+      OCCURENCE: {
+         CREATE: gql`
+            mutation insertSubscriptionOccurence(
+               $object: subscription_subscriptionOccurence_customer_insert_input!
+            ) {
+               insertSubscriptionOccurence: insert_subscription_subscriptionOccurence_customer_one(
+                  object: $object
+               ) {
+                  keycloakId
+               }
+            }
+         `,
+      },
    },
 }
 
