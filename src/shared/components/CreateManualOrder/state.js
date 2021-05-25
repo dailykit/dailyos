@@ -1,7 +1,7 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import { useTunnel } from '@dailykit/ui'
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation, useLazyQuery } from '@apollo/react-hooks'
 
 import { InlineLoader } from '../'
 import { logger } from '../../utils'
@@ -48,11 +48,39 @@ const reducers = (state, { type, payload }) => {
    }
 }
 
-export const Provider = ({ isModeTunnelOpen, children }) => {
+export const Provider = ({
+   brandId = null,
+   keycloakId = null,
+   isModeTunnelOpen,
+   children,
+}) => {
    const { addTab } = useTabs()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(4)
    const [state, dispatch] = React.useReducer(reducers, initial)
+   const [customerLoading, setIsCustomerLoading] = React.useState(true)
    const [organizationLoading, setOrganizationLoading] = React.useState(true)
+   useQuery(QUERIES.CUSTOMER.LIST, {
+      skip: organizationLoading || !brandId || !keycloakId,
+      variables: {
+         where: {
+            brandId: { _eq: brandId },
+            customer: { keycloakId: { _eq: keycloakId } },
+         },
+      },
+      onCompleted: ({ customers = [] } = {}) => {
+         if (customers.length > 0) {
+            const [customer] = customers
+            dispatch({ type: 'SET_BRAND', payload: { id: brandId } })
+            dispatch({ type: 'SET_CUSTOMER', payload: customer })
+         }
+         setIsCustomerLoading(false)
+      },
+      onError: error => {
+         logger(error)
+         setIsCustomerLoading(false)
+         toast.error('Failed to fetch customer details.')
+      },
+   })
 
    const [insert, { loading: creatingCart }] = useMutation(
       MUTATIONS.CART.INSERT,
@@ -76,6 +104,9 @@ export const Provider = ({ isModeTunnelOpen, children }) => {
    React.useEffect(() => {
       if (isModeTunnelOpen) {
          openTunnel(1)
+         if (!brandId || !keycloakId) {
+            setIsCustomerLoading(false)
+         }
       }
    }, [isModeTunnelOpen])
 
@@ -94,7 +125,7 @@ export const Provider = ({ isModeTunnelOpen, children }) => {
       },
    })
 
-   const createCart = async (user = null, occurenceId) => {
+   const createCart = async (user = null, occurenceId = null) => {
       const cart = {}
       if (user) {
          const customer = await processCustomer(user, state.organization)
@@ -123,13 +154,13 @@ export const Provider = ({ isModeTunnelOpen, children }) => {
       cart.brandId = state.brand.id
       cart.source =
          state.mode === 'SUBSCRIPTION' ? 'subscription' : 'a-la-carte'
-      if (state.mode === 'SUBSCRIPTION') {
+      if (state.mode === 'SUBSCRIPTION' && occurenceId) {
          cart.subscriptionOccurenceId = occurenceId
       }
       await insert({ variables: { object: cart } })
    }
 
-   if (organizationLoading) return <InlineLoader />
+   if (organizationLoading || customerLoading) return <InlineLoader />
    return (
       <Context.Provider
          value={{

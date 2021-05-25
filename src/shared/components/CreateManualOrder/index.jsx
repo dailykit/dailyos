@@ -11,19 +11,36 @@ import {
 import { Provider, useManual } from './state'
 import { BrandTunnel, CustomerTunnel, SubscriptionTunnel } from './tunnels'
 
-export const CreateManualOrder = ({ isModeTunnelOpen }) => {
+export const CreateManualOrder = ({
+   isModeTunnelOpen,
+   brandId = null,
+   keycloakId = null,
+}) => {
+   if (!isModeTunnelOpen) return null
    return (
-      <Provider isModeTunnelOpen={isModeTunnelOpen}>
+      <Provider
+         brandId={brandId}
+         keycloakId={keycloakId}
+         isModeTunnelOpen={isModeTunnelOpen}
+      >
          <Content />
       </Provider>
    )
 }
 
 const Content = () => {
-   const { tunnels, dispatch } = useManual()
+   const { brand, customer, methods, tunnels, dispatch } = useManual()
 
    const setMode = mode => {
       dispatch({ type: 'SET_MODE', payload: mode })
+      if (brand?.id && customer?.id && customer?.keycloakId) {
+         if (mode === 'SUBSCRIPTION') {
+            tunnels.open(4)
+         } else {
+            methods.cart.create.mutate()
+         }
+         return
+      }
       tunnels.open(2)
    }
    return (
