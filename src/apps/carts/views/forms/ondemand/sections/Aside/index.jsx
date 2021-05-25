@@ -53,6 +53,16 @@ export const Aside = () => {
       })
    }
 
+   const markPaid = () => {
+      if (!params?.id) return
+      update({
+         variables: {
+            id: params.id,
+            _set: { paymentStatus: 'SUCCEEDED' },
+         },
+      })
+   }
+
    return (
       <Styles.Aside>
          <main>
@@ -77,6 +87,8 @@ export const Aside = () => {
                      title="Via Stripe"
                      onClick={() => openTunnel(2)}
                   />
+                  <Spacer size="14px" />
+                  <OptionTile title="Mark Paid" onClick={markPaid} />
                </Flex>
             </Tunnel>
             <Tunnel size="full">
