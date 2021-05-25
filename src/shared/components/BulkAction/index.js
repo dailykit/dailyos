@@ -20,6 +20,7 @@ import {
    UPDATE_PRODUCTS,
    UPDATE_INGREDIENTS,
    CONCATENATE_ARRAY_COLUMN,
+   CONCATENATE_STRING_COLUMN,
 } from './mutation'
 
 const BulkActions = ({
@@ -31,6 +32,8 @@ const BulkActions = ({
    setBulkActions,
    clearAllActions,
    close,
+   additionalBulkAction = {},
+   additionalFunction,
 }) => {
    const [showPopup, setShowPopup] = React.useState(false)
    const [popupHeading, setPopupHeading] = React.useState('')
@@ -67,14 +70,24 @@ const BulkActions = ({
          //  logger(error)
       },
    })
-   const [concatenateArrayColumn, { loading, error }] = useLazyQuery(
-      CONCATENATE_ARRAY_COLUMN,
+   const [concatenateArrayColumn] = useLazyQuery(CONCATENATE_ARRAY_COLUMN, {
+      onCompleted: () => {
+         toast.success('Update Successfully')
+         close(1)
+      },
+      onError: () => {
+         toast.error('Something went wrong!')
+      },
+   })
+   const [concatenateStringColumn, { loading, error }] = useLazyQuery(
+      CONCATENATE_STRING_COLUMN,
       {
          onCompleted: () => {
-            console.log('this is complete')
+            toast.success('Update Successfully')
+            close(1)
          },
          onError: () => {
-            console.log('this is error')
+            toast.error('Something went wrong!')
          },
       }
    )
@@ -115,15 +128,56 @@ const BulkActions = ({
             })
          }
       }
+      if ('concatDataString' in bulkActions) {
+         const toBeConcat = Object.keys(bulkActions.concatDataString)
+         console.log(1)
+         console.log(toBeConcat)
+         if (toBeConcat.length > 0) {
+            console.log(2)
+            const newConcatDataString = { ...bulkActions.concatDataString }
+            toBeConcat.forEach(data => {
+               console.log(3)
+               newConcatDataString[data].arrayofids =
+                  '(' + selectedRows.map(idx => idx.id).join(',') + ')'
+               newConcatDataString[data].appendvalue = newConcatDataString[data]
+                  .appendvalue
+                  ? newConcatDataString[data].appendvalue
+                  : ''
+               newConcatDataString[data].prependvalue = newConcatDataString[
+                  data
+               ].prependvalue
+                  ? newConcatDataString[data].prependvalue
+                  : ''
+               console.log('this is concatDataString', newConcatDataString)
+               concatenateStringColumn({
+                  variables: {
+                     concatDataString: newConcatDataString[data],
+                  },
+               })
+            })
+         }
+      }
+      //additional action use for those action which not to be set.(increment)
+      if (additionalFunction) {
+         console.log('in additional')
+         additionalFunction()
+      }
       if (fn) {
          const newBulkAction = { ...bulkActions }
-         delete newBulkAction.concatData
-         fn({
-            variables: {
-               ids: selectedRows.map(idx => idx.id),
-               _set: newBulkAction,
-            },
-         })
+         if ('concatData' in bulkActions) {
+            delete newBulkAction.concatData
+         }
+         if ('concatDataString' in bulkActions) {
+            delete newBulkAction.concatDataString
+         }
+         if (Object.keys(newBulkAction).length !== 0) {
+            fn({
+               variables: {
+                  ids: selectedRows.map(idx => idx.id),
+                  _set: newBulkAction,
+               },
+            })
+         }
       } else {
          toast.error('Incorrect schema or table name!')
       }
@@ -246,9 +300,10 @@ const BulkActions = ({
                         size="md"
                         disabled={
                            selectedRows.length > 0 &&
-                           Object.keys(bulkActions).length !== 0
+                           (Object.keys(bulkActions).length !== 0 ||
+                           Object.keys(additionalBulkAction).length !== 0
                               ? false
-                              : true
+                              : true)
                         }
                         onClick={() => {
                            setShowPopup(true)

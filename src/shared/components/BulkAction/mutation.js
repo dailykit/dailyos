@@ -35,3 +35,11 @@ export const CONCATENATE_ARRAY_COLUMN = gql`
       }
    }
 `
+export const CONCATENATE_STRING_COLUMN = gql`
+   query ConcatenateStringColumn($concatDataString: concatenateColumn_args!) {
+      concatenateColumn(args: $concatDataString) {
+         message
+         success
+      }
+   }
+`
