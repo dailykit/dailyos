@@ -9,7 +9,7 @@ import {
 } from '@dailykit/ui'
 
 import { Provider, useManual } from './state'
-import { BrandTunnel, CustomerTunnel } from './tunnels'
+import { BrandTunnel, CustomerTunnel, SubscriptionTunnel } from './tunnels'
 
 export const CreateManualOrder = ({ isModeTunnelOpen }) => {
    return (
@@ -47,6 +47,9 @@ const Content = () => {
          </Tunnel>
          <Tunnel size="md">
             <CustomerTunnel />
+         </Tunnel>
+         <Tunnel size="md">
+            <SubscriptionTunnel />
          </Tunnel>
       </Tunnels>
    )

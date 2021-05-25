@@ -62,7 +62,10 @@ export const QUERIES = {
          query customers($where: crm_brand_customer_bool_exp = {}) {
             customers: brandCustomers(where: $where) {
                id
+               isDemo
                keycloakId
+               isSubscriber
+               subscriptionId
                subscriptionPaymentMethodId
                customer {
                   id
@@ -96,4 +99,27 @@ export const QUERIES = {
          }
       }
    `,
+   SUBSCRIPTION: {
+      OCCURENCE: {
+         LIST: gql`
+            query occurences(
+               $where: subscription_subscriptionOccurence_bool_exp
+               $whereCustomer: subscription_subscriptionOccurence_customer_bool_exp
+            ) {
+               occurences: subscriptionOccurences(
+                  where: $where
+                  order_by: { fulfillmentDate: asc_nulls_last }
+               ) {
+                  id
+                  fulfillmentDate
+                  cutoffTimeStamp
+                  customers(where: $whereCustomer) {
+                     id: cartId
+                     hasCart: validStatus(path: "hasCart")
+                  }
+               }
+            }
+         `,
+      },
+   },
 }

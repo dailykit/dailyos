@@ -1,11 +1,12 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import { useTunnel } from '@dailykit/ui'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 
 import { InlineLoader } from '../'
-import { QUERIES } from './graphql'
 import { logger } from '../../utils'
+import { useTabs } from '../../providers'
+import { QUERIES, MUTATIONS } from './graphql'
 
 const Context = React.createContext()
 
@@ -13,6 +14,7 @@ const initial = {
    mode: '',
    brand: { id: null },
    customer: { id: null },
+   organization: { id: null },
 }
 
 const reducers = (state, { type, payload }) => {
@@ -29,44 +31,11 @@ const reducers = (state, { type, payload }) => {
             },
          }
       case 'SET_CUSTOMER': {
-         let customer = {}
-
-         customer.brand_customerId = payload.id
-         customer.keycloakId = payload.keycloakId
-         customer.subscriptionPaymentMethodId =
-            payload.subscriptionPaymentMethodId
-
-         customer.id = payload.customer.id
-         customer.email = payload.customer.email
-
-         customer.firstName =
-            payload.customer.platform_customer?.firstName || ''
-         customer.lastName = payload.customer.platform_customer?.lastName || ''
-         customer.fullName = payload.customer.platform_customer?.fullName || ''
-         customer.phoneNumber =
-            payload.customer.platform_customer?.phoneNumber || ''
-         customer.stripeCustomerId =
-            payload.customer.platform_customer?.stripeCustomerId || ''
-
-         if (
-            state.organization.id &&
-            state.organization?.stripeAccountType === 'standard' &&
-            state.organization?.stripeAccountId
-         ) {
-            if (
-               payload.customer.platform_customer?.customerByClients.length > 0
-            ) {
-               const [node = {}] =
-                  payload.customer.platform_customer?.customerByClients || []
-               if (node?.organizationStripeCustomerId) {
-                  customer.stripeCustomerId = node?.organizationStripeCustomerId
-               }
-            }
-         }
+         const result = processCustomer(payload, state.organization)
 
          return {
             ...state,
-            customer,
+            customer: result,
          }
       }
       case 'SET_ORGANIZATION':
@@ -80,14 +49,33 @@ const reducers = (state, { type, payload }) => {
 }
 
 export const Provider = ({ isModeTunnelOpen, children }) => {
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
+   const { addTab } = useTabs()
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(4)
    const [state, dispatch] = React.useReducer(reducers, initial)
    const [organizationLoading, setOrganizationLoading] = React.useState(true)
+
+   const [insert, { loading: creatingCart }] = useMutation(
+      MUTATIONS.CART.INSERT,
+      {
+         onCompleted: ({ createCart = {} }) => {
+            toast.success('Successfully created the cart.')
+            if (createCart?.id) {
+               const path = `/carts/${
+                  state.mode === 'SUBSCRIPTION' ? 'subscription' : 'ondemand'
+               }/${createCart?.id}`
+               addTab(createCart?.id, path)
+            }
+         },
+         onError: error => {
+            logger(error)
+            toast.error('Failed to create the cart.')
+         },
+      }
+   )
 
    React.useEffect(() => {
       if (isModeTunnelOpen) {
          openTunnel(1)
-      } else {
       }
    }, [isModeTunnelOpen])
 
@@ -106,6 +94,41 @@ export const Provider = ({ isModeTunnelOpen, children }) => {
       },
    })
 
+   const createCart = async (user = null, occurenceId) => {
+      const cart = {}
+      if (user) {
+         const customer = await processCustomer(user, state.organization)
+
+         cart.isTest = customer.isTest
+         cart.customerId = customer.id
+         cart.customerKeycloakId = customer.keycloakId
+         cart.customerInfo = {
+            customerFirstName: customer.firstName,
+            customerLastName: customer.lastName,
+            customerEmail: customer.email,
+            customerPhone: customer.phoneNumber,
+         }
+      } else {
+         cart.isTest = state.customer.isTest
+         cart.customerId = state.customer.id
+         cart.customerKeycloakId = state.customer.keycloakId
+         cart.customerInfo = {
+            customerFirstName: state.customer.firstName,
+            customerLastName: state.customer.lastName,
+            customerEmail: state.customer.email,
+            customerPhone: state.customer.phoneNumber,
+         }
+      }
+
+      cart.brandId = state.brand.id
+      cart.source =
+         state.mode === 'SUBSCRIPTION' ? 'subscription' : 'a-la-carte'
+      if (state.mode === 'SUBSCRIPTION') {
+         cart.subscriptionOccurenceId = occurenceId
+      }
+      await insert({ variables: { object: cart } })
+   }
+
    if (organizationLoading) return <InlineLoader />
    return (
       <Context.Provider
@@ -113,6 +136,9 @@ export const Provider = ({ isModeTunnelOpen, children }) => {
             dispatch,
             ...state,
             tunnels: { list: tunnels, open: openTunnel, close: closeTunnel },
+            methods: {
+               cart: { create: { mutate: createCart, loading: creatingCart } },
+            },
          }}
       >
          {children}
@@ -121,3 +147,40 @@ export const Provider = ({ isModeTunnelOpen, children }) => {
 }
 
 export const useManual = () => React.useContext(Context)
+
+const processCustomer = (user, organization) => {
+   let customer = {}
+
+   customer.isDemo = user.isDemo
+   customer.isSubscriber = user.isSubscriber
+   customer.subscriptionId = user.subscriptionId
+   customer.brand_customerId = user.id
+   customer.keycloakId = user.keycloakId
+   customer.subscriptionPaymentMethodId = user.subscriptionPaymentMethodId
+
+   customer.id = user.customer.id
+   customer.email = user.customer.email
+   customer.isTest = user.customer.isTest
+
+   customer.firstName = user.customer.platform_customer?.firstName || ''
+   customer.lastName = user.customer.platform_customer?.lastName || ''
+   customer.fullName = user.customer.platform_customer?.fullName || ''
+   customer.phoneNumber = user.customer.platform_customer?.phoneNumber || ''
+   customer.stripeCustomerId =
+      user.customer.platform_customer?.stripeCustomerId || ''
+
+   if (
+      organization.id &&
+      organization?.stripeAccountType === 'standard' &&
+      organization?.stripeAccountId
+   ) {
+      if (user.customer.platform_customer?.customerByClients.length > 0) {
+         const [node = {}] =
+            user.customer.platform_customer?.customerByClients || []
+         if (node?.organizationStripeCustomerId) {
+            customer.stripeCustomerId = node?.organizationStripeCustomerId
+         }
+      }
+   }
+   return customer
+}
