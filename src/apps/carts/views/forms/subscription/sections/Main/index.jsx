@@ -1,114 +1,45 @@
 import React from 'react'
-import moment from 'moment'
-import { isEqual } from 'lodash'
+import { uniqBy } from 'lodash'
 import styled from 'styled-components'
 import { toast } from 'react-toastify'
 import { Element } from 'react-scroll'
-import { useLazyQuery, useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useParams } from 'react-router'
 import {
-   AnchorNav,
-   AnchorNavItem,
+   Tag,
    Text,
    Flex,
    Filler,
-   TextButton,
    Spacer,
+   AnchorNav,
+   TextButton,
+   AnchorNavItem,
 } from '@dailykit/ui'
 
 import { useManual } from '../../state'
-import { QUERIES } from '../../../../../graphql'
+import { MUTATIONS, QUERIES } from '../../../../../graphql'
 import EmptyIllo from '../../../../../assets/svgs/EmptyIllo'
 import { InlineLoader } from '../../../../../../../shared/components'
 import { currencyFmt, logger } from '../../../../../../../shared/utils'
 
 export const Main = () => {
-   const { brand } = useManual()
-   const [menu, setMenu] = React.useState([])
-   const [categories, setCategories] = React.useState([])
-   const [isMenuEmpty, setIsMenuEmpty] = React.useState(false)
+   const { subscriptionOccurenceId, customer } = useManual()
    const [hasMenuError, setHasMenuError] = React.useState(false)
-   const [isMenuLoading, setIsMenuLoading] = React.useState(true)
-   const [fetchProducts] = useLazyQuery(QUERIES.PRODUCTS.LIST, {
-      onCompleted: ({ products = [] }) => {
-         const _menu = []
-         categories.map(category => {
-            _menu.push({
-               title: category.name,
-               products: products.filter(product =>
-                  category.products.includes(product.id)
-               ),
-            })
-         })
-         setMenu(_menu)
-         setIsMenuEmpty(false)
-         setHasMenuError(false)
-         setIsMenuLoading(false)
-      },
-      onError: error => {
-         logger(error)
-         setIsMenuEmpty(false)
-         setHasMenuError(true)
-         setIsMenuLoading(false)
-      },
-   })
-   useQuery(QUERIES.MENU, {
-      skip: !brand?.id,
-      variables: {
-         params: { brandId: brand.id, date: moment().format('YYYY-MM-DD') },
-      },
-      onCompleted: async (data = {}) => {
-         try {
-            if (
-               isEqual(data, {
-                  menu: [{ data: { menu: [] }, __typename: 'onDemand_menu' }],
-               })
-            ) {
-               setIsMenuEmpty(true)
-               setHasMenuError(false)
-               setIsMenuLoading(false)
-               return
-            }
-            const [_data] = data.menu
-            const { data: { menu = [] } = {} } = _data
-            setCategories(menu)
-            const ids = menu.map(({ products }) => products).flat()
-
-            if (ids.length === 0) {
-               setIsMenuEmpty(true)
-               setHasMenuError(false)
-               setIsMenuLoading(false)
-               return
-            }
-            await fetchProducts({
-               variables: {
-                  where: {
-                     isArchived: { _eq: false },
-                     id: { _in: ids },
-                  },
-               },
-            })
-         } catch (error) {
+   const { loading, data: { categories = [] } = {} } = useQuery(
+      QUERIES.CATEGORIES.LIST,
+      {
+         variables: {
+            subscriptionId: { _eq: customer.subscriptionId },
+            subscriptionOccurenceId: { _eq: subscriptionOccurenceId },
+         },
+         onError: error => {
             logger(error)
-            setIsMenuLoading(false)
             setHasMenuError(true)
-            setIsMenuEmpty(false)
-            toast.error(
-               'There was an issue in fetching the menu for today, please try again!'
-            )
-         }
-      },
-      onError: error => {
-         logger(error)
-         setIsMenuLoading(false)
-         setHasMenuError(true)
-         setIsMenuEmpty(false)
-         toast.error(
-            'There was an issue in fetching the menu for today, please try again!'
-         )
-      },
-   })
+         },
+      }
+   )
 
-   if (isMenuLoading) return <InlineLoader />
+   if (loading) return <InlineLoader />
    if (hasMenuError)
       return (
          <Styles.Main>
@@ -123,12 +54,12 @@ export const Main = () => {
                   width="380px"
                   height="320px"
                   illustration={<EmptyIllo width="240px" />}
-                  message="There was an issue in fetching the menu for today, please try again!"
+                  message="There was an issue in fetching the prodcuts, please try again!"
                />
             </Flex>
          </Styles.Main>
       )
-   if (isMenuEmpty)
+   if (categories.length === 0)
       return (
          <Styles.Main>
             <Flex
@@ -149,21 +80,25 @@ export const Main = () => {
       )
    return (
       <Styles.Main>
-         <Menu menu={menu} />
+         <Menu categories={categories} />
       </Styles.Main>
    )
 }
 
-const Menu = ({ menu }) => {
+const Menu = ({ categories = [] }) => {
+   const [insert, { loading }] = useMutation(MUTATIONS.CART.ITEM.INSERT, {
+      onCompleted: () => toast.success('Successfully added the product!'),
+      onError: () => toast.error('Failed to add the product!'),
+   })
    return (
       <>
          <AnchorNav>
-            {menu.map(item => (
+            {categories.map(category => (
                <AnchorNavItem
-                  key={item.title}
-                  label={item.title}
-                  targetElement={item.title}
+                  key={category.name}
+                  label={category.name}
                   containerId="categories"
+                  targetElement={category.name}
                />
             ))}
          </AnchorNav>
@@ -178,50 +113,125 @@ const Menu = ({ menu }) => {
                padding: '0 14px',
             }}
          >
-            {menu.map(item => (
-               <Element
-                  key={item.title}
-                  name={item.title}
-                  style={{ height: '100%', overflowY: 'auto' }}
-               >
-                  <Text as="text1">{item.title}</Text>
-                  <Spacer size="14px" />
-                  <Styles.Cards>
-                     {item.products.map(product => (
-                        <Styles.Card key={product.id}>
-                           <aside>
-                              {product.assets?.images &&
-                              product.assets?.images?.length > 0 ? (
-                                 <img
-                                    alt={product.name}
-                                    src={product.assets?.images[0]}
-                                 />
-                              ) : (
-                                 <span>N/A</span>
-                              )}
-                           </aside>
-                           <Flex as="main" container flexDirection="column">
-                              <Text as="text2">{product.name}</Text>
-                              <Text as="text3">
-                                 Price: {currencyFmt(product.price)}
-                              </Text>
-                              <Spacer size="8px" />
-                              <TextButton
-                                 type="solid"
-                                 variant="secondary"
-                                 size="sm"
-                              >
-                                 ADD
-                              </TextButton>
-                           </Flex>
-                        </Styles.Card>
-                     ))}
-                  </Styles.Cards>
-                  <Spacer size="24px" />
-               </Element>
-            ))}
+            {categories.map(category => {
+               const products = uniqBy(
+                  category.productsAggregate.nodes,
+                  ({ cartItem = {} }) =>
+                     [
+                        cartItem?.productId,
+                        cartItem?.option?.productOptionId,
+                     ].join()
+               )
+               return (
+                  <Element
+                     key={category.name}
+                     name={category.name}
+                     style={{ height: '100%', overflowY: 'auto' }}
+                  >
+                     <Text as="text1">
+                        {category.name}({products.length})
+                     </Text>
+                     <Spacer size="14px" />
+                     <Styles.Cards>
+                        {products.map(product => (
+                           <Product
+                              key={product.id}
+                              data={product}
+                              insert={{ mutate: insert, loading }}
+                           />
+                        ))}
+                     </Styles.Cards>
+                     <Spacer size="24px" />
+                  </Element>
+               )
+            })}
          </Element>
       </>
+   )
+}
+
+const insertCartId = (node, cartId) => {
+   if (node.childs.data.length > 0) {
+      node.childs.data = node.childs.data.map(item => {
+         if (item.childs.data.length > 0) {
+            item.childs.data = item.childs.data.map(item => ({
+               ...item,
+               cartId,
+            }))
+         }
+         return { ...item, cartId }
+      })
+   }
+   node.cartId = cartId
+
+   return node
+}
+
+const Product = ({ data, insert }) => {
+   const params = useParams()
+   const { occurenceCustomer } = useManual()
+
+   const add = () => {
+      if (occurenceCustomer?.itemCountValid) {
+         toast.warn("You're cart is already full!")
+         return
+      }
+      const cart = insertCartId(data.cartItem, params?.id)
+      insert.mutate({ variables: { object: cart } })
+   }
+
+   const product = {
+      addOnLabel: data.addOnLabel,
+      addOnPrice: data.addOnPrice,
+      isAvailable: data.isAvailable,
+      name: data?.productOption?.product?.name || '',
+      label: data?.productOption?.label || '',
+      type: data?.productOption?.simpleRecipeYield?.simpleRecipe?.type,
+      image:
+         data?.productOption?.product?.assets?.images?.length > 0
+            ? data?.productOption?.product?.assets?.images[0]
+            : null,
+      additionalText: data?.productOption?.product?.additionalText || '',
+   }
+   return (
+      <Styles.Card>
+         <aside>
+            {product.image ? (
+               <img alt={product.name} src={product.image} />
+            ) : (
+               <span>N/A</span>
+            )}
+         </aside>
+         <Flex as="main" container flexDirection="column">
+            <div>{product.addOnLabel && <Tag>{product.addOnLabel}</Tag>}</div>
+            <Spacer size="4px" />
+            <Text as="text2">{product.name}</Text>
+            <Spacer size="8px" />
+            <TextButton
+               size="sm"
+               type="solid"
+               onClick={add}
+               variant="secondary"
+               isLoading={insert.loading}
+               disabled={!product.isAvailable}
+               title={
+                  product.isAvailable
+                     ? 'Add product'
+                     : 'This product is out of stock.'
+               }
+            >
+               {product.isAvailable ? (
+                  <>
+                     ADD {product.addOnPrice > 0 && ' + '}
+                     {product.addOnPrice > 0 &&
+                        currencyFmt(Number(product.addOnPrice) || 0)}
+                  </>
+               ) : (
+                  'Out of Stock'
+               )}
+            </TextButton>
+         </Flex>
+      </Styles.Card>
    )
 }
 

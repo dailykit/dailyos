@@ -35,6 +35,7 @@ const reducers = (state, { type, payload }) => {
             address: payload.address,
             paymentMethod: payload.paymentMethod,
             occurenceCustomer: payload.occurenceCustomer,
+            subscriptionOccurenceId: payload.subscriptionOccurenceId,
             ...(payload.billing && {
                billing: {
                   discount: payload.billing?.discount,
@@ -120,11 +121,6 @@ export const ManualProvider = ({ children }) => {
          subscriptionData: { data: { cart = {} } = {} } = {},
       }) => {
          if (cart && !isEmpty(cart)) {
-            console.log(
-               'cart.occurenceCustomer',
-               cart.subscriptionOccurenceId,
-               cart.occurenceCustomer
-            )
             dispatch({
                type: 'SET_INITIAL',
                payload: {
@@ -135,6 +131,7 @@ export const ManualProvider = ({ children }) => {
                   address: cart.address || { id: null },
                   paymentMethod: { id: cart.paymentMethodId },
                   occurenceCustomer: cart.occurenceCustomer || {},
+                  subscriptionOccurenceId: cart.subscriptionOccurenceId,
                },
             })
             refetchCustomer()

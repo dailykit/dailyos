@@ -173,22 +173,60 @@ export const QUERIES = {
          }
       }
    `,
-   PRODUCTS: {
+   CATEGORIES: {
       LIST: gql`
-         query products($where: products_product_bool_exp = {}) {
-            products(where: $where) {
-               id
+         query categories(
+            $subscriptionId: Int_comparison_exp
+            $subscriptionOccurenceId: Int_comparison_exp
+         ) {
+            categories: productCategories(
+               where: {
+                  subscriptionOccurenceProducts: {
+                     _or: [
+                        { subscriptionId: $subscriptionId }
+                        { subscriptionOccurenceId: $subscriptionOccurenceId }
+                     ]
+                     isVisible: { _eq: true }
+                  }
+               }
+            ) {
                name
-               type
-               assets
-               tags
-               additionalText
-               description
-               price
-               discount
-               isPopupAllowed
-               isPublished
-               defaultProductOptionId
+               productsAggregate: subscriptionOccurenceProducts_aggregate(
+                  where: {
+                     _or: [
+                        { subscriptionId: $subscriptionId }
+                        { subscriptionOccurenceId: $subscriptionOccurenceId }
+                     ]
+                  }
+               ) {
+                  aggregate {
+                     count
+                  }
+                  nodes {
+                     id
+                     cartItem
+                     addOnLabel
+                     addOnPrice
+                     isAvailable
+                     isSingleSelect
+                     productOption {
+                        id
+                        label
+                        simpleRecipeYield {
+                           yield
+                           simpleRecipe {
+                              id
+                              type
+                           }
+                        }
+                        product {
+                           name
+                           assets
+                           additionalText
+                        }
+                     }
+                  }
+               }
             }
          }
       `,

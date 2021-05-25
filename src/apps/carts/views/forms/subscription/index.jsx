@@ -25,7 +25,7 @@ export const Subscription = () => {
 const ManualContent = () => {
    return (
       <Styles.Layout>
-         {/* <Main /> */}
+         <Main />
          <Aside />
       </Styles.Layout>
    )
