@@ -203,8 +203,13 @@ const Product = ({ data, insert }) => {
             )}
          </aside>
          <Flex as="main" container flexDirection="column">
-            <div>{product.addOnLabel && <Tag>{product.addOnLabel}</Tag>}</div>
-            <Spacer size="4px" />
+            {product.addOnLabel && (
+               <div>
+                  <Tag>{product.addOnLabel}</Tag>
+                  <Spacer size="4px" />
+               </div>
+            )}
+
             <Text as="text2">{product.name}</Text>
             <Spacer size="8px" />
             <TextButton

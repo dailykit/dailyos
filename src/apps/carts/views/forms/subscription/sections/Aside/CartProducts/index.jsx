@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
-import { Flex, IconButton, Spacer, Text } from '@dailykit/ui'
+import { Flex, IconButton, Spacer, Tag, Text } from '@dailykit/ui'
 
 import { useManual } from '../../../state'
 import { MUTATIONS } from '../../../../../../graphql'
@@ -10,24 +10,23 @@ import { currencyFmt } from '../../../../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../../../../shared/assets/icons'
 
 const CartProducts = () => {
-   const { billing, products } = useManual()
+   const { billing, occurenceCustomer, products } = useManual()
    const [remove] = useMutation(MUTATIONS.CART.ITEM.DELETE, {
       onCompleted: () => toast.success('Successfully deleted the product.'),
       onError: () => toast.error('Failed to delete the product.'),
    })
    return (
       <section>
-         <Text as="text2">Products({products.aggregate.count})</Text>
+         <Text as="text2">
+            Products({occurenceCustomer?.addedProductsCount || 0})
+         </Text>
          <Spacer size="8px" />
          <Styles.Cards>
             {products.nodes.map(product => (
                <Styles.Card key={product.id}>
                   <aside>
                      {product.image ? (
-                        <img
-                           src={product.image}
-                           alt={product.productOption.name}
-                        />
+                        <img src={product.image} alt={product.name} />
                      ) : (
                         <span>N/A</span>
                      )}
@@ -38,10 +37,18 @@ const CartProducts = () => {
                      justifyContent="space-between"
                   >
                      <Flex as="main" container flexDirection="column">
-                        <Text as="text2">{product.productOption.name}</Text>
-                        <Text as="text3">
-                           Price: {currencyFmt(product.price)}
-                        </Text>
+                        {product.addOnLabel && (
+                           <div>
+                              <Tag>{product.addOnLabel}</Tag>
+                              <Spacer size="4px" />
+                           </div>
+                        )}
+                        <Text as="text2">{product.name}</Text>
+                        {Boolean(product.addOnPrice) && (
+                           <Text as="text3">
+                              Add On Price: {currencyFmt(product.addOnPrice)}
+                           </Text>
+                        )}
                      </Flex>
                      <IconButton
                         size="sm"

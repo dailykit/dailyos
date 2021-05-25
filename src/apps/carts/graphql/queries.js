@@ -26,15 +26,15 @@ export const QUERIES = {
                }
                address
                fulfillmentInfo
-               products: cartItems_aggregate(
-                  where: { levelType: { _eq: "orderItem" } }
-               ) {
+               products: cartItems_aggregate(where: { level: { _eq: 1 } }) {
                   aggregate {
                      count
                   }
                   nodes {
                      id
-                     price: unitPrice
+                     addOnLabel
+                     addOnPrice
+                     name: displayName
                      image: displayImage
                      productOption: productOptionView {
                         id
