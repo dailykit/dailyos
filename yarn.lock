@@ -1317,12 +1317,10 @@
     react-tag-autocomplete "^5.7.1"
     tabulator-tables "4.7.2"
 
-
-"@dailykit/ui@^0.8.41":
-  version "0.8.41"
-  resolved "https://registry.yarnpkg.com/@dailykit/ui/-/ui-0.8.41.tgz#21843d04ecdabfb48837a055839bf456a15821dd"
-  integrity sha512-7EhqTPqBczy7Dww1zFqzE1ppaE8EAYwrLROuLEAZzhCQDKE7faLNFR6szvYGNUoIWhUlXk7KiLq9+hNra7g3MA==
-
+"@dailykit/ui@0.8.42":
+  version "0.8.42"
+  resolved "https://registry.yarnpkg.com/@dailykit/ui/-/ui-0.8.42.tgz#bbaf2c635f2c221c173c4858ba1d0ad9bd799be8"
+  integrity sha512-VzecYx0kscuBm3Bcq89BY2hvFtbhv/iCHfigXSc80CkXQG1HaTdpMwIbtonKopF+cQW/vTL+uC0XAA+4JN/LIA==
   dependencies:
     "@storybook/cli" "^6.1.18"
     concurrently "^5.3.0"
@@ -2015,6 +2013,18 @@
   dependencies:
     core-js "^3.6.5"
     find-up "^4.1.0"
+
+"@stripe/react-stripe-js@^1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@stripe/react-stripe-js/-/react-stripe-js-1.4.1.tgz#884d59286fff00ba77389b32c045516f65d7a340"
+  integrity sha512-FjcVrhf72+9fUL3Lz3xi02ni9tzH1A1x6elXlr6tvBDgSD55oPJuodoP8eC7xTnBIKq0olF5uJvgtkJyDCdzjA==
+  dependencies:
+    prop-types "^15.7.2"
+
+"@stripe/stripe-js@^1.15.0":
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/@stripe/stripe-js/-/stripe-js-1.15.0.tgz#86178cfbe66151910b09b03595e60048ab4c698e"
+  integrity sha512-KQsNPc+uVQkc8dewwz1A6uHOWeU2cWoZyNIbsx5mtmperr5TPxw4u8M20WOa22n6zmIOh/zLdzEe8DYK/0IjBw==
 
 "@svgr/babel-plugin-add-jsx-attribute@^4.2.0":
   version "4.2.0"

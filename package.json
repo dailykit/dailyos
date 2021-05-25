@@ -6,14 +6,14 @@
    "dependencies": {
       "@apollo/react-hooks": "3.1.5",
       "@dailykit/react-tabulator": "0.13.6",
-
-      "@dailykit/ui": "^0.8.41",
-
+      "@dailykit/ui": "0.8.42",
       "@monaco-editor/react": "^4.0.11",
       "@reach/tabs": "0.11.2",
       "@react-google-maps/api": "1.9.7",
       "@sentry/react": "^5.25.0",
       "@sentry/tracing": "^5.25.0",
+      "@stripe/react-stripe-js": "^1.4.1",
+      "@stripe/stripe-js": "^1.15.0",
       "@testing-library/jest-dom": "4.2.4",
       "@testing-library/react": "9.3.2",
       "@testing-library/user-event": "7.1.2",
