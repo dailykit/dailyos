@@ -8,6 +8,7 @@ import {
    Dropdown,
    ButtonGroup,
    RadioGroup,
+   Form,
 } from '@dailykit/ui'
 import { Trans, useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -15,6 +16,7 @@ import { useTabs } from '../../../../../../../shared/providers'
 import { INGREDIENT_CATEGORY_CREATE } from '../../../../../graphql/mutations'
 import { INGREDIENT_CATEGORIES_INGREDIENTS_AGGREGATE } from '../../../../../graphql/subscriptions'
 import BulkActions from '../../../../../../../shared/components/BulkAction'
+import { Tooltip } from '../../../../../../../shared/components'
 const address = 'apps.menu.views.listings.productslisting.'
 
 export default function BulkActionsTunnel({
@@ -31,6 +33,10 @@ export default function BulkActionsTunnel({
       category: {
          defaultOption: null,
          value: '',
+      },
+      nameConcat: {
+         forAppend: '',
+         foePrepend: '',
       },
    })
    const [bulkActions, setBulkActions] = React.useState({})
@@ -101,8 +107,55 @@ export default function BulkActionsTunnel({
             defaultOption: null,
             value: '',
          },
+         nameConcat: {
+            forAppend: '',
+            foePrepend: '',
+         },
       }))
       setBulkActions({})
+   }
+   const checkNested = (obj, level, ...rest) => {
+      if (obj === undefined) return false
+      if (rest.length == 0 && obj.hasOwnProperty(level)) return true
+      return checkNested(obj[level], ...rest)
+   }
+   const commonRemove = (
+      column,
+      concatType,
+      positionPrimary,
+      positionSecondary
+   ) => {
+      //positionPrimary use for changing field
+      //positionSecondary use for another field
+      concatType =
+         concatType === 'concatData' ? 'concatData' : 'concatDataString'
+      console.log('this is new concat type', concatType)
+      const nestedCheckPrepend = checkNested(
+         bulkActions,
+         concatType,
+         column,
+         positionSecondary
+      )
+      console.log('im in', nestedCheckPrepend)
+      if (nestedCheckPrepend) {
+         const newBulkAction = { ...bulkActions }
+         delete newBulkAction[concatType][column][positionPrimary]
+         setBulkActions(newBulkAction)
+         return
+      }
+      const checkNestedColumn = checkNested(bulkActions, concatType, column)
+      if (checkNestedColumn) {
+         const newBulkAction = { ...bulkActions }
+         delete newBulkAction[concatType][column]
+         setBulkActions(newBulkAction)
+      }
+      if (concatType in bulkActions) {
+         if (Object.keys(bulkActions[concatType]).length === 0) {
+            const newBulkAction = { ...bulkActions }
+            delete newBulkAction[concatType]
+            setBulkActions(newBulkAction)
+         }
+      }
    }
    return (
       <>
@@ -213,6 +266,140 @@ export default function BulkActionsTunnel({
                }}
                placeholder="choose ingredient type"
             />
+            <Spacer size="10px" />
+            <Form.Group>
+               <Form.Label htmlFor="nameAppend" title="nameAppend">
+                  <Flex container alignItems="center">
+                     <Text as="text1">Ingredient name append</Text>
+                     <TextButton
+                        type="ghost"
+                        size="sm"
+                        onClick={() => {
+                           setInitialBulkAction({
+                              ...initialBulkAction,
+                              nameConcat: {
+                                 ...initialBulkAction.nameConcat,
+                                 forAppend: '',
+                              },
+                           })
+                           commonRemove(
+                              'name',
+                              'concatDataString',
+                              'appendvalue',
+                              'prependvalue'
+                           )
+                        }}
+                     >
+                        Clear
+                     </TextButton>
+                     <Tooltip identifier="product" />
+                  </Flex>
+               </Form.Label>
+               <Form.Text
+                  id="nameAppend"
+                  name="nameAppend"
+                  value={initialBulkAction.nameConcat.forAppend}
+                  onChange={e =>
+                     setInitialBulkAction({
+                        ...initialBulkAction,
+                        nameConcat: {
+                           ...initialBulkAction.nameConcat,
+                           forAppend: e.target.value,
+                        },
+                     })
+                  }
+                  onBlur={() => {
+                     if (initialBulkAction.nameConcat.forAppend) {
+                        const newNameAppend =
+                           initialBulkAction.nameConcat.forAppend
+
+                        const concatDataString = {
+                           ...bulkActions.concatDataString,
+                        }
+                        const newName = {
+                           ...concatDataString.name,
+                        }
+                        newName.columnname = 'name'
+                        newName.appendvalue = newNameAppend
+                        newName.schemaname = 'ingredient'
+                        newName.tablename = 'ingredient'
+                        concatDataString.name = newName
+                        setBulkActions({
+                           ...bulkActions,
+                           concatDataString,
+                        })
+                     }
+                  }}
+                  placeholder="Enter ingredient name append"
+               />
+            </Form.Group>
+            <Spacer size="10px" />
+            <Form.Group>
+               <Form.Label htmlFor="namePrepend" title="namePrepend">
+                  <Flex container alignItems="center">
+                     <Text as="text1">Ingredient name prepend</Text>
+                     <TextButton
+                        type="ghost"
+                        size="sm"
+                        onClick={() => {
+                           setInitialBulkAction({
+                              ...initialBulkAction,
+                              nameConcat: {
+                                 ...initialBulkAction.nameConcat,
+                                 forPrepend: '',
+                              },
+                           })
+                           commonRemove(
+                              'name',
+                              'concatDataString',
+                              'prependvalue',
+                              'appendvalue'
+                           )
+                        }}
+                     >
+                        Clear
+                     </TextButton>
+                     <Tooltip identifier="product" />
+                  </Flex>
+               </Form.Label>
+               <Form.Text
+                  id="namePrepend"
+                  name="namePrepend"
+                  value={initialBulkAction.nameConcat.forPrepend}
+                  onChange={e =>
+                     setInitialBulkAction({
+                        ...initialBulkAction,
+                        nameConcat: {
+                           ...initialBulkAction.nameConcat,
+                           forPrepend: e.target.value,
+                        },
+                     })
+                  }
+                  onBlur={() => {
+                     if (initialBulkAction.nameConcat.forPrepend) {
+                        const newNamePrepend =
+                           initialBulkAction.nameConcat.forPrepend
+
+                        const concatDataString = {
+                           ...bulkActions.concatDataString,
+                        }
+                        const newName = {
+                           ...concatDataString.name,
+                        }
+                        newName.columnname = 'name'
+                        newName.prependvalue = newNamePrepend
+                        newName.schemaname = 'ingredient'
+                        newName.tablename = 'ingredient'
+                        concatDataString.name = newName
+                        setBulkActions({
+                           ...bulkActions,
+                           concatDataString,
+                        })
+                     }
+                  }}
+                  placeholder="Enter ingredient name prepend"
+               />
+            </Form.Group>
          </BulkActions>
       </>
    )
