@@ -95,6 +95,7 @@ export const QUERIES = {
             customers: brandCustomers(where: $where) {
                id
                keycloakId
+               subscriptionId
                subscriptionAddressId
                subscriptionPaymentMethodId
                customer {
@@ -252,5 +253,18 @@ export const QUERIES = {
             }
          }
       `,
+   },
+   SUBSCRIPTION: {
+      ZIPCODE: {
+         LIST: gql`
+            query zipcodes(
+               $where: subscription_subscription_zipcode_bool_exp = {}
+            ) {
+               zipcodes: subscription_subscription_zipcode(where: $where) {
+                  zipcode
+               }
+            }
+         `,
+      },
    },
 }
