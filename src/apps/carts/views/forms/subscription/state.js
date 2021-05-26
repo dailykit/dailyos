@@ -89,7 +89,9 @@ export const ManualProvider = ({ children }) => {
       onCompleted: ({ addresses = [] } = {}) => {
          if (addresses.length > 0) {
             const [address] = addresses
-            dispatch({ type: 'SET_ADDRESS', payload: address })
+            if (!state.address?.id) {
+               dispatch({ type: 'SET_ADDRESS', payload: address })
+            }
          }
       },
    })
@@ -216,6 +218,7 @@ const processCustomer = (user, organization) => {
 
    customer.brand_customerId = user.id
    customer.keycloakId = user.keycloakId
+   customer.subscriptionId = user.subscriptionId
    customer.subscriptionAddressId = user.subscriptionAddressId
    customer.subscriptionPaymentMethodId = user.subscriptionPaymentMethodId
 
