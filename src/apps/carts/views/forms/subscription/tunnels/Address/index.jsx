@@ -1,6 +1,6 @@
 import React from 'react'
 import { toast } from 'react-toastify'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { useParams } from 'react-router'
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import {
@@ -41,6 +41,14 @@ const Content = ({ panel }) => {
    const { customer } = useManual()
    const [address, setAddress] = React.useState(null)
    const [addTunnels, openAddTunnel, closeAddTunnel] = useTunnel(1)
+   const { loading: loadingZipcodes, data: { zipcodes = [] } = {} } = useQuery(
+      QUERIES.SUBSCRIPTION.ZIPCODE.LIST,
+      {
+         variables: {
+            where: { subscriptionId: { _eq: customer?.subscriptionId } },
+         },
+      }
+   )
    const [update, { loading: updatingCart }] = useMutation(
       MUTATIONS.CART.UPDATE,
       {
@@ -74,6 +82,12 @@ const Content = ({ panel }) => {
          },
       }
    )
+
+   const fallsInZipcodes = React.useCallback(
+      zipcode => zipcodes.findIndex(node => zipcode === node.zipcode) !== -1,
+      [zipcodes]
+   )
+
    return (
       <>
          <TunnelHeader
@@ -98,7 +112,7 @@ const Content = ({ panel }) => {
                onClick={() => openAddTunnel(1)}
             />
             <Spacer size="16px" />
-            {loading ? (
+            {loading || loadingZipcodes ? (
                <InlineLoader />
             ) : (
                <>
@@ -110,17 +124,26 @@ const Content = ({ panel }) => {
                      />
                   ) : (
                      <ul>
-                        {addresses.map(node => (
-                           <Styles.Address
-                              key={node.id}
-                              onClick={() => setAddress(node)}
-                              className={
-                                 node.id === address?.id ? 'active' : ''
-                              }
-                           >
-                              <Text as="p">{parseAddress(node)}</Text>
-                           </Styles.Address>
-                        ))}
+                        {addresses.map(node => {
+                           const isAvailable = fallsInZipcodes(node.zipcode)
+                           const parsedAddress = parseAddress(node)
+                           const isSelected = node.id === address?.id
+                           return (
+                              <Styles.Address
+                                 key={node.id}
+                                 isAvailable={isAvailable}
+                                 className={isSelected ? 'active' : ''}
+                                 onClick={() => isAvailable && setAddress(node)}
+                                 title={
+                                    isAvailable
+                                       ? parsedAddress
+                                       : 'This address is not deliverable on the customers selected plan.'
+                                 }
+                              >
+                                 <Text as="p">{parsedAddress}</Text>
+                              </Styles.Address>
+                           )
+                        })}
                      </ul>
                   )}
                </>
@@ -138,16 +161,23 @@ const Content = ({ panel }) => {
 }
 
 const Styles = {
-   Address: styled.li`
-      padding: 14px;
-      list-style: none;
-      border-radius: 2px;
-      border: 1px solid #ebebeb;
-      + li {
-         margin-top: 14px;
-      }
-      &.active {
-         border-color: #5d41db;
-      }
-   `,
+   Address: styled.li(
+      ({ isAvailable }) => css`
+         padding: 14px;
+         list-style: none;
+         border-radius: 2px;
+         border: 1px solid #ebebeb;
+         + li {
+            margin-top: 14px;
+         }
+         &.active {
+            border-color: #5d41db;
+         }
+         ${!isAvailable &&
+         css`
+            opacity: 0.5;
+            cursor: not-allowed;
+         `}
+      `
+   ),
 }
