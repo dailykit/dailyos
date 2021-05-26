@@ -28,6 +28,42 @@ export const QUERIES = {
                   id
                   title
                   domain
+                  onDemandSettings(
+                     where: {
+                        onDemandSetting: {
+                           identifier: {
+                              _in: [
+                                 "Location"
+                                 "Pickup Availability"
+                                 "Delivery Availability"
+                              ]
+                           }
+                        }
+                     }
+                  ) {
+                     onDemandSetting {
+                        identifier
+                        value
+                     }
+                  }
+                  subscriptionStoreSettings(
+                     where: {
+                        subscriptionStoreSetting: {
+                           identifier: {
+                              _in: [
+                                 "Location"
+                                 "Pickup Availability"
+                                 "Delivery Availability"
+                              ]
+                           }
+                        }
+                     }
+                  ) {
+                     subscriptionStoreSetting {
+                        identifier
+                        value
+                     }
+                  }
                }
                address
                fulfillmentInfo
@@ -277,6 +313,176 @@ export const QUERIES = {
                      id
                      time
                      address
+                  }
+               }
+            }
+         `,
+      },
+   },
+   FULFILLMENT: {
+      ONDEMAND: {
+         PICKUP: gql`
+            subscription OndemandPickup($brandId: Int!) {
+               onDemandPickup: fulfillmentTypes(
+                  where: {
+                     isActive: { _eq: true }
+                     value: { _eq: "ONDEMAND_PICKUP" }
+                  }
+               ) {
+                  recurrences(
+                     where: {
+                        isActive: { _eq: true }
+                        brands: {
+                           _and: {
+                              brandId: { _eq: $brandId }
+                              isActive: { _eq: true }
+                           }
+                        }
+                     }
+                  ) {
+                     id
+                     type
+                     rrule
+                     timeSlots(where: { isActive: { _eq: true } }) {
+                        id
+                        to
+                        from
+                        pickUpPrepTime
+                     }
+                  }
+               }
+            }
+         `,
+         DELIVERY: gql`
+            subscription OnDemandDelivery($distance: numeric!, $brandId: Int!) {
+               onDemandDelivery: fulfillmentTypes(
+                  where: {
+                     isActive: { _eq: true }
+                     value: { _eq: "ONDEMAND_DELIVERY" }
+                  }
+               ) {
+                  recurrences(
+                     where: {
+                        isActive: { _eq: true }
+                        brands: {
+                           _and: {
+                              brandId: { _eq: $brandId }
+                              isActive: { _eq: true }
+                           }
+                        }
+                     }
+                  ) {
+                     id
+                     type
+                     rrule
+                     timeSlots(where: { isActive: { _eq: true } }) {
+                        id
+                        to
+                        from
+                        mileRanges(
+                           where: {
+                              isActive: { _eq: true }
+                              from: { _lte: $distance }
+                              to: { _gte: $distance }
+                           }
+                        ) {
+                           id
+                           to
+                           from
+                           isActive
+                           prepTime
+                           charges {
+                              id
+                              charge
+                              orderValueFrom
+                              orderValueUpto
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         `,
+      },
+      PREORDER: {
+         PICKUP: gql`
+            subscription PreOrderPickup($brandId: Int!) {
+               preOrderPickup: fulfillmentTypes(
+                  where: {
+                     isActive: { _eq: true }
+                     value: { _eq: "PREORDER_PICKUP" }
+                  }
+               ) {
+                  recurrences(
+                     where: {
+                        isActive: { _eq: true }
+                        brands: {
+                           _and: {
+                              brandId: { _eq: $brandId }
+                              isActive: { _eq: true }
+                           }
+                        }
+                     }
+                  ) {
+                     id
+                     type
+                     rrule
+                     timeSlots(where: { isActive: { _eq: true } }) {
+                        id
+                        to
+                        from
+                        pickUpLeadTime
+                     }
+                  }
+               }
+            }
+         `,
+         DELIVERY: gql`
+            subscription PreOrderDelivery($distance: numeric!, $brandId: Int!) {
+               preOrderDelivery: fulfillmentTypes(
+                  where: {
+                     isActive: { _eq: true }
+                     value: { _eq: "PREORDER_DELIVERY" }
+                  }
+               ) {
+                  recurrences(
+                     where: {
+                        isActive: { _eq: true }
+                        brands: {
+                           _and: {
+                              brandId: { _eq: $brandId }
+                              isActive: { _eq: true }
+                           }
+                        }
+                     }
+                  ) {
+                     id
+                     type
+                     rrule
+                     timeSlots(where: { isActive: { _eq: true } }) {
+                        id
+                        to
+                        from
+                        mileRanges(
+                           where: {
+                              isActive: { _eq: true }
+                              from: { _lte: $distance }
+                              to: { _gte: $distance }
+                           }
+                        ) {
+                           id
+                           to
+                           from
+                           isActive
+                           leadTime
+                           charges {
+                              id
+                              charge
+                              orderValueFrom
+                              orderValueUpto
+                           }
+                        }
+                     }
                   }
                }
             }
