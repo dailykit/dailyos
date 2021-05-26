@@ -1,10 +1,11 @@
 import React from 'react'
 import moment from 'moment'
 import { isEqual } from 'lodash'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { toast } from 'react-toastify'
+import { useParams } from 'react-router'
 import { Element } from 'react-scroll'
-import { useLazyQuery, useQuery } from '@apollo/react-hooks'
+import { useLazyQuery, useMutation, useQuery } from '@apollo/react-hooks'
 import {
    AnchorNav,
    AnchorNavItem,
@@ -16,7 +17,7 @@ import {
 } from '@dailykit/ui'
 
 import { useManual } from '../../state'
-import { QUERIES } from '../../../../../graphql'
+import { MUTATIONS, QUERIES } from '../../../../../graphql'
 import EmptyIllo from '../../../../../assets/svgs/EmptyIllo'
 import { InlineLoader } from '../../../../../../../shared/components'
 import { currencyFmt, logger } from '../../../../../../../shared/utils'
@@ -155,6 +156,77 @@ export const Main = () => {
 }
 
 const Menu = ({ menu }) => {
+   const { id: cartId } = useParams()
+
+   const [insertCartItem, { loading }] = useMutation(
+      MUTATIONS.CART.ITEM.INSERT,
+      {
+         onCompleted: () => {
+            console.log('Added item!')
+         },
+         onError: error => {
+            console.log(error)
+         },
+      }
+   )
+
+   const calcDiscountedPrice = (price, discount) => {
+      return price - price * (discount / 100)
+   }
+
+   const renderPrice = product => {
+      if (product.isPopupAllowed) {
+         if (product.discount) {
+            return (
+               <Flex container alignItems="center">
+                  <Styles.Price strike>
+                     {currencyFmt(product.price)}
+                  </Styles.Price>{' '}
+                  <Styles.Price>
+                     {currencyFmt(
+                        calcDiscountedPrice(product.price, product.discount)
+                     )}
+                  </Styles.Price>
+               </Flex>
+            )
+         }
+         return <Styles.Price>{currencyFmt(product.price)}</Styles.Price>
+      } else {
+         const totalPrice =
+            product.defaultCartItem.unitPrice +
+            product.defaultCartItem.childs?.data?.reduce(
+               (acc, op) => acc + op.unitPrice,
+               0
+            )
+
+         return <Styles.Price>{currencyFmt(totalPrice)}</Styles.Price>
+      }
+   }
+
+   const handleAddProduct = (e, categoryTitle) => {
+      const { productId } = e.target.dataset
+      if (productId && !loading) {
+         const category = menu.find(item => item.title === categoryTitle)
+         const product = category.products.find(pdct => pdct.id === +productId)
+
+         if (product.isPopupAllowed) {
+            // open options tunnel
+            console.log('Open options tunnel!')
+         } else {
+            console.log(product.defaultCartItem)
+            console.log(cartId)
+            insertCartItem({
+               variables: {
+                  object: {
+                     ...product.defaultCartItem,
+                     cartId: +cartId,
+                  },
+               },
+            })
+         }
+      }
+   }
+
    return (
       <>
          <AnchorNav>
@@ -183,6 +255,7 @@ const Menu = ({ menu }) => {
                   key={item.title}
                   name={item.title}
                   style={{ height: '100%', overflowY: 'auto' }}
+                  onClick={e => handleAddProduct(e, item.title)}
                >
                   <Text as="text1">{item.title}</Text>
                   <Spacer size="14px" />
@@ -202,14 +275,13 @@ const Menu = ({ menu }) => {
                            </aside>
                            <Flex as="main" container flexDirection="column">
                               <Text as="text2">{product.name}</Text>
-                              <Text as="text3">
-                                 Price: {currencyFmt(product.price)}
-                              </Text>
+                              <Text as="text3">{renderPrice(product)}</Text>
                               <Spacer size="8px" />
                               <TextButton
                                  type="solid"
                                  variant="secondary"
                                  size="sm"
+                                 data-product-id={product.id}
                               >
                                  ADD
                               </TextButton>
@@ -269,4 +341,10 @@ const Styles = {
          text-align: center;
       }
    `,
+   Price: styled.p(
+      ({ strike }) => css`
+         text-decoration-line: ${strike ? 'line-through' : 'none'};
+         margin-right: ${strike ? '1ch' : '0'};
+      `
+   ),
 }
