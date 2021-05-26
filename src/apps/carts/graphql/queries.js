@@ -77,10 +77,6 @@ export const QUERIES = {
                      addOnPrice
                      name: displayName
                      image: displayImage
-                     productOption: productOptionView {
-                        id
-                        name: displayName
-                     }
                   }
                }
             }

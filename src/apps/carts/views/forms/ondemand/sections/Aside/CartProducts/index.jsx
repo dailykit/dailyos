@@ -24,10 +24,7 @@ const CartProducts = () => {
                <Styles.Card key={product.id}>
                   <aside>
                      {product.image ? (
-                        <img
-                           src={product.image}
-                           alt={product.productOption.name}
-                        />
+                        <img src={product.image} alt={product.name} />
                      ) : (
                         <span>N/A</span>
                      )}
@@ -38,7 +35,7 @@ const CartProducts = () => {
                      justifyContent="space-between"
                   >
                      <Flex as="main" container flexDirection="column">
-                        <Text as="text2">{product.productOption.name}</Text>
+                        <Text as="text2">{product.name}</Text>
                         <Text as="text3">
                            Price: {currencyFmt(product.price)}
                         </Text>

@@ -123,7 +123,7 @@ const CartInfo = () => {
                }}
             />
             <Flex as="main" padding="0 8px 8px 8px">
-               {fulfillment.type ? (
+               {fulfillment?.type ? (
                   renderFulfillmentInfo(fulfillment)
                ) : (
                   <Styles.Filler
