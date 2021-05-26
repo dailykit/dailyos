@@ -190,6 +190,7 @@ export const QUERIES = {
                isPopupAllowed
                isPublished
                defaultProductOptionId
+               defaultCartItem
             }
          }
       `,
