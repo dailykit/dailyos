@@ -10,6 +10,7 @@ import { logger } from '../../../../../shared/utils'
 import EmptyIllo from '../../../assets/svgs/EmptyIllo'
 import { AddressTunnel, PaymentTunnel } from './tunnels'
 import { InlineLoader } from '../../../../../shared/components'
+import FulfillmentTunnel from './tunnels/Fulfillment'
 
 const Context = React.createContext()
 
@@ -21,6 +22,7 @@ const initial = {
    organization: { id: null },
    products: { aggregate: { count: 0 } },
    billing: {},
+   fulfillment: {},
 }
 
 const reducers = (state, { type, payload }) => {
@@ -34,6 +36,7 @@ const reducers = (state, { type, payload }) => {
             products: payload.products,
             paymentMethod: payload.paymentMethod,
             billing: payload.billing,
+            fulfillment: payload.fulfillment,
          }
       case 'SET_CUSTOMER':
          return {
@@ -58,6 +61,7 @@ const reducers = (state, { type, payload }) => {
 export const ManualProvider = ({ children }) => {
    const params = useParams()
    const addressTunnels = useTunnel(1)
+   const fulfillmentTunnels = useTunnel(1)
    const [cartError, setCartError] = React.useState('')
    const [isCartLoading, setIsCartLoading] = React.useState(true)
    const [state, dispatch] = React.useReducer(reducers, initial)
@@ -108,6 +112,7 @@ export const ManualProvider = ({ children }) => {
          subscriptionData: { data: { cart = {} } = {} } = {},
       }) => {
          if (cart && !isEmpty(cart)) {
+            console.log(cart)
             dispatch({
                type: 'SET_INITIAL',
                payload: {
@@ -127,6 +132,7 @@ export const ManualProvider = ({ children }) => {
                      walletAmountUsed: cart?.walletAmountUsed || 0,
                      loyaltyPointsUsed: cart?.loyaltyPointsUsed || 0,
                   },
+                  fulfillment: cart?.fulfillmentInfo,
                },
             })
             refetchCustomer()
@@ -176,6 +182,7 @@ export const ManualProvider = ({ children }) => {
             dispatch,
             brand: state.brand,
             address: state.address,
+            fulfillment: state.fulfillment,
             billing: state.billing,
             products: state.products,
             customer: state.customer,
@@ -183,10 +190,12 @@ export const ManualProvider = ({ children }) => {
             paymentMethod: state.paymentMethod,
             tunnels: {
                address: addressTunnels,
+               fulfillment: fulfillmentTunnels,
             },
          }}
       >
          {children}
+         <FulfillmentTunnel panel={fulfillmentTunnels} />
          <AddressTunnel panel={addressTunnels} />
       </Context.Provider>
    )

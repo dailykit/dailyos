@@ -283,7 +283,7 @@ const Menu = ({ menu }) => {
                                  size="sm"
                                  data-product-id={product.id}
                               >
-                                 ADD
+                                 ADD {product.isPopupAllowed && '+'}
                               </TextButton>
                            </Flex>
                         </Styles.Card>
