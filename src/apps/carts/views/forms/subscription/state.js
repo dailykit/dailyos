@@ -6,9 +6,9 @@ import { Flex, Filler, useTunnel } from '@dailykit/ui'
 import { useQuery, useSubscription } from '@apollo/react-hooks'
 
 import { QUERIES } from '../../../graphql'
+import { FulfillmentTunnel } from './tunnels'
 import { logger } from '../../../../../shared/utils'
 import EmptyIllo from '../../../assets/svgs/EmptyIllo'
-import { AddressTunnel, PaymentTunnel } from './tunnels'
 import { InlineLoader } from '../../../../../shared/components'
 
 const Context = React.createContext()
@@ -34,7 +34,9 @@ const reducers = (state, { type, payload }) => {
             products: payload.products,
             address: payload.address,
             paymentMethod: payload.paymentMethod,
+            fulfillmentInfo: payload.fulfillmentInfo,
             occurenceCustomer: payload.occurenceCustomer,
+            subscriptionOccurence: payload.subscriptionOccurence,
             subscriptionOccurenceId: payload.subscriptionOccurenceId,
             ...(payload.billing && {
                billing: {
@@ -149,8 +151,10 @@ export const ManualProvider = ({ children }) => {
                   products: cart.products,
                   customer: { id: cart?.customerId },
                   address: cart.address || { id: null },
+                  fulfillmentInfo: cart.fulfillmentInfo,
                   paymentMethod: { id: cart.paymentMethodId },
                   occurenceCustomer: cart.occurenceCustomer || {},
+                  subscriptionOccurence: cart.subscriptionOccurence,
                   subscriptionOccurenceId: cart.subscriptionOccurenceId,
                },
             })
@@ -206,7 +210,7 @@ export const ManualProvider = ({ children }) => {
          }}
       >
          {children}
-         <AddressTunnel panel={addressTunnels} />
+         <FulfillmentTunnel panel={addressTunnels} />
       </Context.Provider>
    )
 }
