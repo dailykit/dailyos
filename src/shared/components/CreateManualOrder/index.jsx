@@ -23,17 +23,17 @@ export const CreateManualOrder = ({
          keycloakId={keycloakId}
          isModeTunnelOpen={isModeTunnelOpen}
       >
-         <Content />
+         <Content brandId={brandId} keycloakId={keycloakId} />
       </Provider>
    )
 }
 
-const Content = () => {
-   const { brand, customer, methods, tunnels, dispatch } = useManual()
+const Content = ({ brandId, keycloakId }) => {
+   const { methods, tunnels, dispatch } = useManual()
 
    const setMode = mode => {
       dispatch({ type: 'SET_MODE', payload: mode })
-      if (brand?.id && customer?.id && customer?.keycloakId) {
+      if (brandId && keycloakId) {
          if (mode === 'SUBSCRIPTION') {
             tunnels.open(4)
          } else {
