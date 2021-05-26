@@ -4,13 +4,13 @@
    border-bottom: 2px solid #d8d8d8;
 }
 
-.tabulator-col .tabulator-frozen .tabulator-frozen-left {
-   height: 100px !important;
+.tabulator-col
+   .tabulator-sortable
+   .colHover
+   .tabulator-frozen
+   .tabulator-frozen-left {
+   height: 90px !important;
    margin-top: -10px !important;
-}
-
-.tabulator-col .tabulator-frozen {
-   height: 90px;
 }
 
 .gIjFdD {

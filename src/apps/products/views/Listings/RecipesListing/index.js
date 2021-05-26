@@ -13,10 +13,15 @@ import {
    Tunnel,
    Tunnels,
    useTunnel,
+   Form,
+   Checkbox,
    TunnelHeader,
    Context,
    ContextualMenu,
+   typeOf,
 } from '@dailykit/ui'
+import { jsPDF } from 'jspdf'
+import 'jspdf-autotable'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import {
@@ -50,11 +55,38 @@ const RecipesListing = () => {
    const [tunnels, openTunnel, closeTunnel, visible] = useTunnel(2)
    // Queries and Mutations
 
-   const {
+   // const [recipes, setRecipes] = React.useState([])
+
+   let {
       loading,
       data: { simpleRecipes: recipes = [] } = {},
       error,
    } = useSubscription(S_RECIPES)
+
+   // if (recipes.length > 0) {
+   //    const updatedRecipes = recipes.map(recipe => {
+   //       recipe.simpleRecipeYieldsLength = recipe.simpleRecipeYields.length
+   //       return recipe
+   //    })
+   //    recipes = [...updatedRecipes]
+   // }
+
+   // let recipes = []
+
+   // const { loading, error } = useSubscription(S_RECIPES, {
+   //    onSubscriptionData: data => {
+   //       const { simpleRecipes } = data.subscriptionData.data
+   //       const updatedRecipes = simpleRecipes.map(recipe => {
+   //          recipe.simpleRecipeYieldsLength = recipe.simpleRecipeYields.length
+   //          return recipe
+   //       })
+
+   //       console.log('up', updatedRecipes)
+   //       recipes = updatedRecipes
+   //    },
+   // })
+
+   console.log('re', recipes)
 
    const [createRecipe] = useMutation(CREATE_SIMPLE_RECIPE, {
       onCompleted: input => {
@@ -114,6 +146,8 @@ const RecipesListing = () => {
       logger(error)
       return <ErrorState />
    }
+
+   console.log('data', recipes)
    return (
       <ResponsiveFlex maxWidth="1280px" margin="0 auto">
          <Tunnels tunnels={tunnels}>
@@ -167,15 +201,36 @@ class DataTable extends React.Component {
    constructor(props) {
       super(props)
       this.state = {
-         groups: [],
+         groups: [localStorage.getItem('tabulator-recipe_table-group')],
       }
       this.tableRef = React.createRef()
       this.handleRowSelection = this.handleRowSelection.bind(this)
    }
+
+   // componentDidMount() {
+   //    // console.log('local', JSON.parse(localStorage.getItem('rows-schema')))
+   //    var selectedRowsId = JSON.parse(localStorage.getItem('rows-schema'))
+   //    console.log(typeof selectedRowsId)
+
+   //    // console.log('table', this.tableRef.current)
+   //    // console.log('id', selectedRowsId)
+   //    // console.log('is', Array.isArray(selectedRowsId))
+   //    if (Array.isArray(selectedRowsId) && selectedRowsId.length > 0) {
+   //       console.log('h1llon')
+   //       if (this.tableRef.current !== null) {
+   //          console.log('h1llonkjn')
+   //          console.log('table', this.tableRef.current.table)
+   //          this.tableRef.current.table.selectRow([1064, 1008])
+   //       }
+   //    }
+   //    // this.props.setSelectedRows(localStorage.getItem('rows-schema'))
+   // }
+
    columns = [
       {
          formatter: 'rowSelection',
-         titleFormatter: 'rowSelection',
+         // titleFormatter: 'tickcross',
+         titleFormatter: reactFormatter(<Selection />),
          hozAlign: 'center',
          headerSort: false,
          frozen: true,
@@ -187,12 +242,15 @@ class DataTable extends React.Component {
          width: 400,
          frozen: true,
          headerFilter: true,
+
          formatter: reactFormatter(<RecipeName />),
-         // cellClick: (e, cell) => {
-         //    const { name, id } = cell._cell.row.data
-         //    this.props.addTab(name, `/products/recipes/${id}`)
-         // },
+         cellClick: (e, cell) => {
+            const { name, id } = cell._cell.row.data
+            this.props.addTab(name, `/products/recipes/${id}`)
+         },
          cssClass: 'colHover',
+         resizable: 'true',
+         maxWidth: 400,
       },
       { title: 'Author', field: 'author', headerFilter: true },
       {
@@ -201,6 +259,7 @@ class DataTable extends React.Component {
          headerFilter: true,
          hozAlign: 'right',
          headerHozAlign: 'right',
+         width: 150,
       },
       {
          title: 'Cuisine type',
@@ -212,11 +271,11 @@ class DataTable extends React.Component {
       },
       {
          title: '# of Servings',
-         field: 'simpleRecipeYields',
+         field: 'simpleRecipeYields.aggregate.count',
          headerFilter: false,
          hozAlign: 'right',
          headerHozAlign: 'right',
-         formatter: reactFormatter(<ServingsCount />),
+         // formatter: reactFormatter(<ServingsCount />),
          width: 150,
       },
       // {
@@ -230,22 +289,41 @@ class DataTable extends React.Component {
       //    width: 150,
       //    headerFilter: true,
       // },
-      // {
-      //    title: 'Actions',
-      //    headerSort: false,
-      //    headerFilter: false,
-      //    hozAlign: 'center',
-      //    // frozen: true,
-      //    headerHozAlign: 'center',
-      //    formatter: reactFormatter(
-      //       <DeleteRecipe onDelete={this.props.deleteRecipeHandler} />
-      //    ),
-      //    width: 100,
-      // },
+      {
+         title: 'Actions',
+         headerSort: false,
+         headerFilter: false,
+         hozAlign: 'center',
+         download: false,
+         frozen: true,
+         headerHozAlign: 'center',
+         formatter: reactFormatter(
+            <DeleteRecipe onDelete={this.props.deleteRecipeHandler} />
+         ),
+         width: 80,
+      },
    ]
-   handleRowSelection = rows => {
-      this.props.setSelectedRows(rows)
-      localStorage.setItem('rows', rows)
+   handleRowSelection = ({ _row }) => {
+      console.log(_row.getData())
+      this.props.setSelectedRows(prevState => [...prevState, _row.getData()])
+
+      let newData = [...this.props.selectedRows.map(row => row.id)]
+      localStorage.setItem(
+         'selected-rows-id_recipe_table',
+         JSON.stringify(newData)
+      )
+   }
+
+   handleDeSelection = ({ _row }) => {
+      const data = _row.getData()
+      console.log('de', _row.getData())
+      this.props.setSelectedRows(prevState =>
+         prevState.filter(row => row.id != data.id)
+      )
+      localStorage.setItem(
+         'selected-rows-id_recipe_table',
+         JSON.stringify(this.props.selectedRows.map(row => row.id))
+      )
    }
 
    removeSelectedRow = id => {
@@ -266,6 +344,37 @@ class DataTable extends React.Component {
    clearHeaderFilter = () => {
       this.tableRef.current.table.clearHeaderFilter()
    }
+
+   downloadCsvData = () => {
+      this.tableRef.current.table.download('csv', 'recipe_table.csv')
+   }
+
+   downloadPdfData = () => {
+      this.tableRef.current.table.downloadToTab('pdf', 'recipe_table.pdf')
+   }
+
+   downloadXlsxData = () => {
+      this.tableRef.current.table.download('xlsx', 'recipe_table.xlsx')
+   }
+
+   selectRows = () => {
+      const selectedRowsId =
+         localStorage.getItem('selected-rows-id_recipe_table') || '[]'
+      this.tableRef.current.table.selectRow(JSON.parse(selectedRowsId))
+      if (JSON.parse(selectedRowsId).length > 0) {
+         let newArr = []
+         JSON.parse(selectedRowsId).forEach(x => {
+            const newFind = this.props.data.find(y => y.id == x)
+            newArr = [...newArr, newFind]
+         })
+         this.props.setSelectedRows(newArr)
+      }
+   }
+
+   handleMultipleRowSelection = () => {
+      console.log('checkbox')
+   }
+
    render() {
       return (
          <>
@@ -276,15 +385,46 @@ class DataTable extends React.Component {
                handleGroupBy={this.handleGroupBy}
                clearHeaderFilter={this.clearHeaderFilter}
             />
+
+            <Spacer size="24px" />
+            <Flex container as="header" width="100%" justifyContent="flex-end">
+               <TextButton
+                  onClick={this.downloadCsvData}
+                  type="solid"
+                  size="sm"
+               >
+                  Download CSV
+               </TextButton>
+               <Spacer size="10px" xAxis />
+               <TextButton
+                  onClick={this.downloadPdfData}
+                  type="solid"
+                  size="sm"
+               >
+                  Download PDF
+               </TextButton>
+               <Spacer size="10px" xAxis />
+               <TextButton
+                  onClick={this.downloadXlsxData}
+                  type="solid"
+                  size="sm"
+               >
+                  Download XLSX
+               </TextButton>
+            </Flex>
+
             <Spacer size="30px" />
             <ReactTabulator
                ref={this.tableRef}
+               dataLoaded={this.selectRows}
                columns={this.columns}
                data={this.props.data}
                selectableCheck={() => true}
-               rowSelectionChanged={(data, components) => {
-                  this.handleRowSelection(data)
-               }}
+               // rowSelectionChanged={(data, components) => {
+               //    this.handleRowSelection(data)
+               // }}
+               rowSelected={this.handleRowSelection}
+               rowDeselected={this.handleDeSelection}
                options={tableOptions}
                data-custom-attr="test-custom-attribute"
                className="custom-css-class"
@@ -298,24 +438,24 @@ function DeleteRecipe({ cell, onDelete }) {
    const recipe = cell.getData()
 
    return (
-      // <IconButton type="ghost" onClick={() => onDelete(recipe)}>
-      //    <DeleteIcon color="#FF5A52" />
-      // </IconButton>
-      <ContextualMenu>
-         <Context
-            title="This is context 1"
-            handleClick={() => console.log('Context1')}
-         >
-            <p>This is things could be done</p>
-            <TextButton type="solid" size="sm">
-               Update
-            </TextButton>
-         </Context>
-         <Context
-            title="This is context 2"
-            handleClick={() => console.log('Context2')}
-         />
-      </ContextualMenu>
+      <IconButton type="ghost" onClick={() => onDelete(recipe)}>
+         <DeleteIcon color="#FF5A52" />
+      </IconButton>
+      // <ContextualMenu>
+      //    <Context
+      //       title="This is context 1"
+      //       handleClick={() => console.log('Context1')}
+      //    >
+      //       <p>This is things could be done</p>
+      //       <TextButton type="solid" size="sm">
+      //          Update
+      //       </TextButton>
+      //    </Context>
+      //    <Context
+      //       title="This is context 2"
+      //       handleClick={() => console.log('Context2')}
+      //    />
+      // </ContextualMenu>
    )
 }
 
@@ -335,9 +475,24 @@ function PublishStatus({ cell }) {
    )
 }
 
-function RecipeName({ cell }) {
+function Selection() {
+   const [checked, setChecked] = React.useState(true)
+
+   const handleMultipleRowSelection = () => {
+      setChecked(!checked)
+      console.log('handleMultipleRowSelection')
+   }
+   return (
+      <Checkbox
+         id="label"
+         checked={checked}
+         onChange={handleMultipleRowSelection}
+      ></Checkbox>
+   )
+}
+
+function RecipeName({ cell, addTab }) {
    const data = cell.getData()
-   console.log('cell', data)
    return (
       <>
          <Flex
@@ -359,7 +514,11 @@ function RecipeName({ cell }) {
                      overflow: 'hidden',
                      textOverflow: 'ellipsis',
                   }}
-                  onClick={() => console.log('hi')}
+                  // onClick={(e, cell) => {
+                  //    const { name, id } = data
+                  //    addTab(name, `/products/recipes/${id}`)
+                  //    console.log('hi')
+                  // }}
 
                   // onClick(e, cell) => {
                   //    const { name, id } = cell._cell.row.data
@@ -379,7 +538,7 @@ function RecipeName({ cell }) {
                <IconButton type="ghost">
                   {data.isPublished ? <PublishIcon /> : <UnPublishIcon />}
                </IconButton>
-               <ContextualMenu>
+               {/* <ContextualMenu>
                   <Context
                      title="This is context 1"
                      handleClick={() => console.log('Context1')}
@@ -393,7 +552,7 @@ function RecipeName({ cell }) {
                      title="This is context 2"
                      handleClick={() => console.log('Context2')}
                   />
-               </ContextualMenu>
+               </ContextualMenu> */}
             </Flex>
          </Flex>
       </>
