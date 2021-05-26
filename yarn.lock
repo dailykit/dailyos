@@ -1317,15 +1317,18 @@
     react-tag-autocomplete "^5.7.1"
     tabulator-tables "4.7.2"
 
-
 "@dailykit/ui@^0.8.41":
   version "0.8.41"
   resolved "https://registry.yarnpkg.com/@dailykit/ui/-/ui-0.8.41.tgz#21843d04ecdabfb48837a055839bf456a15821dd"
   integrity sha512-7EhqTPqBczy7Dww1zFqzE1ppaE8EAYwrLROuLEAZzhCQDKE7faLNFR6szvYGNUoIWhUlXk7KiLq9+hNra7g3MA==
-
   dependencies:
     "@storybook/cli" "^6.1.18"
     concurrently "^5.3.0"
+
+"@dailykit/web-renderer@1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@dailykit/web-renderer/-/web-renderer-1.0.7.tgz#437eed0ecde37215284622e3409eac38605380b7"
+  integrity sha512-Zq5T+tv5fBZOPAVn773vhg32hPz376SjVp1/hTGqtYYFuCnWXU2uc2Y6ke5JBJ0c3HW7bz3nrJ59G7plbr6LeQ==
 
 "@emotion/is-prop-valid@^0.8.8":
   version "0.8.8"
