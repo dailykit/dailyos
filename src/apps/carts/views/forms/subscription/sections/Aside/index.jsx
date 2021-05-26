@@ -74,7 +74,7 @@ export const Aside = () => {
             <TextButton
                type="solid"
                onClick={() => openTunnel(1)}
-               disabled={!occurenceCustomer?.validItemCount}
+               disabled={!occurenceCustomer?.itemCountValid}
             >
                CHECKOUT
             </TextButton>
