@@ -9,9 +9,14 @@ export const QUERIES = {
                customerId
                customerInfo
                paymentMethodId
+               fulfillmentInfo
                customerKeycloakId
                billing: billingDetails
                subscriptionOccurenceId
+               subscriptionOccurence {
+                  id
+                  fulfillmentDate
+               }
                occurenceCustomer: subscriptionOccurenceCustomer {
                   itemCountValid: validStatus(path: "itemCountValid")
                   addedProductsCount: validStatus(path: "addedProductsCount")
@@ -262,6 +267,17 @@ export const QUERIES = {
             ) {
                zipcodes: subscription_subscription_zipcode(where: $where) {
                   zipcode
+                  deliveryTime
+                  deliveryPrice
+                  isPickupActive
+                  isDeliveryActive
+                  defaultAutoSelectFulfillmentMode
+                  pickupOptionId: subscriptionPickupOptionId
+                  pickupOption: subscriptionPickupOption {
+                     id
+                     time
+                     address
+                  }
                }
             }
          `,

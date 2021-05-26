@@ -1,4 +1,5 @@
 import React from 'react'
+import moment from 'moment'
 import styled from 'styled-components'
 import { toast } from 'react-toastify'
 import { Text, Flex, Spacer, Avatar, Filler, IconButton } from '@dailykit/ui'
@@ -9,7 +10,15 @@ import * as Icon from '../../../../../../../../shared/assets/icons'
 import { parseAddress } from '../../../../../../../../shared/utils'
 
 const CartInfo = () => {
-   const { brand, tunnels, address, customer, paymentMethod } = useManual()
+   const {
+      brand,
+      tunnels,
+      address,
+      customer,
+      paymentMethod,
+      fulfillmentInfo,
+      subscriptionOccurence,
+   } = useManual()
 
    return (
       <section>
@@ -77,9 +86,28 @@ const CartInfo = () => {
                }}
             />
             <Flex as="main" padding="0 8px 8px 8px">
-               {address?.id ? (
-                  <Text as="p">{parseAddress(address)}</Text>
-               ) : (
+               {fulfillmentInfo?.type === 'PREORDER_DELIVERY' && (
+                  <Text as="p">
+                     Box will be delivered on{' '}
+                     {moment(fulfillmentInfo?.slot?.from).format('MMM D')}{' '}
+                     &nbsp;between{' '}
+                     {moment(fulfillmentInfo?.slot?.from).format('hh:mm A')}
+                     &nbsp;-&nbsp;
+                     {moment(fulfillmentInfo?.slot?.to).format(
+                        'hh:mm A'
+                     )} at {parseAddress(address)}
+                  </Text>
+               )}
+               {fulfillmentInfo?.type === 'PREORDER_PICKUP' && (
+                  <Text as="p">
+                     Pickup is set in between{' '}
+                     {moment(fulfillmentInfo?.slot?.from).format('MMM D')},{' '}
+                     {moment(fulfillmentInfo?.slot?.from).format('hh:mm A')} -{' '}
+                     {moment(fulfillmentInfo?.slot?.to).format('hh:mm A')} from{' '}
+                     {parseAddress(fulfillmentInfo?.address)}
+                  </Text>
+               )}
+               {fulfillmentInfo === null && (
                   <Styles.Filler
                      height="100px"
                      message="Please select an address"
