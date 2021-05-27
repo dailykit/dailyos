@@ -11,7 +11,7 @@ import { QUERIES, MUTATIONS } from './graphql'
 const Context = React.createContext()
 
 const initial = {
-   mode: '',
+   mode: 'SUBSCRIPTION',
    brand: { id: null },
    customer: { id: null },
    organization: { id: null },
