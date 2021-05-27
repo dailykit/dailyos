@@ -649,7 +649,7 @@ export const QUERIES = {
             simpleRecipes: simpleRecipesAggregate(
                where: {
                   simpleRecipeYields: {
-                     simpleRecipecartItems: { level: { _eq: 3 }, cart: $cart }
+                     simpleRecipeCartItems: { level: { _eq: 3 }, cart: $cart }
                   }
                }
             ) {
