@@ -8,9 +8,13 @@ import { useQuery, useSubscription } from '@apollo/react-hooks'
 import { QUERIES } from '../../../graphql'
 import { logger } from '../../../../../shared/utils'
 import EmptyIllo from '../../../assets/svgs/EmptyIllo'
-import { AddressTunnel, PaymentTunnel } from './tunnels'
+import {
+   AddressTunnel,
+   PaymentTunnel,
+   ProductOptionsTunnel,
+   FulfillmentTunnel,
+} from './tunnels'
 import { InlineLoader } from '../../../../../shared/components'
-import FulfillmentTunnel from './tunnels/Fulfillment'
 
 const Context = React.createContext()
 
@@ -23,6 +27,7 @@ const initial = {
    products: { aggregate: { count: 0 } },
    billing: {},
    fulfillment: {},
+   productId: null,
 }
 
 const reducers = (state, { type, payload }) => {
@@ -53,6 +58,11 @@ const reducers = (state, { type, payload }) => {
             ...state,
             organization: payload,
          }
+      case 'SET_PRODUCT_ID':
+         return {
+            ...state,
+            productId: payload,
+         }
       default:
          return state
    }
@@ -62,6 +72,7 @@ export const ManualProvider = ({ children }) => {
    const params = useParams()
    const addressTunnels = useTunnel(1)
    const fulfillmentTunnels = useTunnel(1)
+   const productOptionsTunnels = useTunnel(1)
    const [cartError, setCartError] = React.useState('')
    const [isCartLoading, setIsCartLoading] = React.useState(true)
    const [state, dispatch] = React.useReducer(reducers, initial)
@@ -191,12 +202,14 @@ export const ManualProvider = ({ children }) => {
             tunnels: {
                address: addressTunnels,
                fulfillment: fulfillmentTunnels,
+               productOptions: productOptionsTunnels,
             },
          }}
       >
          {children}
          <FulfillmentTunnel panel={fulfillmentTunnels} />
          <AddressTunnel panel={addressTunnels} />
+         <ProductOptionsTunnel panel={productOptionsTunnels} />
       </Context.Provider>
    )
 }

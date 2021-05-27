@@ -30,7 +30,7 @@ import { InlineLoader } from '../../../../../../../shared/components'
 import { logger, parseAddress } from '../../../../../../../shared/utils'
 import { toast } from 'react-toastify'
 
-const FulfillmentTunnel = ({ panel }) => {
+export const FulfillmentTunnel = ({ panel }) => {
    const [tunnels] = panel
    return (
       <Tunnels tunnels={tunnels}>
@@ -489,5 +489,3 @@ const Content = ({ panel }) => {
       </>
    )
 }
-
-export default FulfillmentTunnel

@@ -232,6 +232,26 @@ export const QUERIES = {
             }
          }
       `,
+      ONE: gql`
+         query product($id: Int!) {
+            product(id: $id) {
+               id
+               name
+               type
+               price
+               discount
+               defaultProductOptionId
+               defaultCartItem
+               productOptions {
+                  id
+                  label
+                  price
+                  discount
+                  cartItem
+               }
+            }
+         }
+      `,
    },
    CATEGORIES: {
       LIST: gql`
