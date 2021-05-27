@@ -12,6 +12,7 @@ import {
    IconButton,
    Form,
 } from '@dailykit/ui'
+import styled from 'styled-components'
 import { MUTATIONS, QUERIES } from '../../../../../graphql'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { useManual } from '../../state'
@@ -391,25 +392,27 @@ const Content = ({ panel }) => {
             <InlineLoader />
          ) : (
             <Flex padding="16px">
-               <Text as="subtitle"> Order for </Text>
+               <Text as="text1"> Order for </Text>
+               <Spacer size="4px" />
                <RadioGroup
                   options={[
                      { id: 'PICKUP', title: 'Pickup' },
                      { id: 'DELIVERY', title: 'Delivery' },
                   ]}
-                  onChange={option => setType(option.id)}
+                  onChange={option => setType(option?.id ?? '')}
                />
                <Spacer size="16px" />
                {type === 'DELIVERY' && (
                   <>
-                     <Text as="subtitle"> Address for Delivery </Text>
+                     <Text as="text1"> Address for Delivery </Text>
+                     <Spacer size="4px" />
                      {Boolean(address?.id) ? (
                         <Flex
                            container
                            alignItems="center"
                            justifyContent="space-between"
                         >
-                           <Text as="text1">{parseAddress(address)}</Text>
+                           <Text as="text2">{parseAddress(address)}</Text>
                            <IconButton
                               type="outline"
                               size="sm"
@@ -430,23 +433,22 @@ const Content = ({ panel }) => {
                )}
                {Boolean(type) && (
                   <>
-                     <Text as="subtitle">
-                        {' '}
-                        When would you like your order?{' '}
-                     </Text>
+                     <Text as="text1"> When would you like your order? </Text>
+                     <Spacer size="4px" />
                      <RadioGroup
                         options={[
                            { id: 'ONDEMAND', title: 'Now' },
                            { id: 'PREORDER', title: 'Later' },
                         ]}
-                        onChange={option => setTime(option.id)}
+                        onChange={option => setTime(option?.id ?? '')}
                      />
                      <Spacer size="16px" />
                   </>
                )}
                {time === 'PREORDER' && (
                   <>
-                     <Text as="subtitle"> Select a slot </Text>
+                     <Text as="text1"> Select a slot </Text>
+                     <Spacer size="4px" />
                      <Flex container alignItems="center">
                         <Form.Group>
                            <Form.Label htmlFor="date" title="date">
@@ -483,9 +485,15 @@ const Content = ({ panel }) => {
                      </Flex>
                   </>
                )}
-               {Boolean(error) && <Text as="text3">{error}</Text>}
+               {Boolean(error) && <Styles.Error>{error}</Styles.Error>}
             </Flex>
          )}
       </>
    )
+}
+
+const Styles = {
+   Error: styled.small`
+      color: #ec3333;
+   `,
 }

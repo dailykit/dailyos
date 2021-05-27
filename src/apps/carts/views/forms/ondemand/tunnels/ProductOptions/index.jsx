@@ -65,7 +65,7 @@ const Content = ({ panel }) => {
             close={() => closeTunnel(1)}
             right={{
                title: 'Add',
-               loading: adding,
+               isLoading: adding,
                disabled: !selectedOption,
                action: () =>
                   insertCartItem({
