@@ -11,7 +11,11 @@ import {
    useSingleList,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
+import {
+   Banner,
+   InlineLoader,
+   Tooltip,
+} from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { IngredientContext } from '../../../../../context/ingredient'
 import { FETCH_PACKAGINGS } from '../../../../../graphql'
@@ -56,6 +60,7 @@ const EditPackagingTunnel = ({ closeTunnel }) => {
             tooltip={<Tooltip identifier="packaging_tunnel" />}
          />
          <TunnelBody>
+            <Banner id="products-app-ingredients-packaging-tunnel-top" />
             {loading ? (
                <InlineLoader />
             ) : (
@@ -94,6 +99,7 @@ const EditPackagingTunnel = ({ closeTunnel }) => {
                   )}
                </>
             )}
+            <Banner id="products-app-ingredients-packaging-tunnel-bottom" />
          </TunnelBody>
       </>
    )

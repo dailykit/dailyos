@@ -19,6 +19,7 @@ import { isEmpty, stubTrue } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import {
+   Banner,
    ErrorState,
    InlineLoader,
    Tooltip,
@@ -205,15 +206,15 @@ const RecipeForm = () => {
    }
    const toggleSubRecipe = () => {
       const val = !state.isSubRecipe
-         updateRecipe({
-            variables: {
-               id: state.id,
-               set: {
-                  isSubRecipe: val,
-               },
+      updateRecipe({
+         variables: {
+            id: state.id,
+            set: {
+               isSubRecipe: val,
             },
-         })
-      }
+         },
+      })
+   }
    const clone = () => {
       if (cloning) return
       const clonedRecipe = {
@@ -302,6 +303,7 @@ const RecipeForm = () => {
                   />
                </Tunnel>
             </Tunnels>
+            <Banner id="products-app-recipes-create-recipe-top" />
             <ResponsiveFlex
                container
                justifyContent="space-between"
@@ -378,9 +380,11 @@ const RecipeForm = () => {
                      name="subRecipe"
                      value={state.isSubRecipe}
                      onChange={toggleSubRecipe}
-                  > <Flex container alignItems="center">
+                  >
+                     {' '}
+                     <Flex container alignItems="center">
                         Sub Recipe
-                  <Spacer xAxis size="16px" />
+                        <Spacer xAxis size="16px" />
                         <Tooltip identifier="sub_publish" />
                      </Flex>
                   </Form.Toggle>
@@ -427,6 +431,7 @@ const RecipeForm = () => {
                   </HorizontalTabPanels>
                </HorizontalTabs>
             </Flex>
+            <Banner id="products-app-recipes-create-recipe-bottom" />
          </>
       </RecipeContext.Provider>
    )

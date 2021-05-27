@@ -19,7 +19,11 @@ import {
 } from '../../../../../graphql'
 import validator from '../../validators'
 import { TunnelBody } from '../styled'
-import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
+import {
+   InlineLoader,
+   Tooltip,
+   Banner,
+} from '../../../../../../../shared/components'
 
 const ServingsTunnel = ({ state, closeTunnel }) => {
    // State
@@ -181,6 +185,7 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
             tooltip={<Tooltip identifier="servings_tunnel" />}
          />
          <TunnelBody>
+            <Banner id="products-app-recipes-create-recipe-servings-tunnel-top" />
             {loading ? (
                <InlineLoader />
             ) : (
@@ -284,6 +289,7 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
                   />
                </>
             )}
+            <Banner id="products-app-recipes-create-recipe-servings-tunnel-bottom" />
          </TunnelBody>
       </>
    )

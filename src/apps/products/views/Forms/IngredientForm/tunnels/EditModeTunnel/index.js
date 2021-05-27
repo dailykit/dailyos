@@ -13,6 +13,7 @@ import { toast } from 'react-toastify'
 import {
    OperationConfig,
    Tooltip,
+   Banner,
 } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { EditIcon } from '../../../../../assets/icons'
@@ -109,6 +110,7 @@ const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
             tooltip={<Tooltip identifier="edit_mode_tunnel" />}
          />
          <TunnelBody>
+            <Banner id="products-app-ingredients-edit-mode-tunnel-top" />
             <StyledTable cellSpacing={0}>
                <thead>
                   <tr>
@@ -212,6 +214,7 @@ const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
                   </tr>
                </tbody>
             </StyledTable>
+            <Banner id="products-app-ingredients-edit-mode-tunnel-bottom" />
          </TunnelBody>
       </>
    )
