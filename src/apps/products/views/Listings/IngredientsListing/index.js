@@ -18,6 +18,7 @@ import * as moment from 'moment'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import {
+   Banner,
    ErrorState,
    InlineLoader,
    Tooltip,
@@ -108,6 +109,7 @@ const IngredientsListing = () => {
 
    return (
       <ResponsiveFlex maxWidth="1280px" margin="0 auto">
+         <Banner id="products-app-ingredients-listing-top" />
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="lg">
                <BulkActionsTunnel
@@ -149,6 +151,7 @@ const IngredientsListing = () => {
                setSelectedRows={setSelectedRows}
             />
          )}
+         <Banner id="products-app-ingredients-listing-bottom" />
       </ResponsiveFlex>
    )
 }
