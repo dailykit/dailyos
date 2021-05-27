@@ -157,15 +157,17 @@ export const Main = () => {
 
 const Menu = ({ menu }) => {
    const { id: cartId } = useParams()
+   const { tunnels, dispatch } = useManual()
 
    const [insertCartItem, { loading }] = useMutation(
       MUTATIONS.CART.ITEM.INSERT,
       {
          onCompleted: () => {
-            console.log('Added item!')
+            toast.success('Item added to cart!')
          },
          onError: error => {
-            console.log(error)
+            logger(error)
+            toast.error('Failed to add product to cart!')
          },
       }
    )
@@ -212,6 +214,11 @@ const Menu = ({ menu }) => {
          if (product.isPopupAllowed) {
             // open options tunnel
             console.log('Open options tunnel!')
+            dispatch({
+               type: 'SET_PRODUCT_ID',
+               payload: productId,
+            })
+            tunnels.productOptions[1](1)
          } else {
             console.log(product.defaultCartItem)
             console.log(cartId)

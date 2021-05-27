@@ -128,7 +128,7 @@ const CartInfo = () => {
                ) : (
                   <Styles.Filler
                      height="100px"
-                     message="Please select an address"
+                     message="Please add fulfillment details"
                      illustration={<EmptyIllo width="120px" />}
                   />
                )}
