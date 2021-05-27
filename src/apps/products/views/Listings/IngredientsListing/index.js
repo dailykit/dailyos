@@ -109,7 +109,7 @@ const IngredientsListing = () => {
    return (
       <ResponsiveFlex maxWidth="1280px" margin="0 auto">
          <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1} size="lg">
+            <Tunnel layer={1} size="full">
                <BulkActionsTunnel
                   removeSelectedRow={removeSelectedRow}
                   close={closeTunnel}

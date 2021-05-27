@@ -100,7 +100,7 @@ const ProductsListing = () => {
    return (
       <>
          <Tunnels tunnels={tunnels}>
-            <Tunnel layer={1} size="lg">
+            <Tunnel layer={1} size="full">
                <BulkActionsTunnel
                   close={closeTunnel}
                   selectedRows={selectedRows}
