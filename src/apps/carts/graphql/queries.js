@@ -17,6 +17,7 @@ export const QUERIES = {
                paymentMethodId
                walletAmountUsed
                loyaltyPointsUsed
+               loyaltyPointsUsable
                customerKeycloakId
                billing: billingDetails
                subscriptionOccurenceId
