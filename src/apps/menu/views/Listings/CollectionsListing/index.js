@@ -12,6 +12,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import {
+   Banner,
    ErrorState,
    InlineLoader,
    Tooltip,
@@ -154,6 +155,7 @@ const CollectionsListing = () => {
 
    return (
       <ResponsiveFlex maxWidth="1280px" margin="0 auto">
+         <Banner id="menu-app-collections-listing-top" />
          <Flex
             container
             alignItems="center"
@@ -187,6 +189,7 @@ const CollectionsListing = () => {
                options={tableOptions}
             />
          )}
+         <Banner id="menu-app-collections-listing-bottom" />
       </ResponsiveFlex>
    )
 }
