@@ -285,7 +285,7 @@ const Content = ({ panel }) => {
             onSave={() => refetch()}
             closeTunnel={closeAddTunnel}
             keycloakId={customer?.keycloakId}
-            clientId={window._env_.REACT_APP_KEYCLOAK_REALM}
+            clientId={window._env_.REACT_APP_KEYCLOAK_REALM + '-subscription'}
          />
       </>
    )
