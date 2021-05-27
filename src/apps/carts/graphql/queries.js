@@ -6,10 +6,17 @@ export const QUERIES = {
          subscription cart($id: Int!) {
             cart(id: $id) {
                id
+               tax
+               discount
+               itemTotal
+               totalPrice
                customerId
                customerInfo
-               paymentMethodId
+               deliveryPrice
                fulfillmentInfo
+               paymentMethodId
+               walletAmountUsed
+               loyaltyPointsUsed
                customerKeycloakId
                billing: billingDetails
                subscriptionOccurenceId
@@ -46,24 +53,6 @@ export const QUERIES = {
                         value
                      }
                   }
-                  subscriptionStoreSettings(
-                     where: {
-                        subscriptionStoreSetting: {
-                           identifier: {
-                              _in: [
-                                 "Location"
-                                 "Pickup Availability"
-                                 "Delivery Availability"
-                              ]
-                           }
-                        }
-                     }
-                  ) {
-                     subscriptionStoreSetting {
-                        identifier
-                        value
-                     }
-                  }
                }
                address
                fulfillmentInfo
@@ -75,6 +64,7 @@ export const QUERIES = {
                      id
                      addOnLabel
                      addOnPrice
+                     price: unitPrice
                      name: displayName
                      image: displayImage
                   }
