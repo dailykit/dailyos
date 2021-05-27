@@ -13,6 +13,7 @@ import {
    Tooltip,
    ErrorState,
    InlineLoader,
+   Banner,
 } from '../../../../../shared/components'
 import { ResponsiveFlex } from '../../../../../shared/components/ResponsiveFlex'
 
@@ -98,6 +99,7 @@ export const Subscriptions = () => {
 
    return (
       <ResponsiveFlex maxWidth="1280px" margin="0 auto">
+         <Banner id="subscription-app-subscriptions-listing-top" />
          <Flex
             container
             as="header"
@@ -124,6 +126,7 @@ export const Subscriptions = () => {
                options={{ ...options, layout: 'fitColumns', maxHeight: 480 }}
             />
          )}
+         <Banner id="subscription-app-subscriptions-listing-bottom" />
       </ResponsiveFlex>
    )
 }
