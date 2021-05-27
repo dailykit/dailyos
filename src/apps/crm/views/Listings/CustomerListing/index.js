@@ -13,7 +13,7 @@ import {
    CUSTOMERS_LISTING,
    CUSTOMER_ARCHIVED,
 } from '../../../graphql'
-import { Tooltip, InlineLoader } from '../../../../../shared/components'
+import { Tooltip, InlineLoader, Banner } from '../../../../../shared/components'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { currencyFmt, logger } from '../../../../../shared/utils'
@@ -328,6 +328,7 @@ const CustomerListing = () => {
    if (loading || customerCountLoading || listloading) return <InlineLoader />
    return (
       <StyledWrapper>
+         <Banner id="crm-app-customers-listing-top" />
          <Flex
             container
             alignItems="center"
@@ -360,6 +361,7 @@ const CustomerListing = () => {
                ref={tableRef}
             />
          )}
+         <Banner id="crm-app-customers-listing-bottom" />
       </StyledWrapper>
    )
 }

@@ -23,7 +23,7 @@ import {
 } from '../../../graphql'
 import { StyledWrapper } from './styled'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
-import { Tooltip, InlineLoader } from '../../../../../shared/components'
+import { Tooltip, InlineLoader, Banner } from '../../../../../shared/components'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import CampaignTypeTunnel from './Tunnel'
@@ -216,6 +216,7 @@ const CampaignListing = () => {
    if (listLoading || loading) return <InlineLoader />
    return (
       <StyledWrapper>
+         <Banner id="crm-app-campaigns-listing-top" />
          <Flex container alignItems="center" justifyContent="space-between">
             <Flex container height="80px" alignItems="center">
                <Text as="title">
@@ -248,6 +249,7 @@ const CampaignListing = () => {
                <CampaignTypeTunnel close={closeTunnel} />
             </Tunnel>
          </Tunnels>
+         <Banner id="crm-app-campaigns-listing-bottom" />
       </StyledWrapper>
    )
 }
