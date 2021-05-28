@@ -6,8 +6,7 @@
    "dependencies": {
       "@apollo/react-hooks": "3.1.5",
       "@dailykit/react-tabulator": "0.13.6",
-      "@dailykit/ui": "^0.8.39",
-      "@dailykit/ui": "0.8.32",
+      "@dailykit/ui": "^0.8.46",
       "@monaco-editor/react": "^4.0.11",
       "@reach/tabs": "0.11.2",
       "@react-google-maps/api": "1.9.7",
@@ -52,6 +51,7 @@
       "react-google-places-autocomplete": "2.1.0",
       "react-i18next": "11.4.0",
       "react-loadable": "5.5.0",
+      "react-loading-skeleton": "^2.2.0",
       "react-phone-input-2": "2.13.5",
       "react-router-dom": "5.1.2",
       "react-rte": "^0.16.3",
