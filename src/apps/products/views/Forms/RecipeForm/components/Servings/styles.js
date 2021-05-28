@@ -5,7 +5,7 @@ export const StyledCardEven = styled.div(
       height: 85px;
       width: 160px;
       padding: 5px 5px 5px 5px;
-      marginbottom: 22px;
+      margin-bottom: 40px;
       background: ${index % 2 == 0 ? `#FFFFFF` : `#F4F4F4`};
       border: 1px solid #f4f4f4;
       box-sizing: border-box;

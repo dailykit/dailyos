@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { useMutation, useSubscription, useLazyQuery } from '@apollo/react-hooks'
 import { Link } from 'react-router-dom'
 import Skeleton from 'react-loading-skeleton'
+import LazyDropdown from '../LazyDropdown'
 import {
    ButtonTile,
    Flex,
@@ -14,7 +15,6 @@ import {
    IconButton,
    ContextualMenu,
    Context,
-   Dropdown,
    Form,
    Spacer,
    ComboButton,
@@ -30,7 +30,7 @@ import {
    AutoGenerate,
    NextArrow,
    PreviousArrow,
-   PlusIconLarge
+   PlusIconLarge,
 } from '../../../../../assets/icons'
 import { toast } from 'react-toastify'
 import {
@@ -68,28 +68,13 @@ import { constant, stubFalse } from 'lodash'
 
 const Servings = ({ state }) => {
    const { recipeState } = React.useContext(RecipeContext)
-   const [ingredientProcessings, setIngredientProcessings] = React.useState([])
 
-   let [search] = React.useState('')
-   let [ingredientStateId, setingredientStateId] = React.useState(0)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [
       ingredientsTunnel,
       openingredientTunnel,
       closeingredientTunnel,
    ] = useTunnel(2)
-
-   const { loading } = useSubscription(S_PROCESSINGS, {
-      variables: {
-         where: {
-            isArchived: { _eq: false },
-         },
-      },
-      onSubscriptionData: data => {
-         const processings = data.subscriptionData.data.ingredientProcessings
-         setIngredientProcessings(processings)
-      },
-   })
 
    const [sachets, setSachets] = React.useState([])
    let [slipname, setslipname] = React.useState('')
@@ -146,54 +131,6 @@ const Servings = ({ state }) => {
             },
          })
    }
-
-   const [updateSimpleRecipeIngredientProcessing] = useMutation(
-      UPDATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING,
-      {
-         onCompleted: () => {
-            toast.success('Processing added!')
-         },
-         onError: error => {
-            toast.error('Something went wrong!')
-            logger(error)
-         },
-      }
-   )
-
-   const [upsertMasterProcessing] = useMutation(UPSERT_MASTER_PROCESSING, {
-      onCompleted: data => {
-         createProcessing({
-            variables: {
-               procs: [
-                  {
-                     ingredientId: ingredientStateId,
-                     processingName:
-                        data.createMasterProcessing.returning[0].name,
-                  },
-               ],
-            },
-         })
-      },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-   })
-
-   const [createProcessing] = useMutation(CREATE_PROCESSINGS, {
-      onCompleted: data => {
-         //console.log(data)
-         const processing = {
-            id: data.createIngredientProcessing.returning[0].id,
-            title: data.createIngredientProcessing.returning[0].processingName,
-         }
-         // add(processing)
-      },
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-   })
 
    const [upsertMasterUnit] = useMutation(UPSERT_MASTER_UNIT, {
       onError: error => {
@@ -299,6 +236,7 @@ const Servings = ({ state }) => {
          return (
             <StyledCardEven
                baseYieldId={option.baseYieldId}
+               key={index}
                index={index}
                id={option.id}
             >
@@ -339,7 +277,9 @@ const Servings = ({ state }) => {
                               }
                            >
                               <AutoGenerate />
-                              <div style={{color:'#202020'}}>Auto-generate</div>
+                              <div style={{ color: '#202020' }}>
+                                 Auto-generate
+                              </div>
                            </ComboButton>
                         </Context>
                      ) : (
@@ -365,43 +305,15 @@ const Servings = ({ state }) => {
    const ingredientsOptions =
       state.simpleRecipeIngredients?.map((option, index) => {
          //console.log(option, 'Adrish option')
-         let dropDownReadOnly = true
+
          let sachetDisabled = false
-         let optionsWithoutDescription = []
+
          let sachetOptions = []
 
          if (option.processing == null) {
-            dropDownReadOnly = false
             sachetDisabled = true
          }
-         const selectedOption = processing => {
-            updateSimpleRecipeIngredientProcessing({
-               variables: {
-                  id: option.id,
-                  _set: {
-                     processingId: processing.id,
-                     simpleRecipeId: state.id,
-                  },
-               },
-            })
-         }
-         const searchedOption = searchedProcessing => {
-            search = searchedProcessing
 
-            //console.log(search, 'Adrish Search')
-         }
-
-         const quickCreateProcessing = () => {
-            let processingName =
-               search.slice(0, 1).toUpperCase() + search.slice(1)
-            setingredientStateId(option.ingredient.id)
-            //console.log(ingredientStateId, 'ingredientStateId')
-            upsertMasterProcessing({
-               variables: {
-                  name: processingName,
-               },
-            })
-         }
          const deleteIngredientProcessing = id => {
             const isConfirmed = window.confirm(
                'Are you sure you want to delete this ingredient?'
@@ -415,13 +327,14 @@ const Servings = ({ state }) => {
                })
             }
          }
-         let ProcessingOptions = []
+         console.log(option, 'option outside Processing')
          return (
             <div
+               key={index}
                style={{
                   display: 'grid',
                   gridTemplateColumns: `238px repeat(${state.simpleRecipeYields?.length}, 160px)`,
-                  gridTemplateRows: `130px)`,
+                  gridTemplateRows: `170px`,
                }}
             >
                <StyledCardIngredient>
@@ -444,28 +357,10 @@ const Servings = ({ state }) => {
                      </ContextualMenu>
                   </div>
 
-                  {ingredientProcessings.map((item, index) => {
-                     if (option.ingredient.id == item.ingredientId) {
-                        ProcessingOptions.push({
-                           id: item.id,
-                           title: item.title,
-                        })
-                     }
-                     optionsWithoutDescription = ProcessingOptions
-                  })}
                   <Spacer size="7px" />
+
                   <div id="dropdown">
-                     <Dropdown
-                        type="single"
-                        variant="revamp"
-                        defaultOption={option.processing}
-                        addOption={quickCreateProcessing}
-                        options={ProcessingOptions}
-                        searchedOption={searchedOption}
-                        selectedOption={selectedOption}
-                        readOnly={dropDownReadOnly}
-                        typeName="processing"
-                     />
+                     <Processings state={state} option={option} />
                   </div>
 
                   <div id="calCountIngredient">
@@ -508,10 +403,9 @@ const Servings = ({ state }) => {
                         visibility = item.isVisible
                         defaultSachetOption = {
                            id: item.ingredientSachet.id,
-                           title: `${defaultSachetOption.title} ${item.ingredientSachet.quantity}`,
+                           title: `${item.ingredientSachet.quantity} ${item.ingredientSachet.unit}`,
                         }
                      }
-                     return ''
                   })
 
                   const quickCreateSachet = async () => {
@@ -563,18 +457,22 @@ const Servings = ({ state }) => {
                      //console.log(search, 'Adrish Search')
                   }
 
-                  //console.log(defaultSachetOption, "Adrish defaultSachetOption")
+                  // console.log(defaultSachetOption, 'Adrish defaultSachetOption')
                   return (
-                     <>
+                     <React.Fragment key={index}>
                         {loader == false || sachetOptions.length > 0 ? (
                            <SatchetCard index={index}>
-                              <Dropdown
+                              <LazyDropdown
                                  disabled={sachetDisabled}
                                  options={sachetOptions}
                                  defaultOption={defaultSachetOption}
+                                 defaultName={defaultSachetOption.title}
                                  addOption={quickCreateSachet}
                                  searchedOption={searchedSachetOption}
                                  selectedOption={selectedSachetOption}
+                                 handleClick={() => {
+                                    console.log('Fetch Data')
+                                 }}
                                  type="single"
                                  variant="revamp"
                                  typeName="sachet"
@@ -601,7 +499,7 @@ const Servings = ({ state }) => {
                               <Skeleton />
                            </SatchetCard>
                         )}
-                     </>
+                     </React.Fragment>
                   )
                })}
             </div>
@@ -820,16 +718,16 @@ const Servings = ({ state }) => {
                               left: '0',
                               position: 'sticky',
                               zIndex: '+10',
-                              background: '#F4F4F4'
+                              background: '#F4F4F4',
                            }}
                            type="solid"
                         >
-                           <PlusIconLarge/>
+                           <PlusIconLarge />
                         </IconButton>
 
                         {options}
                      </div>
-                     {loading && ingredientsOptions.length && loadingSachets ? (
+                     {ingredientsOptions.length && loadingSachets ? (
                         <InlineLoader />
                      ) : (
                         <>
@@ -1025,3 +923,138 @@ const SachetDetails = ({
       </>
    )
 }
+
+const Processings = ({ state, option }) => {
+   const [ProcessingOptions, setProcessingOptions] = React.useState([])
+   const [ingredientProcessings, setIngredientProcessings] = React.useState([])
+
+   let [search] = React.useState('')
+   const { loading } = useSubscription(S_PROCESSINGS, {
+      variables: {
+         where: {
+            isArchived: { _eq: false },
+         },
+      },
+      onSubscriptionData: data => {
+         const processings = data.subscriptionData.data.ingredientProcessings
+         setIngredientProcessings(processings)
+      },
+   })
+
+   let [ingredientStateId, setingredientStateId] = React.useState(0)
+   const [upsertMasterProcessing] = useMutation(UPSERT_MASTER_PROCESSING, {
+      onCompleted: data => {
+         createProcessing({
+            variables: {
+               procs: [
+                  {
+                     ingredientId: ingredientStateId,
+                     processingName:
+                        data.createMasterProcessing.returning[0].name,
+                  },
+               ],
+            },
+         })
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
+   const [createProcessing] = useMutation(CREATE_PROCESSINGS, {
+      onCompleted: data => {
+         //console.log(data)
+         const processing = {
+            id: data.createIngredientProcessing.returning[0].id,
+            title: data.createIngredientProcessing.returning[0].processingName,
+         }
+         // add(processing)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
+   const [updateSimpleRecipeIngredientProcessing] = useMutation(
+      UPDATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING,
+      {
+         onCompleted: () => {
+            toast.success('Processing added!')
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
+
+   let dropDownReadOnly = true
+   let optionsWithoutDescription = []
+   if (option.processing == null) {
+      dropDownReadOnly = false
+   }
+   const selectedOption = processing => {
+      updateSimpleRecipeIngredientProcessing({
+         variables: {
+            id: option.id,
+            _set: {
+               processingId: processing.id,
+               simpleRecipeId: state.id,
+            },
+         },
+      })
+   }
+   const searchedOption = searchedProcessing => {
+      search = searchedProcessing
+      //console.log(search, 'Adrish Search')
+   }
+
+   const quickCreateProcessing = () => {
+      let processingName = search.slice(0, 1).toUpperCase() + search.slice(1)
+      setingredientStateId(option.ingredient.id)
+      //console.log(ingredientStateId, 'ingredientStateId')
+      upsertMasterProcessing({
+         variables: {
+            name: processingName,
+         },
+      })
+   }
+   const tempProcessingOptions = ingredientProcessings.filter((item, index) => {
+      if (option.ingredient.id == item.ingredientId) {
+         return true
+      } else {
+         return false
+      }
+   })
+   let defaultName = ''
+   if (option.processing === null) {
+      defaultName = ''
+   } else {
+      defaultName = option.processing.name
+   }
+   console.log(option, 'option inside Processing')
+   // console.log(defaultName, 'defaultName')
+   return (
+      <>
+         <LazyDropdown
+            type="single"
+            variant="revamp"
+            defaultName={defaultName}
+            defaultOption={option.processing}
+            addOption={quickCreateProcessing}
+            options={ProcessingOptions}
+            searchedOption={searchedOption}
+            selectedOption={selectedOption}
+            readOnly={dropDownReadOnly}
+            handleClick={() => {
+               setProcessingOptions(tempProcessingOptions)
+            }}
+            typeName="processing"
+         />
+      </>
+   )
+}
+
+
