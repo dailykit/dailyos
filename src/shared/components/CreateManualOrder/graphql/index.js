@@ -56,6 +56,18 @@ export const MUTATIONS = {
          `,
       },
    },
+   REGISTER_AND_CREATE_BRAND_CUSTOMER: gql`
+      mutation registerAndCreateBrandCustomer(
+         $input: RegisterAndCreateBrandCustomerInput!
+      ) {
+         registerAndCreateBrandCustomer(input: $input) {
+            success
+            data
+            error
+            message
+         }
+      }
+   `,
 }
 
 export const QUERIES = {
@@ -77,6 +89,36 @@ export const QUERIES = {
       LIST: gql`
          query customers($where: crm_brand_customer_bool_exp = {}) {
             customers: brandCustomers(where: $where) {
+               id
+               isDemo
+               keycloakId
+               isSubscriber
+               subscriptionId
+               subscriptionPaymentMethodId
+               customer {
+                  id
+                  email
+                  isTest
+                  platform_customer {
+                     id: keycloakId
+                     firstName
+                     lastName
+                     phoneNumber
+                     fullName
+                     stripeCustomerId
+                     customerByClients: CustomerByClients {
+                        id: keycloakId
+                        clientId
+                        organizationStripeCustomerId
+                     }
+                  }
+               }
+            }
+         }
+      `,
+      ONE: gql`
+         query brandCustomer($id: Int!) {
+            brandCustomer(id: $id) {
                id
                isDemo
                keycloakId
