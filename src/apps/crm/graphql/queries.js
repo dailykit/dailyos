@@ -245,9 +245,14 @@ export const ALL_DATA = gql`
                      line1
                      line2
                      city
-                     zipcode
                      state
                      country
+                     zipcode
+                     notes
+                     label
+                     searched
+                     landmark
+                     keycloakId
                   }
                   stripePaymentMethods {
                      stripePaymentMethodId

@@ -451,17 +451,34 @@ export const CREATE_CUISINE_NAME = gql`
    }
 `
 export const INGREDIENT_INGREDIENT_CATEGORY_UPDATE = gql`
-   mutation updateIngredientCategory($id: Int_comparison_exp! $category: String!) {
-      updateIngredient(where: {id: $id}, _set: {category: $category}) {
-        affected_rows
+   mutation updateIngredientCategory(
+      $id: Int_comparison_exp!
+      $category: String!
+   ) {
+      updateIngredient(where: { id: $id }, _set: { category: $category }) {
+         affected_rows
       }
-    }
+   }
 `
 
 export const INGREDIENT_CATEGORY_CREATE = gql`
    mutation insertIngredientCategory($name: String!) {
       createIngredientCategory(object: { name: $name }) {
          name
+      }
+   }
+`
+export const INCREASE_PRICE_AND_DISCOUNT = gql`
+   mutation increasePriceAndDiscount(
+      $price: numeric!
+      $discount: numeric!
+      $ids: [Int!]
+   ) {
+      updateProducts(
+         where: { id: { _in: $ids } }
+         _inc: { price: $price, discount: $discount }
+      ) {
+         affected_rows
       }
    }
 `
