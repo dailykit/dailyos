@@ -33,6 +33,7 @@ import {
    SUBSCRIPTION_PLAN,
    OCCURENCES,
    REWARD_DATA,
+   CUSTOMERS_LISTING_2,
 } from './queries'
 
 import {
@@ -101,4 +102,5 @@ export {
    SIGNUP_COUNT,
    LOYALTYPOINT_COUNT,
    BRAND_LISTING,
+   CUSTOMERS_LISTING_2,
 }
