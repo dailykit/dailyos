@@ -223,9 +223,15 @@ const CustomerListing = () => {
          'tabulator-customer_table-group'
       )
       const customerGroupParse =
-         customerGroup !== undefined ? JSON.parse(customerGroup).groupBy : null
+         customerGroup !== undefined &&
+         customerGroup !== null &&
+         customerGroup.length !== 0
+            ? JSON.parse(customerGroup)
+            : null
       tableRef.current.table.setGroupBy(
-         customerGroupParse.length > 0 ? customerGroupParse : 'subscriber'
+         !!customerGroupParse && customerGroupParse.length > 0
+            ? customerGroupParse
+            : 'subscriber'
       )
       tableRef.current.table.setGroupHeader(function (
          value,
@@ -294,8 +300,10 @@ const CustomerListing = () => {
          'tabulator-customer_table-group'
       )
       const customerGroupParse =
-         customerGroup !== undefined && customerGroup.length !== 0
-            ? JSON.parse(customerGroup).groupBy
+         customerGroup !== undefined &&
+         customerGroup !== null &&
+         customerGroup.length !== 0
+            ? JSON.parse(customerGroup)
             : null
       if (customerGroupParse !== null) {
          customerGroupParse.forEach(x => {
@@ -609,6 +617,10 @@ const CustomerListing = () => {
                   options={groupByOptions}
                   searchedOption={() => {}}
                   selectedOption={value => {
+                     localStorage.setItem(
+                        'tabulator-customer_table-group',
+                        JSON.stringify(value.map(x => x.payLoad))
+                     )
                      tableRef.current.table.setGroupBy(
                         value.map(x => x.payLoad)
                      )

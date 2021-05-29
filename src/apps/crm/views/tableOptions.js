@@ -9,7 +9,7 @@ const options = {
    persistence: true,
    persistenceID: 'customer_table',
    persistence: {
-      group: true,
+      group: false,
       sort: true, //persist column sorting
       filter: true, //persist filter sorting
       page: true, //persist page
