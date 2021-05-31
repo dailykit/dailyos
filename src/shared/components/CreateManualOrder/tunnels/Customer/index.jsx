@@ -159,6 +159,19 @@ const validateEmail = email => {
 }
 
 const CreateCustomer = ({ closeCustomerTunnel }) => {
+   const [email, setEmail] = React.useState({
+      value: '',
+      meta: {
+         errors: [],
+         isValid: false,
+         isTouched: false,
+      },
+   })
+   const [form, setForm] = React.useState({
+      firstName: '',
+      lastName: '',
+      phoneNumber: '',
+   })
    const { mode, brand, methods, tunnels, dispatch } = useManual()
    const [fetchCustomer, { loading: loadingCustomer }] = useLazyQuery(
       QUERIES.CUSTOMER.ONE,
@@ -206,14 +219,6 @@ const CreateCustomer = ({ closeCustomerTunnel }) => {
          },
       }
    )
-   const [email, setEmail] = React.useState({
-      value: '',
-      meta: {
-         errors: [],
-         isValid: false,
-         isTouched: false,
-      },
-   })
 
    const onBlur = e => {
       const { value } = e.target
@@ -232,6 +237,11 @@ const CreateCustomer = ({ closeCustomerTunnel }) => {
       setEmail(existing => ({ ...existing, value }))
    }
 
+   const onFormChange = e => {
+      const { name, value } = e.target
+      setForm(existing => ({ ...existing, [name]: value }))
+   }
+
    const handleSubmit = async () => {
       create({
          variables: {
@@ -243,6 +253,11 @@ const CreateCustomer = ({ closeCustomerTunnel }) => {
                clientId:
                   window._env_.REACT_APP_KEYCLOAK_REALM +
                   `${mode === 'SUBSCRIPTION' ? '-subscription' : ''}`,
+               ...(form.firstName.trim() && { firstName: form.firstName }),
+               ...(form.lastName.trim() && { lastName: form.lastName }),
+               ...(form.phoneNumber.trim() && {
+                  phoneNumber: form.phoneNumber,
+               }),
             },
          },
       })
@@ -256,6 +271,9 @@ const CreateCustomer = ({ closeCustomerTunnel }) => {
          />
          <Flex padding="16px" overflowY="auto" height="calc(100vh - 196px)">
             <Form.Group>
+               <Form.Label htmlFor="email" title="email">
+                  Email*
+               </Form.Label>
                <Form.Text
                   id="email"
                   name="email"
@@ -270,6 +288,45 @@ const CreateCustomer = ({ closeCustomerTunnel }) => {
                   email.meta.errors.map((error, index) => (
                      <Form.Error key={index}>{error}</Form.Error>
                   ))}
+            </Form.Group>
+            <Spacer size="14px" />
+            <Form.Group>
+               <Form.Label htmlFor="firstName" title="firstName">
+                  First Name
+               </Form.Label>
+               <Form.Text
+                  id="firstName"
+                  name="firstName"
+                  value={form.firstName}
+                  onChange={onFormChange}
+                  placeholder="enter customer's first name"
+               />
+            </Form.Group>
+            <Spacer size="14px" />
+            <Form.Group>
+               <Form.Label htmlFor="lastName" title="lastName">
+                  Last Name
+               </Form.Label>
+               <Form.Text
+                  id="lastName"
+                  name="lastName"
+                  value={form.lastName}
+                  onChange={onFormChange}
+                  placeholder="enter customer's last name"
+               />
+            </Form.Group>
+            <Spacer size="14px" />
+            <Form.Group>
+               <Form.Label htmlFor="phoneNumber" title="phoneNumber">
+                  Phone Number
+               </Form.Label>
+               <Form.Text
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  value={form.phoneNumber}
+                  onChange={onFormChange}
+                  placeholder="enter customer's phone number"
+               />
             </Form.Group>
             <Spacer size="16px" />
             <TextButton
