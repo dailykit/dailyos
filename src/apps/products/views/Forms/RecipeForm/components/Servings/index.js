@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { useMutation, useSubscription, useLazyQuery } from '@apollo/react-hooks'
 import { Link } from 'react-router-dom'
 import Skeleton from 'react-loading-skeleton'
-import LazyDropdown from '../LazyDropdown'
+
 import {
    ButtonTile,
    Flex,
@@ -19,6 +19,7 @@ import {
    Spacer,
    ComboButton,
 } from '@dailykit/ui'
+import LazyDropdown from '../LazyDropdown';
 import {
    Serving,
    CalCount,
@@ -179,7 +180,7 @@ const Servings = ({ state }) => {
    ] = useLazyQuery(DERIVE_SACHETS_FROM_BASE_YIELD, {
       onCompleted: data => {
          const [response] = data.simpleRecipe_deriveIngredientSachets
-         console.log({ response })
+         //console.log({ response })
          if (response && response.success) {
             toast.success(response.message)
          } else {
@@ -327,7 +328,7 @@ const Servings = ({ state }) => {
                })
             }
          }
-         console.log(option, 'option outside Processing')
+         //console.log(option, 'option outside Processing')
          return (
             <div
                key={index}
@@ -927,12 +928,15 @@ const SachetDetails = ({
 const Processings = ({ state, option }) => {
    const [ProcessingOptions, setProcessingOptions] = React.useState([])
    const [ingredientProcessings, setIngredientProcessings] = React.useState([])
-
+   const [ingredientStateId, setingredientStateId] = React.useState(0)
    let [search] = React.useState('')
    const { loading } = useSubscription(S_PROCESSINGS, {
       variables: {
          where: {
-            isArchived: { _eq: false },
+            _and: [
+               { ingredientId: { _eq: ingredientStateId } },
+               { isArchived: { _eq: false } },
+            ],
          },
       },
       onSubscriptionData: data => {
@@ -941,7 +945,7 @@ const Processings = ({ state, option }) => {
       },
    })
 
-   let [ingredientStateId, setingredientStateId] = React.useState(0)
+   console.log(ingredientProcessings,"ingredientProcessings")
    const [upsertMasterProcessing] = useMutation(UPSERT_MASTER_PROCESSING, {
       onCompleted: data => {
          createProcessing({
@@ -955,6 +959,7 @@ const Processings = ({ state, option }) => {
                ],
             },
          })
+         
       },
       onError: error => {
          toast.error('Something went wrong!')
@@ -1014,12 +1019,14 @@ const Processings = ({ state, option }) => {
    const quickCreateProcessing = () => {
       let processingName = search.slice(0, 1).toUpperCase() + search.slice(1)
       setingredientStateId(option.ingredient.id)
+      
       //console.log(ingredientStateId, 'ingredientStateId')
       upsertMasterProcessing({
          variables: {
             name: processingName,
          },
       })
+      setProcessingOptions(tempProcessingOptions)
    }
    const tempProcessingOptions = ingredientProcessings.filter((item, index) => {
       if (option.ingredient.id == item.ingredientId) {
@@ -1034,7 +1041,7 @@ const Processings = ({ state, option }) => {
    } else {
       defaultName = option.processing.name
    }
-   console.log(option, 'option inside Processing')
+   // console.log(option, 'option inside Processing')
    // console.log(defaultName, 'defaultName')
    return (
       <>
@@ -1042,19 +1049,19 @@ const Processings = ({ state, option }) => {
             type="single"
             variant="revamp"
             defaultName={defaultName}
+            isLoading = {loading}
             defaultOption={option.processing}
             addOption={quickCreateProcessing}
-            options={ProcessingOptions}
+            options={ingredientProcessings}
             searchedOption={searchedOption}
             selectedOption={selectedOption}
             readOnly={dropDownReadOnly}
             handleClick={() => {
                setProcessingOptions(tempProcessingOptions)
+               setingredientStateId(option.ingredient.id)
             }}
             typeName="processing"
          />
       </>
    )
 }
-
-
