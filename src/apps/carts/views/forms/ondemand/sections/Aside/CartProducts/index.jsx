@@ -3,7 +3,15 @@ import styled from 'styled-components'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router'
 import { useMutation } from '@apollo/react-hooks'
-import { Flex, Form, IconButton, Spacer, Text, TextButton } from '@dailykit/ui'
+import {
+   Filler,
+   Flex,
+   Form,
+   IconButton,
+   Spacer,
+   Text,
+   TextButton,
+} from '@dailykit/ui'
 
 import { useManual } from '../../../state'
 import { MUTATIONS } from '../../../../../../graphql'
@@ -12,6 +20,7 @@ import {
    CloseIcon,
    DeleteIcon,
 } from '../../../../../../../../shared/assets/icons'
+import EmptyIllo from '../../../../../../assets/svgs/EmptyIllo'
 
 const CartProducts = () => {
    const { billing, products } = useManual()

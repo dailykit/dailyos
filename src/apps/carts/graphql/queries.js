@@ -259,6 +259,51 @@ export const QUERIES = {
                      }
                   }
                }
+               customizableProductComponents(
+                  where: { isArchived: { _eq: false } }
+                  order_by: { position: desc_nulls_last }
+               ) {
+                  id
+                  selectedOptions {
+                     productOption {
+                        id
+                        label
+                        quantity
+                        modifier {
+                           id
+                           name
+                           categories(where: { isVisible: { _eq: true } }) {
+                              name
+                              isRequired
+                              type
+                              limits
+                              options(where: { isVisible: { _eq: true } }) {
+                                 id
+                                 name
+                                 price
+                                 discount
+                                 quantity
+                                 image
+                                 isActive
+                                 simpleRecipeYieldId
+                                 sachetItemId
+                                 ingredientSachetId
+                                 cartItem
+                              }
+                           }
+                        }
+                     }
+                     price
+                     discount
+                     cartItem
+                  }
+                  linkedProduct {
+                     id
+                     name
+                     type
+                     assets
+                  }
+               }
             }
          }
       `,

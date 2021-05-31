@@ -13,6 +13,7 @@ import {
    PaymentTunnel,
    ProductOptionsTunnel,
    FulfillmentTunnel,
+   CustomizableComponentsTunnel,
 } from './tunnels'
 import { InlineLoader } from '../../../../../shared/components'
 
@@ -75,6 +76,7 @@ export const ManualProvider = ({ children }) => {
    const addressTunnels = useTunnel(1)
    const fulfillmentTunnels = useTunnel(1)
    const productOptionsTunnels = useTunnel(1)
+   const customizableComponentTunnels = useTunnel(1)
    const [cartError, setCartError] = React.useState('')
    const [isCartLoading, setIsCartLoading] = React.useState(true)
    const [state, dispatch] = React.useReducer(reducers, initial)
@@ -211,6 +213,7 @@ export const ManualProvider = ({ children }) => {
                address: addressTunnels,
                fulfillment: fulfillmentTunnels,
                productOptions: productOptionsTunnels,
+               customizableComponents: customizableComponentTunnels,
             },
          }}
       >
@@ -218,6 +221,7 @@ export const ManualProvider = ({ children }) => {
          <FulfillmentTunnel panel={fulfillmentTunnels} />
          <AddressTunnel panel={addressTunnels} />
          <ProductOptionsTunnel panel={productOptionsTunnels} />
+         <CustomizableComponentsTunnel panel={customizableComponentTunnels} />
       </Context.Provider>
    )
 }
