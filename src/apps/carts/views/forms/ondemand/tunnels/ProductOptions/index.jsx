@@ -3,6 +3,9 @@ import styled, { css } from 'styled-components'
 import {
    Filler,
    Flex,
+   IconButton,
+   MinusIcon,
+   PlusIcon,
    Spacer,
    Text,
    Tunnel,
@@ -41,6 +44,7 @@ const Content = ({ panel }) => {
    } = useManual()
 
    const [selectedOption, setSelectedOption] = React.useState(null)
+   const [quantity, setQuantity] = React.useState(1)
    const [modifiersState, setModifiersState] = React.useState({
       isValid: true,
       selectedModifiers: [],
@@ -57,8 +61,8 @@ const Content = ({ panel }) => {
       console.log(error)
    }
 
-   const [insertCartItem, { loading: adding }] = useMutation(
-      MUTATIONS.CART.ITEM.INSERT,
+   const [insertCartItems, { loading: adding }] = useMutation(
+      MUTATIONS.CART.ITEM.INSERT_MANY,
       {
          onCompleted: () => {
             toast.success('Item added to cart!')
@@ -81,12 +85,10 @@ const Content = ({ panel }) => {
          modifiersState.selectedModifiers,
          product.type
       )
-      insertCartItem({
+      const objects = new Array(quantity).fill({ ...cartItem, cartId: +cartId })
+      insertCartItems({
          variables: {
-            object: {
-               ...cartItem,
-               cartId: +cartId,
-            },
+            objects,
          },
       })
    }
@@ -104,8 +106,8 @@ const Content = ({ panel }) => {
             0
          )
       }
-      return total
-   }, [product, selectedOption, modifiersState.selectedModifiers])
+      return total * quantity
+   }, [product, selectedOption, modifiersState.selectedModifiers, quantity])
 
    return (
       <>
@@ -119,7 +121,7 @@ const Content = ({ panel }) => {
                action: add,
             }}
          />
-         <Flex padding="16px">
+         <Styles.TunnelBody padding="16px">
             {loading ? (
                <InlineLoader />
             ) : (
@@ -172,7 +174,31 @@ const Content = ({ panel }) => {
                   handleChange={result => setModifiersState(result)}
                />
             )}
-         </Flex>
+            <Styles.Fixed
+               container
+               alignItems="center"
+               justifyContent="center"
+               width="calc(100% - 16px)"
+            >
+               <IconButton
+                  type="solid"
+                  size="sm"
+                  onClick={() => quantity > 1 && setQuantity(qty => qty - 1)}
+               >
+                  <MinusIcon color="#fff" />
+               </IconButton>
+               <Spacer xAxis size="16px" />
+               <Text as="title">{quantity}</Text>
+               <Spacer xAxis size="16px" />
+               <IconButton
+                  type="solid"
+                  size="sm"
+                  onClick={() => setQuantity(qty => qty + 1)}
+               >
+                  <PlusIcon color="#fff" />
+               </IconButton>
+            </Styles.Fixed>
+         </Styles.TunnelBody>
       </>
    )
 }
@@ -350,5 +376,13 @@ const Styles = {
       width: 40px;
       border-radius: 2px;
       object-fit: cover;
+   `,
+   TunnelBody: styled(Flex)`
+      position: relative;
+      height: inherit;
+   `,
+   Fixed: styled(Flex)`
+      position: absolute;
+      bottom: 0;
    `,
 }
