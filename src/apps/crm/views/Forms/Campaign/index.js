@@ -32,6 +32,7 @@ import {
    Tooltip,
    InlineLoader,
    InsightDashboard,
+   Banner,
 } from '../../../../../shared/components'
 import { CloseIcon, TickIcon } from '../../../../../shared/assets/icons'
 import CampaignContext from '../../../context/Campaign/CampaignForm'
@@ -178,6 +179,8 @@ const CampaignForm = () => {
             updateCheckbox: updateCheckbox,
          }}
       >
+         <Banner id="crm-app-campaigns-campaign-details-top" />
+
          <StyledWrapper>
             <InputWrapper>
                <Flex
@@ -285,6 +288,7 @@ const CampaignForm = () => {
                </HorizontalTabs>
             </StyledDiv>
          </StyledWrapper>
+         <Banner id="crm-app-campaigns-campaign-details-bottom" />
       </CampaignContext.Provider>
    )
 }

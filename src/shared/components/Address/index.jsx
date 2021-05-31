@@ -9,6 +9,7 @@ import { Tunnels, Tunnel, Spacer, TunnelHeader, Form } from '@dailykit/ui'
 import { Flex } from '..'
 import { useScript } from '../../utils/useScript'
 import { isEmpty } from 'lodash'
+import Banner from '../Banner'
 
 const INSERT_ADDRESS = gql`
    mutation insertAddress($object: platform_customerAddress_insert_input!) {
@@ -192,6 +193,7 @@ export const AddressTunnel = ({
                   disabled: !isFormValid,
                }}
             />
+            <Banner id="address-tunnel-top" />
             <Flex padding="16px">
                <GPlaces>
                   {loaded && !error && (
@@ -341,6 +343,7 @@ export const AddressTunnel = ({
                   />
                </Form.Group>
             </Flex>
+            <Banner id="address-tunnel-bottom" />
          </Tunnel>
       </Tunnels>
    )
