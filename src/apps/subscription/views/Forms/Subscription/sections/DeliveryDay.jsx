@@ -30,6 +30,7 @@ import {
    ErrorState,
    InlineLoader,
    ErrorBoundary,
+   Banner,
 } from '../../../../../../shared/components'
 
 const DeliveryDay = ({ id }) => {
@@ -156,6 +157,7 @@ const EditSubscriptionTunnel = ({ id, closeTunnel }) => {
                <Tooltip identifier="form_subscription_tunnel_subscription_field_date" />
             }
          />
+         <Banner id="subscription-app-create-subscription-edit-subscription-tunnel-top" />
          <Flex padding="16px">
             <Form.Group>
                <Form.Label htmlFor="endDate" title="endDate">
@@ -172,6 +174,7 @@ const EditSubscriptionTunnel = ({ id, closeTunnel }) => {
                />
             </Form.Group>
          </Flex>
+         <Banner id="subscription-app-create-subscription-edit-subscription-tunnel-bottom" />
       </>
    )
 }
