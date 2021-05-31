@@ -316,6 +316,7 @@ const PrintTunnel = ({ closeTunnel }) => {
             }}
             close={() => closeTunnel(1)}
          />
+         <Banner id="settings-app-devices-print-tunnel-top" />
          <Flex padding="16px" overflowY="auto" height="calc(100vh - 105px)">
             <Form.Group>
                <Form.Label htmlFor="url" title="url">
@@ -365,6 +366,7 @@ const PrintTunnel = ({ closeTunnel }) => {
                </List>
             )}
          </Flex>
+         <Banner id="settings-app-devices-print-tunnel-bottom" />
       </>
    )
 }
