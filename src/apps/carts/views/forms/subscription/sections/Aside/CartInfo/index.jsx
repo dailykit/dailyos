@@ -56,8 +56,12 @@ const CartInfo = () => {
                {customer?.id && customer?.email ? (
                   <>
                      <Flex container alignItems="center">
-                        <Avatar title={customer?.fullName || ''} />
-                        <Spacer size="22px" xAxis />
+                        {customer?.fullName && (
+                           <>
+                              <Avatar title={customer?.fullName || ''} />
+                              <Spacer size="22px" xAxis />
+                           </>
+                        )}
                         <Flex>
                            <Text as="p">{customer?.fullName}</Text>
                            <Text as="p">{customer?.email}</Text>

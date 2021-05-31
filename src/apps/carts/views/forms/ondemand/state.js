@@ -125,7 +125,6 @@ export const ManualProvider = ({ children }) => {
          subscriptionData: { data: { cart = {} } = {} } = {},
       }) => {
          if (cart && !isEmpty(cart)) {
-            console.log(cart)
             dispatch({
                type: 'SET_INITIAL',
                payload: {
@@ -153,7 +152,9 @@ export const ManualProvider = ({ children }) => {
                },
             })
             refetchCustomer()
-            refetchPaymentMethod()
+            if (cart?.paymentMethodId) {
+               refetchPaymentMethod()
+            }
             setCartError('')
          } else {
             setCartError('No such cart exists!')

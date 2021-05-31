@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { toast } from 'react-toastify'
+import { useParams } from 'react-router'
 import { useMutation } from '@apollo/react-hooks'
 import { Flex, Form, IconButton, Spacer, Text, TextButton } from '@dailykit/ui'
 
@@ -11,7 +12,6 @@ import {
    CloseIcon,
    DeleteIcon,
 } from '../../../../../../../../shared/assets/icons'
-import { useParams } from 'react-router'
 
 const CartProducts = () => {
    const { billing, products } = useManual()
@@ -23,40 +23,48 @@ const CartProducts = () => {
       <section>
          <Text as="text2">Products({products.aggregate.count})</Text>
          <Spacer size="8px" />
-         <Styles.Cards>
-            {products.nodes.map(product => (
-               <Styles.Card key={product.id}>
-                  <aside>
-                     {product.image ? (
-                        <img src={product.image} alt={product.name} />
-                     ) : (
-                        <span>N/A</span>
-                     )}
-                  </aside>
-                  <Flex
-                     container
-                     alignItems="center"
-                     justifyContent="space-between"
-                  >
-                     <Flex as="main" container flexDirection="column">
-                        <Text as="text2">{product.name}</Text>
-                        <Text as="text3">
-                           Price: {currencyFmt(product.price)}
-                        </Text>
-                     </Flex>
-                     <IconButton
-                        size="sm"
-                        type="ghost"
-                        onClick={() =>
-                           remove({ variables: { id: product.id } })
-                        }
+         {products.aggregate.count > 0 ? (
+            <Styles.Cards>
+               {products.nodes.map(product => (
+                  <Styles.Card key={product.id}>
+                     <aside>
+                        {product.image ? (
+                           <img src={product.image} alt={product.name} />
+                        ) : (
+                           <span>N/A</span>
+                        )}
+                     </aside>
+                     <Flex
+                        container
+                        alignItems="center"
+                        justifyContent="space-between"
                      >
-                        <DeleteIcon color="#ec3333" />
-                     </IconButton>
-                  </Flex>
-               </Styles.Card>
-            ))}
-         </Styles.Cards>
+                        <Flex as="main" container flexDirection="column">
+                           <Text as="text2">{product.name}</Text>
+                           <Text as="text3">
+                              Price: {currencyFmt(product.price)}
+                           </Text>
+                        </Flex>
+                        <IconButton
+                           size="sm"
+                           type="ghost"
+                           onClick={() =>
+                              remove({ variables: { id: product.id } })
+                           }
+                        >
+                           <DeleteIcon color="#ec3333" />
+                        </IconButton>
+                     </Flex>
+                  </Styles.Card>
+               ))}
+            </Styles.Cards>
+         ) : (
+            <Filler
+               height="160px"
+               message="No products added yet!"
+               illustration={<EmptyIllo />}
+            />
+         )}
          <Spacer size="16px" />
          <LoyaltyPoints />
          <Spacer size="16px" />
