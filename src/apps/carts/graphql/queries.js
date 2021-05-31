@@ -239,6 +239,25 @@ export const QUERIES = {
                   price
                   discount
                   cartItem
+                  modifier {
+                     id
+                     categories(where: { isVisible: { _eq: true } }) {
+                        id
+                        isRequired
+                        name
+                        limits
+                        type
+                        options(where: { isVisible: { _eq: true } }) {
+                           id
+                           name
+                           price
+                           discount
+                           image
+                           isActive
+                           cartItem
+                        }
+                     }
+                  }
                }
             }
          }
