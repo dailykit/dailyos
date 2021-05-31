@@ -17,6 +17,10 @@ import { currencyFmt, logger } from '../../../../../../../shared/utils'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router'
 import { getCartItemWithModifiers, getModifiersValidator } from './utils'
+import CircleCheckedIcon from '../../../../../../../shared/assets/icons/CircleChecked'
+import CircleIcon from '../../../../../../../shared/assets/icons/Circle'
+import SquareCheckedIcon from '../../../../../../../shared/assets/icons/SquareChecked'
+import SquareIcon from '../../../../../../../shared/assets/icons/Square'
 
 export const ProductOptionsTunnel = ({ panel }) => {
    const [tunnels] = panel
@@ -87,6 +91,22 @@ const Content = ({ panel }) => {
       })
    }
 
+   const totalPrice = React.useMemo(() => {
+      if (!product) return 0
+      let total = calcDiscountedPrice(product.price, product.discount)
+      if (selectedOption) {
+         total += calcDiscountedPrice(
+            selectedOption.price,
+            selectedOption.discount
+         )
+         total += modifiersState.selectedModifiers.reduce(
+            (acc, op) => acc + op.data[0].unitPrice,
+            0
+         )
+      }
+      return total
+   }, [product, selectedOption, modifiersState.selectedModifiers])
+
    return (
       <>
          <TunnelHeader
@@ -104,6 +124,10 @@ const Content = ({ panel }) => {
                <InlineLoader />
             ) : (
                <>
+                  <Flex container alignItems="center" justifyContent="flex-end">
+                     <Text as="text2">Total: {currencyFmt(totalPrice)}</Text>
+                  </Flex>
+                  <Spacer size="12px" />
                   {product?.productOptions?.length ? (
                      product.productOptions.map(option => (
                         <Styles.Option
@@ -221,6 +245,25 @@ const Modifiers = ({ data, handleChange }) => {
       }
    }
 
+   const renderIcon = (type, option) => {
+      const exists = selectedModifiers.find(
+         op => op.data[0].modifierOptionId === option.id
+      )
+      if (type === 'single') {
+         return exists ? (
+            <CircleCheckedIcon color="#367BF5" />
+         ) : (
+            <CircleIcon color="#aaa" />
+         )
+      } else {
+         return exists ? (
+            <SquareCheckedIcon color="#367BF5" />
+         ) : (
+            <SquareIcon color="#aaa" />
+         )
+      }
+   }
+
    return (
       <>
          <Text as="text1">Modifiers</Text>
@@ -239,14 +282,11 @@ const Modifiers = ({ data, handleChange }) => {
                      onClick={() =>
                         option.isActive && selectModifierOption(option)
                      }
-                     selected={
-                        ~selectedModifiers.findIndex(
-                           item => item.data[0].modifierOptionId === option.id
-                        )
-                     }
                      faded={!option.isActive}
                   >
                      <Flex container alignItems="center">
+                        {renderIcon(category.type, option)}
+                        <Spacer xAxis size="8px" />
                         {Boolean(option.image) && (
                            <>
                               <Styles.OptionImage src={option.image} />
