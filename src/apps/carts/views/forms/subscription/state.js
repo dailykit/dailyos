@@ -159,7 +159,9 @@ export const ManualProvider = ({ children }) => {
                },
             })
             refetchCustomer()
-            refetchPaymentMethod()
+            if (cart?.paymentMethodId) {
+               refetchPaymentMethod()
+            }
             refetchAddress()
             setCartError('')
          } else {

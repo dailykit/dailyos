@@ -27,6 +27,7 @@ const initial = {
    products: { aggregate: { count: 0 } },
    billing: {},
    fulfillment: {},
+   loyaltyPoints: {},
    productId: null,
 }
 
@@ -42,6 +43,7 @@ const reducers = (state, { type, payload }) => {
             paymentMethod: payload.paymentMethod,
             billing: payload.billing,
             fulfillment: payload.fulfillment,
+            loyaltyPoints: payload.loyaltyPoints,
          }
       case 'SET_CUSTOMER':
          return {
@@ -123,7 +125,6 @@ export const ManualProvider = ({ children }) => {
          subscriptionData: { data: { cart = {} } = {} } = {},
       }) => {
          if (cart && !isEmpty(cart)) {
-            console.log(cart)
             dispatch({
                type: 'SET_INITIAL',
                payload: {
@@ -144,10 +145,16 @@ export const ManualProvider = ({ children }) => {
                      loyaltyPointsUsed: cart?.loyaltyPointsUsed || 0,
                   },
                   fulfillment: cart?.fulfillmentInfo,
+                  loyaltyPoints: {
+                     used: cart.loyaltyPointsUsed,
+                     usable: cart.loyaltyPointsUsable,
+                  },
                },
             })
             refetchCustomer()
-            refetchPaymentMethod()
+            if (cart?.paymentMethodId) {
+               refetchPaymentMethod()
+            }
             setCartError('')
          } else {
             setCartError('No such cart exists!')
@@ -199,6 +206,7 @@ export const ManualProvider = ({ children }) => {
             customer: state.customer,
             organization: state.organization,
             paymentMethod: state.paymentMethod,
+            loyaltyPoints: state.loyaltyPoints,
             tunnels: {
                address: addressTunnels,
                fulfillment: fulfillmentTunnels,
