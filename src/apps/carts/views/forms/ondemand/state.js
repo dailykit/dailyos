@@ -27,6 +27,7 @@ const initial = {
    products: { aggregate: { count: 0 } },
    billing: {},
    fulfillment: {},
+   loyaltyPoints: {},
    productId: null,
 }
 
@@ -42,6 +43,7 @@ const reducers = (state, { type, payload }) => {
             paymentMethod: payload.paymentMethod,
             billing: payload.billing,
             fulfillment: payload.fulfillment,
+            loyaltyPoints: payload.loyaltyPoints,
          }
       case 'SET_CUSTOMER':
          return {
@@ -143,6 +145,10 @@ export const ManualProvider = ({ children }) => {
                      loyaltyPointsUsed: cart?.loyaltyPointsUsed || 0,
                   },
                   fulfillment: cart?.fulfillmentInfo,
+                  loyaltyPoints: {
+                     used: cart.loyaltyPointsUsed,
+                     usable: cart.loyaltyPointsUsable,
+                  },
                },
             })
             refetchCustomer()
@@ -200,6 +206,7 @@ export const ManualProvider = ({ children }) => {
             customer: state.customer,
             organization: state.organization,
             paymentMethod: state.paymentMethod,
+            loyaltyPoints: state.loyaltyPoints,
             tunnels: {
                address: addressTunnels,
                fulfillment: fulfillmentTunnels,
