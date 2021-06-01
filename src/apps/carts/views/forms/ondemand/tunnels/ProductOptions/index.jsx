@@ -169,6 +169,7 @@ const Styles = {
       height: inherit;
    `,
    Fixed: styled(Flex)`
+      background: #fff;
       position: absolute;
       bottom: 0;
    `,

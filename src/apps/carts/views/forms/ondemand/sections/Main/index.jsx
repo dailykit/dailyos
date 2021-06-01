@@ -221,6 +221,8 @@ const Menu = ({ menu }) => {
                   return tunnels.productOptions[1](1)
                case 'customizable':
                   return tunnels.customizableComponents[1](1)
+               case 'combo':
+                  return tunnels.comboComponents[1](1)
             }
          } else {
             insertCartItem({

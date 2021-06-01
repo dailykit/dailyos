@@ -253,6 +253,7 @@ const Styles = {
       border-radius: 2px;
    `,
    Fixed: styled(Flex)`
+      background: #fff;
       position: absolute;
       bottom: 0;
    `,

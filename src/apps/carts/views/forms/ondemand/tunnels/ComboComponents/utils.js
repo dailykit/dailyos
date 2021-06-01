@@ -9,11 +9,11 @@ export const getCartItemWithModifiers = (
       []
    )
 
-   const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
+   const dataArr = finalCartItem?.childs?.data
    const dataArrLength = dataArr.length
 
    if (dataArrLength === 0) {
-      finalCartItem.childs.data[0].childs.data = combinedModifiers
+      finalCartItem.childs.data = combinedModifiers
       return finalCartItem
    } else {
       for (let i = 0; i < dataArrLength; i++) {
@@ -23,7 +23,7 @@ export const getCartItemWithModifiers = (
                data: combinedModifiers,
             },
          }
-         finalCartItem.childs.data[0].childs.data[i] = objWithModifiers
+         finalCartItem.childs.data[i] = objWithModifiers
       }
       return finalCartItem
    }

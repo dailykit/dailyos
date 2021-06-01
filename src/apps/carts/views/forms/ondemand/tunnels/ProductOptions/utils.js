@@ -1,7 +1,6 @@
 export const getCartItemWithModifiers = (
    cartItemInput,
-   selectedModifiersInput,
-   type
+   selectedModifiersInput
 ) => {
    const finalCartItem = { ...cartItemInput }
 
@@ -10,43 +9,22 @@ export const getCartItemWithModifiers = (
       []
    )
 
-   if (type === 'combo') {
-      const dataArr = finalCartItem?.childs?.data
-      const dataArrLength = dataArr.length
+   const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
+   const dataArrLength = dataArr.length
 
-      if (dataArrLength === 0) {
-         finalCartItem.childs.data = combinedModifiers
-         return finalCartItem
-      } else {
-         for (let i = 0; i < dataArrLength; i++) {
-            const objWithModifiers = {
-               ...dataArr[i],
-               childs: {
-                  data: combinedModifiers,
-               },
-            }
-            finalCartItem.childs.data[i] = objWithModifiers
-         }
-         return finalCartItem
-      }
+   if (dataArrLength === 0) {
+      finalCartItem.childs.data[0].childs.data = combinedModifiers
+      return finalCartItem
    } else {
-      const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
-      const dataArrLength = dataArr.length
-
-      if (dataArrLength === 0) {
-         finalCartItem.childs.data[0].childs.data = combinedModifiers
-         return finalCartItem
-      } else {
-         for (let i = 0; i < dataArrLength; i++) {
-            const objWithModifiers = {
-               ...dataArr[i],
-               childs: {
-                  data: combinedModifiers,
-               },
-            }
-            finalCartItem.childs.data[0].childs.data[i] = objWithModifiers
+      for (let i = 0; i < dataArrLength; i++) {
+         const objWithModifiers = {
+            ...dataArr[i],
+            childs: {
+               data: combinedModifiers,
+            },
          }
-         return finalCartItem
+         finalCartItem.childs.data[0].childs.data[i] = objWithModifiers
       }
+      return finalCartItem
    }
 }

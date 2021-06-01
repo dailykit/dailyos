@@ -9,6 +9,8 @@ const ProductOptions = ({
    selectedOption,
    handleOptionSelect,
 }) => {
+   console.log({ selectedOption })
+
    return (
       <>
          {productOptions.length ? (
