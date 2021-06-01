@@ -25,6 +25,7 @@ import ProductOptions from '../../../../../components/ProductOptions'
 import { MUTATIONS, QUERIES } from '../../../../../graphql'
 import { useManual } from '../../state'
 import { getCartItemWithModifiers } from './utils'
+import QuantitySelector from '../../../../../components/QuantitySelector'
 
 export const ProductOptionsTunnel = ({ panel }) => {
    const [tunnels] = panel
@@ -150,25 +151,10 @@ const Content = ({ panel }) => {
                      justifyContent="center"
                      width="calc(100% - 16px)"
                   >
-                     <IconButton
-                        type="solid"
-                        size="sm"
-                        onClick={() =>
-                           quantity > 1 && setQuantity(qty => qty - 1)
-                        }
-                     >
-                        <MinusIcon color="#fff" />
-                     </IconButton>
-                     <Spacer xAxis size="16px" />
-                     <Text as="title">{quantity}</Text>
-                     <Spacer xAxis size="16px" />
-                     <IconButton
-                        type="solid"
-                        size="sm"
-                        onClick={() => setQuantity(qty => qty + 1)}
-                     >
-                        <PlusIcon color="#fff" />
-                     </IconButton>
+                     <QuantitySelector
+                        quantity={quantity}
+                        setQuantity={setQuantity}
+                     />
                   </Styles.Fixed>
                </>
             )}

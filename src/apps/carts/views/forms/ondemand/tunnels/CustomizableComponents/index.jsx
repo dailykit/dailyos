@@ -25,6 +25,7 @@ import Modifiers from '../../../../../components/Modifiers'
 import { ChevronLeft } from '../../../../../../../shared/assets/icons'
 import { getCartItemWithModifiers } from './utils'
 import { toast } from 'react-toastify'
+import QuantitySelector from '../../../../../components/QuantitySelector'
 
 export const CustomizableComponentsTunnel = ({ panel }) => {
    const [tunnels] = panel
@@ -131,6 +132,7 @@ const Content = ({ panel }) => {
       setSelectedComponent(null)
       setSelectedOption(null)
       setModifiersState({ isValid: true, selectedModifiers: [] })
+      setQuantity(1)
    }
 
    return (
@@ -159,9 +161,15 @@ const Content = ({ panel }) => {
                      height="40px"
                   >
                      {selectedComponent && (
-                        <IconButton type="ghost" size="sm" onClick={goBack}>
-                           <ChevronLeft size={20} />
-                        </IconButton>
+                        <Flex container alignItems="center">
+                           <IconButton type="ghost" size="sm" onClick={goBack}>
+                              <ChevronLeft size={20} />
+                           </IconButton>
+                           <Spacer xAxis size="8px" />
+                           <Text as="text2">
+                              {selectedComponent.linkedProduct.name}
+                           </Text>
+                        </Flex>
                      )}
                      <Text as="text2">Total: {currencyFmt(totalPrice)}</Text>
                   </Flex>
@@ -184,6 +192,17 @@ const Content = ({ panel }) => {
                               handleChange={result => setModifiersState(result)}
                            />
                         )}
+                        <Styles.Fixed
+                           container
+                           alignItems="center"
+                           justifyContent="center"
+                           width="calc(100% - 16px)"
+                        >
+                           <QuantitySelector
+                              quantity={quantity}
+                              setQuantity={setQuantity}
+                           />
+                        </Styles.Fixed>
                      </>
                   ) : (
                      <>
@@ -232,5 +251,9 @@ const Styles = {
       height: 56px;
       width: 56px;
       border-radius: 2px;
+   `,
+   Fixed: styled(Flex)`
+      position: absolute;
+      bottom: 0;
    `,
 }
