@@ -1,13 +1,26 @@
 import React from 'react'
 import styled from 'styled-components'
 import { toast } from 'react-toastify'
+import { useParams } from 'react-router'
 import { useMutation } from '@apollo/react-hooks'
-import { Flex, IconButton, Spacer, Text } from '@dailykit/ui'
+import {
+   Filler,
+   Flex,
+   Form,
+   IconButton,
+   Spacer,
+   Text,
+   TextButton,
+} from '@dailykit/ui'
 
 import { useManual } from '../../../state'
 import { MUTATIONS } from '../../../../../../graphql'
-import { currencyFmt } from '../../../../../../../../shared/utils'
-import { DeleteIcon } from '../../../../../../../../shared/assets/icons'
+import { currencyFmt, logger } from '../../../../../../../../shared/utils'
+import {
+   CloseIcon,
+   DeleteIcon,
+} from '../../../../../../../../shared/assets/icons'
+import EmptyIllo from '../../../../../../assets/svgs/EmptyIllo'
 
 const CartProducts = () => {
    const { billing, products } = useManual()
@@ -19,43 +32,50 @@ const CartProducts = () => {
       <section>
          <Text as="text2">Products({products.aggregate.count})</Text>
          <Spacer size="8px" />
-         <Styles.Cards>
-            {products.nodes.map(product => (
-               <Styles.Card key={product.id}>
-                  <aside>
-                     {product.image ? (
-                        <img
-                           src={product.image}
-                           alt={product.productOption.name}
-                        />
-                     ) : (
-                        <span>N/A</span>
-                     )}
-                  </aside>
-                  <Flex
-                     container
-                     alignItems="center"
-                     justifyContent="space-between"
-                  >
-                     <Flex as="main" container flexDirection="column">
-                        <Text as="text2">{product.productOption.name}</Text>
-                        <Text as="text3">
-                           Price: {currencyFmt(product.price)}
-                        </Text>
-                     </Flex>
-                     <IconButton
-                        size="sm"
-                        type="ghost"
-                        onClick={() =>
-                           remove({ variables: { id: product.id } })
-                        }
+         {products.aggregate.count > 0 ? (
+            <Styles.Cards>
+               {products.nodes.map(product => (
+                  <Styles.Card key={product.id}>
+                     <aside>
+                        {product.image ? (
+                           <img src={product.image} alt={product.name} />
+                        ) : (
+                           <span>N/A</span>
+                        )}
+                     </aside>
+                     <Flex
+                        container
+                        alignItems="center"
+                        justifyContent="space-between"
                      >
-                        <DeleteIcon color="#ec3333" />
-                     </IconButton>
-                  </Flex>
-               </Styles.Card>
-            ))}
-         </Styles.Cards>
+                        <Flex as="main" container flexDirection="column">
+                           <Text as="text2">{product.name}</Text>
+                           <Text as="text3">
+                              Price: {currencyFmt(product.price)}
+                           </Text>
+                        </Flex>
+                        <IconButton
+                           size="sm"
+                           type="ghost"
+                           onClick={() =>
+                              remove({ variables: { id: product.id } })
+                           }
+                        >
+                           <DeleteIcon color="#ec3333" />
+                        </IconButton>
+                     </Flex>
+                  </Styles.Card>
+               ))}
+            </Styles.Cards>
+         ) : (
+            <Filler
+               height="160px"
+               message="No products added yet!"
+               illustration={<EmptyIllo />}
+            />
+         )}
+         <Spacer size="16px" />
+         <LoyaltyPoints />
          <Spacer size="16px" />
          <section>
             <Text as="text2">Billing Details</Text>
@@ -95,7 +115,208 @@ const CartProducts = () => {
 
 export default CartProducts
 
+const LoyaltyPoints = () => {
+   const { id: cartId } = useParams()
+   const { loyaltyPoints } = useManual()
+   const [points, setPoints] = React.useState({
+      value: '',
+      meta: {
+         errors: [],
+         isTouched: false,
+         isValid: true,
+      },
+   })
+
+   const [updateCart, { loading }] = useMutation(MUTATIONS.CART.UPDATE, {
+      onCompleted: () => {
+         toast.success(
+            `Successfully ${
+               points.value > 0 ? 'added' : 'removed'
+            } loyalty points.`
+         )
+         setPoints({
+            value: 0,
+            meta: {
+               errors: [],
+               isTouched: false,
+               isValid: true,
+            },
+         })
+      },
+      onError: error => {
+         logger(error)
+         toast.error('Failed to update the fulfillment details.')
+      },
+   })
+
+   const validate = e => {
+      const { value } = e.target
+      if (value === '') {
+         setPoints({
+            ...points,
+            meta: {
+               errors: [],
+               isTouched: true,
+               isValid: false,
+            },
+         })
+         return
+      }
+
+      const v = parseInt(value)
+      if (isNaN(v)) {
+         setPoints({
+            ...points,
+            meta: {
+               errors: ['Please input numbers only!'],
+               isTouched: true,
+               isValid: false,
+            },
+         })
+         return
+      }
+      if (v <= 0) {
+         setPoints({
+            ...points,
+            meta: {
+               errors: ['Points should be greater than 0!'],
+               isTouched: true,
+               isValid: false,
+            },
+         })
+         return
+      }
+      if (v > loyaltyPoints.usable) {
+         setPoints({
+            ...points,
+            meta: {
+               errors: [`Points should be less than ${loyaltyPoints.usable}!`],
+               isTouched: true,
+               isValid: false,
+            },
+         })
+         return
+      }
+      if (v % 1 !== 0) {
+         setPoints({
+            ...points,
+            meta: {
+               errors: [`Points should be integers only!`],
+               isTouched: true,
+               isValid: false,
+            },
+         })
+         return
+      }
+
+      setPoints({
+         ...points,
+         meta: {
+            errors: [],
+            isValid: true,
+            isTouched: true,
+         },
+      })
+   }
+
+   if (!loyaltyPoints.usable && !loyaltyPoints.used) return null
+
+   return (
+      <>
+         <Text as="text2">Loyalty Points</Text>
+         <Spacer size="4px" />
+         <Styles.LoyaltyPoints>
+            {loyaltyPoints.used ? (
+               <Flex
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+               >
+                  <Text as="h3"> {loyaltyPoints.used} </Text>
+                  <IconButton
+                     type="ghost"
+                     isLoading={loading}
+                     onClick={() => {
+                        updateCart({
+                           variables: {
+                              id: cartId,
+                              _set: {
+                                 loyaltyPointsUsed: 0,
+                              },
+                           },
+                        })
+                     }}
+                  >
+                     <CloseIcon color="#ec3333" />
+                  </IconButton>
+               </Flex>
+            ) : (
+               <Flex
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+               >
+                  <Flex>
+                     <Form.Group>
+                        <Form.Label htmlFor="points" title="points">
+                           Points
+                        </Form.Label>
+                        <Form.Number
+                           id="points"
+                           name="points"
+                           onBlur={validate}
+                           onChange={e =>
+                              setPoints({ ...points, value: e.target.value })
+                           }
+                           value={points.value}
+                           placeholder="Enter points"
+                           hasError={
+                              points.meta.isTouched && !points.meta.isValid
+                           }
+                        />
+                        {points.meta.isTouched &&
+                           !points.meta.isValid &&
+                           points.meta.errors.map((error, index) => (
+                              <Form.Error justifyContent="center" key={index}>
+                                 {error}
+                              </Form.Error>
+                           ))}
+                     </Form.Group>
+                     <Spacer size="4px" />
+                     <Text as="text3">Max: {loyaltyPoints.usable}</Text>
+                  </Flex>
+                  <TextButton
+                     type="ghost"
+                     disabled={!points.meta.isValid || !points.value}
+                     isLoading={loading}
+                     onClick={() => {
+                        if (points.meta.isValid && points.value) {
+                           updateCart({
+                              variables: {
+                                 id: cartId,
+                                 _set: {
+                                    loyaltyPointsUsed: points.value,
+                                 },
+                              },
+                           })
+                        }
+                     }}
+                  >
+                     Use
+                  </TextButton>
+               </Flex>
+            )}
+         </Styles.LoyaltyPoints>
+      </>
+   )
+}
+
 const Styles = {
+   LoyaltyPoints: styled.div`
+      background: #ffffff;
+      border: 1px solid #ececec;
+      padding: 8px;
+   `,
    Cards: styled.ul`
       overflow-y: auto;
       max-height: 264px;

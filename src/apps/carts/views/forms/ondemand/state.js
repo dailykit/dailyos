@@ -8,7 +8,14 @@ import { useQuery, useSubscription } from '@apollo/react-hooks'
 import { QUERIES } from '../../../graphql'
 import { logger } from '../../../../../shared/utils'
 import EmptyIllo from '../../../assets/svgs/EmptyIllo'
-import { AddressTunnel, PaymentTunnel } from './tunnels'
+import {
+   AddressTunnel,
+   PaymentTunnel,
+   ProductOptionsTunnel,
+   FulfillmentTunnel,
+   CustomizableComponentsTunnel,
+   ComboComponentsTunnel,
+} from './tunnels'
 import { InlineLoader } from '../../../../../shared/components'
 
 const Context = React.createContext()
@@ -21,6 +28,9 @@ const initial = {
    organization: { id: null },
    products: { aggregate: { count: 0 } },
    billing: {},
+   fulfillment: {},
+   loyaltyPoints: {},
+   productId: null,
 }
 
 const reducers = (state, { type, payload }) => {
@@ -34,6 +44,8 @@ const reducers = (state, { type, payload }) => {
             products: payload.products,
             paymentMethod: payload.paymentMethod,
             billing: payload.billing,
+            fulfillment: payload.fulfillment,
+            loyaltyPoints: payload.loyaltyPoints,
          }
       case 'SET_CUSTOMER':
          return {
@@ -50,6 +62,11 @@ const reducers = (state, { type, payload }) => {
             ...state,
             organization: payload,
          }
+      case 'SET_PRODUCT_ID':
+         return {
+            ...state,
+            productId: payload,
+         }
       default:
          return state
    }
@@ -58,6 +75,10 @@ const reducers = (state, { type, payload }) => {
 export const ManualProvider = ({ children }) => {
    const params = useParams()
    const addressTunnels = useTunnel(1)
+   const fulfillmentTunnels = useTunnel(1)
+   const productOptionsTunnels = useTunnel(1)
+   const customizableComponentTunnels = useTunnel(1)
+   const comboComponentTunnels = useTunnel(1)
    const [cartError, setCartError] = React.useState('')
    const [isCartLoading, setIsCartLoading] = React.useState(true)
    const [state, dispatch] = React.useReducer(reducers, initial)
@@ -127,10 +148,17 @@ export const ManualProvider = ({ children }) => {
                      walletAmountUsed: cart?.walletAmountUsed || 0,
                      loyaltyPointsUsed: cart?.loyaltyPointsUsed || 0,
                   },
+                  fulfillment: cart?.fulfillmentInfo,
+                  loyaltyPoints: {
+                     used: cart.loyaltyPointsUsed,
+                     usable: cart.loyaltyPointsUsable,
+                  },
                },
             })
             refetchCustomer()
-            refetchPaymentMethod()
+            if (cart?.paymentMethodId) {
+               refetchPaymentMethod()
+            }
             setCartError('')
          } else {
             setCartError('No such cart exists!')
@@ -176,18 +204,28 @@ export const ManualProvider = ({ children }) => {
             dispatch,
             brand: state.brand,
             address: state.address,
+            fulfillment: state.fulfillment,
             billing: state.billing,
             products: state.products,
             customer: state.customer,
             organization: state.organization,
             paymentMethod: state.paymentMethod,
+            loyaltyPoints: state.loyaltyPoints,
             tunnels: {
                address: addressTunnels,
+               fulfillment: fulfillmentTunnels,
+               productOptions: productOptionsTunnels,
+               customizableComponents: customizableComponentTunnels,
+               comboComponents: comboComponentTunnels,
             },
          }}
       >
          {children}
+         <FulfillmentTunnel panel={fulfillmentTunnels} />
          <AddressTunnel panel={addressTunnels} />
+         <ProductOptionsTunnel panel={productOptionsTunnels} />
+         <CustomizableComponentsTunnel panel={customizableComponentTunnels} />
+         <ComboComponentsTunnel panel={comboComponentTunnels} />
       </Context.Provider>
    )
 }

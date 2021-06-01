@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { toast } from 'react-toastify'
+import format from 'date-fns/format'
 import { Text, Flex, Spacer, Avatar, Filler, IconButton } from '@dailykit/ui'
 
 import { useManual } from '../../../state'
@@ -9,7 +10,52 @@ import * as Icon from '../../../../../../../../shared/assets/icons'
 import { parseAddress } from '../../../../../../../../shared/utils'
 
 const CartInfo = () => {
-   const { brand, tunnels, address, customer, paymentMethod } = useManual()
+   const {
+      brand,
+      tunnels,
+      address,
+      fulfillment,
+      customer,
+      paymentMethod,
+   } = useManual()
+
+   const renderFulfillmentInfo = f => {
+      const renderMode = () => {
+         switch (f.type) {
+            case 'ONDEMAND_DELIVERY':
+               return 'Deliver Now'
+            case 'ONDEMAND_PICKUP':
+               return 'Pickup Now'
+            case 'PREORDER_PICKUP':
+               return 'Pickup Later'
+            case 'PREORDER_DELIVERY':
+               return 'Deliver Later'
+            default:
+               return '-'
+         }
+      }
+
+      return (
+         <Flex>
+            <Text as="text1"> {renderMode()} </Text>
+            <Spacer size="4px" />
+            <Text as="text2">{format(new Date(f.slot.from), 'PPp')}</Text>
+            <Spacer size="4px" />
+            {f.type.includes('DELIVERY') && (
+               <>
+                  {address.id ? (
+                     <Text as="text2">{parseAddress(address)}</Text>
+                  ) : (
+                     <small>
+                        We could not resolve your address. Please select your
+                        address again!
+                     </small>
+                  )}
+               </>
+            )}
+         </Flex>
+      )
+   }
 
    return (
       <section>
@@ -47,8 +93,12 @@ const CartInfo = () => {
                {customer?.id && customer?.email ? (
                   <>
                      <Flex container alignItems="center">
-                        <Avatar title={customer?.fullName || ''} />
-                        <Spacer size="22px" xAxis />
+                        {customer?.fullName && (
+                           <>
+                              <Avatar title={customer?.fullName || ''} />
+                              <Spacer size="22px" xAxis />
+                           </>
+                        )}
                         <Flex>
                            <Text as="p">{customer?.fullName}</Text>
                            <Text as="p">{customer?.email}</Text>
@@ -73,16 +123,16 @@ const CartInfo = () => {
                   if (!customer?.id) {
                      return toast.warning('Please select a customer first.')
                   }
-                  tunnels.address[1](1)
+                  tunnels.fulfillment[1](1)
                }}
             />
             <Flex as="main" padding="0 8px 8px 8px">
-               {address?.id ? (
-                  <Text as="p">{parseAddress(address)}</Text>
+               {fulfillment?.type ? (
+                  renderFulfillmentInfo(fulfillment)
                ) : (
                   <Styles.Filler
                      height="100px"
-                     message="Please select an address"
+                     message="Please add fulfillment details"
                      illustration={<EmptyIllo width="120px" />}
                   />
                )}

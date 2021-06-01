@@ -2,10 +2,11 @@ import React from 'react'
 import styled from 'styled-components'
 import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
-import { Flex, IconButton, Spacer, Tag, Text } from '@dailykit/ui'
+import { Filler, Flex, IconButton, Spacer, Tag, Text } from '@dailykit/ui'
 
 import { useManual } from '../../../state'
 import { MUTATIONS } from '../../../../../../graphql'
+import EmptyIllo from '../../../../../../assets/svgs/EmptyIllo'
 import { currencyFmt } from '../../../../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../../../../shared/assets/icons'
 
@@ -21,48 +22,56 @@ const CartProducts = () => {
             Products({occurenceCustomer?.addedProductsCount || 0})
          </Text>
          <Spacer size="8px" />
-         <Styles.Cards>
-            {products.nodes.map(product => (
-               <Styles.Card key={product.id}>
-                  <aside>
-                     {product.image ? (
-                        <img src={product.image} alt={product.name} />
-                     ) : (
-                        <span>N/A</span>
-                     )}
-                  </aside>
-                  <Flex
-                     container
-                     alignItems="center"
-                     justifyContent="space-between"
-                  >
-                     <Flex as="main" container flexDirection="column">
-                        {product.addOnLabel && (
-                           <div>
-                              <Tag>{product.addOnLabel}</Tag>
-                              <Spacer size="4px" />
-                           </div>
+         {products.aggregate.count > 0 ? (
+            <Styles.Cards>
+               {products.nodes.map(product => (
+                  <Styles.Card key={product.id}>
+                     <aside>
+                        {product.image ? (
+                           <img src={product.image} alt={product.name} />
+                        ) : (
+                           <span>N/A</span>
                         )}
-                        <Text as="text2">{product.name}</Text>
-                        {Boolean(product.addOnPrice) && (
-                           <Text as="text3">
-                              Add On Price: {currencyFmt(product.addOnPrice)}
-                           </Text>
-                        )}
-                     </Flex>
-                     <IconButton
-                        size="sm"
-                        type="ghost"
-                        onClick={() =>
-                           remove({ variables: { id: product.id } })
-                        }
+                     </aside>
+                     <Flex
+                        container
+                        alignItems="center"
+                        justifyContent="space-between"
                      >
-                        <DeleteIcon color="#ec3333" />
-                     </IconButton>
-                  </Flex>
-               </Styles.Card>
-            ))}
-         </Styles.Cards>
+                        <Flex as="main" container flexDirection="column">
+                           {product.addOnLabel && (
+                              <div>
+                                 <Tag>{product.addOnLabel}</Tag>
+                                 <Spacer size="4px" />
+                              </div>
+                           )}
+                           <Text as="text2">{product.name}</Text>
+                           {Boolean(product.addOnPrice) && (
+                              <Text as="text3">
+                                 Add On Price: {currencyFmt(product.addOnPrice)}
+                              </Text>
+                           )}
+                        </Flex>
+                        <IconButton
+                           size="sm"
+                           type="ghost"
+                           onClick={() =>
+                              remove({ variables: { id: product.id } })
+                           }
+                        >
+                           <DeleteIcon color="#ec3333" />
+                        </IconButton>
+                     </Flex>
+                  </Styles.Card>
+               ))}
+            </Styles.Cards>
+         ) : (
+            <Filler
+               height="160px"
+               message="No products added yet!"
+               illustration={<EmptyIllo />}
+            />
+         )}
          <Spacer size="16px" />
          <section>
             <Text as="text2">Billing Details</Text>

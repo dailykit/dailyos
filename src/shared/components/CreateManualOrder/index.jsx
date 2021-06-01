@@ -15,6 +15,7 @@ export const CreateManualOrder = ({
    isModeTunnelOpen,
    brandId = null,
    keycloakId = null,
+   setIsModeTunnelOpen,
 }) => {
    if (!isModeTunnelOpen) return null
    return (
@@ -23,17 +24,21 @@ export const CreateManualOrder = ({
          keycloakId={keycloakId}
          isModeTunnelOpen={isModeTunnelOpen}
       >
-         <Content />
+         <Content
+            brandId={brandId}
+            keycloakId={keycloakId}
+            setIsModeTunnelOpen={setIsModeTunnelOpen}
+         />
       </Provider>
    )
 }
 
-const Content = () => {
-   const { brand, customer, methods, tunnels, dispatch } = useManual()
+const Content = ({ brandId, keycloakId, setIsModeTunnelOpen }) => {
+   const { methods, tunnels, dispatch } = useManual()
 
    const setMode = mode => {
       dispatch({ type: 'SET_MODE', payload: mode })
-      if (brand?.id && customer?.id && customer?.keycloakId) {
+      if (brandId && keycloakId) {
          if (mode === 'SUBSCRIPTION') {
             tunnels.open(4)
          } else {
@@ -46,7 +51,13 @@ const Content = () => {
    return (
       <Tunnels tunnels={tunnels.list}>
          <Tunnel size="md">
-            <TunnelHeader title="Select Store" close={() => tunnels.close(1)} />
+            <TunnelHeader
+               title="Select Store"
+               close={() => {
+                  setIsModeTunnelOpen(false)
+                  tunnels.close(1)
+               }}
+            />
             <Flex padding="16px" overflowY="auto" height="calc(100vh - 196px)">
                <OptionTile
                   title="On-demand Store"
@@ -65,7 +76,7 @@ const Content = () => {
          <Tunnel size="md">
             <CustomerTunnel />
          </Tunnel>
-         <Tunnel size="md">
+         <Tunnel size="lg">
             <SubscriptionTunnel />
          </Tunnel>
       </Tunnels>

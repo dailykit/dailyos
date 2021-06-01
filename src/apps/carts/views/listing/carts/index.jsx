@@ -40,7 +40,10 @@ export const Carts = () => {
             </TextButton>
          </Flex>
          <Listing />
-         <CreateManualOrder isModeTunnelOpen={isModeTunnelOpen} />
+         <CreateManualOrder
+            isModeTunnelOpen={isModeTunnelOpen}
+            setIsModeTunnelOpen={setIsModeTunnelOpen}
+         />
       </Flex>
    )
 }

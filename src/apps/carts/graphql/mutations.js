@@ -17,6 +17,17 @@ export const MUTATIONS = {
                }
             }
          `,
+         INSERT_MANY: gql`
+            mutation createCartItems(
+               $objects: [order_cartItem_insert_input!]!
+            ) {
+               createCartItems(objects: $objects) {
+                  returning {
+                     id
+                  }
+               }
+            }
+         `,
       },
       UPDATE: gql`
          mutation updateCart(

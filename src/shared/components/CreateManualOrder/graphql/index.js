@@ -56,6 +56,18 @@ export const MUTATIONS = {
          `,
       },
    },
+   REGISTER_AND_CREATE_BRAND_CUSTOMER: gql`
+      mutation registerAndCreateBrandCustomer(
+         $input: RegisterAndCreateBrandCustomerInput!
+      ) {
+         registerAndCreateBrandCustomer(input: $input) {
+            success
+            data
+            error
+            message
+         }
+      }
+   `,
 }
 
 export const QUERIES = {
@@ -104,6 +116,36 @@ export const QUERIES = {
             }
          }
       `,
+      ONE: gql`
+         query brandCustomer($id: Int!) {
+            brandCustomer(id: $id) {
+               id
+               isDemo
+               keycloakId
+               isSubscriber
+               subscriptionId
+               subscriptionPaymentMethodId
+               customer {
+                  id
+                  email
+                  isTest
+                  platform_customer {
+                     id: keycloakId
+                     firstName
+                     lastName
+                     phoneNumber
+                     fullName
+                     stripeCustomerId
+                     customerByClients: CustomerByClients {
+                        id: keycloakId
+                        clientId
+                        organizationStripeCustomerId
+                     }
+                  }
+               }
+            }
+         }
+      `,
    },
    ORGANIZATION: gql`
       query organizations {
@@ -119,8 +161,11 @@ export const QUERIES = {
       OCCURENCE: {
          LIST: gql`
             query occurences(
+               $includeCustomers: Boolean!
                $where: subscription_subscriptionOccurence_bool_exp
-               $whereCustomer: subscription_subscriptionOccurence_customer_bool_exp
+               $whereCustomer: subscription_subscriptionOccurence_customer_bool_exp = {
+
+               }
             ) {
                occurences: subscriptionOccurences(
                   where: $where
@@ -129,7 +174,8 @@ export const QUERIES = {
                   id
                   fulfillmentDate
                   cutoffTimeStamp
-                  customers(where: $whereCustomer) {
+                  customers(where: $whereCustomer)
+                     @include(if: $includeCustomers) {
                      id: cartId
                      hasCart: validStatus(path: "hasCart")
                   }
@@ -137,5 +183,59 @@ export const QUERIES = {
             }
          `,
       },
+      PLANS: gql`
+         query plans(
+            $isDemo: Boolean!
+            $where: subscription_subscriptionTitle_bool_exp!
+         ) {
+            plans: subscription_subscriptionTitle(where: $where) {
+               id
+               title
+               servings: subscriptionServings(
+                  order_by: { servingSize: asc }
+                  where: { isDemo: { _eq: $isDemo }, isActive: { _eq: true } }
+               ) {
+                  id
+                  size: servingSize
+                  itemCounts: subscriptionItemCounts(
+                     order_by: { count: asc, price: asc }
+                     where: {
+                        isDemo: { _eq: $isDemo }
+                        isActive: { _eq: true }
+                     }
+                  ) {
+                     id
+                     count
+                     price
+                     isTaxIncluded
+                  }
+               }
+            }
+         }
+      `,
+      ITEM_COUNT: gql`
+         query itemCount($id: Int!, $zipcode: String, $isDemo: Boolean) {
+            itemCount: subscription_subscriptionItemCount_by_pk(id: $id) {
+               id
+               subscriptions(
+                  where: {
+                     isDemo: { _eq: $isDemo }
+                     availableZipcodes: { zipcode: { _eq: $zipcode } }
+                  }
+                  order_by: { position: desc_nulls_last }
+               ) {
+                  id
+                  rrule
+                  zipcodes: availableZipcodes(
+                     where: { zipcode: { _eq: $zipcode } }
+                  ) {
+                     deliveryPrice
+                     isDeliveryActive
+                     isPickupActive
+                  }
+               }
+            }
+         }
+      `,
    },
 }
