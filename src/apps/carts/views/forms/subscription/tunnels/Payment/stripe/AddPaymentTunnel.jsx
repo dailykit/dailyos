@@ -11,9 +11,9 @@ import {
    CardElement,
 } from '@stripe/react-stripe-js'
 
-import { useManual } from '../../state'
-import { MUTATIONS } from '../../../../../graphql'
-import { InlineLoader } from '../../../../../../../shared/components'
+import { useManual } from '../../../state'
+import { MUTATIONS } from '../../../../../../graphql'
+import { InlineLoader } from '../../../../../../../../shared/components'
 
 const AddPaymentTunnel = ({ tunnels, closeTunnel, onSave }) => {
    return (

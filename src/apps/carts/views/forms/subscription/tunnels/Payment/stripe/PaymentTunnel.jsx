@@ -12,13 +12,13 @@ import {
    TunnelHeader,
 } from '@dailykit/ui'
 
-import { useManual } from '../../state'
-import { QUERIES } from '../../../../../graphql'
+import { useManual } from '../../../state'
 import AddPaymentTunnel from './AddPaymentTunnel'
-import EmptyIllo from '../../../../../assets/svgs/EmptyIllo'
-import { InlineLoader } from '../../../../../../../shared/components'
+import { QUERIES } from '../../../../../../graphql'
+import EmptyIllo from '../../../../../../assets/svgs/EmptyIllo'
+import { InlineLoader } from '../../../../../../../../shared/components'
 
-export const PaymentTunnel = ({ setCard, closeTunnel }) => {
+const PaymentTunnel = ({ setCard, closeTunnel }) => {
    const { customer } = useManual()
    const [payment, setPayment] = React.useState(null)
    const [addTunnels, openAddTunnel, closeAddTunnel] = useTunnel(1)
@@ -49,13 +49,13 @@ export const PaymentTunnel = ({ setCard, closeTunnel }) => {
       <>
          <TunnelHeader
             title="Select Payment Method"
-            close={() => closeTunnel(3)}
+            close={() => closeTunnel(1)}
             right={{
                title: 'Save',
                disabled: !payment?.id,
                action: () => {
                   setCard(payment)
-                  closeTunnel(3)
+                  closeTunnel(1)
                },
             }}
          />
@@ -107,6 +107,8 @@ export const PaymentTunnel = ({ setCard, closeTunnel }) => {
       </>
    )
 }
+
+export default PaymentTunnel
 
 const Styles = {
    Address: styled.li`
