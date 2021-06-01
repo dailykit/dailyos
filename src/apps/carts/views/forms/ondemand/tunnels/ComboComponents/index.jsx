@@ -120,7 +120,6 @@ const Content = ({ panel }) => {
             ...updatedStage,
             isValid,
          }
-         console.log(updatedStages)
          setStages(updatedStages)
       },
       [currentStage, stages]
@@ -138,7 +137,6 @@ const Content = ({ panel }) => {
             ...updatedStage,
             isValid,
          }
-         console.log(updatedStages)
          setStages(updatedStages)
       },
       [currentStage, stages]
@@ -156,7 +154,6 @@ const Content = ({ panel }) => {
             ...updatedStage,
             isValid,
          }
-         console.log(updatedStages)
          setStages(updatedStages)
       },
       [currentStage, stages]
@@ -173,7 +170,6 @@ const Content = ({ panel }) => {
             selectedModifiers: [],
          },
       }
-      console.log(updatedStages)
       setStages(updatedStages)
    }
 
@@ -220,8 +216,6 @@ const Content = ({ panel }) => {
             </>
          )
       } else {
-         console.log({ selectedComponent })
-
          return (
             <>
                {selectedComponent && (
@@ -328,8 +322,6 @@ const Content = ({ panel }) => {
          setCurrentStage(prevStage => prevStage - 1)
       }
    }
-
-   console.log('Re-render')
 
    React.useEffect(() => {
       if (product?.comboProductComponents?.length && !stages.length) {
