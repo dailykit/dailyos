@@ -1,4 +1,6 @@
 export * from './Address'
 export * from './Fulfillment'
 export * from './ProductOptions'
+export * from './CustomizableComponents'
+export * from './ComboComponents'
 export * from './Payment'

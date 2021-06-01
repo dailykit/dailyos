@@ -61,6 +61,7 @@ export {
 export * from './Tick'
 export * from './ChevronUp'
 export * from './ChevronDown'
+export * from './ChevronLeft'
 export * from './Printer'
 export * from './Tooltip'
 export * from './Circle'

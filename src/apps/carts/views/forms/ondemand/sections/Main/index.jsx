@@ -212,16 +212,19 @@ const Menu = ({ menu }) => {
          const product = category.products.find(pdct => pdct.id === +productId)
 
          if (product.isPopupAllowed) {
-            // open options tunnel
-            console.log('Open options tunnel!')
             dispatch({
                type: 'SET_PRODUCT_ID',
                payload: productId,
             })
-            tunnels.productOptions[1](1)
+            switch (product.type) {
+               case 'simple':
+                  return tunnels.productOptions[1](1)
+               case 'customizable':
+                  return tunnels.customizableComponents[1](1)
+               case 'combo':
+                  return tunnels.comboComponents[1](1)
+            }
          } else {
-            console.log(product.defaultCartItem)
-            console.log(cartId)
             insertCartItem({
                variables: {
                   object: {
