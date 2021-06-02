@@ -18,13 +18,13 @@ import CartInfo from './CartInfo'
 import { useManual } from '../../state'
 import CartProducts from './CartProducts'
 import { MUTATIONS } from '../../../../../graphql'
-import { StripeTunnel } from '../../tunnels/Payment'
+import { RazorpayTunnel, StripeTunnel } from '../../tunnels/Payment'
 import { logger } from '../../../../../../../shared/utils'
 
 export const Aside = () => {
    const params = useParams()
-   const { customer, occurenceCustomer } = useManual()
-   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+   const { occurenceCustomer } = useManual()
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
    const [update] = useMutation(MUTATIONS.CART.UPDATE, {
       onCompleted: () => {
          closeTunnel(1)
@@ -75,12 +75,21 @@ export const Aside = () => {
                      onClick={() => openTunnel(2)}
                   />
                   <Spacer size="14px" />
+                  <OptionTile
+                     title="Via RazorPay"
+                     onClick={() => openTunnel(3)}
+                  />
+                  <Spacer size="14px" />
                   <OptionTile title="Mark Paid" onClick={markPaid} />
                </Flex>
             </Tunnel>
             <Tunnel size="full">
-               <TunnelHeader title="Payment" close={() => closeTunnel(2)} />
+               <TunnelHeader title="Stripe" close={() => closeTunnel(2)} />
                <StripeTunnel closeViaTunnel={closeTunnel} />
+            </Tunnel>
+            <Tunnel size="full">
+               <TunnelHeader title="Razorpay" close={() => closeTunnel(3)} />
+               <RazorpayTunnel closeViaTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
       </Styles.Aside>
