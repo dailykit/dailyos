@@ -2,8 +2,9 @@ import React from 'react'
 import styled from 'styled-components'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
 import {
+   ButtonTile,
    Filler,
    Flex,
    Form,
@@ -14,7 +15,7 @@ import {
 } from '@dailykit/ui'
 
 import { useManual } from '../../../state'
-import { MUTATIONS } from '../../../../../../graphql'
+import { MUTATIONS, QUERIES } from '../../../../../../graphql'
 import { currencyFmt, logger } from '../../../../../../../../shared/utils'
 import {
    CloseIcon,
@@ -76,6 +77,8 @@ const CartProducts = () => {
          )}
          <Spacer size="16px" />
          <LoyaltyPoints />
+         <Spacer size="16px" />
+         <Coupon />
          <Spacer size="16px" />
          <section>
             <Text as="text2">Billing Details</Text>
@@ -311,6 +314,81 @@ const LoyaltyPoints = () => {
    )
 }
 
+const Coupon = () => {
+   const { id: cartId } = useParams()
+   const { customer, tunnels } = useManual()
+
+   const { data, error } = useSubscription(QUERIES.CART.REWARDS, {
+      variables: {
+         cartId: +cartId,
+         params: {
+            cartId: +cartId,
+            keycloakId: customer.keycloakId,
+         },
+      },
+      onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
+         if (data.cartRewards.length) {
+            const isCouponValid = data.cartRewards.every(
+               record => record.reward.condition.isValid
+            )
+            if (isCouponValid) {
+               console.log('Coupon is valid!')
+            } else {
+               console.log('Coupon is not valid anymore!')
+               toast.error('Coupon is not valid!')
+               deleteCartRewards()
+            }
+         }
+      },
+   })
+   if (error) {
+      console.log('🚀 Coupon ~ error', error)
+   }
+
+   const [deleteCartRewards] = useMutation(MUTATIONS.CART.REWARDS.DELETE, {
+      variables: {
+         cartId: +cartId,
+      },
+      onCompleted: () => {
+         toast.success('Coupon removed successfully!')
+      },
+      onError: error => {
+         toast.error('Failed to delete coupon!')
+         logger(error)
+      },
+   })
+
+   return (
+      <>
+         {data?.cartRewards?.length ? (
+            <Styles.Coupon
+               container
+               alignItems="center"
+               justifyContent="space-between"
+               padding="8px"
+            >
+               <Flex>
+                  <Text as="text1">
+                     {data.cartRewards[0].reward.coupon.code}
+                  </Text>
+                  <Spacer size="4px" />
+                  <Text as="subtitle">Coupon applied!</Text>
+               </Flex>
+               <IconButton type="ghost" size="sm" onClick={deleteCartRewards}>
+                  <CloseIcon color="#ec3333" />
+               </IconButton>
+            </Styles.Coupon>
+         ) : (
+            <ButtonTile
+               type="secondary"
+               text="Add Coupon"
+               onClick={() => tunnels.coupons[1](1)}
+            />
+         )}
+      </>
+   )
+}
+
 const Styles = {
    LoyaltyPoints: styled.div`
       background: #ffffff;
@@ -359,5 +437,9 @@ const Styles = {
       > span {
          font-size: 14px;
       }
+   `,
+   Coupon: styled(Flex)`
+      background: #fff;
+      border: 1px solid #ececec;
    `,
 }
