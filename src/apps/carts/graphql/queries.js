@@ -7,11 +7,13 @@ export const QUERIES = {
             cart(id: $id) {
                id
                tax
+               orderId
                discount
                itemTotal
                totalPrice
                customerId
                customerInfo
+               paymentStatus
                deliveryPrice
                fulfillmentInfo
                paymentMethodId

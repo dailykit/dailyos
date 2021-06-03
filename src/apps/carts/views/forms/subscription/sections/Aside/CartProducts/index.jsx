@@ -11,7 +11,7 @@ import { currencyFmt } from '../../../../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../../../../shared/assets/icons'
 
 const CartProducts = () => {
-   const { billing, occurenceCustomer, products } = useManual()
+   const { cart, billing, occurenceCustomer, products } = useManual()
    const [remove] = useMutation(MUTATIONS.CART.ITEM.DELETE, {
       onCompleted: () => toast.success('Successfully deleted the product.'),
       onError: () => toast.error('Failed to delete the product.'),
@@ -52,15 +52,17 @@ const CartProducts = () => {
                               </Text>
                            )}
                         </Flex>
-                        <IconButton
-                           size="sm"
-                           type="ghost"
-                           onClick={() =>
-                              remove({ variables: { id: product.id } })
-                           }
-                        >
-                           <DeleteIcon color="#ec3333" />
-                        </IconButton>
+                        {cart?.paymentStatus === 'PENDING' && (
+                           <IconButton
+                              size="sm"
+                              type="ghost"
+                              onClick={() =>
+                                 remove({ variables: { id: product.id } })
+                              }
+                           >
+                              <DeleteIcon color="#ec3333" />
+                           </IconButton>
+                        )}
                      </Flex>
                   </Styles.Card>
                ))}
