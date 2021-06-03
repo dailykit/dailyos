@@ -19,7 +19,7 @@ import {
    Spacer,
    ComboButton,
 } from '@dailykit/ui'
-import LazyDropdown from '../LazyDropdown';
+import LazyDropdown from '../LazyDropdown'
 import {
    Serving,
    CalCount,
@@ -61,6 +61,8 @@ import {
    DELETE_SIMPLE_RECIPE_INGREDIENT_PROCESSINGS,
    DERIVE_SACHETS_FROM_BASE_YIELD,
    UPDATE_RECIPE,
+   PROCESSINGS,
+   SACHETS,
 } from '../../../../../graphql'
 import { ServingsTunnel, IngredientsTunnel } from '../../tunnels'
 import { RecipeContext } from '../../../../../context/recipe'
@@ -71,33 +73,8 @@ const Servings = ({ state }) => {
    const { recipeState } = React.useContext(RecipeContext)
 
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-   const [
-      ingredientsTunnel,
-      openingredientTunnel,
-      closeingredientTunnel,
-   ] = useTunnel(2)
-
-   const [sachets, setSachets] = React.useState([])
-   let [slipname, setslipname] = React.useState('')
-
-   // Query
-   const { loadingSachets } = useSubscription(S_SACHETS, {
-      variables: {
-         where: {
-            isArchived: { _eq: false },
-         },
-      },
-      onSubscriptionData: data => {
-         const updatedSachets = data.subscriptionData.data.ingredientSachets.map(
-            sachet => ({
-               ...sachet,
-               title: `${sachet.quantity} ${sachet.unit}`,
-            })
-         )
-
-         setSachets([...updatedSachets])
-      },
-   })
+   const [ingredientsTunnel, openingredientTunnel, closeingredientTunnel] =
+      useTunnel(2)
 
    // Mutation
    const [updateRecipe] = useMutation(UPDATE_RECIPE, {
@@ -133,33 +110,6 @@ const Servings = ({ state }) => {
          })
    }
 
-   const [upsertMasterUnit] = useMutation(UPSERT_MASTER_UNIT, {
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-   })
-   const [createSachet] = useMutation(CREATE_SACHET, {
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-   })
-
-   const [upsertRecipeYieldSachet] = useMutation(
-      UPSERT_SIMPLE_RECIPE_YIELD_SACHET,
-      {
-         onCompleted: () => {
-            toast.success('Sachet added!')
-            closeTunnel(3)
-         },
-         onError: error => {
-            toast.error('Something went wrong!')
-            logger(error)
-         },
-      }
-   )
-
    const [deleteSimpleRecipeIngredientProcessings] = useMutation(
       DELETE_SIMPLE_RECIPE_INGREDIENT_PROCESSINGS,
       {
@@ -174,45 +124,44 @@ const Servings = ({ state }) => {
    )
    const retryInfo = React.useRef(null)
 
-   const [
-      deriveSachetsFromBaseYield,
-      { loading: generating, refetch },
-   ] = useLazyQuery(DERIVE_SACHETS_FROM_BASE_YIELD, {
-      onCompleted: data => {
-         const [response] = data.simpleRecipe_deriveIngredientSachets
-         //console.log({ response })
-         if (response && response.success) {
-            toast.success(response.message)
-         } else {
-            toast.warn('Something is not right!')
-         }
-      },
-      onError: error => {
-         retryInfo.current = {
-            ...retryInfo.current,
-            tries: 1 + retryInfo.current.tries,
-         }
-         if (
-            error.message ===
-               'GraphQL error: invalid input syntax for type json' &&
-            retryInfo.current.tries < 15
-         ) {
-            console.log('Retrying...')
-            refetch({
-               variables: {
-                  args: {
-                     sourceyieldid: retryInfo.current.recipeYield.baseYieldId,
-                     targetyieldid: retryInfo.current.recipeYield.id,
+   const [deriveSachetsFromBaseYield, { loading: generating, refetch }] =
+      useLazyQuery(DERIVE_SACHETS_FROM_BASE_YIELD, {
+         onCompleted: data => {
+            const [response] = data.simpleRecipe_deriveIngredientSachets
+            //console.log({ response })
+            if (response && response.success) {
+               toast.success(response.message)
+            } else {
+               toast.warn('Something is not right!')
+            }
+         },
+         onError: error => {
+            retryInfo.current = {
+               ...retryInfo.current,
+               tries: 1 + retryInfo.current.tries,
+            }
+            if (
+               error.message ===
+                  'GraphQL error: invalid input syntax for type json' &&
+               retryInfo.current.tries < 15
+            ) {
+               console.log('Retrying...')
+               refetch({
+                  variables: {
+                     args: {
+                        sourceyieldid:
+                           retryInfo.current.recipeYield.baseYieldId,
+                        targetyieldid: retryInfo.current.recipeYield.id,
+                     },
                   },
-               },
-            })
-         } else {
-            toast.error('Failed to generate sachets!')
-            console.log(error)
-         }
-      },
-      fetchPolicy: 'cache-and-network',
-   })
+               })
+            } else {
+               toast.error('Failed to generate sachets!')
+               console.log(error)
+            }
+         },
+         fetchPolicy: 'cache-and-network',
+      })
 
    const options =
       state.simpleRecipeYields?.map((option, index) => {
@@ -306,15 +255,6 @@ const Servings = ({ state }) => {
    const ingredientsOptions =
       state.simpleRecipeIngredients?.map((option, index) => {
          //console.log(option, 'Adrish option')
-
-         let sachetDisabled = false
-
-         let sachetOptions = []
-
-         if (option.processing == null) {
-            sachetDisabled = true
-         }
-
          const deleteIngredientProcessing = id => {
             const isConfirmed = window.confirm(
                'Are you sure you want to delete this ingredient?'
@@ -373,33 +313,12 @@ const Servings = ({ state }) => {
                </StyledCardIngredient>
 
                {state.simpleRecipeYields?.map((object, index) => {
-                  sachetOptions = []
-                  let search = ''
-                  let loader = false
+                  // console.log(defaultSachetOption, 'Adrish defaultSachetOption')
+                  let defaultSachetOption = {}
                   let defaultslipName = ''
                   let visibility = ''
-                  sachets.map((item, index) => {
-                     if (sachetDisabled == false) {
-                        //console.log(option.processing.id, item.processingId, "Adrish Processing idss")
-                        if (
-                           option.processing.id ==
-                              item.ingredientProcessingId &&
-                           option.ingredient.id == item.ingredient.id
-                        ) {
-                           //console.log(item.id,"Adrish sachet idss")
-                           loader = true
-                           sachetOptions.push({
-                              id: item.id,
-                              title: item.title,
-                           })
-                        }
-                     }
-                  })
-                  let defaultSachetOption = {}
-                  //console.log(object , "Adrish Ingredient options")
                   option.linkedSachets.map((item, index) => {
                      if (item.simpleRecipeYield.id == object.id) {
-                        loader = true
                         defaultslipName = item.slipName
                         visibility = item.isVisible
                         defaultSachetOption = {
@@ -408,98 +327,30 @@ const Servings = ({ state }) => {
                         }
                      }
                   })
-
-                  const quickCreateSachet = async () => {
-                     if (!search.includes(' '))
-                        return toast.error(
-                           'Quantity and Unit should be space separated!'
-                        )
-                     const [quantity, unit] = search.trim().split(' ')
-                     if (quantity && unit) {
-                        await upsertMasterUnit({
-                           variables: {
-                              name: unit,
-                           },
-                        })
-                        createSachet({
-                           variables: {
-                              objects: [
-                                 {
-                                    ingredientId: option.ingredient.id,
-                                    ingredientProcessingId:
-                                       option.processing.id,
-                                    quantity: +quantity,
-                                    unit,
-                                    tracking: false,
-                                 },
-                              ],
-                           },
-                        })
-                     } else {
-                        toast.error('Enter a valid quantity and unit!')
-                     }
-                  }
-                  const selectedSachetOption = sachet => {
-                     upsertRecipeYieldSachet({
-                        variables: {
-                           yieldId: object.id,
-                           ingredientProcessingRecordId: option.id,
-                           ingredientSachetId: sachet.id,
-                           slipName:
-                              defaultslipName.length > 0
-                                 ? defaultslipName
-                                 : option.ingredient.name,
-                        },
-                     })
-                  }
-                  const searchedSachetOption = searchedSachet => {
-                     search = searchedSachet
-
-                     //console.log(search, 'Adrish Search')
-                  }
-
-                  // console.log(defaultSachetOption, 'Adrish defaultSachetOption')
                   return (
                      <React.Fragment key={index}>
-                        {loader == false || sachetOptions.length > 0 ? (
-                           <SatchetCard index={index}>
-                              <LazyDropdown
-                                 disabled={sachetDisabled}
-                                 options={sachetOptions}
-                                 defaultOption={defaultSachetOption}
-                                 defaultName={defaultSachetOption.title}
-                                 addOption={quickCreateSachet}
-                                 searchedOption={searchedSachetOption}
-                                 selectedOption={selectedSachetOption}
-                                 handleClick={() => {
-                                    console.log('Fetch Data')
-                                 }}
-                                 type="single"
-                                 variant="revamp"
-                                 typeName="sachet"
+                        <SatchetCard index={index}>
+                           <Sachets
+                              defaultslipName={defaultslipName}
+                              object={object}
+                              option={option}
+                           />
+                           <Spacer size="3px" />
+                           <div id="sachetDetails">
+                              <SachetDetails
+                                 yieldId={object.id}
+                                 ingredientProcessingRecordId={option.id}
+                                 slipName={defaultslipName}
+                                 isVisible={visibility}
+                                 disabled={
+                                    Object.keys(defaultSachetOption).length == 0
+                                       ? true
+                                       : false
+                                 }
+                                 index={index}
                               />
-                              <Spacer size="3px" />
-                              <div id="sachetDetails">
-                                 <SachetDetails
-                                    yieldId={object.id}
-                                    ingredientProcessingRecordId={option.id}
-                                    slipName={defaultslipName}
-                                    isVisible={visibility}
-                                    disabled={
-                                       Object.keys(defaultSachetOption)
-                                          .length == 0
-                                          ? true
-                                          : false
-                                    }
-                                    index={index}
-                                 />
-                              </div>
-                           </SatchetCard>
-                        ) : (
-                           <SatchetCard>
-                              <Skeleton />
-                           </SatchetCard>
-                        )}
+                           </div>
+                        </SatchetCard>
                      </React.Fragment>
                   )
                })}
@@ -507,12 +358,10 @@ const Servings = ({ state }) => {
          )
       }) || []
    const recipeForm = useRef(null)
-   const [buttonClickRightRender, setButtonClickRightRender] = React.useState(
-      false
-   )
-   const [buttonClickLeftRender, setButtonClickLeftRender] = React.useState(
-      false
-   )
+   const [buttonClickRightRender, setButtonClickRightRender] =
+      React.useState(false)
+   const [buttonClickLeftRender, setButtonClickLeftRender] =
+      React.useState(false)
    useEffect(() => {
       if (state.simpleRecipeYields?.length > 5) {
          setButtonClickRightRender(true)
@@ -520,7 +369,7 @@ const Servings = ({ state }) => {
          setButtonClickRightRender(false)
          setButtonClickLeftRender(false)
       }
-   }, state.simpleRecipeYields)
+   }, [state.simpleRecipeYields, state.simpleRecipeYields?.length])
 
    let [buttonClickRight, setButtonClickRight] = React.useState(0)
    let [buttonClickLeft, setButtonClickLeft] = React.useState(0)
@@ -640,7 +489,8 @@ const Servings = ({ state }) => {
                         variables: {
                            id: state.id,
                            set: {
-                              showIngredientsQuantity: !state.showIngredientsQuantity,
+                              showIngredientsQuantity:
+                                 !state.showIngredientsQuantity,
                            },
                         },
                      })
@@ -728,9 +578,7 @@ const Servings = ({ state }) => {
 
                         {options}
                      </div>
-                     {ingredientsOptions.length && loadingSachets ? (
-                        <InlineLoader />
-                     ) : (
+                     {
                         <>
                            <Spacer size="40px" />
                            <DragNDrop
@@ -742,7 +590,7 @@ const Servings = ({ state }) => {
                               {ingredientsOptions}
                            </DragNDrop>
                         </>
-                     )}
+                     }
 
                      <Spacer size="50px" />
                      <ButtonTile
@@ -930,22 +778,27 @@ const Processings = ({ state, option }) => {
    const [ingredientProcessings, setIngredientProcessings] = React.useState([])
    const [ingredientStateId, setingredientStateId] = React.useState(0)
    let [search] = React.useState('')
-   const { loading } = useSubscription(S_PROCESSINGS, {
-      variables: {
-         where: {
-            _and: [
-               { ingredientId: { _eq: ingredientStateId } },
-               { isArchived: { _eq: false } },
-            ],
-         },
-      },
-      onSubscriptionData: data => {
-         const processings = data.subscriptionData.data.ingredientProcessings
-         setIngredientProcessings(processings)
-      },
-   })
 
-   console.log(ingredientProcessings,"ingredientProcessings")
+   const [loadProcessing, { called, loading, data }] = useLazyQuery(
+      PROCESSINGS,
+      {
+         variables: {
+            where: {
+               _and: [
+                  { ingredientId: { _eq: ingredientStateId } },
+                  { isArchived: { _eq: false } },
+               ],
+            },
+         },
+         onCompleted: data => {
+            const processings = data.ingredientProcessings
+            //console.log('inside processing loading')
+            setIngredientProcessings(processings)
+         },
+         fetchPolicy: 'cache-and-network',
+      }
+   )
+   //console.log(ingredientProcessings,"ingredientProcessings")
    const [upsertMasterProcessing] = useMutation(UPSERT_MASTER_PROCESSING, {
       onCompleted: data => {
          createProcessing({
@@ -959,7 +812,6 @@ const Processings = ({ state, option }) => {
                ],
             },
          })
-         
       },
       onError: error => {
          toast.error('Something went wrong!')
@@ -975,6 +827,7 @@ const Processings = ({ state, option }) => {
             title: data.createIngredientProcessing.returning[0].processingName,
          }
          // add(processing)
+         loadProcessing()
       },
       onError: error => {
          toast.error('Something went wrong!')
@@ -1019,22 +872,15 @@ const Processings = ({ state, option }) => {
    const quickCreateProcessing = () => {
       let processingName = search.slice(0, 1).toUpperCase() + search.slice(1)
       setingredientStateId(option.ingredient.id)
-      
+
       //console.log(ingredientStateId, 'ingredientStateId')
       upsertMasterProcessing({
          variables: {
             name: processingName,
          },
       })
-      setProcessingOptions(tempProcessingOptions)
    }
-   const tempProcessingOptions = ingredientProcessings.filter((item, index) => {
-      if (option.ingredient.id == item.ingredientId) {
-         return true
-      } else {
-         return false
-      }
-   })
+
    let defaultName = ''
    if (option.processing === null) {
       defaultName = ''
@@ -1049,7 +895,7 @@ const Processings = ({ state, option }) => {
             type="single"
             variant="revamp"
             defaultName={defaultName}
-            isLoading = {loading}
+            isLoading={loading}
             defaultOption={option.processing}
             addOption={quickCreateProcessing}
             options={ingredientProcessings}
@@ -1057,11 +903,148 @@ const Processings = ({ state, option }) => {
             selectedOption={selectedOption}
             readOnly={dropDownReadOnly}
             handleClick={() => {
-               setProcessingOptions(tempProcessingOptions)
                setingredientStateId(option.ingredient.id)
+               loadProcessing()
             }}
             typeName="processing"
          />
       </>
+   )
+}
+
+const Sachets = ({ defaultslipName, option, object }) => {
+   const [upsertMasterUnit] = useMutation(UPSERT_MASTER_UNIT, {
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+   const [createSachet] = useMutation(CREATE_SACHET, {
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
+   const [upsertRecipeYieldSachet] = useMutation(
+      UPSERT_SIMPLE_RECIPE_YIELD_SACHET,
+      {
+         onCompleted: () => {
+            toast.success('Sachet added!')
+         },
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
+   let sachetDisabled = false
+   const [sachets, setSachets] = React.useState([])
+   
+   const [loadSachets, { called, loading, data }] = useLazyQuery(SACHETS, {
+      variables: {
+         where: {
+            _and: [
+               { ingredientId: { _eq: option.ingredient.id } },
+               { isArchived: { _eq: false } },
+            ],
+         },
+      },
+      onCompleted: data => {
+         const updatedSachets =
+            data.ingredientSachets.map(sachet => ({
+               ...sachet,
+               title: `${sachet.quantity} ${sachet.unit}`,
+            }))
+
+         setSachets([...updatedSachets])
+      },
+      fetchPolicy: 'cache-and-network',
+   })
+   let sachetOptions = []
+
+   if (option.processing == null) {
+      sachetDisabled = true
+   }
+   sachetOptions = []
+   let search = ''
+   let loader = false
+
+   
+   let defaultSachetOption = {}
+   //console.log(object , "Adrish Ingredient options")
+   option.linkedSachets.map((item, index) => {
+      if (item.simpleRecipeYield.id == object.id) {
+         loader = true
+         defaultSachetOption = {
+            id: item.ingredientSachet.id,
+            title: `${item.ingredientSachet.quantity} ${item.ingredientSachet.unit}`,
+         }
+      }
+   })
+
+   const quickCreateSachet = async () => {
+      if (!search.includes(' '))
+         return toast.error('Quantity and Unit should be space separated!')
+      const [quantity, unit] = search.trim().split(' ')
+      if (quantity && unit) {
+         await upsertMasterUnit({
+            variables: {
+               name: unit,
+            },
+         })
+         createSachet({
+            variables: {
+               objects: [
+                  {
+                     ingredientId: option.ingredient.id,
+                     ingredientProcessingId: option.processing.id,
+                     quantity: +quantity,
+                     unit,
+                     tracking: false,
+                  },
+               ],
+            },
+         })
+         loadSachets();
+      } else {
+         toast.error('Enter a valid quantity and unit!')
+      }
+   }
+   const selectedSachetOption = sachet => {
+      upsertRecipeYieldSachet({
+         variables: {
+            yieldId: object.id,
+            ingredientProcessingRecordId: option.id,
+            ingredientSachetId: sachet.id,
+            slipName:
+               defaultslipName.length > 0
+                  ? defaultslipName
+                  : option.ingredient.name,
+         },
+      })
+   }
+   const searchedSachetOption = searchedSachet => {
+      search = searchedSachet
+
+      //console.log(search, 'Adrish Search')
+   }
+
+   return (
+      <LazyDropdown
+         disabled={sachetDisabled}
+         options={sachets}
+         defaultName={defaultSachetOption.title}
+         addOption={quickCreateSachet}
+         searchedOption={searchedSachetOption}
+         isLoading={loading}
+         selectedOption={selectedSachetOption}
+         handleClick={() => {
+            loadSachets()
+         }}
+         type="single"
+         variant="revamp"
+         typeName="sachet"
+      />
    )
 }

@@ -75,7 +75,7 @@ const LazyDropdown = ({
       setIsOptionsVisible(!isOptionsVisible)
    }
    const onDropdownSelcted = () => {
-      if (isOptionsVisible === false) {
+      if (!isOptionsVisible) {
          handleClick()
       }
       setIsOptionsVisible(!isOptionsVisible)
@@ -117,7 +117,9 @@ const LazyDropdown = ({
                            setSelected(null)
                            setStateDefaultName('')
                            setIsOptionsVisible(true)
-                           handleClick()
+                           if (!isOptionsVisible) {
+                              handleClick()
+                           }
                         }
                      }}
                   >
@@ -146,7 +148,9 @@ const LazyDropdown = ({
                            setKeyword(e.target.value.toLowerCase())
                         }
                         onFocus={() => {
-                           handleClick()
+                           if (!isOptionsVisible) {
+                              handleClick()
+                           }
                            setIsOptionsVisible(true)
                         }}
                      />
@@ -161,40 +165,44 @@ const LazyDropdown = ({
          </StyledSelected>
          {!readOnly && isOptionsVisible && (
             <StyledOptions variant={variant} matchedOptions={matchedOptions}>
-               {isLoading && (
+               {isLoading ? (
                   <center>
                      <StyledOption>
-                        <span data-type="spinner">
-                           <Spinner variant="secondary" />
-                        </span>
+                        <div>
+                           <span data-type="spinner">
+                              <Spinner variant="secondary" />
+                           </span>
+                        </div>
                      </StyledOption>
                   </center>
-               )}
-               {matchedOptions.map(
-                  (option, index) =>
-                     matchedOptions.length && (
-                        <StyledOption
-                           key={option.id}
-                           title={option.title}
-                           isSelected={selected === index}
-                           onClick={() => handleOptionClick(option)}
-                           description={option?.description || ''}
-                        >
-                           <div>
-                              <span>{option.title}</span>
-                              {option?.description && (
-                                 <p>{option.description}</p>
-                              )}
-                           </div>
-                        </StyledOption>
-                     )
-               )}
-               {!matchedOptions.length && (
-                  <NoItemFound
-                     addOption={addOption}
-                     keyword={keyword}
-                     typeName={typeName}
-                  />
+               ) : (
+                  <>
+                     {matchedOptions.map((option, index) =>
+                        matchedOptions.length && (
+                           <StyledOption
+                              key={option.id}
+                              title={option.title}
+                              isSelected={selected === index}
+                              onClick={() => handleOptionClick(option)}
+                              description={option?.description || ''}
+                           >
+                              <div>
+                                 <span>{option.title}</span>
+                                 {option?.description && (
+                                    <p>{option.description}</p>
+                                 )}
+                              </div>
+                           </StyledOption>
+                        )
+                     )}
+                     {!matchedOptions.length && (
+                        <NoItemFound
+                           addOption={addOption}
+                           keyword={keyword}
+                           typeName={typeName}
+                        />
+                     )}
+                  </>
                )}
             </StyledOptions>
          )}
