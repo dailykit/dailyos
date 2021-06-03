@@ -66,7 +66,7 @@ export const Products = ({ order }) => {
    }
 
    const types = groupBy(
-      order.cart.cartItemViews_aggregate.nodes,
+      order.cart.cartItems_aggregate.nodes,
       'productOptionType'
    )
    return (
@@ -76,7 +76,7 @@ export const Products = ({ order }) => {
                <Styles.Tab>
                   {t(address.concat('all'))}{' '}
                   <StyledCount>
-                     {order.cart.cartItemViews_aggregate.aggregate.count}
+                     {order.cart.cartItems_aggregate.aggregate.count}
                   </StyledCount>
                </Styles.Tab>
                {Object.keys(types).map(key => (
@@ -88,7 +88,7 @@ export const Products = ({ order }) => {
             </Styles.TabList>
             <Styles.TabPanels>
                <Styles.TabPanel>
-                  {order.cart.cartItemViews_aggregate.nodes.map(item => (
+                  {order.cart.cartItems_aggregate.nodes.map(item => (
                      <StyledProductItem key={item.id}>
                         <div>
                            <StyledProductTitle>
@@ -112,7 +112,7 @@ export const Products = ({ order }) => {
                {Object.values(types).map((listing, index) => (
                   <Styles.TabPanel key={index}>
                      {listing.map(item => (
-                        <StyledProductItem key={item.id}>
+                        <StyledProductItem key={`${item.id}-${index}`}>
                            <div>
                               <StyledProductTitle>
                                  {item.displayName.split('->').pop().trim()}

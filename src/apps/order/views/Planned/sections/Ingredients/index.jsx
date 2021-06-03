@@ -48,8 +48,7 @@ const Listing = ({ setTotal, setQuantity }) => {
                      (y, x) =>
                         y +
                         x.ingredientSachets_aggregate.nodes.reduce(
-                           (d, c) =>
-                              d + c.cartItemViews_aggregate.aggregate.count,
+                           (d, c) => d + c.cartItems_aggregate.aggregate.count,
                            0
                         ),
                      0
@@ -59,8 +58,7 @@ const Listing = ({ setTotal, setQuantity }) => {
             setTotal(total)
             const quantity = list.nodes.reduce(
                (b, a) =>
-                  b +
-                  a.cartItemViews_aggregate.aggregate.sum.displayUnitQuantity,
+                  b + a.cartItems_aggregate.aggregate.sum.displayUnitQuantity,
                0
             )
             setQuantity(quantity)
@@ -92,7 +90,7 @@ const Listing = ({ setTotal, setQuantity }) => {
                   <Text as="subtitle">
                      Total Quantity:{' '}
                      {
-                        node.cartItemViews_aggregate?.aggregate?.sum
+                        node.cartItems_aggregate?.aggregate?.sum
                            ?.displayUnitQuantity
                      }
                   </Text>
@@ -118,12 +116,12 @@ const Processings = ({ nodes }) => {
                      <span>
                         {node.processingName}
                         <span title="Total">
-                           ({node.cartItemViews_aggregate.aggregate.count})
+                           ({node.cartItems_aggregate.aggregate.count})
                         </span>
                      </span>
                      <span title="Total Quantity">
                         {
-                           node.cartItemViews_aggregate.aggregate.sum
+                           node.cartItems_aggregate.aggregate.sum
                               .displayUnitQuantity
                         }
                      </span>
@@ -153,12 +151,12 @@ const Sachets = ({ nodes }) => {
                         {node.quantity}
                         {node.unit}
                         <span title="Total">
-                           ({node.cartItemViews_aggregate.aggregate.count})
+                           ({node.cartItems_aggregate.aggregate.count})
                         </span>
                      </span>
                      <span title="Total Quantity">
                         {
-                           node.cartItemViews_aggregate.aggregate.sum
+                           node.cartItems_aggregate.aggregate.sum
                               .displayUnitQuantity
                         }
                      </span>
@@ -168,7 +166,7 @@ const Sachets = ({ nodes }) => {
             <StyledTabPanels>
                {nodes.map(node => (
                   <StyledTabPanel>
-                     <Cards nodes={node.cartItemViews_aggregate.nodes} />
+                     <Cards nodes={node.cartItems_aggregate.nodes} />
                   </StyledTabPanel>
                ))}
             </StyledTabPanels>
