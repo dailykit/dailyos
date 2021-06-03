@@ -147,7 +147,11 @@ const Content = ({ panel }) => {
                action: add,
             }}
          />
-         <Styles.TunnelBody padding="16px">
+         <Styles.TunnelBody
+            padding="16px"
+            overflowY="auto"
+            height="calc(100vh - 196px)"
+         >
             {loading ? (
                <InlineLoader />
             ) : (
@@ -192,17 +196,6 @@ const Content = ({ panel }) => {
                               handleChange={result => setModifiersState(result)}
                            />
                         )}
-                        <Styles.Fixed
-                           container
-                           alignItems="center"
-                           justifyContent="center"
-                           width="calc(100% - 16px)"
-                        >
-                           <QuantitySelector
-                              quantity={quantity}
-                              setQuantity={setQuantity}
-                           />
-                        </Styles.Fixed>
                      </>
                   ) : (
                      <>
@@ -228,6 +221,17 @@ const Content = ({ panel }) => {
                         )}
                      </>
                   )}
+                  <Styles.Fixed
+                     container
+                     alignItems="center"
+                     justifyContent="center"
+                     width="calc(100% - 16px)"
+                  >
+                     <QuantitySelector
+                        quantity={quantity}
+                        setQuantity={setQuantity}
+                     />
+                  </Styles.Fixed>
                </>
             )}
          </Styles.TunnelBody>
@@ -254,7 +258,7 @@ const Styles = {
    `,
    Fixed: styled(Flex)`
       background: #fff;
-      position: absolute;
+      position: sticky;
       bottom: 0;
    `,
 }
