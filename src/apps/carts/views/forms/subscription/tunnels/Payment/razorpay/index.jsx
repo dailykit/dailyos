@@ -11,7 +11,7 @@ import { InlineLoader } from '../../../../../../../../shared/components'
 const RAZORPAY_SCRIPT_URL =
    'https://s3.us-east-2.amazonaws.com/dailykit.org/payments/v2/index.js'
 
-export const RazorpayTunnel = () => {
+export const RazorpayTunnel = ({ closeViaTunnel }) => {
    const params = useParams()
    const [partnershipId, setPartnershipId] = React.useState(null)
    const [isOrganizationLoading, setIsOrganizationLoading] = React.useState(
@@ -51,6 +51,11 @@ export const RazorpayTunnel = () => {
       onSubscriptionData: async ({
          subscriptionData: { data: { cart = {} } = {} } = {},
       }) => {
+         if (cart.paymentStatus === 'SUCCEEDED') {
+            closeViaTunnel(3)
+            closeViaTunnel(1)
+            return
+         }
          const brandObject = {
             name: cart.brand.title,
             logo: '',
@@ -140,6 +145,7 @@ const CART = gql`
       cart(id: $id) {
          id
          isTest
+         orderId
          paymentId
          totalPrice
          isCartValid
