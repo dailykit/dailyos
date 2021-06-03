@@ -28,6 +28,7 @@ export const Aside = () => {
    const { addTab } = useTabs()
    const { occurenceCustomer } = useManual()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
+   
    const [update] = useMutation(MUTATIONS.CART.UPDATE, {
       onCompleted: () => {
          closeTunnel(1)

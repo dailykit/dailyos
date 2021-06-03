@@ -391,7 +391,7 @@ const Content = ({ panel }) => {
          {[PPLoading, OPLoading, PDLoading, ODLoading].some(Boolean) ? (
             <InlineLoader />
          ) : (
-            <Flex padding="16px">
+            <Flex padding="16px" overflowY="auto" height="calc(100vh - 196px)">
                <Text as="text1"> Order for </Text>
                <Spacer size="4px" />
                <RadioGroup

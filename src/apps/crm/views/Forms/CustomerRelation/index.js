@@ -129,7 +129,7 @@ const CustomerRelation = ({ match }) => {
          brandId: context.brandId,
       },
       onError: error => {
-         toast.error('Something went wrong4')
+         toast.error('Something went wrong!')
          logger(error)
       },
    })
