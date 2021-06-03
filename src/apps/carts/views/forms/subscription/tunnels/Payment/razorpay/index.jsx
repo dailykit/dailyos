@@ -1,6 +1,6 @@
 import React from 'react'
 import gql from 'graphql-tag'
-import { Flex } from '@dailykit/ui'
+import { Flex, Spacer } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router'
 import { useQuery, useSubscription } from '@apollo/react-hooks'
@@ -78,17 +78,22 @@ export const RazorpayTunnel = () => {
       return <InlineLoader />
    return (
       <Flex padding="16px" overflowY="auto" height="calc(100vh - 196px)">
-         <div id="payment" />
-
-         {cart.paymentRequestInfo?.payload?.payment_link?.entity?.short_url && (
-            <p>
-               Send this payment link to your user:{' '}
-               {
-                  cart.paymentRequestInfo?.payload?.payment_link?.entity
-                     ?.short_url
-               }
-            </p>
+         {cart.paymentLinkUrl && (
+            <>
+               <p>
+                  Send this payment link to your customer:{' '}
+                  <a
+                     target="_blank"
+                     rel="noreferer noopener"
+                     href={cart.paymentLinkUrl}
+                  >
+                     {cart.paymentLinkUrl}
+                  </a>
+               </p>
+               <Spacer size="14px" />
+            </>
          )}
+         <div id="payment" />
       </Flex>
    )
 }
@@ -140,8 +145,11 @@ const CART = gql`
          isCartValid
          paymentStatus
          transactionId
-         paymentRequestInfo
+         paymentUpdatedAt
          customerKeycloakId
+         paymentLinkUrl: transactionRemark(
+            path: "payload.payment_link.entity.short_url"
+         )
          brand {
             id
             title
