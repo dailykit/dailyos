@@ -17,13 +17,17 @@ import {
 } from '@dailykit/ui'
 
 import CartInfo from './CartInfo'
+import { useManual } from '../../state'
 import CartProducts from './CartProducts'
 import { MUTATIONS } from '../../../../../graphql'
 import { logger } from '../../../../../../../shared/utils'
+import { useTabs } from '../../../../../../../shared/providers'
 import { RazorpayTunnel, StripeTunnel } from '../../tunnels/Payment'
 
 export const Aside = () => {
    const params = useParams()
+   const { cart } = useManual()
+   const { addTab } = useTabs()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [update] = useMutation(MUTATIONS.CART.UPDATE, {
       onCompleted: () => {
@@ -54,9 +58,23 @@ export const Aside = () => {
             <CartInfo />
          </main>
          <footer>
-            <TextButton type="solid" onClick={() => openTunnel(1)}>
-               CHECKOUT
-            </TextButton>
+            {cart?.paymentStatus === 'SUCCEEDED' && cart?.orderId ? (
+               <TextButton
+                  type="solid"
+                  onClick={() =>
+                     addTab(
+                        `ORD${cart?.orderId}`,
+                        `/order/orders/${cart?.orderId}`
+                     )
+                  }
+               >
+                  View Order #{cart?.orderId}
+               </TextButton>
+            ) : (
+               <TextButton type="solid" onClick={() => openTunnel(1)}>
+                  CHECKOUT
+               </TextButton>
+            )}
          </footer>
          <Tunnels tunnels={tunnels}>
             <Tunnel size="md">

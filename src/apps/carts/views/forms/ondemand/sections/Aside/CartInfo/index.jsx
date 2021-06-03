@@ -11,6 +11,7 @@ import { parseAddress } from '../../../../../../../../shared/utils'
 
 const CartInfo = () => {
    const {
+      cart,
       brand,
       tunnels,
       address,
@@ -119,6 +120,7 @@ const CartInfo = () => {
          <Styles.Card>
             <Header
                title="Fulfillment"
+               canEdit={cart?.paymentStatus === 'PENDING'}
                onEdit={() => {
                   if (!customer?.id) {
                      return toast.warning('Please select a customer first.')
@@ -163,7 +165,7 @@ const CartInfo = () => {
 
 export default CartInfo
 
-const Header = ({ title = '', onEdit = null }) => {
+const Header = ({ title = '', canEdit, onEdit = null }) => {
    return (
       <Flex
          container
@@ -174,7 +176,7 @@ const Header = ({ title = '', onEdit = null }) => {
          justifyContent="space-between"
       >
          <Text as="text2">{title}</Text>
-         {onEdit && (
+         {canEdit && onEdit && (
             <IconButton type="ghost" size="sm" onClick={onEdit}>
                <Icon.EditIcon size="12px" />
             </IconButton>
