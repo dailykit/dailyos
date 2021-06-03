@@ -22,6 +22,7 @@ const initial = {
    products: { aggregate: { count: 0 } },
    billing: {},
    occurenceCustomer: {},
+   cart: {},
 }
 
 const reducers = (state, { type, payload }) => {
@@ -70,6 +71,17 @@ const reducers = (state, { type, payload }) => {
             ...state,
             organization: payload,
          }
+      case 'SET_CART': {
+         const { id, orderId, paymentStatus } = payload
+         return {
+            ...state,
+            cart: {
+               id,
+               orderId,
+               paymentStatus,
+            },
+         }
+      }
       default:
          return state
    }
@@ -158,6 +170,7 @@ export const ManualProvider = ({ children }) => {
                   subscriptionOccurenceId: cart.subscriptionOccurenceId,
                },
             })
+            dispatch({ type: 'SET_CART', payload: cart })
             refetchCustomer()
             if (cart?.paymentMethodId) {
                refetchPaymentMethod()

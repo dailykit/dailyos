@@ -18,11 +18,14 @@ import CartInfo from './CartInfo'
 import { useManual } from '../../state'
 import CartProducts from './CartProducts'
 import { MUTATIONS } from '../../../../../graphql'
-import { RazorpayTunnel, StripeTunnel } from '../../tunnels/Payment'
 import { logger } from '../../../../../../../shared/utils'
+import { useTabs } from '../../../../../../../shared/providers'
+import { RazorpayTunnel, StripeTunnel } from '../../tunnels/Payment'
 
 export const Aside = () => {
    const params = useParams()
+   const { cart } = useManual()
+   const { addTab } = useTabs()
    const { occurenceCustomer } = useManual()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
    const [update] = useMutation(MUTATIONS.CART.UPDATE, {
@@ -54,13 +57,27 @@ export const Aside = () => {
             <CartInfo />
          </main>
          <footer>
-            <TextButton
-               type="solid"
-               onClick={() => openTunnel(1)}
-               disabled={!occurenceCustomer?.itemCountValid}
-            >
-               CHECKOUT
-            </TextButton>
+            {cart?.paymentStatus === 'SUCCEEDED' && cart?.orderId ? (
+               <TextButton
+                  type="solid"
+                  onClick={() =>
+                     addTab(
+                        `ORD${cart?.orderId}`,
+                        `/order/orders/${cart?.orderId}`
+                     )
+                  }
+               >
+                  View Order #{cart?.orderId}
+               </TextButton>
+            ) : (
+               <TextButton
+                  type="solid"
+                  onClick={() => openTunnel(1)}
+                  disabled={!occurenceCustomer?.itemCountValid}
+               >
+                  CHECKOUT
+               </TextButton>
+            )}
          </footer>
          <Tunnels tunnels={tunnels}>
             <Tunnel size="md">
