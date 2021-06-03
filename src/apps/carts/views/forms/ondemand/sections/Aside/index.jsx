@@ -19,8 +19,8 @@ import {
 import CartInfo from './CartInfo'
 import CartProducts from './CartProducts'
 import { MUTATIONS } from '../../../../../graphql'
-import { StripeTunnel } from '../../tunnels/Payment'
 import { logger } from '../../../../../../../shared/utils'
+import { RazorpayTunnel, StripeTunnel } from '../../tunnels/Payment'
 
 export const Aside = () => {
    const params = useParams()
@@ -71,6 +71,11 @@ export const Aside = () => {
                      onClick={() => openTunnel(2)}
                   />
                   <Spacer size="14px" />
+                  <OptionTile
+                     title="Via RazorPay"
+                     onClick={() => openTunnel(3)}
+                  />
+                  <Spacer size="14px" />
                   <OptionTile title="Mark Paid" onClick={markPaid} />
                </Flex>
             </Tunnel>
@@ -78,6 +83,10 @@ export const Aside = () => {
             <Tunnel size="full">
                <TunnelHeader title="Payment" close={() => closeTunnel(2)} />
                <StripeTunnel closeViaTunnel={closeTunnel} />
+            </Tunnel>
+            <Tunnel size="full">
+               <TunnelHeader title="Razorpay" close={() => closeTunnel(3)} />
+               <RazorpayTunnel closeViaTunnel={closeTunnel} />
             </Tunnel>
          </Tunnels>
       </Styles.Aside>
