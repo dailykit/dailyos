@@ -24,7 +24,7 @@ import {
 import EmptyIllo from '../../../../../../assets/svgs/EmptyIllo'
 
 const CartProducts = () => {
-   const { billing, products } = useManual()
+   const { cart, billing, products } = useManual()
    const [remove] = useMutation(MUTATIONS.CART.ITEM.DELETE, {
       onCompleted: () => toast.success('Successfully deleted the product.'),
       onError: () => toast.error('Failed to delete the product.'),
@@ -55,15 +55,17 @@ const CartProducts = () => {
                               Price: {currencyFmt(product.price)}
                            </Text>
                         </Flex>
-                        <IconButton
-                           size="sm"
-                           type="ghost"
-                           onClick={() =>
-                              remove({ variables: { id: product.id } })
-                           }
-                        >
-                           <DeleteIcon color="#ec3333" />
-                        </IconButton>
+                        {cart?.paymentStatus === 'PENDING' && (
+                           <IconButton
+                              size="sm"
+                              type="ghost"
+                              onClick={() =>
+                                 remove({ variables: { id: product.id } })
+                              }
+                           >
+                              <DeleteIcon color="#ec3333" />
+                           </IconButton>
+                        )}
                      </Flex>
                   </Styles.Card>
                ))}
@@ -316,7 +318,7 @@ const LoyaltyPoints = () => {
 
 const Coupon = () => {
    const { id: cartId } = useParams()
-   const { customer, tunnels } = useManual()
+   const { cart, customer, tunnels } = useManual()
 
    const { data, error } = useSubscription(QUERIES.CART.REWARDS, {
       variables: {
@@ -374,16 +376,26 @@ const Coupon = () => {
                   <Spacer size="4px" />
                   <Text as="subtitle">Coupon applied!</Text>
                </Flex>
-               <IconButton type="ghost" size="sm" onClick={deleteCartRewards}>
-                  <CloseIcon color="#ec3333" />
-               </IconButton>
+               {cart?.paymentStatus === 'PENDING' && (
+                  <IconButton
+                     type="ghost"
+                     size="sm"
+                     onClick={deleteCartRewards}
+                  >
+                     <CloseIcon color="#ec3333" />
+                  </IconButton>
+               )}
             </Styles.Coupon>
          ) : (
-            <ButtonTile
-               type="secondary"
-               text="Add Coupon"
-               onClick={() => tunnels.coupons[1](1)}
-            />
+            <>
+               {cart?.paymentStatus === 'PENDING' && (
+                  <ButtonTile
+                     type="secondary"
+                     text="Add Coupon"
+                     onClick={() => tunnels.coupons[1](1)}
+                  />
+               )}
+            </>
          )}
       </>
    )

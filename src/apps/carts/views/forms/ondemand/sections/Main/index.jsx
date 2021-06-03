@@ -157,7 +157,7 @@ export const Main = () => {
 
 const Menu = ({ menu }) => {
    const { id: cartId } = useParams()
-   const { tunnels, dispatch } = useManual()
+   const { cart, tunnels, dispatch } = useManual()
 
    const [insertCartItem, { loading }] = useMutation(
       MUTATIONS.CART.ITEM.INSERT,
@@ -287,14 +287,16 @@ const Menu = ({ menu }) => {
                               <Text as="text2">{product.name}</Text>
                               <Text as="text3">{renderPrice(product)}</Text>
                               <Spacer size="8px" />
-                              <TextButton
-                                 type="solid"
-                                 variant="secondary"
-                                 size="sm"
-                                 data-product-id={product.id}
-                              >
-                                 ADD {product.isPopupAllowed && '+'}
-                              </TextButton>
+                              {cart?.paymentStatus === 'PENDING' && (
+                                 <TextButton
+                                    type="solid"
+                                    variant="secondary"
+                                    size="sm"
+                                    data-product-id={product.id}
+                                 >
+                                    ADD {product.isPopupAllowed && '+'}
+                                 </TextButton>
+                              )}
                            </Flex>
                         </Styles.Card>
                      ))}

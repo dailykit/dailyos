@@ -409,12 +409,8 @@ const Content = ({ panel }) => {
                            </Text>
                         </Flex>
                         {renderComboComponent()}
-                        <Styles.Fixed
-                           container
-                           alignItems="center"
-                           justifyContent="center"
-                           width="calc(100% - 16px)"
-                        >
+
+                        <Styles.Fixed width="120px" margin="0 auto">
                            {currentStage === stages.length - 1 ? (
                               <QuantitySelector
                                  quantity={quantity}
@@ -460,7 +456,6 @@ const Styles = {
       border-radius: 2px;
    `,
    Fixed: styled(Flex)`
-      background: #fff;
       position: sticky;
       bottom: 0;
    `,

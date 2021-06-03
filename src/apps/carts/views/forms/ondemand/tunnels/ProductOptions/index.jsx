@@ -122,7 +122,7 @@ const Content = ({ panel }) => {
          <Styles.TunnelBody
             padding="16px"
             overflowY="auto"
-            height="calc(100vh - 196px)"
+            height="calc(100vh - 193px)"
          >
             {loading ? (
                <InlineLoader />
@@ -149,12 +149,7 @@ const Content = ({ panel }) => {
                         handleChange={result => setModifiersState(result)}
                      />
                   )}
-                  <Styles.Fixed
-                     container
-                     alignItems="center"
-                     justifyContent="center"
-                     width="calc(100% - 16px)"
-                  >
+                  <Styles.Fixed width="120px" margin="0 auto">
                      <QuantitySelector
                         quantity={quantity}
                         setQuantity={setQuantity}
@@ -170,10 +165,8 @@ const Content = ({ panel }) => {
 const Styles = {
    TunnelBody: styled(Flex)`
       position: relative;
-      height: inherit;
    `,
    Fixed: styled(Flex)`
-      background: #fff;
       position: sticky;
       bottom: 0;
    `,
