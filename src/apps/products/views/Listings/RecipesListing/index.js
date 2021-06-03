@@ -13,15 +13,8 @@ import {
    Tunnel,
    Tunnels,
    useTunnel,
-   Form,
    Checkbox,
-   TunnelHeader,
-   Context,
-   ContextualMenu,
-   typeOf,
 } from '@dailykit/ui'
-import { jsPDF } from 'jspdf'
-import 'jspdf-autotable'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import {
@@ -29,7 +22,7 @@ import {
    InlineLoader,
    Tooltip,
 } from '../../../../../shared/components'
-import { useTooltip, useTabs } from '../../../../../shared/providers'
+import { useTabs } from '../../../../../shared/providers'
 import { logger, randomSuffix } from '../../../../../shared/utils'
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
 import { BulkActionsTunnel, ApplyFilterTunnel } from './tunnels'
@@ -38,7 +31,6 @@ import {
    DELETE_SIMPLE_RECIPES,
    S_RECIPES,
 } from '../../../graphql'
-import ServingsCount from '../../../utils/countFormatter'
 import tableOptions from '../tableOption'
 import { ResponsiveFlex } from '../styled'
 import { useRef } from 'react'
@@ -55,38 +47,11 @@ const RecipesListing = () => {
    const [tunnels, openTunnel, closeTunnel, visible] = useTunnel(2)
    // Queries and Mutations
 
-   // const [recipes, setRecipes] = React.useState([])
-
    let {
       loading,
       data: { simpleRecipes: recipes = [] } = {},
       error,
    } = useSubscription(S_RECIPES)
-
-   // if (recipes.length > 0) {
-   //    const updatedRecipes = recipes.map(recipe => {
-   //       recipe.simpleRecipeYieldsLength = recipe.simpleRecipeYields.length
-   //       return recipe
-   //    })
-   //    recipes = [...updatedRecipes]
-   // }
-
-   // let recipes = []
-
-   // const { loading, error } = useSubscription(S_RECIPES, {
-   //    onSubscriptionData: data => {
-   //       const { simpleRecipes } = data.subscriptionData.data
-   //       const updatedRecipes = simpleRecipes.map(recipe => {
-   //          recipe.simpleRecipeYieldsLength = recipe.simpleRecipeYields.length
-   //          return recipe
-   //       })
-
-   //       console.log('up', updatedRecipes)
-   //       recipes = updatedRecipes
-   //    },
-   // })
-
-   console.log('re', recipes)
 
    const [createRecipe] = useMutation(CREATE_SIMPLE_RECIPE, {
       onCompleted: input => {
@@ -147,7 +112,6 @@ const RecipesListing = () => {
       return <ErrorState />
    }
 
-   console.log('data', recipes)
    return (
       <ResponsiveFlex maxWidth="1280px" margin="0 auto">
          <Tunnels tunnels={tunnels}>
@@ -197,45 +161,71 @@ const RecipesListing = () => {
    )
 }
 
+const CheckBox = ({ handleMultipleRowSelection, checked }) => {
+   return (
+      <Checkbox
+         id="label"
+         checked={checked}
+         onChange={() => {
+            handleMultipleRowSelection()
+         }}
+         isAllSelected={null}
+      />
+   )
+}
+const CrossBox = ({ removeSelectedRecipes }) => {
+   return (
+      <Checkbox
+         id="label"
+         checked={false}
+         onChange={removeSelectedRecipes}
+         isAllSelected={false}
+      />
+   )
+}
+
 class DataTable extends React.Component {
    constructor(props) {
       super(props)
       this.state = {
+         checked: false,
          groups: [localStorage.getItem('tabulator-recipe_table-group')],
       }
+      this.handleMultipleRowSelection = this.handleMultipleRowSelection.bind(
+         this
+      )
       this.tableRef = React.createRef()
       this.handleRowSelection = this.handleRowSelection.bind(this)
    }
 
-   // componentDidMount() {
-   //    // console.log('local', JSON.parse(localStorage.getItem('rows-schema')))
-   //    var selectedRowsId = JSON.parse(localStorage.getItem('rows-schema'))
-   //    console.log(typeof selectedRowsId)
+   handleMultipleRowSelection = () => {
+      this.setState(
+         {
+            checked: !this.state.checked,
+         },
+         () => {
+            if (this.state.checked) {
+               this.tableRef.current.table.selectRow('active')
+               let multipleRowData = this.tableRef.current.table.getSelectedData()
+               this.props.setSelectedRows(multipleRowData)
+               localStorage.setItem(
+                  'selected-rows-id_recipe_table',
+                  JSON.stringify(multipleRowData.map(row => row.id))
+               )
+            } else {
+               this.tableRef.current.table.deselectRow()
+               this.props.setSelectedRows([])
 
-   //    // console.log('table', this.tableRef.current)
-   //    // console.log('id', selectedRowsId)
-   //    // console.log('is', Array.isArray(selectedRowsId))
-   //    if (Array.isArray(selectedRowsId) && selectedRowsId.length > 0) {
-   //       console.log('h1llon')
-   //       if (this.tableRef.current !== null) {
-   //          console.log('h1llonkjn')
-   //          console.log('table', this.tableRef.current.table)
-   //          this.tableRef.current.table.selectRow([1064, 1008])
-   //       }
-   //    }
-   //    // this.props.setSelectedRows(localStorage.getItem('rows-schema'))
-   // }
+               localStorage.setItem(
+                  'selected-rows-id_recipe_table',
+                  JSON.stringify([])
+               )
+            }
+         }
+      )
+   }
 
    columns = [
-      {
-         formatter: 'rowSelection',
-         // titleFormatter: 'tickcross',
-         titleFormatter: reactFormatter(<Selection />),
-         hozAlign: 'center',
-         headerSort: false,
-         frozen: true,
-         width: 15,
-      },
       {
          title: 'Name',
          field: 'name',
@@ -250,45 +240,9 @@ class DataTable extends React.Component {
          },
          cssClass: 'colHover',
          resizable: 'true',
-         maxWidth: 400,
+         minWidth: 100,
+         maxWidth: 500,
       },
-      { title: 'Author', field: 'author', headerFilter: true },
-      {
-         title: 'Cooking Time',
-         field: 'cookingTime',
-         headerFilter: true,
-         hozAlign: 'right',
-         headerHozAlign: 'right',
-         width: 150,
-      },
-      {
-         title: 'Cuisine type',
-         field: 'cuisine',
-         headerFilter: true,
-         hozAlign: 'left',
-         headerHozAlign: 'right',
-         width: 150,
-      },
-      {
-         title: '# of Servings',
-         field: 'simpleRecipeYields.aggregate.count',
-         headerFilter: false,
-         hozAlign: 'right',
-         headerHozAlign: 'right',
-         // formatter: reactFormatter(<ServingsCount />),
-         width: 150,
-      },
-      // {
-      //    title: 'Published',
-      //    field: 'isPublished',
-      //    // formatter: 'tickCross',
-      //    // frozen: true,
-      //    hozAlign: 'center',
-      //    headerHozAlign: 'center',
-      //    formatter: reactFormatter(<PublishStatus />),
-      //    width: 150,
-      //    headerFilter: true,
-      // },
       {
          title: 'Actions',
          headerSort: false,
@@ -302,9 +256,42 @@ class DataTable extends React.Component {
          ),
          width: 80,
       },
+      {
+         title: 'Author',
+         field: 'author',
+         headerFilter: true,
+         hozAlign: 'left',
+         headerHozAlign: 'right',
+         minWidth: 100,
+         width: 200,
+      },
+      {
+         title: 'Cooking Time',
+         field: 'cookingTime',
+         headerFilter: true,
+         hozAlign: 'right',
+         resizable: false,
+         headerHozAlign: 'right',
+         width: 150,
+      },
+      {
+         title: 'Cuisine type',
+         field: 'cuisine',
+         headerFilter: true,
+         hozAlign: 'left',
+         headerHozAlign: 'right',
+         width: 200,
+      },
+      {
+         title: '# of Servings',
+         field: 'simpleRecipeYields.aggregate.count',
+         headerFilter: false,
+         hozAlign: 'right',
+         headerHozAlign: 'right',
+         width: 80,
+      },
    ]
    handleRowSelection = ({ _row }) => {
-      console.log(_row.getData())
       this.props.setSelectedRows(prevState => [...prevState, _row.getData()])
 
       let newData = [...this.props.selectedRows.map(row => row.id)]
@@ -316,7 +303,6 @@ class DataTable extends React.Component {
 
    handleDeSelection = ({ _row }) => {
       const data = _row.getData()
-      console.log('de', _row.getData())
       this.props.setSelectedRows(prevState =>
          prevState.filter(row => row.id != data.id)
       )
@@ -335,8 +321,6 @@ class DataTable extends React.Component {
             groups: value,
          },
          () => {
-            console.log('value', value)
-            console.log('group', JSON.stringify(this.state.groups))
             this.tableRef.current.table.setGroupBy(this.state.groups)
          }
       )
@@ -358,6 +342,42 @@ class DataTable extends React.Component {
    }
 
    selectRows = () => {
+      const recipeGroup = localStorage.getItem('tabulator-recipe_table-group')
+      const recipeGroupParse =
+         recipeGroup !== undefined &&
+         recipeGroup !== null &&
+         recipeGroup.length !== 0
+            ? JSON.parse(recipeGroup)
+            : null
+      this.tableRef.current.table.setGroupBy(
+         !!recipeGroupParse && recipeGroupParse.length > 0
+            ? recipeGroupParse
+            : []
+      )
+
+      this.tableRef.current.table.setGroupHeader(function (
+         value,
+         count,
+         data1,
+         group
+      ) {
+         let newHeader
+         switch (group._group.field) {
+            case 'isPublished':
+               newHeader = 'Publish'
+               break
+            case 'cuisine':
+               newHeader = 'Cuisine Type'
+               break
+            case 'author':
+               newHeader = 'Author'
+               break
+            default:
+               break
+         }
+         return `${newHeader} - ${value} || ${count} Recipes`
+      })
+
       const selectedRowsId =
          localStorage.getItem('selected-rows-id_recipe_table') || '[]'
       this.tableRef.current.table.selectRow(JSON.parse(selectedRowsId))
@@ -371,11 +391,46 @@ class DataTable extends React.Component {
       }
    }
 
-   handleMultipleRowSelection = () => {
-      console.log('checkbox')
+   removeSelectedRecipes = () => {
+      this.setState({ checked: false })
+      this.props.setSelectedRows([])
+      this.tableRef.current.table.deselectRow()
+      localStorage.setItem('selected-rows-id_recipe_table', JSON.stringify([]))
    }
 
    render() {
+      const selectionColumn =
+         this.props.selectedRows.length > 0 &&
+         this.props.selectedRows.length < this.props.data.length
+            ? {
+                 formatter: 'rowSelection',
+                 titleFormatter: reactFormatter(
+                    <CrossBox
+                       removeSelectedRecipes={this.removeSelectedRecipes}
+                    />
+                 ),
+                 align: 'center',
+                 hozAlign: 'center',
+                 width: 10,
+                 headerSort: false,
+                 frozen: true,
+              }
+            : {
+                 formatter: 'rowSelection',
+                 titleFormatter: reactFormatter(
+                    <CheckBox
+                       checked={this.state.checked}
+                       handleMultipleRowSelection={
+                          this.handleMultipleRowSelection
+                       }
+                    />
+                 ),
+                 align: 'center',
+                 hozAlign: 'center',
+                 width: 20,
+                 headerSort: false,
+                 frozen: true,
+              }
       return (
          <>
             <Spacer size="5px" />
@@ -386,7 +441,7 @@ class DataTable extends React.Component {
                clearHeaderFilter={this.clearHeaderFilter}
             />
 
-            <Spacer size="24px" />
+            <Spacer size="40px" />
             <Flex container as="header" width="100%" justifyContent="flex-end">
                <TextButton
                   onClick={this.downloadCsvData}
@@ -417,15 +472,12 @@ class DataTable extends React.Component {
             <ReactTabulator
                ref={this.tableRef}
                dataLoaded={this.selectRows}
-               columns={this.columns}
+               columns={[selectionColumn, ...this.columns]}
                data={this.props.data}
                selectableCheck={() => true}
-               // rowSelectionChanged={(data, components) => {
-               //    this.handleRowSelection(data)
-               // }}
                rowSelected={this.handleRowSelection}
                rowDeselected={this.handleDeSelection}
-               options={tableOptions}
+               options={{ ...tableOptions, reactiveData: true }}
                data-custom-attr="test-custom-attribute"
                className="custom-css-class"
             />
@@ -441,53 +493,6 @@ function DeleteRecipe({ cell, onDelete }) {
       <IconButton type="ghost" onClick={() => onDelete(recipe)}>
          <DeleteIcon color="#FF5A52" />
       </IconButton>
-      // <ContextualMenu>
-      //    <Context
-      //       title="This is context 1"
-      //       handleClick={() => console.log('Context1')}
-      //    >
-      //       <p>This is things could be done</p>
-      //       <TextButton type="solid" size="sm">
-      //          Update
-      //       </TextButton>
-      //    </Context>
-      //    <Context
-      //       title="This is context 2"
-      //       handleClick={() => console.log('Context2')}
-      //    />
-      // </ContextualMenu>
-   )
-}
-
-function PublishStatus({ cell }) {
-   const data = cell.getData()
-   return (
-      <Flex
-         container
-         width="100%"
-         justifyContent="space-between"
-         alignItems="center"
-      >
-         <IconButton type="ghost">
-            {data.isPublished ? <PublishIcon /> : <UnPublishIcon />}
-         </IconButton>
-      </Flex>
-   )
-}
-
-function Selection() {
-   const [checked, setChecked] = React.useState(true)
-
-   const handleMultipleRowSelection = () => {
-      setChecked(!checked)
-      console.log('handleMultipleRowSelection')
-   }
-   return (
-      <Checkbox
-         id="label"
-         checked={checked}
-         onChange={handleMultipleRowSelection}
-      ></Checkbox>
    )
 }
 
@@ -509,21 +514,11 @@ function RecipeName({ cell, addTab }) {
             >
                <p
                   style={{
-                     width: '200px',
+                     width: '230px',
                      whiteSpace: 'nowrap',
                      overflow: 'hidden',
                      textOverflow: 'ellipsis',
                   }}
-                  // onClick={(e, cell) => {
-                  //    const { name, id } = data
-                  //    addTab(name, `/products/recipes/${id}`)
-                  //    console.log('hi')
-                  // }}
-
-                  // onClick(e, cell) => {
-                  //    const { name, id } = cell._cell.row.data
-                  //    this.props.addTab(name, `/products/recipes/${id}`)
-                  // }
                >
                   {cell._cell.value}
                </p>
@@ -532,27 +527,12 @@ function RecipeName({ cell, addTab }) {
             <Flex
                container
                width="100%"
-               justifyContent="space-between"
+               justifyContent="flex-end"
                alignItems="center"
             >
                <IconButton type="ghost">
                   {data.isPublished ? <PublishIcon /> : <UnPublishIcon />}
                </IconButton>
-               {/* <ContextualMenu>
-                  <Context
-                     title="This is context 1"
-                     handleClick={() => console.log('Context1')}
-                  >
-                     <p>This is things could be done</p>
-                     <TextButton type="solid" size="sm">
-                        Update
-                     </TextButton>
-                  </Context>
-                  <Context
-                     title="This is context 2"
-                     handleClick={() => console.log('Context2')}
-                  />
-               </ContextualMenu> */}
             </Flex>
          </Flex>
       </>
@@ -571,10 +551,32 @@ const ActionBar = ({
       { id: 3, title: 'author' },
    ])
    const selectedOption = option => {
-      const newOptions = option.map(x => x.title)
+      localStorage.setItem(
+         'tabulator-recipe_table-group',
+         JSON.stringify(option.map(val => val.title))
+      )
+      const newOptions = option.map(val => val.title)
       handleGroupBy(newOptions)
    }
-   const searchedOption = option => console.log(option)
+
+   const defaultIDs = () => {
+      let arr = []
+      const recipeGroup = localStorage.getItem('tabulator-recipe_table-group')
+      const recipeGroupParse =
+         recipeGroup !== undefined &&
+         recipeGroup !== null &&
+         recipeGroup.length !== 0
+            ? JSON.parse(recipeGroup)
+            : null
+      if (recipeGroupParse !== null) {
+         recipeGroupParse.forEach(x => {
+            const foundGroup = groupByOptions.find(y => y.title == x)
+            arr.push(foundGroup.id)
+         })
+      }
+      return arr.length == 0 ? [] : arr
+   }
+
    return (
       <>
          <Flex
@@ -629,9 +631,9 @@ const ActionBar = ({
                   <Dropdown
                      type="multi"
                      variant="revamp"
+                     defaultIds={defaultIDs()}
                      disabled={true}
                      options={groupByOptions}
-                     searchedOption={searchedOption}
                      selectedOption={selectedOption}
                      typeName="cuisine"
                   />

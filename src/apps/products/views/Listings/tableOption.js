@@ -1,9 +1,9 @@
 const options = {
    cellVertAlign: 'middle',
-   layout: 'fitColumns',
+   // layout: 'fitColumns',
    autoResize: true,
    maxHeight: 420,
-   resizableColumns: false,
+   resizableColumns: true,
    virtualDomBuffer: 20,
    persistenceID: 'recipe_table',
    placeholder: 'No Data Available',
@@ -12,15 +12,9 @@ const options = {
    persistenceMode: 'local',
    selectablePersistence: true,
    persistence: {
-      group: true,
-      // group:{
-      //    groupBy: true,  //persist only the groupBy setting
-      //    groupStartOpen: true,
-      //    groupHeader: true,
-      // },
+      group: false,
       sort: true, //persist column sorting
       filter: true, //persist filter sorting
-      // group: true, //persist row grouping
       page: true, //persist page
       columns: true, //persist columns
    },
