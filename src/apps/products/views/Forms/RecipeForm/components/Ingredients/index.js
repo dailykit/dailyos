@@ -201,6 +201,15 @@ const Ingredients = ({ state }) => {
                   droppableId="simpleRecipeIngredientsDroppableId"
                   tablename="simpleRecipe_ingredient_processing"
                   schemaname="simpleRecipe"
+                  isDefaultDrag={false}
+                  customDragStyle={{
+                     width: '20px',
+                     height: '20px',
+                     cursor: 'move',
+                     borderRadius: '50%',
+                     backgroundColor: 'grey',
+                     textAlign: 'center'
+                  }}
                >
                   {state.simpleRecipeIngredients.map(
                      ({ id, ingredient, processing, linkedSachets }) => (
@@ -251,6 +260,7 @@ const Ingredients = ({ state }) => {
 export default Ingredients
 
 const CollapsibleHead = ({ ingredient, processing, deleteIngredient }) => {
+   console.log(processing, 'processing log')
    return (
       <Flex
          container

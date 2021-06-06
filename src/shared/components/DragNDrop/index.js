@@ -10,10 +10,17 @@ export default function DragNDrop({
    tablename,
    schemaname,
    direction,
+   isDefaultDrag = true,
+   customDragStyle,
 }) {
    const { priorityMutation } = useDnd()
    const [data, setData] = useState(list)
-
+   const getItemStyle = (isDragging, draggableStyle) => ({
+      // some basic styles to make the items look a bit nicer
+      // styles we need to apply on draggables
+      ...draggableStyle,
+      cursor: "move"
+    });
    const onDragEnd = result => {
       //return if item was dropped outside
       if (!result.destination) return
@@ -130,44 +137,78 @@ export default function DragNDrop({
       setData(newData)
    }
    return (
-      <DragDropContext onDragEnd={onDragEnd}>
-         <Droppable
-            droppableId={droppableId}
-            direction={direction || 'vertical'}
-         >
-            {provided => (
-               <div
-                  {...provided.droppableProps}
-                  style={
-                     direction === 'horizontal'
-                        ? {
-                             display: 'flex',
-                          }
-                        : { display: 'block' }
-                  }
-                  ref={provided.innerRef}
-               >
-                  {children.map((item, index) => (
-                     <Draggable
-                        key={index}
-                        draggableId={'' + index}
-                        index={index}
-                     >
-                        {provided => (
-                           <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                           >
-                              {item}
-                           </div>
-                        )}
-                     </Draggable>
-                  ))}
-                  {provided.placeholder}
-               </div>
-            )}
-         </Droppable>
-      </DragDropContext>
+      <div style={{ cursor: `${isDefaultDrag ? 'grabbing' : 'move !important'}` }}>
+         <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable
+               droppableId={droppableId}
+               direction={direction || 'vertical'}
+            >
+               {provided => (
+                  <div
+                     {...provided.droppableProps}
+                     style={{
+                        display: `${
+                           direction === 'horizontal' ? 'flex' : 'block'
+                        }`,
+                        cursor: `${isDefaultDrag ? 'grabbing' : 'move'}`,
+                     }}
+                     ref={provided.innerRef}
+                  >
+                     {children.map((item, index) => (
+                        <Draggable
+                           key={index}
+                           draggableId={'' + index}
+                           index={index}
+                        >
+                           {(provided, snapshot) =>
+                              isDefaultDrag ? (
+                                 <div
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                 >
+                                    {item}
+                                 </div>
+                              ) : (
+                                 <div
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    style={getItemStyle(
+                                       snapshot.isDragging,
+                                       provided.draggableProps.style
+                                     )}
+                                 >
+                                    <div
+                                       style={{
+                                          display: 'flex',
+                                          cursor: 'default',
+                                       }}
+                                    >
+                                       <div
+                                          {...provided.dragHandleProps}
+                                          style={customDragStyle}
+                                       >
+                                          {index + 1}
+                                       </div>
+                                       <div
+                                          style={{
+                                             flex: '1',
+                                             cursor: 'default',
+                                          }}
+                                       >
+                                          {item}
+                                       </div>
+                                    </div>
+                                 </div>
+                              )
+                           }
+                        </Draggable>
+                     ))}
+                     {provided.placeholder}
+                  </div>
+               )}
+            </Droppable>
+         </DragDropContext>
+      </div>
    )
 }
