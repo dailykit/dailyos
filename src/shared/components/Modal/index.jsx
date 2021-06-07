@@ -11,16 +11,21 @@ export default function Modal({
    setIsModalOpen,
    setIsOpen,
    bottomBarRef,
+   handleMenuItemClick,
+   isContentOpen,
+   setIsContentOpen,
+   filePaths,
+   cssPaths,
+   jsPaths,
+   setJsPaths,
+   setCssPaths,
+   setfilePaths,
+   hasAction,
 }) {
    const { state = {}, removeClickedOptionInfo } = useBottomBar()
    const [optionMenu, setOptionMenu] = useState({})
-   const [filePaths, setfilePaths] = useState([])
-   const [cssPaths, setCssPaths] = useState([])
-   const [jsPaths, setJsPaths] = useState([])
-
    const ref = React.useRef()
    const contentRef = React.useRef()
-   const [isContentOpen, setIsContentOpen] = useState(false)
 
    useOnClickOutside([ref, bottomBarRef, contentRef], () => {
       setIsModalOpen(false)
@@ -33,24 +38,6 @@ export default function Modal({
          setOptionMenu(state?.clickedOptionMenu)
       }
    }, [state?.clickedOptionMenu])
-
-   const handleMenuItemClick = menuItem => {
-      if (menuItem?.action?.actionTypeTitle === 'infoOverlay') {
-         const { path, linkedCssFiles, linkedJsFiles } = menuItem?.action?.file
-         const linkedCssPaths = linkedCssFiles.map(file => {
-            return file.cssFile.path
-         })
-         const linkedJsPaths = linkedJsFiles.map(file => {
-            return file.jsFile.path
-         })
-         setfilePaths([path])
-         setCssPaths(linkedCssPaths)
-         setJsPaths(linkedJsPaths)
-         setIsContentOpen(true)
-      } else {
-         document.getElementById('content_area').innerHTML = ''
-      }
-   }
 
    useEffect(() => {
       document.getElementById('content_area').innerHTML = ''
@@ -90,8 +77,10 @@ export default function Modal({
    }, [isOpen])
 
    const hasContent =
-      (filePaths?.length > 0 || cssPaths?.length > 0 || jsPaths?.length > 0) &&
-      isContentOpen
+      ((filePaths?.length > 0 || cssPaths?.length > 0 || jsPaths?.length > 0) &&
+         isContentOpen) ||
+      (isContentOpen && hasAction)
+
    return (
       <Styles.ModalWrapper show={isOpen} hasContent={hasContent}>
          <Styles.ModalBody>

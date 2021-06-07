@@ -5,7 +5,6 @@ import ChildNode from './ChildNode'
 
 export default function MenuItem({ menuItem = {}, clickHandler, ...props }) {
    const [toggleMenu, setToggleMenu] = useState(false)
-   console.log(menuItem)
 
    return (
       <StyledWrapper
