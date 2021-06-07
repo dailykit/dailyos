@@ -21,6 +21,8 @@ export default function Modal({
    setCssPaths,
    setfilePaths,
    hasAction,
+   deleteNavigationMenuId,
+   deleteOptionId,
 }) {
    const { state = {}, removeClickedOptionInfo } = useBottomBar()
    const [optionMenu, setOptionMenu] = useState({})
@@ -31,6 +33,8 @@ export default function Modal({
       setIsModalOpen(false)
       setIsOpen(false)
       removeClickedOptionInfo()
+      deleteOptionId('optionId')
+      deleteNavigationMenuId('navigationMenuItemId')
    })
 
    useEffect(() => {
@@ -112,7 +116,10 @@ export default function Modal({
                <ComboButton
                   type="ghost"
                   size="sm"
-                  onClick={() => setIsContentOpen(false)}
+                  onClick={() => {
+                     deleteNavigationMenuId('navigationMenuItemId')
+                     setIsContentOpen(false)
+                  }}
                >
                   <ClearIcon color="#45484C" />
                   Close

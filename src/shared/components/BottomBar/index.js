@@ -7,6 +7,7 @@ import Styles from './style'
 import { useWindowSize } from '../../hooks/useWindowSize'
 import { useLocation } from 'react-router'
 import qs from 'query-string'
+import useQueryParamState from './useQueryParamState'
 
 const BottomBar = () => {
    const [isModalOpen, setIsModalOpen] = React.useState(false)
@@ -19,6 +20,15 @@ const BottomBar = () => {
    const [filePaths, setfilePaths] = React.useState([])
    const [cssPaths, setCssPaths] = React.useState([])
    const [jsPaths, setJsPaths] = React.useState([])
+
+   const [optionId, setOptionId, deleteOptionId] = useQueryParamState(
+      'optionId'
+   )
+   const [
+      navigationMenuItemId,
+      setNavigationMenuItemId,
+      deleteNavigationMenuId,
+   ] = useQueryParamState('navigationMenuItemId')
 
    const {
       state,
@@ -41,7 +51,7 @@ const BottomBar = () => {
       setIsOpen(true)
    }
 
-   const handleMenuItemClick = menuItem => {
+   const getMenuItemAction = menuItem => {
       if (menuItem?.action?.actionTypeTitle === 'infoOverlay') {
          const { path, linkedCssFiles, linkedJsFiles } = menuItem?.action?.file
          const linkedCssPaths = linkedCssFiles.map(file => {
@@ -59,6 +69,11 @@ const BottomBar = () => {
       }
    }
 
+   const handleMenuItemClick = menuItem => {
+      getMenuItemAction(menuItem)
+      setNavigationMenuItemId(menuItem.id)
+   }
+
    React.useEffect(() => {
       const searchedValue = qs.parse(search)
       const optionId = Number(searchedValue?.optionId)
@@ -66,22 +81,22 @@ const BottomBar = () => {
 
       if (optionId) {
          const [filtered] = state?.bottomBarOptions.filter(
-            option => option.id === optionId
+            option => option.id === Number(optionId)
          )
          if (filtered) {
             handleBottomBarOptionClick(filtered)
             const [
                filteredNavMenuItem,
             ] = filtered?.navigationMenu?.navigationMenuItems.filter(
-               item => item.id === navigationMenuItemId
+               item => item.id === Number(navigationMenuItemId)
             )
             if (filteredNavMenuItem?.actionId && filteredNavMenuItem) {
                setHasAction(true)
-               handleMenuItemClick(filteredNavMenuItem)
+               getMenuItemAction(filteredNavMenuItem)
             }
          }
       }
-   }, [])
+   }, [search])
 
    return (
       <>
@@ -116,7 +131,12 @@ const BottomBar = () => {
                               state?.clickedOption?.navigationMenu?.id ===
                                  option?.navigationMenuId
                            }
-                           onClick={() => handleBottomBarOptionClick(option)}
+                           onClick={() => {
+                              handleBottomBarOptionClick(option)
+                              setOptionId(option.id)
+                              deleteNavigationMenuId('navigationMenuItemId')
+                              setIsContentOpen(false)
+                           }}
                         >
                            {option?.title || ''}
                         </Styles.Option>
@@ -141,6 +161,8 @@ const BottomBar = () => {
                setCssPaths={setCssPaths}
                setfilePaths={setfilePaths}
                hasAction={hasAction}
+               deleteNavigationMenuId={deleteNavigationMenuId}
+               deleteOptionId={deleteOptionId}
             />
          )}
       </>
