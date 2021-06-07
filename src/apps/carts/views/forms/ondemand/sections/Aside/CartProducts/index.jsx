@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { LoyaltyPoints, Coupon } from '../../../../../../components'
 import {
    Filler,
    Flex,
@@ -24,7 +25,14 @@ import {
 import EmptyIllo from '../../../../../../assets/svgs/EmptyIllo'
 
 const CartProducts = () => {
-   const { cart, billing, products } = useManual()
+   const {
+      cart,
+      billing,
+      products,
+      customer,
+      tunnels,
+      loyaltyPoints,
+   } = useManual()
    const [remove] = useMutation(MUTATIONS.CART.ITEM.DELETE, {
       onCompleted: () => toast.success('Successfully deleted the product.'),
       onError: () => toast.error('Failed to delete the product.'),
@@ -78,9 +86,9 @@ const CartProducts = () => {
             />
          )}
          <Spacer size="16px" />
-         <LoyaltyPoints />
+         <LoyaltyPoints loyaltyPoints={loyaltyPoints} />
          <Spacer size="16px" />
-         <Coupon />
+         <Coupon customer={customer} tunnels={tunnels} />
          <Spacer size="16px" />
          <section>
             <Text as="text2">Billing Details</Text>
@@ -120,293 +128,7 @@ const CartProducts = () => {
 
 export default CartProducts
 
-const LoyaltyPoints = () => {
-   const { id: cartId } = useParams()
-   const { loyaltyPoints } = useManual()
-   const [points, setPoints] = React.useState({
-      value: '',
-      meta: {
-         errors: [],
-         isTouched: false,
-         isValid: true,
-      },
-   })
-
-   const [updateCart, { loading }] = useMutation(MUTATIONS.CART.UPDATE, {
-      onCompleted: () => {
-         toast.success(
-            `Successfully ${
-               points.value > 0 ? 'added' : 'removed'
-            } loyalty points.`
-         )
-         setPoints({
-            value: 0,
-            meta: {
-               errors: [],
-               isTouched: false,
-               isValid: true,
-            },
-         })
-      },
-      onError: error => {
-         logger(error)
-         toast.error('Failed to update the fulfillment details.')
-      },
-   })
-
-   const validate = e => {
-      const { value } = e.target
-      if (value === '') {
-         setPoints({
-            ...points,
-            meta: {
-               errors: [],
-               isTouched: true,
-               isValid: false,
-            },
-         })
-         return
-      }
-
-      const v = parseInt(value)
-      if (isNaN(v)) {
-         setPoints({
-            ...points,
-            meta: {
-               errors: ['Please input numbers only!'],
-               isTouched: true,
-               isValid: false,
-            },
-         })
-         return
-      }
-      if (v <= 0) {
-         setPoints({
-            ...points,
-            meta: {
-               errors: ['Points should be greater than 0!'],
-               isTouched: true,
-               isValid: false,
-            },
-         })
-         return
-      }
-      if (v > loyaltyPoints.usable) {
-         setPoints({
-            ...points,
-            meta: {
-               errors: [`Points should be less than ${loyaltyPoints.usable}!`],
-               isTouched: true,
-               isValid: false,
-            },
-         })
-         return
-      }
-      if (v % 1 !== 0) {
-         setPoints({
-            ...points,
-            meta: {
-               errors: [`Points should be integers only!`],
-               isTouched: true,
-               isValid: false,
-            },
-         })
-         return
-      }
-
-      setPoints({
-         ...points,
-         meta: {
-            errors: [],
-            isValid: true,
-            isTouched: true,
-         },
-      })
-   }
-
-   if (!loyaltyPoints.usable && !loyaltyPoints.used) return null
-
-   return (
-      <>
-         <Text as="text2">Loyalty Points</Text>
-         <Spacer size="4px" />
-         <Styles.LoyaltyPoints>
-            {loyaltyPoints.used ? (
-               <Flex
-                  container
-                  alignItems="center"
-                  justifyContent="space-between"
-               >
-                  <Text as="h3"> {loyaltyPoints.used} </Text>
-                  <IconButton
-                     type="ghost"
-                     isLoading={loading}
-                     onClick={() => {
-                        updateCart({
-                           variables: {
-                              id: cartId,
-                              _set: {
-                                 loyaltyPointsUsed: 0,
-                              },
-                           },
-                        })
-                     }}
-                  >
-                     <CloseIcon color="#ec3333" />
-                  </IconButton>
-               </Flex>
-            ) : (
-               <Flex
-                  container
-                  alignItems="center"
-                  justifyContent="space-between"
-               >
-                  <Flex>
-                     <Form.Group>
-                        <Form.Label htmlFor="points" title="points">
-                           Points
-                        </Form.Label>
-                        <Form.Number
-                           id="points"
-                           name="points"
-                           onBlur={validate}
-                           onChange={e =>
-                              setPoints({ ...points, value: e.target.value })
-                           }
-                           value={points.value}
-                           placeholder="Enter points"
-                           hasError={
-                              points.meta.isTouched && !points.meta.isValid
-                           }
-                        />
-                        {points.meta.isTouched &&
-                           !points.meta.isValid &&
-                           points.meta.errors.map((error, index) => (
-                              <Form.Error justifyContent="center" key={index}>
-                                 {error}
-                              </Form.Error>
-                           ))}
-                     </Form.Group>
-                     <Spacer size="4px" />
-                     <Text as="text3">Max: {loyaltyPoints.usable}</Text>
-                  </Flex>
-                  <TextButton
-                     type="ghost"
-                     disabled={!points.meta.isValid || !points.value}
-                     isLoading={loading}
-                     onClick={() => {
-                        if (points.meta.isValid && points.value) {
-                           updateCart({
-                              variables: {
-                                 id: cartId,
-                                 _set: {
-                                    loyaltyPointsUsed: points.value,
-                                 },
-                              },
-                           })
-                        }
-                     }}
-                  >
-                     Use
-                  </TextButton>
-               </Flex>
-            )}
-         </Styles.LoyaltyPoints>
-      </>
-   )
-}
-
-const Coupon = () => {
-   const { id: cartId } = useParams()
-   const { cart, customer, tunnels } = useManual()
-
-   const { data, error } = useSubscription(QUERIES.CART.REWARDS, {
-      variables: {
-         cartId: +cartId,
-         params: {
-            cartId: +cartId,
-            keycloakId: customer.keycloakId,
-         },
-      },
-      onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
-         if (data.cartRewards.length) {
-            const isCouponValid = data.cartRewards.every(
-               record => record.reward.condition.isValid
-            )
-            if (isCouponValid) {
-               console.log('Coupon is valid!')
-            } else {
-               console.log('Coupon is not valid anymore!')
-               toast.error('Coupon is not valid!')
-               deleteCartRewards()
-            }
-         }
-      },
-   })
-   if (error) {
-      console.log('🚀 Coupon ~ error', error)
-   }
-
-   const [deleteCartRewards] = useMutation(MUTATIONS.CART.REWARDS.DELETE, {
-      variables: {
-         cartId: +cartId,
-      },
-      onCompleted: () => {
-         toast.success('Coupon removed successfully!')
-      },
-      onError: error => {
-         toast.error('Failed to delete coupon!')
-         logger(error)
-      },
-   })
-
-   return (
-      <>
-         {data?.cartRewards?.length ? (
-            <Styles.Coupon
-               container
-               alignItems="center"
-               justifyContent="space-between"
-               padding="8px"
-            >
-               <Flex>
-                  <Text as="text1">
-                     {data.cartRewards[0].reward.coupon.code}
-                  </Text>
-                  <Spacer size="4px" />
-                  <Text as="subtitle">Coupon applied!</Text>
-               </Flex>
-               {cart?.paymentStatus === 'PENDING' && (
-                  <IconButton
-                     type="ghost"
-                     size="sm"
-                     onClick={deleteCartRewards}
-                  >
-                     <CloseIcon color="#ec3333" />
-                  </IconButton>
-               )}
-            </Styles.Coupon>
-         ) : (
-            <>
-               {cart?.paymentStatus === 'PENDING' && (
-                  <ButtonTile
-                     type="secondary"
-                     text="Add Coupon"
-                     onClick={() => tunnels.coupons[1](1)}
-                  />
-               )}
-            </>
-         )}
-      </>
-   )
-}
-
 const Styles = {
-   LoyaltyPoints: styled.div`
-      background: #ffffff;
-      border: 1px solid #ececec;
-      padding: 8px;
-   `,
    Cards: styled.ul`
       overflow-y: auto;
       max-height: 264px;
@@ -449,9 +171,5 @@ const Styles = {
       > span {
          font-size: 14px;
       }
-   `,
-   Coupon: styled(Flex)`
-      background: #fff;
-      border: 1px solid #ececec;
    `,
 }
