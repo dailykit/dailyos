@@ -86,6 +86,7 @@ export const Main = () => {
 }
 
 const Menu = ({ categories = [] }) => {
+   const { cart } = useManual()
    const [insert, { loading }] = useMutation(MUTATIONS.CART.ITEM.INSERT, {
       onCompleted: () => toast.success('Successfully added the product!'),
       onError: () => toast.error('Failed to add the product!'),
@@ -135,6 +136,7 @@ const Menu = ({ categories = [] }) => {
                      <Styles.Cards>
                         {products.map(product => (
                            <Product
+                              cart={cart}
                               key={product.id}
                               data={product}
                               insert={{ mutate: insert, loading }}
@@ -167,7 +169,7 @@ const insertCartId = (node, cartId) => {
    return node
 }
 
-const Product = ({ data, insert }) => {
+const Product = ({ cart, data, insert }) => {
    const params = useParams()
    const { occurenceCustomer } = useManual()
 
@@ -212,29 +214,31 @@ const Product = ({ data, insert }) => {
 
             <Text as="text2">{product.name}</Text>
             <Spacer size="8px" />
-            <TextButton
-               size="sm"
-               type="solid"
-               onClick={add}
-               variant="secondary"
-               isLoading={insert.loading}
-               disabled={!product.isAvailable}
-               title={
-                  product.isAvailable
-                     ? 'Add product'
-                     : 'This product is out of stock.'
-               }
-            >
-               {product.isAvailable ? (
-                  <>
-                     ADD {product.addOnPrice > 0 && ' + '}
-                     {product.addOnPrice > 0 &&
-                        currencyFmt(Number(product.addOnPrice) || 0)}
-                  </>
-               ) : (
-                  'Out of Stock'
-               )}
-            </TextButton>
+            {cart?.paymentStatus === 'PENDING' && (
+               <TextButton
+                  size="sm"
+                  type="solid"
+                  onClick={add}
+                  variant="secondary"
+                  isLoading={insert.loading}
+                  disabled={!product.isAvailable}
+                  title={
+                     product.isAvailable
+                        ? 'Add product'
+                        : 'This product is out of stock.'
+                  }
+               >
+                  {product.isAvailable ? (
+                     <>
+                        ADD {product.addOnPrice > 0 && ' + '}
+                        {product.addOnPrice > 0 &&
+                           currencyFmt(Number(product.addOnPrice) || 0)}
+                     </>
+                  ) : (
+                     'Out of Stock'
+                  )}
+               </TextButton>
+            )}
          </Flex>
       </Styles.Card>
    )

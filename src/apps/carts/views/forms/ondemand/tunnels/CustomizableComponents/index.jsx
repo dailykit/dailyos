@@ -221,12 +221,7 @@ const Content = ({ panel }) => {
                         )}
                      </>
                   )}
-                  <Styles.Fixed
-                     container
-                     alignItems="center"
-                     justifyContent="center"
-                     width="calc(100% - 16px)"
-                  >
+                  <Styles.Fixed width="120px" margin="0 auto">
                      <QuantitySelector
                         quantity={quantity}
                         setQuantity={setQuantity}
@@ -257,7 +252,6 @@ const Styles = {
       border-radius: 2px;
    `,
    Fixed: styled(Flex)`
-      background: #fff;
       position: sticky;
       bottom: 0;
    `,
