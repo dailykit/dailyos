@@ -6,7 +6,7 @@ import { Flex, Filler, useTunnel } from '@dailykit/ui'
 import { useQuery, useSubscription } from '@apollo/react-hooks'
 
 import { QUERIES } from '../../../graphql'
-import { FulfillmentTunnel } from './tunnels'
+import { FulfillmentTunnel, CouponsTunnel } from './tunnels'
 import { logger } from '../../../../../shared/utils'
 import EmptyIllo from '../../../assets/svgs/EmptyIllo'
 import { InlineLoader } from '../../../../../shared/components'
@@ -21,6 +21,7 @@ const initial = {
    organization: { id: null },
    products: { aggregate: { count: 0 } },
    billing: {},
+   loyaltyPoints: {},
    occurenceCustomer: {},
 }
 
@@ -34,6 +35,7 @@ const reducers = (state, { type, payload }) => {
             products: payload.products,
             address: payload.address,
             paymentMethod: payload.paymentMethod,
+            loyaltyPoints: payload.loyaltyPoints,
             fulfillmentInfo: payload.fulfillmentInfo,
             occurenceCustomer: payload.occurenceCustomer,
             subscriptionOccurence: payload.subscriptionOccurence,
@@ -78,6 +80,8 @@ const reducers = (state, { type, payload }) => {
 export const ManualProvider = ({ children }) => {
    const params = useParams()
    const addressTunnels = useTunnel(1)
+
+   const couponsTunnels = useTunnel(1)
    const [cartError, setCartError] = React.useState('')
    const [isCartLoading, setIsCartLoading] = React.useState(true)
    const [state, dispatch] = React.useReducer(reducers, initial)
@@ -148,6 +152,10 @@ export const ManualProvider = ({ children }) => {
                payload: {
                   brand: cart.brand,
                   billing: cart.billing,
+                  loyaltyPoints: {
+                     used: cart.loyaltyPointsUsed,
+                     usable: cart.loyaltyPointsUsable,
+                  },
                   products: cart.products,
                   customer: { id: cart?.customerId },
                   address: cart.address || { id: null },
@@ -206,13 +214,17 @@ export const ManualProvider = ({ children }) => {
          value={{
             dispatch,
             ...state,
+            billing: state.billing,
+            loyaltyPoints: state.loyaltyPoints,
             tunnels: {
                address: addressTunnels,
+               coupons: couponsTunnels,
             },
          }}
       >
          {children}
          <FulfillmentTunnel panel={addressTunnels} />
+         <CouponsTunnel panel={couponsTunnels} />
       </Context.Provider>
    )
 }

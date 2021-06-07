@@ -9,9 +9,18 @@ import { MUTATIONS } from '../../../../../../graphql'
 import EmptyIllo from '../../../../../../assets/svgs/EmptyIllo'
 import { currencyFmt } from '../../../../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../../../../shared/assets/icons'
+import { LoyaltyPoints, Coupon } from '../../../../../../components'
 
 const CartProducts = () => {
-   const { billing, occurenceCustomer, products } = useManual()
+   const {
+      billing,
+      occurenceCustomer,
+      products,
+      customer,
+      tunnels,
+      loyaltyPoints,
+   } = useManual()
+
    const [remove] = useMutation(MUTATIONS.CART.ITEM.DELETE, {
       onCompleted: () => toast.success('Successfully deleted the product.'),
       onError: () => toast.error('Failed to delete the product.'),
@@ -72,6 +81,10 @@ const CartProducts = () => {
                illustration={<EmptyIllo />}
             />
          )}
+         <Spacer size="16px" />
+         <LoyaltyPoints loyaltyPoints={loyaltyPoints} />
+         <Spacer size="16px" />
+         <Coupon customer={customer} tunnels={tunnels} />
          <Spacer size="16px" />
          <section>
             <Text as="text2">Billing Details</Text>
