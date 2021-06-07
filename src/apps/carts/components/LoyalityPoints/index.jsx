@@ -1,6 +1,5 @@
 import React from 'react'
 import { useParams } from 'react-router'
-import { useManual } from '../../views/forms/ondemand/state'
 import { toast } from 'react-toastify'
 import { useMutation } from '@apollo/react-hooks'
 import styled from 'styled-components'
@@ -21,7 +20,6 @@ import { logger } from '../../../../shared/utils'
 
 const LoyaltyPoints = ({ loyaltyPoints }) => {
    const { id: cartId } = useParams()
-   // const { loyaltyPoints } = useManual()
    const [points, setPoints] = React.useState({
       value: '',
       meta: {
