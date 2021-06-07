@@ -28,7 +28,10 @@ import {
    Tunnels,
    useTunnel,
 } from '@dailykit/ui'
-import { Tooltip } from '../../../../../../../shared/components'
+import {
+   OperationConfig,
+   Tooltip,
+} from '../../../../../../../shared/components'
 import {
    ModifierModeTunnel,
    ModifierFormTunnel,
@@ -54,14 +57,21 @@ const ProductOptionsBulkAction = ({
       openModifiersTunnel,
       closeModifiersTunnel,
    ] = useTunnel(6)
+   const [
+      operationConfigTunnels,
+      openOperationConfigTunnel,
+      closeOperationConfigTunnel,
+   ] = useTunnel(4)
    const {
       modifiersState: { modifierId, modifierName },
       modifiersDispatch,
    } = React.useContext(ModifiersContext)
    const [modifierList, setModifierList] = React.useState([])
+   const [operationalConfigData, setOperationalConfigData] = React.useState({})
    const [initialBulkAction, setInitialBulkAction] = React.useState({
       label: '',
       modifierId: null,
+      operationConfigId: null,
       labelConcat: {
          forAppend: '',
          forPrepend: '',
@@ -79,9 +89,11 @@ const ProductOptionsBulkAction = ({
    })
    const clearAllActions = () => {
       handleModifierClear()
+      handleOperationConfigClear()
       setInitialBulkAction({
          label: '',
          modifierId: null,
+         operationConfigId: null,
          labelConcat: {
             forAppend: '',
             forPrepend: '',
@@ -146,6 +158,28 @@ const ProductOptionsBulkAction = ({
       })
       setInitialBulkAction(prevState => ({ ...prevState, modifierId: null }))
    }
+   const handleAddOpConfig = optionId => {
+      opConfigInvokedBy.current = 'option'
+      openOperationConfigTunnel(1)
+   }
+   const handleOperationConfigClear = () => {
+      setInitialBulkAction(prevState => ({
+         ...prevState,
+         operationConfigId: null,
+      }))
+   }
+   const saveOperationConfig = config => {
+      setInitialBulkAction(prevState => ({
+         ...prevState,
+         operationConfigId: config.id,
+      }))
+      setOperationalConfigData(config)
+      setBulkActions(prevState => ({
+         ...prevState,
+         operationConfigId: config.id,
+      }))
+   }
+   console.log('operational data', operationalConfigData)
    if (loading) {
       return <Loader />
    }
@@ -196,6 +230,12 @@ const ProductOptionsBulkAction = ({
                   <ModifierTemplatesTunnel close={closeModifiersTunnel} />
                </Tunnel>
             </Tunnels>
+            <OperationConfig
+               tunnels={operationConfigTunnels}
+               openTunnel={openOperationConfigTunnel}
+               closeTunnel={closeOperationConfigTunnel}
+               onSelect={saveOperationConfig}
+            />
             {initialBulkAction.modifierId === null ? (
                <ComboButton type="ghost" onClick={handleAddModifier}>
                   <PlusIcon /> Add Modifiers
@@ -206,6 +246,7 @@ const ProductOptionsBulkAction = ({
                   justifyContent="space-between"
                   alignItems="center"
                >
+                  <Text as="h3">Modifier:</Text>
                   <Text as="text1">{modifierName}</Text>
                   <TextButton
                      type="ghost"
@@ -216,6 +257,37 @@ const ProductOptionsBulkAction = ({
                            setBulkActions(newOption)
                         }
                         handleModifierClear()
+                     }}
+                  >
+                     {' '}
+                     Clear
+                  </TextButton>
+               </Flex>
+            )}
+            {initialBulkAction.operationConfigId === null ? (
+               <ComboButton type="ghost" onClick={handleAddOpConfig}>
+                  <PlusIcon /> Add Operational Configuration
+               </ComboButton>
+            ) : (
+               <Flex
+                  container
+                  justifyContent="space-between"
+                  alignItems="center"
+               >
+                  <Text as="h3">Operational Config:</Text>
+                  <Text as="text1">
+                     {operationalConfigData?.station?.name} -
+                     {operationalConfigData?.labelTemplate?.name}
+                  </Text>
+                  <TextButton
+                     type="ghost"
+                     onClick={() => {
+                        if ('operationConfigId' in bulkActions) {
+                           const newOption = { ...bulkActions }
+                           delete newOption.operationConfigId
+                           setBulkActions(newOption)
+                        }
+                        handleOperationConfigClear()
                      }}
                   >
                      {' '}
