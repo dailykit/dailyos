@@ -32,6 +32,7 @@ const initial = {
    fulfillment: {},
    loyaltyPoints: {},
    productId: null,
+   cart: {},
 }
 
 const reducers = (state, { type, payload }) => {
@@ -68,6 +69,17 @@ const reducers = (state, { type, payload }) => {
             ...state,
             productId: payload,
          }
+      case 'SET_CART': {
+         const { id, orderId, paymentStatus } = payload
+         return {
+            ...state,
+            cart: {
+               id,
+               orderId,
+               paymentStatus,
+            },
+         }
+      }
       default:
          return state
    }
@@ -157,6 +169,7 @@ export const ManualProvider = ({ children }) => {
                   },
                },
             })
+            dispatch({ type: 'SET_CART', payload: cart })
             refetchCustomer()
             if (cart?.paymentMethodId) {
                refetchPaymentMethod()
@@ -204,6 +217,7 @@ export const ManualProvider = ({ children }) => {
          value={{
             state,
             dispatch,
+            cart: state.cart,
             brand: state.brand,
             address: state.address,
             fulfillment: state.fulfillment,

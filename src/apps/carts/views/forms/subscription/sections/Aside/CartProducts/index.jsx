@@ -61,15 +61,17 @@ const CartProducts = () => {
                               </Text>
                            )}
                         </Flex>
-                        <IconButton
-                           size="sm"
-                           type="ghost"
-                           onClick={() =>
-                              remove({ variables: { id: product.id } })
-                           }
-                        >
-                           <DeleteIcon color="#ec3333" />
-                        </IconButton>
+                        {cart?.paymentStatus === 'PENDING' && (
+                           <IconButton
+                              size="sm"
+                              type="ghost"
+                              onClick={() =>
+                                 remove({ variables: { id: product.id } })
+                              }
+                           >
+                              <DeleteIcon color="#ec3333" />
+                           </IconButton>
+                        )}
                      </Flex>
                   </Styles.Card>
                ))}
