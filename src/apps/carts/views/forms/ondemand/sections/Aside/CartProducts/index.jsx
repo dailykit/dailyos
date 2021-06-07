@@ -25,7 +25,14 @@ import {
 import EmptyIllo from '../../../../../../assets/svgs/EmptyIllo'
 
 const CartProducts = () => {
-   const { billing, products, customer, tunnels, loyaltyPoints } = useManual()
+   const {
+      cart,
+      billing,
+      products,
+      customer,
+      tunnels,
+      loyaltyPoints,
+   } = useManual()
    const [remove] = useMutation(MUTATIONS.CART.ITEM.DELETE, {
       onCompleted: () => toast.success('Successfully deleted the product.'),
       onError: () => toast.error('Failed to delete the product.'),

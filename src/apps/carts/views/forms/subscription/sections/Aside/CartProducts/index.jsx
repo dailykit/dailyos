@@ -13,6 +13,7 @@ import { LoyaltyPoints, Coupon } from '../../../../../../components'
 
 const CartProducts = () => {
    const {
+      cart,
       billing,
       occurenceCustomer,
       products,
