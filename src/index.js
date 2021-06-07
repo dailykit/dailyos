@@ -14,7 +14,12 @@ import 'react-toastify/dist/ReactToastify.css'
 import Backend from 'i18next-http-backend'
 
 import App from './App'
-import { AuthProvider, TabProvider, DataProvider } from './shared/providers'
+import {
+   AuthProvider,
+   TabProvider,
+   DataProvider,
+   BottomBarProvider,
+} from './shared/providers'
 
 import './global.css'
 
@@ -66,20 +71,22 @@ i18n
          <AuthProvider keycloak={keycloak}>
             <DataProvider>
                <Router basename={window._env_.PUBLIC_URL}>
-                  <TabProvider>
-                     <ToastContainer
-                        position="bottom-left"
-                        autoClose={3000}
-                        hideProgressBar={false}
-                        newestOnTop={false}
-                        closeOnClick
-                        rtl={false}
-                        pauseOnFocusLoss
-                        draggable
-                        pauseOnHover
-                     />
-                     <App />
-                  </TabProvider>
+                  <BottomBarProvider>
+                     <TabProvider>
+                        <ToastContainer
+                           position="bottom-left"
+                           autoClose={3000}
+                           hideProgressBar={false}
+                           newestOnTop={false}
+                           closeOnClick
+                           rtl={false}
+                           pauseOnFocusLoss
+                           draggable
+                           pauseOnHover
+                        />
+                        <App />
+                     </TabProvider>
+                  </BottomBarProvider>
                </Router>
             </DataProvider>
          </AuthProvider>,

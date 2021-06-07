@@ -15,6 +15,7 @@ import Popup from './Popup'
 import RichTextEditor from './RichTextEditor'
 import LinkUnitConversionTunnels from './LinkUnitConversionTunnels'
 import Banner from './Banner'
+import Modal from './Modal'
 
 export {
    Lang,
@@ -34,6 +35,7 @@ export {
    RichTextEditor,
    LinkUnitConversionTunnels,
    Banner,
+   Modal,
 }
 export * from './AssetUploader'
 export * from './InlineLoader'

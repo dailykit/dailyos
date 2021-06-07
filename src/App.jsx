@@ -8,6 +8,7 @@ import { Switch, Route, Link, useLocation } from 'react-router-dom'
 
 import { useTabs } from './shared/providers'
 import { isKeycloakSupported } from './shared/utils'
+
 import {
    TabBar,
    Lang,
@@ -16,6 +17,7 @@ import {
    AddressTunnel,
    Banner,
 } from './shared/components'
+import BottomBar from './shared/components/BottomBar'
 
 const APPS = gql`
    subscription apps {
@@ -85,6 +87,7 @@ const Editor = Loadable({
 const App = () => {
    const location = useLocation()
    const { routes, setRoutes } = useTabs()
+
    const [open, toggle] = React.useState(false)
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
 
@@ -133,6 +136,7 @@ const App = () => {
          </main>
          {/* {!isKeycloakSupported() && <RedirectBanner />} */}
          <Lang />
+         <BottomBar />
       </Layout>
    )
 }

@@ -148,3 +148,58 @@ export const GET_BANNER = gql`
       }
    }
 `
+
+export const GET_BOTTOM_BAR_OPTIONS = gql`
+   subscription GET_BOTTOM_BAR_OPTIONS($app: [String!]!) {
+      ux_bottomBarOption(where: { app: { _in: $app } }) {
+         title
+         id
+         app
+         icon
+         navigationMenuId
+         navigationMenu {
+            title
+            id
+            description
+            navigationMenuItems {
+               id
+               label
+               position
+               parentNavigationMenuItemId
+               url
+               actionId
+               action {
+                  actionTypeTitle
+                  dailyos_action
+                  fileId
+                  id
+                  file {
+                     id
+                     fileName
+                     fileType
+                     path
+                     linkedCssFiles {
+                        id
+                        position
+                        cssFile {
+                           fileName
+                           fileType
+                           path
+                        }
+                     }
+                     linkedJsFiles {
+                        id
+                        position
+                        jsFile {
+                           fileName
+                           fileType
+                           path
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+`
