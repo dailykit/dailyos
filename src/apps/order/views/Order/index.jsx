@@ -338,6 +338,12 @@ const Order = () => {
       return <ErrorState message="Failed to fetch order details!" />
    }
    const types = groupBy(products, 'productOptionType')
+   if (isEmpty(order))
+      return (
+         <Flex>
+            <Filler message="No order details found!" />
+         </Flex>
+      )
    return (
       <Flex>
          <Spacer size="16px" />

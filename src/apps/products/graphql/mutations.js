@@ -406,12 +406,32 @@ export const INSTRUCTION_STEP = {
    `,
 }
 
-export const INGREDIENT_INGREDIENT_CATEGORY_UPDATE = gql`
-   mutation updateIngredientCategory($id: Int_comparison_exp! $category: String!) {
-      updateIngredient(where: {id: $id}, _set: {category: $category}) {
-        affected_rows
+export const SIMPLE_RECIPE_UPDATE = gql`
+   mutation UpdateSimpleRecipe(
+      $ids: [Int!]
+      $_set: simpleRecipe_simpleRecipe_set_input
+   ) {
+      updateSimpleRecipe(where: { id: { _in: $ids } }, _set: $_set) {
+         affected_rows
       }
-    }
+   }
+`
+export const CREATE_CUISINE_NAME = gql`
+   mutation CreateCuisineName($name: String) {
+      createCuisineName(objects: { name: $name }) {
+         affected_rows
+      }
+   }
+`
+export const INGREDIENT_INGREDIENT_CATEGORY_UPDATE = gql`
+   mutation updateIngredientCategory(
+      $id: Int_comparison_exp!
+      $category: String!
+   ) {
+      updateIngredient(where: { id: $id }, _set: { category: $category }) {
+         affected_rows
+      }
+   }
 `
 
 export const INGREDIENT_CATEGORY_CREATE = gql`
@@ -421,4 +441,17 @@ export const INGREDIENT_CATEGORY_CREATE = gql`
       }
    }
 `
-
+export const INCREASE_PRICE_AND_DISCOUNT = gql`
+   mutation increasePriceAndDiscount(
+      $price: numeric!
+      $discount: numeric!
+      $ids: [Int!]
+   ) {
+      updateProducts(
+         where: { id: { _in: $ids } }
+         _inc: { price: $price, discount: $discount }
+      ) {
+         affected_rows
+      }
+   }
+`

@@ -9,7 +9,14 @@ export const INGREDIENTS_COUNT = gql`
       }
    }
 `
-
+export const CUISINES_NAMES = gql`
+   subscription Cuisines {
+      cuisineNames {
+         id
+         title: name
+      }
+   }
+`
 export const S_INGREDIENTS = gql`
    subscription Ingredients {
       ingredients(
@@ -176,6 +183,7 @@ export const S_RECIPES = gql`
          name
          author
          cookingTime
+         cuisine
          isValid
          isPublished
          simpleRecipeYields(where: { isArchived: { _eq: false } }) {
