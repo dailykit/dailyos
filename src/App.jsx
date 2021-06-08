@@ -5,7 +5,7 @@ import { Loader, useTunnel } from '@dailykit/ui'
 import styled from 'styled-components'
 import { useSubscription } from '@apollo/react-hooks'
 import { Switch, Route, Link, useLocation } from 'react-router-dom'
-
+import FullOccurrenceReport from './shared/components/FullOccurrenceReport'
 import { useTabs } from './shared/providers'
 import { isKeycloakSupported } from './shared/utils'
 import {
@@ -117,6 +117,7 @@ const App = () => {
                         </AppItem>
                      ))}
                   </AppList>
+                  <FullOccurrenceReport />
                </Route>
                <Route path="/inventory" component={Inventory} />
                <Route path="/safety" component={Safety} />
