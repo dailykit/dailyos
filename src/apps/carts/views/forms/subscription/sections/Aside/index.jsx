@@ -111,7 +111,7 @@ export const Aside = () => {
                >
                   <OptionTile title="Via Stripe" onClick={() => open(2)} />
                   <Spacer size="14px" />
-                  <OptionTile title="Via RazorPay" onClick={() => open(2)} />
+                  <OptionTile title="Via RazorPay" onClick={() => open(3)} />
                   <Spacer size="14px" />
                   <OptionTile title="Mark Paid" onClick={markPaid} />
                </Flex>

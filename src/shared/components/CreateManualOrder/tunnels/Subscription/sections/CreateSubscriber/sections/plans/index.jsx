@@ -40,10 +40,14 @@ export const SelectPlan = () => {
                servings: plan.servings
                   .filter(serving => serving.itemCounts.length > 0)
                   .map(serving => ({
-                     title: `${serving.size} serving${serving.size > 1 && 's'}`,
+                     title: `${serving.size} serving${
+                        serving.size > 1 ? 's' : ''
+                     }`,
                      ...serving,
                      itemCounts: serving.itemCounts.map(node => ({
-                        title: `${node.count} count${node.count > 1 && 's'}`,
+                        title: `${node.count} count${
+                           node.count > 1 ? 's' : ''
+                        }`,
                         ...node,
                      })),
                   })),
