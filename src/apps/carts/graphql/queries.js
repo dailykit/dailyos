@@ -51,9 +51,9 @@ export const QUERIES = {
                         }
                      }
                   ) {
+                     value
                      onDemandSetting {
                         identifier
-                        value
                      }
                   }
                }
