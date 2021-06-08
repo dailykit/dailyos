@@ -44,7 +44,7 @@ const FullOccurrenceReport = () => {
    React.useEffect(() => {
       // `${process.env.REACT_APP_DAILYOS_SERVER_URI/api/getfulloccurence/getfulloccurence}`
       fetch(
-         `${process.env.REACT_APP_DAILYOS_SERVER_URI}/api/getfulloccurence/getfulloccurence`
+         `${process.env.REACT_APP_DAILYOS_SERVER_URI}/api/occurences/report`
       )
          .then(result => result.json())
          .then(data => {
