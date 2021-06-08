@@ -117,7 +117,7 @@ const App = () => {
                         </AppItem>
                      ))}
                   </AppList>
-                  <FullOccurrenceReport />
+                  {/* <FullOccurrenceReport /> */}
                </Route>
                <Route path="/inventory" component={Inventory} />
                <Route path="/safety" component={Safety} />
