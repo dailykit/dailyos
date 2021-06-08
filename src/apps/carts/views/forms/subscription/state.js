@@ -3,12 +3,12 @@ import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router'
 import { Flex, Filler, useTunnel } from '@dailykit/ui'
-import { useQuery, useSubscription } from '@apollo/react-hooks'
+import { useQuery, useSubscription, useMutation } from '@apollo/react-hooks'
 
-import { QUERIES } from '../../../graphql'
-import { FulfillmentTunnel, CouponsTunnel } from './tunnels'
+import { QUERIES, MUTATIONS } from '../../../graphql'
 import { logger } from '../../../../../shared/utils'
 import EmptyIllo from '../../../assets/svgs/EmptyIllo'
+import { FulfillmentTunnel, CouponsTunnel } from './tunnels'
 import { InlineLoader } from '../../../../../shared/components'
 
 const Context = React.createContext()
@@ -153,9 +153,13 @@ export const ManualProvider = ({ children }) => {
          toast.error('Failed to get customer details, please refresh the page.')
       },
    })
+   const [updateBrandCustomer] = useMutation(MUTATIONS.BRAND.CUSTOMER.UPDATE, {
+      refetchQueries: ['customers'],
+      onError: error => logger(error),
+   })
    const { loading, error } = useSubscription(QUERIES.CART.ONE, {
       variables: { id: params.id },
-      onSubscriptionData: ({
+      onSubscriptionData: async ({
          subscriptionData: { data: { cart = {} } = {} } = {},
       }) => {
          if (cart && !isEmpty(cart)) {
@@ -179,6 +183,17 @@ export const ManualProvider = ({ children }) => {
                },
             })
             dispatch({ type: 'SET_CART', payload: cart })
+            if (
+               !cart.occurenceCustomer?.itemCountValid &&
+               state.customer.subscriptionOnboardStatus !== 'SELECT_MENU'
+            ) {
+               await updateBrandCustomer({
+                  variables: {
+                     where: { id: { _eq: state.customer.brand_customerId } },
+                     _set: { subscriptionOnboardStatus: 'SELECT_MENU' },
+                  },
+               })
+            }
             refetchCustomer()
             if (cart?.paymentMethodId) {
                refetchPaymentMethod()
@@ -251,6 +266,7 @@ const processCustomer = (user, organization) => {
    customer.keycloakId = user.keycloakId
    customer.subscriptionId = user.subscriptionId
    customer.subscriptionAddressId = user.subscriptionAddressId
+   customer.subscriptionOnboardStatus = user.subscriptionOnboardStatus
    customer.subscriptionPaymentMethodId = user.subscriptionPaymentMethodId
 
    customer.id = user.customer.id

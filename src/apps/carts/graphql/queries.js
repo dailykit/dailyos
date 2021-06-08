@@ -173,6 +173,7 @@ export const QUERIES = {
                keycloakId
                subscriptionId
                subscriptionAddressId
+               subscriptionOnboardStatus
                subscriptionPaymentMethodId
                customer {
                   id

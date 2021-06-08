@@ -24,11 +24,15 @@ import { RazorpayTunnel, StripeTunnel } from '../../tunnels/Payment'
 
 export const Aside = () => {
    const params = useParams()
-   const { cart } = useManual()
    const { addTab } = useTabs()
    const { occurenceCustomer } = useManual()
+   const { customer, fulfillmentInfo, cart } = useManual()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
-   
+   const [updateBrandCustomer] = useMutation(MUTATIONS.BRAND.CUSTOMER.UPDATE, {
+      refetchQueries: ['customers'],
+      onError: error => logger(error),
+   })
+
    const [update] = useMutation(MUTATIONS.CART.UPDATE, {
       onCompleted: () => {
          closeTunnel(1)
@@ -48,6 +52,20 @@ export const Aside = () => {
             _set: { paymentStatus: 'SUCCEEDED' },
          },
       })
+   }
+
+   const open = async num => {
+      openTunnel(num)
+      if (
+         !['CHECKOUT', 'ONBOARDED'].includes(customer.subscriptionOnboardStatus)
+      ) {
+         await updateBrandCustomer({
+            variables: {
+               where: { id: { _eq: customer.brand_customerId } },
+               _set: { subscriptionOnboardStatus: 'CHECKOUT' },
+            },
+         })
+      }
    }
 
    return (
@@ -74,7 +92,10 @@ export const Aside = () => {
                <TextButton
                   type="solid"
                   onClick={() => openTunnel(1)}
-                  disabled={!occurenceCustomer?.itemCountValid}
+                  disabled={
+                     !occurenceCustomer?.itemCountValid ||
+                     !fulfillmentInfo?.type
+                  }
                >
                   CHECKOUT
                </TextButton>
@@ -88,15 +109,9 @@ export const Aside = () => {
                   overflowY="auto"
                   height="calc(100vh - 196px)"
                >
-                  <OptionTile
-                     title="Via Stripe"
-                     onClick={() => openTunnel(2)}
-                  />
+                  <OptionTile title="Via Stripe" onClick={() => open(2)} />
                   <Spacer size="14px" />
-                  <OptionTile
-                     title="Via RazorPay"
-                     onClick={() => openTunnel(3)}
-                  />
+                  <OptionTile title="Via RazorPay" onClick={() => open(2)} />
                   <Spacer size="14px" />
                   <OptionTile title="Mark Paid" onClick={markPaid} />
                </Flex>
