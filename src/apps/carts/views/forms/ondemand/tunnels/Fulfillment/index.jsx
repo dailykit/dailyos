@@ -51,11 +51,38 @@ const Content = ({ panel }) => {
    const [type, setType] = React.useState('')
    const [time, setTime] = React.useState('')
    const [error, setError] = React.useState('')
+   const [typeOptions, setTypeOptions] = React.useState([])
    const [pickerDates, setPickerDates] = React.useState([])
    const [pickerSlots, setPickerSlots] = React.useState([])
    const [fulfillment, setFulfillment] = React.useState({})
 
    const storedDistance = React.useRef()
+
+   React.useEffect(() => {
+      if (brand?.onDemandSettings?.length) {
+         const types = []
+
+         const deliverySetting = brand.onDemandSettings.find(
+            setting =>
+               setting.onDemandSetting.identifier === 'Delivery Availability'
+         )
+         const { value: deliveryAvailability } = deliverySetting
+
+         if (deliveryAvailability?.isAvailable)
+            types.push({ id: 'DELIVERY', title: 'Delivery' })
+
+         const pickupSetting = brand.onDemandSettings.find(
+            setting =>
+               setting.onDemandSetting.identifier === 'Pickup Availability'
+         )
+         const { value: pickupAvailability } = pickupSetting
+
+         if (pickupAvailability?.isAvailable)
+            types.push({ id: 'PICKUP', title: 'Pickup' })
+
+         setTypeOptions(types)
+      }
+   }, [brand?.onDemandSettings?.length])
 
    // Mutation
    const [updateCart, { loading }] = useMutation(MUTATIONS.CART.UPDATE, {
@@ -115,8 +142,10 @@ const Content = ({ panel }) => {
       setError('')
 
       if (brand.onDemandSettings.length) {
-         const [setting] = brand.onDemandSettings
-         const { value: storeAddress } = setting.onDemandSetting
+         const addressSetting = brand.onDemandSettings.find(
+            setting => setting.onDemandSetting.identifier === 'Location'
+         )
+         const { value: storeAddress } = addressSetting
 
          ;(async () => {
             if (
@@ -170,23 +199,25 @@ const Content = ({ panel }) => {
             setError('')
 
             if (brand.onDemandSettings.length) {
-               const setting1 = brand.onDemandSettings.find(
+               const deliverySetting = brand.onDemandSettings.find(
                   setting =>
                      setting.onDemandSetting.identifier ===
                      'Delivery Availability'
                )
-               const { value: deliveryAvailability } = setting1.onDemandSetting
+               const { value: deliveryAvailability } = deliverySetting
+               console.log('🚀 deliveryAvailability', deliveryAvailability)
 
-               const setting2 = brand.onDemandSettings.find(
+               const pickupSetting = brand.onDemandSettings.find(
                   setting =>
                      setting.onDemandSetting.identifier ===
                      'Pickup Availability'
                )
-               const { value: pickupAvailability } = setting2.onDemandSetting
+               const { value: pickupAvailability } = pickupSetting
+               console.log('🚀 pickupAvailability', pickupAvailability)
 
                switch (type) {
                   case 'PICKUP': {
-                     if (pickupAvailability.isAvailable) {
+                     if (pickupAvailability?.isAvailable) {
                         switch (time) {
                            case 'ONDEMAND': {
                               if (onDemandPickup[0]?.recurrences?.length) {
@@ -260,7 +291,7 @@ const Content = ({ panel }) => {
                      if (!distance) {
                         return setError('Please add an address first!')
                      }
-                     if (deliveryAvailability.isAvailable) {
+                     if (deliveryAvailability?.isAvailable) {
                         switch (time) {
                            case 'ONDEMAND': {
                               if (onDemandDelivery[0]?.recurrences?.length) {
@@ -395,10 +426,7 @@ const Content = ({ panel }) => {
                <Text as="text1"> Order for </Text>
                <Spacer size="4px" />
                <RadioGroup
-                  options={[
-                     { id: 'PICKUP', title: 'Pickup' },
-                     { id: 'DELIVERY', title: 'Delivery' },
-                  ]}
+                  options={typeOptions}
                   onChange={option => setType(option?.id ?? '')}
                />
                <Spacer size="16px" />
