@@ -154,6 +154,15 @@ export const QUERIES = {
             }
          }
       `,
+      SETTINGS: gql`
+         query settings(
+            $where: brands_brand_subscriptionStoreSetting_bool_exp = {}
+         ) {
+            settings: brands_brand_subscriptionStoreSetting(where: $where) {
+               value
+            }
+         }
+      `,
    },
    ORGANIZATION: gql`
       query organizations {

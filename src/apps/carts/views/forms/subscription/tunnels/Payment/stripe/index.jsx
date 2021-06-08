@@ -2,7 +2,7 @@ import React from 'react'
 import { toast } from 'react-toastify'
 import styled from 'styled-components'
 import { useParams } from 'react-router'
-import { useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import {
    Text,
    Flex,
@@ -17,16 +17,29 @@ import {
 
 import { useManual } from '../../../state'
 import PaymentTunnel from './PaymentTunnel'
-import { MUTATIONS } from '../../../../../../graphql'
+import { QUERIES, MUTATIONS } from '../../../../../../graphql'
 import EmptyIllo from '../../../../../../assets/svgs/EmptyIllo'
 import { logger } from '../../../../../../../../shared/utils'
 import * as Icon from '../../../../../../../../shared/assets/icons'
 
 export const StripeTunnel = ({ closeViaTunnel }) => {
-   const { customer } = useManual()
    const params = useParams()
+   const { brand, customer } = useManual()
    const [card, setCard] = React.useState()
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
+
+   const { data: { settings = [] } = {} } = useQuery(QUERIES.BRAND.SETTINGS, {
+      skip: !brand?.id,
+      variables: {
+         where: {
+            brandId: { _eq: brand?.id },
+            subscriptionStoreSetting: {
+               identifier: { _eq: 'Contact' },
+               type: { _eq: 'brand' },
+            },
+         },
+      },
+   })
    const [update] = useMutation(MUTATIONS.CART.UPDATE, {
       onCompleted: () => {
          closeViaTunnel(1)
@@ -52,6 +65,17 @@ export const StripeTunnel = ({ closeViaTunnel }) => {
    return (
       <>
          <Flex padding="16px" overflowY="auto" height="calc(100vh - 196px)">
+            {settings.length > 0 && (
+               <>
+                  <Flex container alignItems="center">
+                     <Text as="title">Checkout url: </Text>
+                     <a
+                        href={`${settings[0]?.value?.website}/get-started/checkout/?id=${params.id}`}
+                     >{`${settings[0]?.value?.website}/get-started/checkout/?id=${params.id}`}</a>
+                  </Flex>
+                  <Spacer size="16px" />
+               </>
+            )}
             <Styles.Card>
                <Header
                   title="Payment Details"
