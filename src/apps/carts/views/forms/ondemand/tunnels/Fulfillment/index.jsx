@@ -427,7 +427,11 @@ const Content = ({ panel }) => {
                <Spacer size="4px" />
                <RadioGroup
                   options={typeOptions}
-                  onChange={option => setType(option?.id ?? '')}
+                  onChange={option => {
+                     setType(option?.id ?? '')
+                     setPickerDates([])
+                     setPickerSlots([])
+                  }}
                />
                <Spacer size="16px" />
                {type === 'DELIVERY' && (
@@ -473,7 +477,7 @@ const Content = ({ panel }) => {
                      <Spacer size="16px" />
                   </>
                )}
-               {time === 'PREORDER' && (
+               {time === 'PREORDER' && Boolean(pickerDates.length) && (
                   <>
                      <Text as="text1"> Select a slot </Text>
                      <Spacer size="4px" />
