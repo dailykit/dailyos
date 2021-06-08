@@ -1,5 +1,6 @@
 import React from 'react'
 import axios from 'axios'
+import { get } from 'lodash'
 import { toast } from 'react-toastify'
 import { useLazyQuery, useMutation, useQuery } from '@apollo/react-hooks'
 import {
@@ -173,6 +174,13 @@ const CreateCustomer = ({ closeCustomerTunnel }) => {
       phoneNumber: '',
    })
    const { mode, brand, methods, tunnels, dispatch } = useManual()
+   const [updatePlatformCustomer] = useMutation(
+      MUTATIONS.UPDATE_PLATFORM_CUSTOMER,
+      {
+         onError: error => logger(error),
+      }
+   )
+
    const [fetchCustomer, { loading: loadingCustomer }] = useLazyQuery(
       QUERIES.CUSTOMER.ONE,
       {
@@ -181,6 +189,43 @@ const CreateCustomer = ({ closeCustomerTunnel }) => {
                type: 'SET_CUSTOMER',
                payload: brandCustomer,
             })
+            if (brandCustomer.customer?.platform_customer?.id) {
+               const _customer = {
+                  firstName:
+                     get(
+                        brandCustomer,
+                        'customer.platform_customer.firstName'
+                     ) || form.firstName,
+                  lastName:
+                     get(
+                        brandCustomer,
+                        'customer.platform_customer.lastName'
+                     ) || form.lastName,
+                  phoneNumber:
+                     get(
+                        brandCustomer,
+                        'customer.platform_customer.phoneNumber'
+                     ) || form.phoneNumber,
+               }
+               await updatePlatformCustomer({
+                  variables: {
+                     keycloakId: brandCustomer.keycloakId,
+                     _set: _customer,
+                  },
+               })
+            } else {
+               const _customer = {
+                  firstName: form.firstName,
+                  lastName: form.lastName,
+                  phoneNumber: form.phoneNumber,
+               }
+               await updatePlatformCustomer({
+                  variables: {
+                     keycloakId: brandCustomer.keycloakId,
+                     _set: _customer,
+                  },
+               })
+            }
             if (mode === 'ONDEMAND') {
                await methods.cart.create.mutate(brandCustomer)
             } else {

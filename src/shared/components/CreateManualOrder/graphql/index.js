@@ -68,6 +68,21 @@ export const MUTATIONS = {
          }
       }
    `,
+   UPDATE_PLATFORM_CUSTOMER: gql`
+      mutation platform_updateCustomer(
+         $keycloakId: String!
+         $_set: platform_customer_set_input = {}
+      ) {
+         platform_updateCustomer(
+            pk_columns: { keycloakId: $keycloakId }
+            _set: $_set
+         ) {
+            firstName
+            lastName
+            phoneNumber
+         }
+      }
+   `,
 }
 
 export const QUERIES = {
