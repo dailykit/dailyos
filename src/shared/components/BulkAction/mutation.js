@@ -43,3 +43,13 @@ export const CONCATENATE_STRING_COLUMN = gql`
       }
    }
 `
+export const UPDATE_PRODUCT_OPTIONS = gql`
+   mutation updateProductOptions(
+      $ids: [Int!]
+      $_set: products_productOption_set_input!
+   ) {
+      updateProductOptions(where: { id: { _in: $ids } }, _set: $_set) {
+         affected_rows
+      }
+   }
+`
