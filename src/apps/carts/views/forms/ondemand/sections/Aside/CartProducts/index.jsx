@@ -16,6 +16,7 @@ import {
 } from '@dailykit/ui'
 
 import { useManual } from '../../../state'
+import { buildImageUrl } from '../../../../../../utils'
 import { MUTATIONS, QUERIES } from '../../../../../../graphql'
 import { currencyFmt, logger } from '../../../../../../../../shared/utils'
 import {
@@ -47,7 +48,10 @@ const CartProducts = () => {
                   <Styles.Card key={product.id}>
                      <aside>
                         {product.image ? (
-                           <img src={product.image} alt={product.name} />
+                           <img
+                              src={buildImageUrl('56x56', product.image)}
+                              alt={product.name}
+                           />
                         ) : (
                            <span>N/A</span>
                         )}
@@ -147,7 +151,7 @@ const Styles = {
       }
       aside {
          width: 56px;
-         height: 42px;
+         height: 56px;
          display: flex;
          background: #eaeaea;
          align-items: center;

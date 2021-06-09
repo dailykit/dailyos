@@ -17,6 +17,7 @@ import {
 } from '@dailykit/ui'
 
 import { useManual } from '../../state'
+import { buildImageUrl } from '../../../../../utils'
 import { MUTATIONS, QUERIES } from '../../../../../graphql'
 import EmptyIllo from '../../../../../assets/svgs/EmptyIllo'
 import { InlineLoader } from '../../../../../../../shared/components'
@@ -199,7 +200,10 @@ const Product = ({ cart, data, insert }) => {
       <Styles.Card>
          <aside>
             {product.image ? (
-               <img alt={product.name} src={product.image} />
+               <img
+                  alt={product.name}
+                  src={buildImageUrl('56x56', product.image)}
+               />
             ) : (
                <span>N/A</span>
             )}
@@ -265,7 +269,7 @@ const Styles = {
       grid-template-columns: auto 1fr;
       aside {
          width: 56px;
-         height: 42px;
+         height: 56px;
          display: flex;
          background: #eaeaea;
          align-items: center;

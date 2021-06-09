@@ -17,6 +17,7 @@ import {
 } from '@dailykit/ui'
 
 import { useManual } from '../../state'
+import { buildImageUrl } from '../../../../../utils'
 import { MUTATIONS, QUERIES } from '../../../../../graphql'
 import EmptyIllo from '../../../../../assets/svgs/EmptyIllo'
 import { InlineLoader } from '../../../../../../../shared/components'
@@ -277,7 +278,10 @@ const Menu = ({ menu }) => {
                               product.assets?.images?.length > 0 ? (
                                  <img
                                     alt={product.name}
-                                    src={product.assets?.images[0]}
+                                    src={buildImageUrl(
+                                       '56x56',
+                                       product.assets?.images[0]
+                                    )}
                                  />
                               ) : (
                                  <span>N/A</span>
@@ -330,7 +334,7 @@ const Styles = {
       grid-template-columns: auto 1fr;
       aside {
          width: 56px;
-         height: 42px;
+         height: 56px;
          display: flex;
          background: #eaeaea;
          align-items: center;

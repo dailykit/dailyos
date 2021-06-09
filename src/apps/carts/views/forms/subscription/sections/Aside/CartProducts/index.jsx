@@ -6,6 +6,7 @@ import { Filler, Flex, IconButton, Spacer, Tag, Text } from '@dailykit/ui'
 
 import { useManual } from '../../../state'
 import { MUTATIONS } from '../../../../../../graphql'
+import { buildImageUrl } from '../../../../../../utils'
 import EmptyIllo from '../../../../../../assets/svgs/EmptyIllo'
 import { currencyFmt } from '../../../../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../../../../shared/assets/icons'
@@ -38,7 +39,10 @@ const CartProducts = () => {
                   <Styles.Card key={product.id}>
                      <aside>
                         {product.image ? (
-                           <img src={product.image} alt={product.name} />
+                           <img
+                              src={buildImageUrl('56x56', product.image)}
+                              alt={product.name}
+                           />
                         ) : (
                            <span>N/A</span>
                         )}
@@ -185,7 +189,7 @@ const Styles = {
       }
       aside {
          width: 56px;
-         height: 42px;
+         height: 56px;
          display: flex;
          background: #eaeaea;
          align-items: center;
