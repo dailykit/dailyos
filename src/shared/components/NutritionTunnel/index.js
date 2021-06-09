@@ -12,6 +12,7 @@ import {
    HelperText,
 } from '@dailykit/ui'
 import { Tooltip } from '../Tooltip'
+import Banner from '../Banner'
 
 const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
    const [state, dispatch] = React.useReducer(reducer, initialState)
@@ -122,6 +123,7 @@ const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
                close={() => closeTunnel(1)}
                tooltip={<Tooltip identifier="nutrition_tunnel" />}
             />
+            <Banner id="nutrition-tunnel-top" />
             <Flex
                padding="16px"
                height="calc(100vh - 106px)"
@@ -542,6 +544,7 @@ const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
                   <Text as="title">%</Text>
                </Flex>
             </Flex>
+            <Banner id="nutrition-tunnel-bottom" />
          </Tunnel>
       </Tunnels>
    )

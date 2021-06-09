@@ -18,6 +18,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import {
+   Banner,
    ErrorState,
    InlineLoader,
    Tooltip,
@@ -115,6 +116,7 @@ const RecipesListing = () => {
    console.log('this is selected rows', selectedRows)
    return (
       <ResponsiveFlex maxWidth="1280px" margin="0 auto">
+         <Banner id="products-app-recipe-listing-top" />
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="full">
                <BulkActionsTunnel
@@ -158,6 +160,7 @@ const RecipesListing = () => {
                setSelectedRows={setSelectedRows}
             />
          )}
+         <Banner id="products-app-recipe-listing-bottom" />
       </ResponsiveFlex>
    )
 }

@@ -41,6 +41,7 @@ import {
    ErrorState,
    InlineLoader,
    DropdownButton,
+   Banner,
 } from '../../../../shared/components'
 
 const isPickup = value => ['ONDEMAND_PICKUP', 'PREORDER_PICKUP'].includes(value)
@@ -346,6 +347,7 @@ const Order = () => {
       )
    return (
       <Flex>
+         <Banner id="order-app-single-order-top" />
          <Spacer size="16px" />
          <ResponsiveFlex
             container
@@ -647,6 +649,7 @@ const Order = () => {
             address={order.cart?.address}
             closeTunnel={closeAddressTunnel}
          />
+         <Banner id="order-app-single-order-bottom" />
       </Flex>
    )
 }
@@ -755,6 +758,7 @@ const EditDeliveryTunnel = ({
                   isLoading: loading,
                }}
             />
+            <Banner id="order-app-single-order-edit-delivery-tunnel-top" />
             <Flex padding="16px" overflowY="auto" height="calc(100vh - 195px)">
                <Form.Group>
                   <Form.Label htmlFor="date" title="date">
@@ -792,6 +796,7 @@ const EditDeliveryTunnel = ({
                   />
                </Form.Group>
             </Flex>
+            <Banner id="order-app-single-order-edit-delivery-tunnel-bottom" />
          </Tunnel>
       </Tunnels>
    )
@@ -849,6 +854,7 @@ const EditAddressTunnel = ({ cartId, tunnels, closeTunnel, address = {} }) => {
                   isLoading: loading,
                }}
             />
+            <Banner id="order-app-single-order-edit-address-tunnel-top" />
             <Flex padding="16px" overflowY="auto" height="calc(100vh - 195px)">
                <Form.Group>
                   <Form.Label htmlFor="line1" title="line1">
@@ -928,6 +934,7 @@ const EditAddressTunnel = ({ cartId, tunnels, closeTunnel, address = {} }) => {
                   />
                </Form.Group>
             </Flex>
+            <Banner id="order-app-single-order-edit-address-tunnel-bottom" />
          </Tunnel>
       </Tunnels>
    )

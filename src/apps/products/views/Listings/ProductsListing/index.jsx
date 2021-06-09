@@ -16,7 +16,7 @@ import {
 // third party imports
 import { useTranslation } from 'react-i18next'
 // shared dir imports
-import { InlineLoader, Tooltip } from '../../../../../shared/components'
+import { Banner, InlineLoader, Tooltip } from '../../../../../shared/components'
 import { useTabs, useTooltip } from '../../../../../shared/providers'
 // local imports
 import { AddIcon } from '../../../assets/icons'
@@ -119,6 +119,7 @@ const ProductsListing = () => {
                justifyContent="space-between"
                height="72px"
             >
+               <Banner id="products-app-products-listing-top" />
                <Flex container alignItems="center">
                   <Text as="h2">{t(address.concat('products'))}</Text>
                   <Tooltip identifier="products_list_heading" />
@@ -148,6 +149,7 @@ const ProductsListing = () => {
                   view={view}
                />
             )}
+            <Banner id="products-app-products-listing-bottom" />
          </ResponsiveFlex>
       </>
    )

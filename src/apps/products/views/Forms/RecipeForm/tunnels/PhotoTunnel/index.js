@@ -37,7 +37,9 @@ const PhotoTunnel = ({ state, closeTunnel }) => {
             close={() => closeTunnel(1)}
             tooltip={<Tooltip identifier="recipe_assets_tunnel" />}
          />
+
          <TunnelBody>
+            <h5>This is from that photo tunnel</h5>
             <AssetUploader
                onAssetUpload={url => addImage(url)}
                onImageSelect={image => addImage(image)}

@@ -21,7 +21,7 @@ import {
 } from '../../../graphql'
 import { StyledWrapper } from './styled'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
-import { Tooltip, InlineLoader } from '../../../../../shared/components'
+import { Tooltip, InlineLoader, Banner } from '../../../../../shared/components'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { currencyFmt, logger, randomSuffix } from '../../../../../shared/utils'
 import options from '../../tableOptions'
@@ -268,6 +268,7 @@ const CouponListing = () => {
    if (loading || listLoading) return <InlineLoader />
    return (
       <StyledWrapper>
+         <Banner id="crm-app-coupons-listing-top" />
          <Flex container alignItems="center" justifyContent="space-between">
             <Flex container height="80px" alignItems="center">
                <Text as="h2">
@@ -294,6 +295,7 @@ const CouponListing = () => {
                ref={tableRef}
             />
          )}
+         <Banner id="crm-app-coupons-listing-bottom" />
       </StyledWrapper>
    )
 }
