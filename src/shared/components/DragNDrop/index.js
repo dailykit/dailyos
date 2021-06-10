@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { Flex } from '@dailykit/ui'
 // import { set } from 'lodash'
@@ -11,16 +11,56 @@ export default function DragNDrop({
    schemaname,
    direction,
    isDefaultDrag = true,
-   customDragStyle,
+   customDragStyle = {},
+   componentHeight,
 }) {
    const { priorityMutation } = useDnd()
    const [data, setData] = useState(list)
-   const getItemStyle = (isDragging, draggableStyle) => ({
-      // some basic styles to make the items look a bit nicer
-      // styles we need to apply on draggables
-      ...draggableStyle,
-      cursor: "move"
-    });
+   const getItemStyle = (style, snapshot, index, size) => {
+      let height = Number(componentHeight)
+      if (style.transform) {
+         let axisLockY = ''
+         if (
+            Number(
+               style.transform.slice(
+                  style.transform.indexOf(',') + 1,
+                  style.transform.length - 3
+               )
+            ) >=
+            height * (size - index)
+         ) {
+            axisLockY = `translate(0px, ${height * (size - index - 1)}px`
+         } else if (
+            Number(
+               style.transform.slice(
+                  style.transform.indexOf(',') + 1,
+                  style.transform.length - 3
+               )
+            ) <=
+            -height * (size - (size - (index + 1)))
+         ) {
+            axisLockY = `translate(0px, ${
+               -height * (size - (size - (index + 1)) - 1)
+            }px`
+         } else {
+            axisLockY = `translate(0px ${style.transform.slice(
+               style.transform.indexOf(','),
+               style.transform.length
+            )}`
+         }
+
+         return {
+            ...style,
+            cursor: `${snapshot.isDragging ? 'move' : 'default'}`,
+            transform: axisLockY,
+         }
+      }
+      return {
+         ...style,
+         cursor: `${snapshot.isDragging ? 'move' : 'default'}`,
+      }
+   }
+
    const onDragEnd = result => {
       //return if item was dropped outside
       if (!result.destination) return
@@ -137,7 +177,7 @@ export default function DragNDrop({
       setData(newData)
    }
    return (
-      <div style={{ cursor: `${isDefaultDrag ? 'grabbing' : 'move !important'}` }}>
+      <div style={{ cursor: `${isDefaultDrag ? 'grabbing' : 'move'}` }}>
          <DragDropContext onDragEnd={onDragEnd}>
             <Droppable
                droppableId={droppableId}
@@ -174,9 +214,11 @@ export default function DragNDrop({
                                     ref={provided.innerRef}
                                     {...provided.draggableProps}
                                     style={getItemStyle(
-                                       snapshot.isDragging,
-                                       provided.draggableProps.style
-                                     )}
+                                       provided.draggableProps.style,
+                                       snapshot,
+                                       index,
+                                       children.length
+                                    )}
                                  >
                                     <div
                                        style={{
