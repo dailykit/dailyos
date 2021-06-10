@@ -108,30 +108,13 @@ export const StyledCardIngredient = styled.div(
       padding: 0px 5px 0px 0px;
       display: inline-block;
       z-index: +10;
-      div#index {
-         display: inline-block;
-         width: 27px;
-         height: 27px;
-         border-radius: 50%;
-         background: #f4f4f4;
-         margin: 0px 18px 0px 0px;
-         font-family: Roboto;
-         font-style: normal;
-         font-weight: bold;
-         font-size: 12px;
-         line-height: 16px;
-         color: #919699;
-         letter-spacing: 0.32px;
-         padding: 7px 0px 0px 0px;
-         text-align: center;
-        
-      }
+      
       div#menu {
          text-align: right;
          display: inline-block;
       }
       div#dropdown {
-         padding: 0px 0px 12px 45px;
+         padding: 0px 0px 12px 0px;
       }
       div#calCountIngredient {
          display: inline-block;
@@ -144,7 +127,7 @@ export const StyledCardIngredient = styled.div(
          font-weight: bold;
          font-size: 11px;
          line-height: 16px;
-         margin: 0px 2px 0px 45px;
+         margin: 0px 2px 0px 0px;
          letter-spacing: 0.32px;
          padding: 1px 0px 2.5px 5px;
          color: #ffffff;

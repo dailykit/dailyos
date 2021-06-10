@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react'
 import { useMutation, useSubscription, useLazyQuery } from '@apollo/react-hooks'
 import { Link } from 'react-router-dom'
 
-
 import {
    ButtonTile,
    Flex,
@@ -279,14 +278,21 @@ const Servings = ({ state }) => {
                }}
             >
                <StyledCardIngredient>
-                  <div id="index">{index + 1}</div>
+                  {/* <div id="index">{index + 1}</div> */}
 
-                  <Link
-                     style={{ display: 'inline-block', width: '156px' }}
-                     to="#"
+                  <div
+                     style={{
+                        display: 'inline-block',
+                        width: '156px',
+                        height:'auto',
+                        paddingBottom: '5px',
+                        overflow: 'auto',
+                        whiteSpace: 'nowrap',
+                        overflowY: 'hidden'
+                     }}
                   >
                      {option.ingredient.name}
-                  </Link>
+                  </div>
                   <div id="menu">
                      <ContextualMenu>
                         <Context
@@ -519,7 +525,7 @@ const Servings = ({ state }) => {
                <div
                   style={{
                      display: 'grid',
-                     gridTemplateColumns: '30px 1038px 30px',
+                     gridTemplateColumns: '30px 1065px 30px',
                   }}
                >
                   {buttonClickLeftRender ? (
@@ -547,13 +553,14 @@ const Servings = ({ state }) => {
                         overflow: 'auto',
                         whiteSpace: 'nowrap',
                         overflowY: 'hidden',
+                        overflowX: 'hidden',
                         scrollBehavior: 'smooth',
                      }}
                   >
                      <div
                         style={{
                            display: 'grid',
-                           gridTemplateColumns: `238px repeat(${state.simpleRecipeYields?.length}, 160px)`,
+                           gridTemplateColumns: `283px repeat(${state.simpleRecipeYields?.length}, 160px)`,
                         }}
                      >
                         <IconButton
@@ -562,7 +569,7 @@ const Servings = ({ state }) => {
                               openTunnel(1)
                            }}
                            style={{
-                              width: '238px',
+                              width: '283px',
                               height: '85px',
                               marginTop: '0px',
                               paddingTop: '0px',
@@ -586,6 +593,26 @@ const Servings = ({ state }) => {
                               droppableId="simpleRecipeIngredientsDroppableId"
                               tablename="simpleRecipe_ingredient_processing"
                               schemaname="simpleRecipe"
+                              isDefaultDrag={false}
+                              customDragStyle={{
+                                 display: 'inlineBlock',
+                                 width: '27px',
+                                 height: '27px',
+                                 borderRadius: '50%',
+                                 background: '#f4f4f4',
+                                 margin: '0px 18px 0px 0px',
+                                 fontFamily: 'Roboto',
+                                 fontStyle: 'normal',
+                                 fontWeight: 'bold',
+                                 fontSize: '12px',
+                                 lineHeight: '16px',
+                                 color: '#919699',
+                                 letterSpacing: '0.32px',
+                                 padding: '7px 0px 0px 0px',
+                                 textAlign: 'center',
+                                 cursor: 'move',
+                              }}
+                              componentHeight={130}
                            >
                               {ingredientsOptions}
                            </DragNDrop>
@@ -940,7 +967,7 @@ const Sachets = ({ defaultslipName, option, object }) => {
    )
    let sachetDisabled = false
    const [sachets, setSachets] = React.useState([])
-   
+
    const [loadSachets, { called, loading, data }] = useLazyQuery(SACHETS, {
       variables: {
          where: {
@@ -951,11 +978,10 @@ const Sachets = ({ defaultslipName, option, object }) => {
          },
       },
       onCompleted: data => {
-         const updatedSachets =
-            data.ingredientSachets.map(sachet => ({
-               ...sachet,
-               title: `${sachet.quantity} ${sachet.unit}`,
-            }))
+         const updatedSachets = data.ingredientSachets.map(sachet => ({
+            ...sachet,
+            title: `${sachet.quantity} ${sachet.unit}`,
+         }))
 
          setSachets([...updatedSachets])
       },
@@ -970,7 +996,6 @@ const Sachets = ({ defaultslipName, option, object }) => {
    let search = ''
    let loader = false
 
-   
    let defaultSachetOption = {}
    //console.log(object , "Adrish Ingredient options")
    option.linkedSachets.map((item, index) => {
@@ -1006,7 +1031,7 @@ const Sachets = ({ defaultslipName, option, object }) => {
                ],
             },
          })
-         loadSachets();
+         loadSachets()
       } else {
          toast.error('Enter a valid quantity and unit!')
       }
