@@ -11,7 +11,14 @@ export const CUSTOMERS_LISTING = gql`
          keycloakId
          source
          brandCustomers(where: { brandId: { _eq: $brandId } }) {
+            created_at
+            updated_at
+            isSubscriberTimeStamp
+            subscriber: isSubscriber
+            isSubscriptionCancelled
+            pausePeriod
             subscription {
+               rrule
                subscriptionItemCount {
                   count
                   plan: subscriptionServing {
@@ -405,6 +412,88 @@ export const REWARD_DATA = gql`
          rewardValue
          type
          position
+      }
+   }
+`
+export const CUSTOMERS_LISTING_2 = gql`
+   query CUSTOMERS_LISTING_2(
+      $brandId: Int!
+      $order_by: [crm_brand_customer_order_by!]!
+   ) {
+      brandCustomers(
+         where: {
+            brandId: { _eq: $brandId }
+            customer: { isArchived: { _eq: false } }
+         }
+         order_by: $order_by
+      ) {
+         id
+         keycloakId
+         customer {
+            email
+            source
+            platform_customer {
+               fullName
+               phoneNumber
+            }
+         }
+         isSubscriber
+         subscriptionTitle {
+            title
+         }
+         subscriptionServing {
+            servingSize
+         }
+         subscriptionItemCount {
+            count
+         }
+         subscription {
+            rrule
+         }
+         pausePeriod
+         isSubscriberTimeStamp
+         isSubscriptionCancelled
+         created_at
+         updated_at
+         orders_aggregate {
+            aggregate {
+               count
+               sum {
+                  amountPaid
+                  discount
+               }
+            }
+         }
+      }
+      uniqueDeliveryDays: subscription_subscription(distinct_on: rrule) {
+         rrule
+      }
+      uniqueItemCounts: subscription_subscriptionItemCount(distinct_on: count) {
+         count
+      }
+      uniqueServings: subscription_subscriptionServing(
+         distinct_on: servingSize
+      ) {
+         servingSize
+      }
+      uniqueTitles: subscription_subscriptionTitle(distinct_on: title) {
+         title
+      }
+   }
+`
+export const UNIQUE_SUBSCRIPTION_FILTER_VALUES = gql`
+   query UNIQUE_SUBSCRIPTION_FILTER_VALUES {
+      subscription_subscription(distinct_on: rrule) {
+         rrule
+      }
+      subscription_subscriptionItemCount(distinct_on: count) {
+         count
+      }
+      subscription_subscriptionServing(distinct_on: servingSize) {
+         servingSize
+      }
+      subscription_subscriptionTitle(distinct_on: title) {
+         title
       }
    }
 `
