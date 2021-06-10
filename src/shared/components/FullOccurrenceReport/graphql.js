@@ -25,3 +25,38 @@ export const SUBSCRIPTION_VIEW_FULL_OCCURENCE_REPORT = gql`
       }
    }
 `
+export const FULL_OCCURENCE_REPORT = gql`
+   query MyQuery(
+      $brandCustomerFilter: FullOccurenceReportCrmBrandCustomerBoolExp!
+   ) {
+      FullOccurenceReport(brandCustomerFilter: $brandCustomerFilter) {
+         cartId
+         fulfillmentDate
+         title
+         addedProductsCount
+         allTimeRank
+         betweenPause
+         brand_customerId
+         cartStatus
+         cartTotalPrice
+         cutoffTimeStamp
+         discount
+         email
+         hasCart
+         isItemCountValid
+         isPaused
+         isSkipped
+         itemCountValidComment
+         paymentRetryAttempt
+         paymentStatus
+         pendingProductCount
+         percentageSkipped
+         rrule
+         skippedAtThisStage
+         startTimeStamp
+         subscriptionItemCount
+         subscriptionOccurenceId
+         subscriptionServingSize
+      }
+   }
+`
