@@ -284,11 +284,11 @@ const Servings = ({ state }) => {
                      style={{
                         display: 'inline-block',
                         width: '156px',
-                        height:'auto',
+                        height: 'auto',
                         paddingBottom: '5px',
                         overflow: 'auto',
                         whiteSpace: 'nowrap',
-                        overflowY: 'hidden'
+                        overflowY: 'hidden',
                      }}
                   >
                      {option.ingredient.name}
@@ -428,6 +428,7 @@ const Servings = ({ state }) => {
                   />
                </Tunnel>
             </Tunnels>
+            <div  >
             <div
                style={{
                   padding: '18px 0px 12.5px 30px',
@@ -525,7 +526,7 @@ const Servings = ({ state }) => {
                <div
                   style={{
                      display: 'grid',
-                     gridTemplateColumns: '30px 1065px 30px',
+                     gridTemplateColumns: '30px 1080px 30px',
                   }}
                >
                   {buttonClickLeftRender ? (
@@ -555,6 +556,7 @@ const Servings = ({ state }) => {
                         overflowY: 'hidden',
                         overflowX: 'hidden',
                         scrollBehavior: 'smooth',
+                        
                      }}
                   >
                      <div
@@ -595,7 +597,11 @@ const Servings = ({ state }) => {
                               schemaname="simpleRecipe"
                               isDefaultDrag={false}
                               customDragStyle={{
-                                 display: 'inlineBlock',
+                                 left: '0',
+                                 position: 'sticky',
+                                 overflowX: 'hidden',
+                                 zIndex: '+20',
+                                 display: 'inline-block',
                                  width: '27px',
                                  height: '27px',
                                  borderRadius: '50%',
@@ -651,6 +657,8 @@ const Servings = ({ state }) => {
                   onClick={() => openTunnel(1)}
                />
             )}
+            </div>
+            
          </>
       </>
    )
