@@ -70,6 +70,11 @@ const FullOccurrenceReport = () => {
          },
       },
       onCompleted: data => {
+         if (
+            !Array.isArray(data?.FullOccurenceReport) &&
+            data.FullOccurenceReport.length === 0
+         )
+            return
          setReports(data.FullOccurenceReport)
          setIsLoading(false)
       },
