@@ -36,7 +36,6 @@ export {
 export * from './AssetUploader'
 export * from './InlineLoader'
 export * from './Flex'
-export * from './DropdownButton'
 export * from './ScrollSection'
 export * from './OperationConfig'
 export * from './Tooltip'

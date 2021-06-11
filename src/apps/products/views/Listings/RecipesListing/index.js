@@ -14,6 +14,7 @@ import {
    Tunnels,
    useTunnel,
    Checkbox,
+   DropdownButton,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -444,31 +445,32 @@ class DataTable extends React.Component {
             <Spacer size="40px" />
             <Flex container as="header" width="100%" justifyContent="flex-end">
                <TextButton
-                  onClick={this.downloadCsvData}
-                  type="solid"
+                  onClick={() => {
+                     localStorage.clear()
+                  }}
+                  type="ghost"
                   size="sm"
                >
-                  Download CSV
+                  Clear Persistence
                </TextButton>
-               <Spacer size="10px" xAxis />
-               <TextButton
-                  onClick={this.downloadPdfData}
-                  type="solid"
-                  size="sm"
-               >
-                  Download PDF
-               </TextButton>
-               <Spacer size="10px" xAxis />
-               <TextButton
-                  onClick={this.downloadXlsxData}
-                  type="solid"
-                  size="sm"
-               >
-                  Download XLSX
-               </TextButton>
+               <Spacer size="40px" xAxis />
+               <DropdownButton title="Download" width="150px">
+                  <DropdownButton.Options>
+                     <DropdownButton.Option onClick={this.downloadCsvData}>
+                        CSV
+                     </DropdownButton.Option>
+                     <DropdownButton.Option onClick={this.downloadPdfData}>
+                        PDF
+                     </DropdownButton.Option>
+                     <DropdownButton.Option onClick={this.downloadXlsxData}>
+                        XLSX
+                     </DropdownButton.Option>
+                  </DropdownButton.Options>
+               </DropdownButton>
             </Flex>
 
             <Spacer size="30px" />
+
             <ReactTabulator
                ref={this.tableRef}
                dataLoaded={this.selectRows}
@@ -634,114 +636,6 @@ const ActionBar = ({
                      defaultIds={defaultIDs()}
                      disabled={true}
                      options={groupByOptions}
-                     selectedOption={selectedOption}
-                     typeName="cuisine"
-                  />
-               </Flex>
-               <Flex
-                  container
-                  as="header"
-                  width="30%"
-                  alignItems="center"
-                  justifyContent="flex-end"
-               >
-                  <Text as="text1">Apply Filter:</Text>
-                  <Spacer size="5px" xAxis />
-                  <IconButton
-                     type="ghost"
-                     size="sm"
-                     onClick={() => openTunnel(2)}
-                  >
-                     <FilterIcon />
-                  </IconButton>
-                  <ButtonGroup align="left">
-                     <TextButton
-                        type="ghost"
-                        size="sm"
-                        onClick={() => clearHeaderFilter()}
-                     >
-                        Clear
-                     </TextButton>
-                  </ButtonGroup>
-               </Flex>
-            </Flex>
-         </Flex>
-      </>
-   )
-}
-
-const ActionBar = ({
-   selectedRows,
-   openTunnel,
-   handleGroupBy,
-   clearHeaderFilter,
-}) => {
-   const [groupByOptions] = React.useState([
-      { id: 1, title: 'isPublished' },
-      { id: 2, title: 'cuisine' },
-      { id: 3, title: 'author' },
-   ])
-   const selectedOption = option => {
-      const newOptions = option.map(x => x.title)
-      handleGroupBy(newOptions)
-   }
-   const searchedOption = option => console.log(option)
-   return (
-      <>
-         <Flex
-            container
-            as="header"
-            width="100%"
-            justifyContent="space-between"
-         >
-            <Flex
-               container
-               as="header"
-               width="30%"
-               alignItems="center"
-               justifyContent="space-between"
-            >
-               <Text as="subtitle">
-                  {selectedRows.length == 0
-                     ? 'No recipe'
-                     : selectedRows.length == 1
-                     ? `${selectedRows.length} recipe`
-                     : `${selectedRows.length} recipes`}{' '}
-                  selected
-               </Text>
-               <ButtonGroup align="left">
-                  <TextButton
-                     type="ghost"
-                     size="sm"
-                     disabled={selectedRows.length === 0 ? true : false}
-                     onClick={() => openTunnel(1)}
-                  >
-                     APPLY BULK ACTIONS
-                  </TextButton>
-               </ButtonGroup>
-            </Flex>
-            <Flex
-               container
-               as="header"
-               width="70%"
-               alignItems="center"
-               justifyContent="space-around"
-            >
-               <Flex
-                  container
-                  as="header"
-                  width="70%"
-                  alignItems="center"
-                  justifyContent="flex-end"
-               >
-                  <Text as="text1">Group By:</Text>
-                  <Spacer size="5px" xAxis />
-                  <Dropdown
-                     type="multi"
-                     variant="revamp"
-                     disabled={true}
-                     options={groupByOptions}
-                     searchedOption={searchedOption}
                      selectedOption={selectedOption}
                      typeName="cuisine"
                   />
