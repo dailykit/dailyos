@@ -112,7 +112,6 @@ const RecipesListing = () => {
       logger(error)
       return <ErrorState />
    }
-   console.log('this is selected rows', selectedRows)
    return (
       <ResponsiveFlex maxWidth="1280px" margin="0 auto">
          <Tunnels tunnels={tunnels}>
@@ -436,6 +435,9 @@ class DataTable extends React.Component {
          <>
             <Spacer size="5px" />
             <ActionBar
+               downloadPdfData={this.downloadPdfData}
+               downloadCsvData={this.downloadCsvData}
+               downloadXlsxData={this.downloadXlsxData}
                selectedRows={this.props.selectedRows}
                openTunnel={this.props.openTunnel}
                handleGroupBy={this.handleGroupBy}
@@ -443,33 +445,6 @@ class DataTable extends React.Component {
             />
 
             <Spacer size="40px" />
-            <Flex container as="header" width="100%" justifyContent="flex-end">
-               <TextButton
-                  onClick={() => {
-                     localStorage.clear()
-                  }}
-                  type="ghost"
-                  size="sm"
-               >
-                  Clear Persistence
-               </TextButton>
-               <Spacer size="40px" xAxis />
-               <DropdownButton title="Download" width="150px">
-                  <DropdownButton.Options>
-                     <DropdownButton.Option onClick={this.downloadCsvData}>
-                        CSV
-                     </DropdownButton.Option>
-                     <DropdownButton.Option onClick={this.downloadPdfData}>
-                        PDF
-                     </DropdownButton.Option>
-                     <DropdownButton.Option onClick={this.downloadXlsxData}>
-                        XLSX
-                     </DropdownButton.Option>
-                  </DropdownButton.Options>
-               </DropdownButton>
-            </Flex>
-
-            <Spacer size="30px" />
 
             <ReactTabulator
                ref={this.tableRef}
@@ -542,6 +517,9 @@ function RecipeName({ cell, addTab }) {
 }
 
 const ActionBar = ({
+   downloadPdfData,
+   downloadCsvData,
+   downloadXlsxData,
    selectedRows,
    openTunnel,
    handleGroupBy,
@@ -590,7 +568,7 @@ const ActionBar = ({
             <Flex
                container
                as="header"
-               width="30%"
+               width="25%"
                alignItems="center"
                justifyContent="space-between"
             >
@@ -617,7 +595,7 @@ const ActionBar = ({
             <Flex
                container
                as="header"
-               width="70%"
+               width="75%"
                alignItems="center"
                justifyContent="space-around"
             >
@@ -628,6 +606,36 @@ const ActionBar = ({
                   alignItems="center"
                   justifyContent="flex-end"
                >
+                  <TextButton
+                     onClick={() => {
+                        localStorage.clear()
+                     }}
+                     type="ghost"
+                     size="sm"
+                  >
+                     Clear Persistence
+                  </TextButton>
+                  <Spacer size="15px" xAxis />
+                  <DropdownButton title="Download" width="150px">
+                     <DropdownButton.Options>
+                        <DropdownButton.Option
+                           onClick={() => downloadCsvData()}
+                        >
+                           CSV
+                        </DropdownButton.Option>
+                        <DropdownButton.Option
+                           onClick={() => downloadPdfData()}
+                        >
+                           PDF
+                        </DropdownButton.Option>
+                        <DropdownButton.Option
+                           onClick={() => downloadXlsxData()}
+                        >
+                           XLSX
+                        </DropdownButton.Option>
+                     </DropdownButton.Options>
+                  </DropdownButton>
+                  <Spacer size="15px" xAxis />
                   <Text as="text1">Group By:</Text>
                   <Spacer size="5px" xAxis />
                   <Dropdown
