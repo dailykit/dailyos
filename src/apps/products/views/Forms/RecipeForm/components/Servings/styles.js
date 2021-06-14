@@ -94,8 +94,8 @@ export const Heading = styled.div`
 `
 
 export const StyledCardIngredient = styled.div(
-   () => css`
-      left: 0;
+   ({buttonClickLeftRender}) => css`
+      left: 0px;
       position: sticky;
       width: 238px;
       height: 130px;
@@ -105,7 +105,7 @@ export const StyledCardIngredient = styled.div(
       font-weight: normal;
       font-size: 20px;
       line-height: 16px;
-      padding: 0px 5px 0px 0px;
+      padding: ${buttonClickLeftRender?`0px 5px 0px 50px`: `0px 5px 0px 0px`};
       display: inline-block;
       z-index: +10;
       

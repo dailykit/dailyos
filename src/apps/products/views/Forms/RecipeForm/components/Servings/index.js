@@ -32,6 +32,7 @@ import {
    PreviousArrow,
    PlusIconLarge,
 } from '../../../../../assets/icons'
+import {ExternalLink} from '../../../../../../../shared/assets/icons'
 import { toast } from 'react-toastify'
 import {
    StyledCardEven,
@@ -74,7 +75,10 @@ const Servings = ({ state }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [ingredientsTunnel, openingredientTunnel, closeingredientTunnel] =
       useTunnel(2)
-
+   const [buttonClickRightRender, setButtonClickRightRender] =
+      React.useState(false)
+   const [buttonClickLeftRender, setButtonClickLeftRender] =
+      React.useState(false)
    // Mutation
    const [updateRecipe] = useMutation(UPDATE_RECIPE, {
       onCompleted: () => {
@@ -164,7 +168,6 @@ const Servings = ({ state }) => {
 
    const options =
       state.simpleRecipeYields?.map((option, index) => {
-         //console.log(option, 'Adrish option')
          const autoGenerate = recipeYield => {
             console.log({ recipeYield })
             if (recipeYield.id && recipeYield.baseYieldId) {
@@ -277,10 +280,12 @@ const Servings = ({ state }) => {
                   gridTemplateRows: `170px`,
                }}
             >
-               <StyledCardIngredient>
+               <StyledCardIngredient
+                  buttonClickLeftRender={buttonClickLeftRender}
+               >
                   {/* <div id="index">{index + 1}</div> */}
 
-                  <div
+                  <Link
                      style={{
                         display: 'inline-block',
                         width: '156px',
@@ -289,10 +294,14 @@ const Servings = ({ state }) => {
                         overflow: 'auto',
                         whiteSpace: 'nowrap',
                         overflowY: 'hidden',
+                        textDecorationLine: 'underline',
+                        color: '#367BF5',
                      }}
+                     to={`/products/ingredients/${option.ingredient.id}`}
                   >
                      {option.ingredient.name}
-                  </div>
+                     <ExternalLink />
+                  </Link>
                   <div id="menu">
                      <ContextualMenu>
                         <Context
@@ -364,10 +373,7 @@ const Servings = ({ state }) => {
          )
       }) || []
    const recipeForm = useRef(null)
-   const [buttonClickRightRender, setButtonClickRightRender] =
-      React.useState(false)
-   const [buttonClickLeftRender, setButtonClickLeftRender] =
-      React.useState(false)
+
    useEffect(() => {
       if (state.simpleRecipeYields?.length > 5) {
          setButtonClickRightRender(true)
@@ -428,237 +434,245 @@ const Servings = ({ state }) => {
                   />
                </Tunnel>
             </Tunnels>
-            <div  >
             <div
                style={{
-                  padding: '18px 0px 12.5px 30px',
-                  fontFamily: 'Roboto',
-                  fontStyle: 'normal',
-                  fontWeight: '500',
-                  fontSize: '28px',
-                  lineHeight: '36px',
-                  letterSpacing: '0.32px',
-                  color: '#202020',
+                  display: 'grid',
+                  gridTemplateColumns: `auto auto auto`,
                }}
             >
-               Servings & Ingredients
-               <Tooltip identifier="recipe_servings" />
-            </div>
-            <div
-               style={{
-                  padding: '12.5px 0px 31px 30px',
-                  display: 'inline-block',
-               }}
-            >
-               <Form.Toggle
-                  name="showIngredients"
-                  onChange={() =>
-                     updateRecipe({
-                        variables: {
-                           id: state.id,
-                           set: {
-                              showIngredients: !state.showIngredients,
-                           },
-                        },
-                     })
-                  }
-                  iconWithText
-                  value={state.showIngredients}
-                  size={48}
-               >
+               <div></div>
+               <div>
                   <div
                      style={{
+                        padding: '18px 0px 12.5px 30px',
                         fontFamily: 'Roboto',
                         fontStyle: 'normal',
                         fontWeight: '500',
-                        fontSize: '16px',
-                        lineHeight: '16px',
+                        fontSize: '28px',
+                        lineHeight: '36px',
                         letterSpacing: '0.32px',
                         color: '#202020',
                      }}
                   >
-                     Show Ingredients on Store
+                     Servings & Ingredients
+                     <Tooltip identifier="recipe_servings" />
                   </div>
-               </Form.Toggle>
-            </div>
-
-            <div
-               style={{
-                  padding: '12.5px 0px 31px 30px',
-                  display: 'inline-block',
-                  marginLeft: '434px',
-               }}
-            >
-               <Form.Toggle
-                  name="showIngredientsQuantity"
-                  onChange={() =>
-                     updateRecipe({
-                        variables: {
-                           id: state.id,
-                           set: {
-                              showIngredientsQuantity:
-                                 !state.showIngredientsQuantity,
-                           },
-                        },
-                     })
-                  }
-                  iconWithText
-                  value={state.showIngredientsQuantity}
-                  size={48}
-               >
                   <div
                      style={{
-                        fontFamily: 'Roboto',
-                        fontStyle: 'normal',
-                        fontWeight: '500',
-                        fontSize: '16px',
-                        lineHeight: '16px',
-                        letterSpacing: '0.32px',
-                        color: '#202020',
+                        padding: '12.5px 0px 31px 30px',
+                        display: 'inline-block',
                      }}
                   >
-                     Show Ingredient Quantity on Store
-                  </div>
-               </Form.Toggle>
-            </div>
-
-            {options.length ? (
-               <div
-                  style={{
-                     display: 'grid',
-                     gridTemplateColumns: '30px 1080px 30px',
-                  }}
-               >
-                  {buttonClickLeftRender ? (
-                     <button
-                        style={{
-                           width: '30px',
-                           height: '30px',
-                           border: 'none',
-                           background: '#FFFFFF',
-                           boxShadow: '-2px 2px 6px rgba(0, 0, 0, 0.15)',
-                           borderRadius: '50%',
-                           marginTop: '25px',
-                        }}
-                        onClick={onButtonClickLeft}
+                     <Form.Toggle
+                        name="showIngredients"
+                        onChange={() =>
+                           updateRecipe({
+                              variables: {
+                                 id: state.id,
+                                 set: {
+                                    showIngredients: !state.showIngredients,
+                                 },
+                              },
+                           })
+                        }
+                        iconWithText
+                        value={state.showIngredients}
+                        size={48}
                      >
-                        <PreviousArrow />
-                     </button>
-                  ) : (
-                     <div></div>
-                  )}
+                        <div
+                           style={{
+                              fontFamily: 'Roboto',
+                              fontStyle: 'normal',
+                              fontWeight: '500',
+                              fontSize: '16px',
+                              lineHeight: '16px',
+                              letterSpacing: '0.32px',
+                              color: '#202020',
+                           }}
+                        >
+                           Show Ingredients on Store
+                        </div>
+                     </Form.Toggle>
+                  </div>
 
                   <div
-                     ref={recipeForm}
                      style={{
-                        overflow: 'auto',
-                        whiteSpace: 'nowrap',
-                        overflowY: 'hidden',
-                        overflowX: 'hidden',
-                        scrollBehavior: 'smooth',
-                        
+                        padding: '12.5px 0px 31px 30px',
+                        display: 'inline-block',
+                        marginLeft: '434px',
                      }}
                   >
+                     <Form.Toggle
+                        name="showIngredientsQuantity"
+                        onChange={() =>
+                           updateRecipe({
+                              variables: {
+                                 id: state.id,
+                                 set: {
+                                    showIngredientsQuantity:
+                                       !state.showIngredientsQuantity,
+                                 },
+                              },
+                           })
+                        }
+                        iconWithText
+                        value={state.showIngredientsQuantity}
+                        size={48}
+                     >
+                        <div
+                           style={{
+                              fontFamily: 'Roboto',
+                              fontStyle: 'normal',
+                              fontWeight: '500',
+                              fontSize: '16px',
+                              lineHeight: '16px',
+                              letterSpacing: '0.32px',
+                              color: '#202020',
+                           }}
+                        >
+                           Show Ingredient Quantity on Store
+                        </div>
+                     </Form.Toggle>
+                  </div>
+
+                  {options.length ? (
                      <div
                         style={{
                            display: 'grid',
-                           gridTemplateColumns: `283px repeat(${state.simpleRecipeYields?.length}, 160px)`,
+                           gridTemplateColumns: '30px 1080px 30px',
                         }}
                      >
-                        <IconButton
-                           variant="secondary"
-                           onClick={() => {
-                              openTunnel(1)
-                           }}
-                           style={{
-                              width: '283px',
-                              height: '85px',
-                              marginTop: '0px',
-                              paddingTop: '0px',
-                              left: '0',
-                              position: 'sticky',
-                              zIndex: '+10',
-                              background: '#F4F4F4',
-                           }}
-                           type="solid"
-                        >
-                           <PlusIconLarge />
-                        </IconButton>
-
-                        {options}
-                     </div>
-                     {
-                        <>
-                           <Spacer size="40px" />
-                           <DragNDrop
-                              list={state.simpleRecipeIngredients}
-                              droppableId="simpleRecipeIngredientsDroppableId"
-                              tablename="simpleRecipe_ingredient_processing"
-                              schemaname="simpleRecipe"
-                              isDefaultDrag={false}
-                              customDragStyle={{
-                                 left: '0',
-                                 position: 'sticky',
-                                 overflowX: 'hidden',
-                                 zIndex: '+20',
-                                 display: 'inline-block',
-                                 width: '27px',
-                                 height: '27px',
+                        {buttonClickLeftRender ? (
+                           <button
+                              style={{
+                                 width: '30px',
+                                 height: '30px',
+                                 border: 'none',
+                                 background: '#FFFFFF',
+                                 boxShadow: '-2px 2px 6px rgba(0, 0, 0, 0.15)',
                                  borderRadius: '50%',
-                                 background: '#f4f4f4',
-                                 margin: '0px 18px 0px 0px',
-                                 fontFamily: 'Roboto',
-                                 fontStyle: 'normal',
-                                 fontWeight: 'bold',
-                                 fontSize: '12px',
-                                 lineHeight: '16px',
-                                 color: '#919699',
-                                 letterSpacing: '0.32px',
-                                 padding: '7px 0px 0px 0px',
-                                 textAlign: 'center',
-                                 cursor: 'move',
+                                 marginTop: '25px',
                               }}
-                              componentHeight={130}
+                              onClick={onButtonClickLeft}
                            >
-                              {ingredientsOptions}
-                           </DragNDrop>
-                        </>
-                     }
+                              <PreviousArrow />
+                           </button>
+                        ) : (
+                           <div></div>
+                        )}
 
-                     <Spacer size="50px" />
+                        <div
+                           ref={recipeForm}
+                           style={{
+                              overflow: 'auto',
+                              whiteSpace: 'nowrap',
+                              overflowY: 'hidden',
+                              overflowX: 'hidden',
+                              scrollBehavior: 'smooth',
+                           }}
+                        >
+                           <div
+                              style={{
+                                 display: 'grid',
+                                 gridTemplateColumns: `283px repeat(${state.simpleRecipeYields?.length}, 160px)`,
+                              }}
+                           >
+                              <IconButton
+                                 variant="secondary"
+                                 onClick={() => {
+                                    openTunnel(1)
+                                 }}
+                                 style={{
+                                    width: '283px',
+                                    height: '85px',
+                                    marginTop: '0px',
+                                    paddingTop: '0px',
+                                    left: '0',
+                                    position: 'sticky',
+                                    zIndex: '+10',
+                                    background: '#F4F4F4',
+                                 }}
+                                 type="solid"
+                              >
+                                 <PlusIconLarge />
+                              </IconButton>
+
+                              {options}
+                           </div>
+                           {
+                              <>
+                                 <Spacer size="40px" />
+                                 <DragNDrop
+                                    list={state.simpleRecipeIngredients}
+                                    droppableId="simpleRecipeIngredientsDroppableId"
+                                    tablename="simpleRecipe_ingredient_processing"
+                                    schemaname="simpleRecipe"
+                                    isDefaultDrag={false}
+                                    customDragStyle={{
+                                       left: '0',
+                                       position: 'sticky',
+                                       overflowX: 'hidden',
+                                       zIndex: '+20',
+                                       display: 'inline-block',
+                                       width: '27px',
+                                       height: '27px',
+                                       borderRadius: '50%',
+                                       background: '#f4f4f4',
+                                       margin: '0px 18px 0px 0px',
+                                       fontFamily: 'Roboto',
+                                       fontStyle: 'normal',
+                                       fontWeight: 'bold',
+                                       fontSize: '12px',
+                                       lineHeight: '16px',
+                                       color: '#919699',
+                                       letterSpacing: '0.32px',
+                                       padding: '7px 0px 0px 0px',
+                                       textAlign: 'center',
+                                       cursor: 'move',
+                                    }}
+                                    componentHeight={130}
+                                 >
+                                    {ingredientsOptions}
+                                 </DragNDrop>
+                              </>
+                           }
+
+                           <Spacer size="50px" />
+                           <ButtonTile
+                              type="secondary"
+                              text="Add Ingredient"
+                              onClick={() => openingredientTunnel(1)}
+                              style={{ left: '0', position: 'sticky' }}
+                           />
+                        </div>
+                        {buttonClickRightRender && (
+                           <button
+                              style={{
+                                 width: '30px',
+                                 height: '30px',
+                                 border: 'none',
+                                 background: '#FFFFFF',
+                                 boxShadow: '-2px 2px 6px rgba(0, 0, 0, 0.15)',
+                                 borderRadius: '50%',
+                                 marginTop: '25px',
+                              }}
+                              onClick={onButtonClickRight}
+                           >
+                              <NextArrow />
+                           </button>
+                        )}
+                     </div>
+                  ) : (
                      <ButtonTile
                         type="secondary"
-                        text="Add Ingredient"
-                        onClick={() => openingredientTunnel(1)}
-                        style={{ left: '0', position: 'sticky' }}
+                        text="Add Servings"
+                        onClick={() => openTunnel(1)}
                      />
-                  </div>
-                  {buttonClickRightRender && (
-                     <button
-                        style={{
-                           width: '30px',
-                           height: '30px',
-                           border: 'none',
-                           background: '#FFFFFF',
-                           boxShadow: '-2px 2px 6px rgba(0, 0, 0, 0.15)',
-                           borderRadius: '50%',
-                           marginTop: '25px',
-                        }}
-                        onClick={onButtonClickRight}
-                     >
-                        <NextArrow />
-                     </button>
                   )}
                </div>
-            ) : (
-               <ButtonTile
-                  type="secondary"
-                  text="Add Servings"
-                  onClick={() => openTunnel(1)}
-               />
-            )}
             </div>
-            
+
+            <div></div>
          </>
       </>
    )
@@ -1026,7 +1040,7 @@ const Sachets = ({ defaultslipName, option, object }) => {
                name: unit,
             },
          })
-         createSachet({
+         await createSachet({
             variables: {
                objects: [
                   {
@@ -1039,7 +1053,7 @@ const Sachets = ({ defaultslipName, option, object }) => {
                ],
             },
          })
-         loadSachets()
+         await loadSachets()
       } else {
          toast.error('Enter a valid quantity and unit!')
       }
