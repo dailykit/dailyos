@@ -22,6 +22,7 @@ import { currencyFmt, logger } from '../../../../../../../../shared/utils'
 import {
    CloseIcon,
    DeleteIcon,
+   EditIcon,
 } from '../../../../../../../../shared/assets/icons'
 import EmptyIllo from '../../../../../../assets/svgs/EmptyIllo'
 
@@ -34,10 +35,7 @@ const CartProducts = () => {
       tunnels,
       loyaltyPoints,
    } = useManual()
-   const [remove] = useMutation(MUTATIONS.CART.ITEM.DELETE, {
-      onCompleted: () => toast.success('Successfully deleted the product.'),
-      onError: () => toast.error('Failed to delete the product.'),
-   })
+
    return (
       <section>
          <Text as="text2">Products({products.aggregate.count})</Text>
@@ -45,41 +43,7 @@ const CartProducts = () => {
          {products.aggregate.count > 0 ? (
             <Styles.Cards>
                {products.nodes.map(product => (
-                  <Styles.Card key={product.id}>
-                     <aside>
-                        {product.image ? (
-                           <img
-                              src={buildImageUrl('56x56', product.image)}
-                              alt={product.name}
-                           />
-                        ) : (
-                           <span>N/A</span>
-                        )}
-                     </aside>
-                     <Flex
-                        container
-                        alignItems="center"
-                        justifyContent="space-between"
-                     >
-                        <Flex as="main" container flexDirection="column">
-                           <Text as="text2">{product.name}</Text>
-                           <Text as="text3">
-                              Price: {currencyFmt(product.price)}
-                           </Text>
-                        </Flex>
-                        {cart?.paymentStatus === 'PENDING' && (
-                           <IconButton
-                              size="sm"
-                              type="ghost"
-                              onClick={() =>
-                                 remove({ variables: { id: product.id } })
-                              }
-                           >
-                              <DeleteIcon color="#ec3333" />
-                           </IconButton>
-                        )}
-                     </Flex>
-                  </Styles.Card>
+                  <ProductCard product={product} cart={cart} />
                ))}
             </Styles.Cards>
          ) : (
@@ -132,6 +96,109 @@ const CartProducts = () => {
 
 export default CartProducts
 
+const ProductCard = ({ product, cart }) => {
+   const [remove] = useMutation(MUTATIONS.CART.ITEM.DELETE, {
+      onCompleted: () => toast.success('Successfully deleted the product.'),
+      onError: () => toast.error('Failed to delete the product.'),
+   })
+
+   const [update] = useMutation(MUTATIONS.PRODUCT.PRICE.UPDATE, {
+      onCompleted: () => toast.success('Successfully updated the price'),
+      onError: () => toast.error('Failed to update the price of product.'),
+   })
+
+   React.useEffect(() => {
+      setUpdatedPrice(product.price)
+   }, [])
+
+   const [isEdit, setIsEdit] = React.useState(false)
+   const [updatedPrice, setUpdatedPrice] = React.useState('')
+   return (
+      <Styles.Card key={product.id}>
+         <aside>
+            {product.image ? (
+               <img
+                  src={buildImageUrl('56x56', product.image)}
+                  alt={product.name}
+               />
+            ) : (
+               <span>N/A</span>
+            )}
+         </aside>
+
+         <Flex container alignItems="center" justifyContent="space-between">
+            <Flex as="main" container flexDirection="column">
+               <Text as="text2">{product.name}</Text>
+               <Text as="text3">Price: {currencyFmt(product.price)}</Text>
+               <Flex
+                  container
+                  alignItems="center"
+                  justifyContent="space-between"
+               >
+                  {!isEdit ? (
+                     <IconButton
+                        type="ghost"
+                        size="sm"
+                        onClick={() => setIsEdit(!isEdit)}
+                     >
+                        <EditIcon />
+                     </IconButton>
+                  ) : (
+                     ''
+                  )}
+                  {isEdit ? (
+                     <Flex
+                        container
+                        alignItems="center"
+                        justifyContent="space-between"
+                     >
+                        <Form.Text
+                           value={updatedPrice}
+                           onChange={e => setUpdatedPrice(e.target.value)}
+                        ></Form.Text>
+                        <Spacer size="2px" xAxis />
+                        <IconButton
+                           type="ghost"
+                           size="sm"
+                           onClick={() => setIsEdit(!isEdit)}
+                        >
+                           <CloseIcon color="#ec3333" />
+                        </IconButton>
+                        <TextButton
+                           type="ghost"
+                           size="sm"
+                           onClick={() => {
+                              setIsEdit(!isEdit)
+                              update({
+                                 variables: {
+                                    id: product.id,
+                                    _set: { unitPrice: updatedPrice },
+                                 },
+                              })
+                           }}
+                        >
+                           Update
+                        </TextButton>
+                     </Flex>
+                  ) : (
+                     ''
+                  )}
+               </Flex>
+            </Flex>
+
+            {cart?.paymentStatus === 'PENDING' && (
+               <IconButton
+                  size="sm"
+                  type="ghost"
+                  onClick={() => remove({ variables: { id: product.id } })}
+               >
+                  <DeleteIcon color="#ec3333" />
+               </IconButton>
+            )}
+         </Flex>
+      </Styles.Card>
+   )
+}
 const Styles = {
    Cards: styled.ul`
       overflow-y: auto;
