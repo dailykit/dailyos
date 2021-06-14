@@ -51,6 +51,7 @@ export const AddressTunnel = ({
    onSave,
    closeTunnel,
    address = {},
+   clientId = null,
    keycloakId = '',
 }) => {
    const [form, setForm] = React.useState({
@@ -161,12 +162,12 @@ export const AddressTunnel = ({
       if (form?.id) {
          const { __typename, ...rest } = form
          upsert({
-            variables: { object: rest },
+            variables: { object: { ...rest, clientId } },
          })
       } else if (keycloakId) {
          const { __typename, ...rest } = form
          upsert({
-            variables: { object: { keycloakId, ...rest } },
+            variables: { object: { keycloakId, ...rest, clientId } },
          })
       } else {
          const { __typename, ...rest } = form

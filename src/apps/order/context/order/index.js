@@ -18,7 +18,7 @@ const initialState = {
       offset: 0,
       loading: true,
       where: {
-         cart: { status: { _eq: 'ORDER_PENDING' } },
+         cart: { status: { _eq: 'ORDER_PENDING' }, order: {} },
          isArchived: { _eq: false },
          _or: [
             { isRejected: { _eq: false } },
@@ -112,26 +112,36 @@ const reducers = (state, { type, payload }) => {
          }
       }
       case 'CLEAR_FULFILLMENT_FILTER': {
-         const { fulfillmentTimestamp, ...rest } = state.orders.where
+         const { cart, ...restWhere } = state.orders.where
+         const { order, ...restCart } = cart
+         const { fulfillmentTimestamp, ...restOrder } = order
          return {
             ...state,
             orders: {
                loading: true,
                limit: 10,
                offset: 0,
-               where: rest,
+               where: {
+                  ...restWhere,
+                  cart: { ...restCart, order: { ...restOrder } },
+               },
             },
          }
       }
       case 'CLEAR_FULFILLMENT_TYPE_FILTER': {
-         const { fulfillmentType, ...rest } = state.orders.where
+         const { cart, ...restWhere } = state.orders.where
+         const { order, ...restCart } = cart
+         const { fulfillmentType, ...restOrder } = order
          return {
             ...state,
             orders: {
                loading: true,
                limit: 10,
                offset: 0,
-               where: rest,
+               where: {
+                  ...restWhere,
+                  cart: { ...restCart, order: { ...restOrder } },
+               },
             },
          }
       }
@@ -152,14 +162,19 @@ const reducers = (state, { type, payload }) => {
          }
       }
       case 'CLEAR_AMOUNT_FILTER': {
-         const { amountPaid, ...rest } = state.orders.where
+         const { cart, ...restWhere } = state.orders.where
+         const { order, ...restCart } = cart
+         const { amountPaid, ...restOrder } = order
          return {
             ...state,
             orders: {
                loading: true,
                limit: 10,
                offset: 0,
-               where: rest,
+               where: {
+                  ...restWhere,
+                  cart: { ...restCart, order: { ...restOrder } },
+               },
             },
          }
       }

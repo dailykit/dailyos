@@ -478,3 +478,18 @@ export const INGREDIENT_CATEGORIES_INGREDIENTS_AGGREGATE = gql`
       }
    }
 `
+export const PRODUCT_OPTIONS = gql`
+   subscription ProductOptions {
+      productOptions(where: { isArchived: { _eq: false } }) {
+         discount
+         id
+         label
+         price
+         quantity
+         product {
+            name
+         }
+         type
+      }
+   }
+`

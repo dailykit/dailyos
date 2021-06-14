@@ -26,6 +26,15 @@ export default function ConfirmationPopup({
 
    const checkValidation = () => {
       if (inputValue == selectedRows.length) {
+         if ('isArchived' in bulkActions) {
+            let keyName
+            switch (table) {
+               case 'Product Options':
+                  keyName = 'selected-rows-id_product_option_table'
+                  break
+            }
+            localStorage.removeItem(keyName)
+         }
          handleOnUpdate()
          setBulkActions({})
          setInputValue('')

@@ -20,6 +20,7 @@ import {
    UPDATE_INGREDIENTS,
    CONCATENATE_ARRAY_COLUMN,
    CONCATENATE_STRING_COLUMN,
+   UPDATE_PRODUCT_OPTIONS,
 } from './mutation'
 
 const BulkActions = ({
@@ -69,6 +70,15 @@ const BulkActions = ({
          //  logger(error)
       },
    })
+   const [updateProductOptions] = useMutation(UPDATE_PRODUCT_OPTIONS, {
+      onCompleted: () => {
+         toast.success('Update Successfully')
+         close(1)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+      },
+   })
    const [concatenateArrayColumn] = useLazyQuery(CONCATENATE_ARRAY_COLUMN, {
       onCompleted: () => {
          toast.success('Update Successfully')
@@ -101,6 +111,9 @@ const BulkActions = ({
             break
          case 'Ingredient':
             return updateIngredients
+            break
+         case 'Product Options':
+            return updateProductOptions
       }
    }
    const handleOnUpdate = () => {
