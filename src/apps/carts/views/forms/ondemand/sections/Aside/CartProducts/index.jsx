@@ -25,6 +25,7 @@ import {
    EditIcon,
 } from '../../../../../../../../shared/assets/icons'
 import EmptyIllo from '../../../../../../assets/svgs/EmptyIllo'
+import { validate } from 'uuid'
 
 const CartProducts = () => {
    const {
@@ -43,7 +44,7 @@ const CartProducts = () => {
          {products.aggregate.count > 0 ? (
             <Styles.Cards>
                {products.nodes.map(product => (
-                  <ProductCard product={product} cart={cart} />
+                  <ProductCard key={product.id} product={product} cart={cart} />
                ))}
             </Styles.Cards>
          ) : (
@@ -107,14 +108,66 @@ const ProductCard = ({ product, cart }) => {
       onError: () => toast.error('Failed to update the price of product.'),
    })
 
-   React.useEffect(() => {
-      setUpdatedPrice(product.price)
-   }, [])
-
    const [isEdit, setIsEdit] = React.useState(false)
-   const [updatedPrice, setUpdatedPrice] = React.useState('')
+   const [updatedPrice, setUpdatedPrice] = React.useState({
+      value: product.price,
+      meta: {
+         errors: [],
+         isTouched: false,
+         isValid: true,
+      },
+   })
+
+   const validate = e => {
+      const { value } = e.target
+      if (value === '') {
+         setUpdatedPrice({
+            ...updatedPrice,
+            meta: {
+               errors: [],
+               isTouched: true,
+               isValid: false,
+            },
+         })
+         return
+      }
+
+      const v = parseInt(value)
+      if (isNaN(v)) {
+         setUpdatedPrice({
+            ...updatedPrice,
+            meta: {
+               errors: ['Please input numbers only!'],
+               isTouched: true,
+               isValid: false,
+            },
+         })
+         return
+      }
+      if (v <= 0) {
+         setUpdatedPrice({
+            ...updatedPrice,
+            meta: {
+               errors: ['Price should be greater than 0!'],
+               isTouched: true,
+               isValid: false,
+            },
+         })
+         return
+      }
+
+      setUpdatedPrice({
+         ...updatedPrice,
+         meta: {
+            errors: [],
+            isValid: true,
+            isTouched: true,
+         },
+      })
+   }
+
    return (
-      <Styles.Card key={product.id}>
+      <Styles.Card>
          <aside>
             {product.image ? (
                <img
@@ -144,18 +197,37 @@ const ProductCard = ({ product, cart }) => {
                         <EditIcon />
                      </IconButton>
                   ) : (
-                     ''
-                  )}
-                  {isEdit ? (
                      <Flex
                         container
                         alignItems="center"
                         justifyContent="space-between"
                      >
-                        <Form.Text
-                           value={updatedPrice}
-                           onChange={e => setUpdatedPrice(e.target.value)}
-                        ></Form.Text>
+                        <Form.Group>
+                           <Form.Number
+                              value={updatedPrice.value}
+                              onChange={e =>
+                                 setUpdatedPrice({
+                                    ...updatedPrice,
+                                    value: e.target.value,
+                                 })
+                              }
+                              onBlur={validate}
+                              hasError={
+                                 updatedPrice.meta.isTouched &&
+                                 !updatedPrice.meta.isValid
+                              }
+                           />
+                           {updatedPrice.meta.isTouched &&
+                              !updatedPrice.meta.isValid &&
+                              updatedPrice.meta.errors.map((error, index) => (
+                                 <Form.Error
+                                    justifyContent="center"
+                                    key={index}
+                                 >
+                                    {error}
+                                 </Form.Error>
+                              ))}
+                        </Form.Group>
                         <Spacer size="2px" xAxis />
                         <IconButton
                            type="ghost"
@@ -167,21 +239,27 @@ const ProductCard = ({ product, cart }) => {
                         <TextButton
                            type="ghost"
                            size="sm"
+                           disabled={
+                              !updatedPrice.meta.isValid || !updatedPrice.value
+                           }
                            onClick={() => {
                               setIsEdit(!isEdit)
-                              update({
-                                 variables: {
-                                    id: product.id,
-                                    _set: { unitPrice: updatedPrice },
-                                 },
-                              })
+                              if (
+                                 updatedPrice.meta.isValid &&
+                                 updatedPrice.value
+                              ) {
+                                 update({
+                                    variables: {
+                                       id: product.id,
+                                       _set: { unitPrice: updatedPrice.value },
+                                    },
+                                 })
+                              }
                            }}
                         >
                            Update
                         </TextButton>
                      </Flex>
-                  ) : (
-                     ''
                   )}
                </Flex>
             </Flex>
