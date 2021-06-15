@@ -17,8 +17,9 @@ import {
    Form,
    Spacer,
    ComboButton,
+   Dropdown
 } from '@dailykit/ui'
-import LazyDropdown from '../LazyDropdown'
+
 import {
    Serving,
    CalCount,
@@ -637,7 +638,7 @@ const Servings = ({ state }) => {
                               </>
                            }
 
-                           <Spacer size="50px" />
+                           <Spacer size="14px" />
                            <ButtonTile
                               type="secondary"
                               text="Add Ingredient"
@@ -940,7 +941,7 @@ const Processings = ({ state, option }) => {
    // console.log(defaultName, 'defaultName')
    return (
       <>
-         <LazyDropdown
+         <Dropdown
             type="single"
             variant="revamp"
             defaultName={defaultName}
@@ -1078,7 +1079,7 @@ const Sachets = ({ defaultslipName, option, object }) => {
    }
 
    return (
-      <LazyDropdown
+      <Dropdown
          disabled={sachetDisabled}
          options={sachets}
          defaultName={defaultSachetOption.title}
