@@ -12,6 +12,8 @@ import {
    Spacer,
    Text,
    TextButton,
+   Popup,
+   ButtonGroup,
    ButtonTile,
 } from '@dailykit/ui'
 
@@ -107,7 +109,10 @@ const ProductCard = ({ product, cart }) => {
       onError: () => toast.error('Failed to update the price of product.'),
    })
 
+   const [visible, setVisible] = React.useState(false)
    const [isEdit, setIsEdit] = React.useState(false)
+   const [showPrimary, setShowPrimary] = React.useState(false)
+   const [showDanger, setShowDanger] = React.useState(false)
    const [updatedPrice, setUpdatedPrice] = React.useState({
       value: product.price,
       meta: {
@@ -181,21 +186,12 @@ const ProductCard = ({ product, cart }) => {
          <Flex container alignItems="center" justifyContent="space-between">
             <Flex as="main" container flexDirection="column">
                <Text as="text2">{product.name}</Text>
-               <Text as="text3">Price: {currencyFmt(product.price)}</Text>
                <Flex
                   container
                   alignItems="center"
                   justifyContent="space-between"
                >
-                  {!isEdit ? (
-                     <IconButton
-                        type="ghost"
-                        size="sm"
-                        onClick={() => setIsEdit(!isEdit)}
-                     >
-                        <EditIcon />
-                     </IconButton>
-                  ) : (
+                  {isEdit ? (
                      <Flex
                         container
                         alignItems="center"
@@ -243,22 +239,79 @@ const ProductCard = ({ product, cart }) => {
                            }
                            onClick={() => {
                               setIsEdit(!isEdit)
-                              if (
-                                 updatedPrice.meta.isValid &&
-                                 updatedPrice.value
-                              ) {
-                                 update({
-                                    variables: {
-                                       id: product.id,
-                                       _set: { unitPrice: updatedPrice.value },
-                                    },
-                                 })
-                              }
+                              setShowPrimary(!showPrimary)
                            }}
                         >
                            Update
                         </TextButton>
                      </Flex>
+                  ) : (
+                     <Text as="text3" onMouseOver={() => setVisible(!visible)}>
+                        Price: {currencyFmt(product.price)}
+                     </Text>
+                  )}
+
+                  <Spacer xAxis size="20px" />
+                  <Popup
+                     show={showPrimary}
+                     clickOutsidePopup={() => setShowPrimary(false)}
+                  >
+                     <Popup.Actions>
+                        <Popup.Text type="primary">
+                           Closing this file will not save any changes!
+                        </Popup.Text>
+                        <Popup.Close
+                           closePopup={() => setShowPrimary(!showPrimary)}
+                        />
+                     </Popup.Actions>
+                     <Popup.ConfirmText>Are you sure?</Popup.ConfirmText>
+                     <Popup.Actions>
+                        <ButtonGroup align="left">
+                           <TextButton
+                              type="solid"
+                              onClick={() => {
+                                 setShowPrimary(!showPrimary)
+                                 if (
+                                    updatedPrice.meta.isValid &&
+                                    updatedPrice.value
+                                 ) {
+                                    update({
+                                       variables: {
+                                          id: product.id,
+                                          _set: {
+                                             unitPrice: updatedPrice.value,
+                                          },
+                                       },
+                                    })
+                                 }
+                              }}
+                           >
+                              Yes! change the price
+                           </TextButton>
+                           <TextButton
+                              type="ghost"
+                              onClick={() => setShowPrimary(!showPrimary)}
+                           >
+                              Don't want to change
+                           </TextButton>
+                        </ButtonGroup>
+                     </Popup.Actions>
+                  </Popup>
+
+                  {visible ? (
+                     <IconButton
+                        type="ghost"
+                        size="sm"
+                        onClick={() => {
+                           setIsEdit(!isEdit)
+
+                           setVisible(!visible)
+                        }}
+                     >
+                        <EditIcon />
+                     </IconButton>
+                  ) : (
+                     ''
                   )}
                </Flex>
             </Flex>
