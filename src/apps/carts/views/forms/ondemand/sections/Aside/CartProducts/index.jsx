@@ -25,7 +25,6 @@ import {
    EditIcon,
 } from '../../../../../../../../shared/assets/icons'
 import EmptyIllo from '../../../../../../assets/svgs/EmptyIllo'
-import { validate } from 'uuid'
 
 const CartProducts = () => {
    const {
