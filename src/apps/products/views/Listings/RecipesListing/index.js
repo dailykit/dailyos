@@ -13,7 +13,8 @@ import {
    Tunnel,
    Tunnels,
    useTunnel,
-   TunnelHeader,
+   Checkbox,
+   DropdownButton,
 } from '@dailykit/ui'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -22,7 +23,7 @@ import {
    InlineLoader,
    Tooltip,
 } from '../../../../../shared/components'
-import { useTooltip, useTabs } from '../../../../../shared/providers'
+import { useTabs } from '../../../../../shared/providers'
 import { logger, randomSuffix } from '../../../../../shared/utils'
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
 import { BulkActionsTunnel, ApplyFilterTunnel } from './tunnels'
@@ -31,11 +32,10 @@ import {
    DELETE_SIMPLE_RECIPES,
    S_RECIPES,
 } from '../../../graphql'
-import ServingsCount from '../../../utils/countFormatter'
 import tableOptions from '../tableOption'
 import { ResponsiveFlex } from '../styled'
 import { useRef } from 'react'
-import FilterIcon from '../../../assets/icons/Filter'
+import { FilterIcon, PublishIcon, UnPublishIcon } from '../../../assets/icons'
 
 const address = 'apps.products.views.listings.recipeslisting.'
 
@@ -48,7 +48,7 @@ const RecipesListing = () => {
    const [tunnels, openTunnel, closeTunnel, visible] = useTunnel(2)
    // Queries and Mutations
 
-   const {
+   let {
       loading,
       data: { simpleRecipes: recipes = [] } = {},
       error,
@@ -112,7 +112,6 @@ const RecipesListing = () => {
       logger(error)
       return <ErrorState />
    }
-   console.log('this is selected rows', selectedRows)
    return (
       <ResponsiveFlex maxWidth="1280px" margin="0 auto">
          <Tunnels tunnels={tunnels}>
@@ -162,81 +161,155 @@ const RecipesListing = () => {
    )
 }
 
+const CheckBox = ({ handleMultipleRowSelection, checked }) => {
+   return (
+      <Checkbox
+         id="label"
+         checked={checked}
+         onChange={() => {
+            handleMultipleRowSelection()
+         }}
+         isAllSelected={null}
+      />
+   )
+}
+const CrossBox = ({ removeSelectedRecipes }) => {
+   return (
+      <Checkbox
+         id="label"
+         checked={false}
+         onChange={removeSelectedRecipes}
+         isAllSelected={false}
+      />
+   )
+}
+
 class DataTable extends React.Component {
    constructor(props) {
       super(props)
       this.state = {
-         groups: [],
+         checked: false,
+         groups: [localStorage.getItem('tabulator-recipe_table-group')],
       }
+      this.handleMultipleRowSelection = this.handleMultipleRowSelection.bind(
+         this
+      )
       this.tableRef = React.createRef()
       this.handleRowSelection = this.handleRowSelection.bind(this)
    }
+
+   handleMultipleRowSelection = () => {
+      this.setState(
+         {
+            checked: !this.state.checked,
+         },
+         () => {
+            if (this.state.checked) {
+               this.tableRef.current.table.selectRow('active')
+               let multipleRowData = this.tableRef.current.table.getSelectedData()
+               this.props.setSelectedRows(multipleRowData)
+               localStorage.setItem(
+                  'selected-rows-id_recipe_table',
+                  JSON.stringify(multipleRowData.map(row => row.id))
+               )
+            } else {
+               this.tableRef.current.table.deselectRow()
+               this.props.setSelectedRows([])
+
+               localStorage.setItem(
+                  'selected-rows-id_recipe_table',
+                  JSON.stringify([])
+               )
+            }
+         }
+      )
+   }
+
    columns = [
-      {
-         formatter: 'rowSelection',
-         titleFormatter: 'rowSelection',
-         hozAlign: 'center',
-         headerSort: false,
-         width: 15,
-      },
       {
          title: 'Name',
          field: 'name',
+         width: 400,
+         frozen: true,
          headerFilter: true,
+
+         formatter: reactFormatter(<RecipeName />),
          cellClick: (e, cell) => {
             const { name, id } = cell._cell.row.data
             this.props.addTab(name, `/products/recipes/${id}`)
          },
          cssClass: 'colHover',
-      },
-      { title: 'Author', field: 'author', headerFilter: true },
-      {
-         title: 'Cooking Time',
-         field: 'cookingTime',
-         headerFilter: true,
-         hozAlign: 'right',
-         headerHozAlign: 'right',
-      },
-      {
-         title: 'Cuisine type',
-         field: 'cuisine',
-         headerFilter: true,
-         hozAlign: 'right',
-         headerHozAlign: 'right',
-         width: 150,
-      },
-      {
-         title: '# of Servings',
-         field: 'simpleRecipeYields',
-         headerFilter: false,
-         hozAlign: 'right',
-         headerHozAlign: 'right',
-         formatter: reactFormatter(<ServingsCount />),
-         width: 150,
-      },
-      {
-         title: 'Published',
-         field: 'isPublished',
-         formatter: 'tickCross',
-         hozAlign: 'center',
-         headerHozAlign: 'center',
-         width: 150,
-         headerFilter: true,
+         resizable: 'true',
+         minWidth: 100,
+         maxWidth: 500,
       },
       {
          title: 'Actions',
          headerSort: false,
          headerFilter: false,
          hozAlign: 'center',
+         download: false,
+         frozen: true,
          headerHozAlign: 'center',
          formatter: reactFormatter(
             <DeleteRecipe onDelete={this.props.deleteRecipeHandler} />
          ),
+         width: 80,
+      },
+      {
+         title: 'Author',
+         field: 'author',
+         headerFilter: true,
+         hozAlign: 'left',
+         headerHozAlign: 'right',
+         minWidth: 100,
+         width: 200,
+      },
+      {
+         title: 'Cooking Time',
+         field: 'cookingTime',
+         headerFilter: true,
+         hozAlign: 'right',
+         resizable: false,
+         headerHozAlign: 'right',
          width: 150,
       },
+      {
+         title: 'Cuisine type',
+         field: 'cuisine',
+         headerFilter: true,
+         hozAlign: 'left',
+         headerHozAlign: 'right',
+         width: 200,
+      },
+      {
+         title: '# of Servings',
+         field: 'simpleRecipeYields.aggregate.count',
+         headerFilter: false,
+         hozAlign: 'right',
+         headerHozAlign: 'right',
+         width: 80,
+      },
    ]
-   handleRowSelection = rows => {
-      this.props.setSelectedRows(rows)
+   handleRowSelection = ({ _row }) => {
+      this.props.setSelectedRows(prevState => [...prevState, _row.getData()])
+
+      let newData = [...this.props.selectedRows.map(row => row.id)]
+      localStorage.setItem(
+         'selected-rows-id_recipe_table',
+         JSON.stringify(newData)
+      )
+   }
+
+   handleDeSelection = ({ _row }) => {
+      const data = _row.getData()
+      this.props.setSelectedRows(prevState =>
+         prevState.filter(row => row.id != data.id)
+      )
+      localStorage.setItem(
+         'selected-rows-id_recipe_table',
+         JSON.stringify(this.props.selectedRows.map(row => row.id))
+      )
    }
 
    removeSelectedRow = id => {
@@ -255,26 +328,133 @@ class DataTable extends React.Component {
    clearHeaderFilter = () => {
       this.tableRef.current.table.clearHeaderFilter()
    }
+
+   downloadCsvData = () => {
+      this.tableRef.current.table.download('csv', 'recipe_table.csv')
+   }
+
+   downloadPdfData = () => {
+      this.tableRef.current.table.downloadToTab('pdf', 'recipe_table.pdf')
+   }
+
+   downloadXlsxData = () => {
+      this.tableRef.current.table.download('xlsx', 'recipe_table.xlsx')
+   }
+
+   selectRows = () => {
+      const recipeGroup = localStorage.getItem('tabulator-recipe_table-group')
+      const recipeGroupParse =
+         recipeGroup !== undefined &&
+         recipeGroup !== null &&
+         recipeGroup.length !== 0
+            ? JSON.parse(recipeGroup)
+            : null
+      this.tableRef.current.table.setGroupBy(
+         !!recipeGroupParse && recipeGroupParse.length > 0
+            ? recipeGroupParse
+            : []
+      )
+
+      this.tableRef.current.table.setGroupHeader(function (
+         value,
+         count,
+         data1,
+         group
+      ) {
+         let newHeader
+         switch (group._group.field) {
+            case 'isPublished':
+               newHeader = 'Publish'
+               break
+            case 'cuisine':
+               newHeader = 'Cuisine Type'
+               break
+            case 'author':
+               newHeader = 'Author'
+               break
+            default:
+               break
+         }
+         return `${newHeader} - ${value} || ${count} Recipes`
+      })
+
+      const selectedRowsId =
+         localStorage.getItem('selected-rows-id_recipe_table') || '[]'
+      this.tableRef.current.table.selectRow(JSON.parse(selectedRowsId))
+      if (JSON.parse(selectedRowsId).length > 0) {
+         let newArr = []
+         JSON.parse(selectedRowsId).forEach(x => {
+            const newFind = this.props.data.find(y => y.id == x)
+            newArr = [...newArr, newFind]
+         })
+         this.props.setSelectedRows(newArr)
+      }
+   }
+
+   removeSelectedRecipes = () => {
+      this.setState({ checked: false })
+      this.props.setSelectedRows([])
+      this.tableRef.current.table.deselectRow()
+      localStorage.setItem('selected-rows-id_recipe_table', JSON.stringify([]))
+   }
+
    render() {
+      const selectionColumn =
+         this.props.selectedRows.length > 0 &&
+         this.props.selectedRows.length < this.props.data.length
+            ? {
+                 formatter: 'rowSelection',
+                 titleFormatter: reactFormatter(
+                    <CrossBox
+                       removeSelectedRecipes={this.removeSelectedRecipes}
+                    />
+                 ),
+                 align: 'center',
+                 hozAlign: 'center',
+                 width: 10,
+                 headerSort: false,
+                 frozen: true,
+              }
+            : {
+                 formatter: 'rowSelection',
+                 titleFormatter: reactFormatter(
+                    <CheckBox
+                       checked={this.state.checked}
+                       handleMultipleRowSelection={
+                          this.handleMultipleRowSelection
+                       }
+                    />
+                 ),
+                 align: 'center',
+                 hozAlign: 'center',
+                 width: 20,
+                 headerSort: false,
+                 frozen: true,
+              }
       return (
          <>
             <Spacer size="5px" />
             <ActionBar
+               downloadPdfData={this.downloadPdfData}
+               downloadCsvData={this.downloadCsvData}
+               downloadXlsxData={this.downloadXlsxData}
                selectedRows={this.props.selectedRows}
                openTunnel={this.props.openTunnel}
                handleGroupBy={this.handleGroupBy}
                clearHeaderFilter={this.clearHeaderFilter}
             />
-            <Spacer size="30px" />
+
+            <Spacer size="40px" />
+
             <ReactTabulator
                ref={this.tableRef}
-               columns={this.columns}
+               dataLoaded={this.selectRows}
+               columns={[selectionColumn, ...this.columns]}
                data={this.props.data}
                selectableCheck={() => true}
-               rowSelectionChanged={(data, components) => {
-                  this.handleRowSelection(data)
-               }}
-               options={tableOptions}
+               rowSelected={this.handleRowSelection}
+               rowDeselected={this.handleDeSelection}
+               options={{ ...tableOptions, reactiveData: true }}
                data-custom-attr="test-custom-attribute"
                className="custom-css-class"
             />
@@ -293,7 +473,53 @@ function DeleteRecipe({ cell, onDelete }) {
    )
 }
 
+function RecipeName({ cell, addTab }) {
+   const data = cell.getData()
+   return (
+      <>
+         <Flex
+            container
+            width="100%"
+            justifyContent="space-between"
+            alignItems="center"
+         >
+            <Flex
+               container
+               width="100%"
+               justifyContent="flex-end"
+               alignItems="center"
+            >
+               <p
+                  style={{
+                     width: '230px',
+                     whiteSpace: 'nowrap',
+                     overflow: 'hidden',
+                     textOverflow: 'ellipsis',
+                  }}
+               >
+                  {cell._cell.value}
+               </p>
+            </Flex>
+
+            <Flex
+               container
+               width="100%"
+               justifyContent="flex-end"
+               alignItems="center"
+            >
+               <IconButton type="ghost">
+                  {data.isPublished ? <PublishIcon /> : <UnPublishIcon />}
+               </IconButton>
+            </Flex>
+         </Flex>
+      </>
+   )
+}
+
 const ActionBar = ({
+   downloadPdfData,
+   downloadCsvData,
+   downloadXlsxData,
    selectedRows,
    openTunnel,
    handleGroupBy,
@@ -305,10 +531,32 @@ const ActionBar = ({
       { id: 3, title: 'author' },
    ])
    const selectedOption = option => {
-      const newOptions = option.map(x => x.title)
+      localStorage.setItem(
+         'tabulator-recipe_table-group',
+         JSON.stringify(option.map(val => val.title))
+      )
+      const newOptions = option.map(val => val.title)
       handleGroupBy(newOptions)
    }
-   const searchedOption = option => console.log(option)
+
+   const defaultIDs = () => {
+      let arr = []
+      const recipeGroup = localStorage.getItem('tabulator-recipe_table-group')
+      const recipeGroupParse =
+         recipeGroup !== undefined &&
+         recipeGroup !== null &&
+         recipeGroup.length !== 0
+            ? JSON.parse(recipeGroup)
+            : null
+      if (recipeGroupParse !== null) {
+         recipeGroupParse.forEach(x => {
+            const foundGroup = groupByOptions.find(y => y.title == x)
+            arr.push(foundGroup.id)
+         })
+      }
+      return arr.length == 0 ? [] : arr
+   }
+
    return (
       <>
          <Flex
@@ -320,7 +568,7 @@ const ActionBar = ({
             <Flex
                container
                as="header"
-               width="30%"
+               width="25%"
                alignItems="center"
                justifyContent="space-between"
             >
@@ -332,6 +580,7 @@ const ActionBar = ({
                      : `${selectedRows.length} recipes`}{' '}
                   selected
                </Text>
+
                <ButtonGroup align="left">
                   <TextButton
                      type="ghost"
@@ -346,7 +595,7 @@ const ActionBar = ({
             <Flex
                container
                as="header"
-               width="70%"
+               width="75%"
                alignItems="center"
                justifyContent="space-around"
             >
@@ -357,14 +606,44 @@ const ActionBar = ({
                   alignItems="center"
                   justifyContent="flex-end"
                >
+                  <TextButton
+                     onClick={() => {
+                        localStorage.clear()
+                     }}
+                     type="ghost"
+                     size="sm"
+                  >
+                     Clear Persistence
+                  </TextButton>
+                  <Spacer size="15px" xAxis />
+                  <DropdownButton title="Download" width="150px">
+                     <DropdownButton.Options>
+                        <DropdownButton.Option
+                           onClick={() => downloadCsvData()}
+                        >
+                           CSV
+                        </DropdownButton.Option>
+                        <DropdownButton.Option
+                           onClick={() => downloadPdfData()}
+                        >
+                           PDF
+                        </DropdownButton.Option>
+                        <DropdownButton.Option
+                           onClick={() => downloadXlsxData()}
+                        >
+                           XLSX
+                        </DropdownButton.Option>
+                     </DropdownButton.Options>
+                  </DropdownButton>
+                  <Spacer size="15px" xAxis />
                   <Text as="text1">Group By:</Text>
                   <Spacer size="5px" xAxis />
                   <Dropdown
                      type="multi"
                      variant="revamp"
+                     defaultIds={defaultIDs()}
                      disabled={true}
                      options={groupByOptions}
-                     searchedOption={searchedOption}
                      selectedOption={selectedOption}
                      typeName="cuisine"
                   />
