@@ -25,6 +25,7 @@ import {
    HorizontalTabList,
    HorizontalTabPanel,
    HorizontalTabPanels,
+   DropdownButton,
 } from '@dailykit/ui'
 
 import { Products } from './sections'
@@ -40,7 +41,6 @@ import {
    Tooltip,
    ErrorState,
    InlineLoader,
-   DropdownButton,
 } from '../../../../shared/components'
 
 const isPickup = value => ['ONDEMAND_PICKUP', 'PREORDER_PICKUP'].includes(value)

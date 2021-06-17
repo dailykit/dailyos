@@ -200,8 +200,11 @@ export const S_RECIPES = gql`
          cuisine
          isValid
          isPublished
-         simpleRecipeYields(where: { isArchived: { _eq: false } }) {
-            id
+
+         simpleRecipeYields: simpleRecipeYields_aggregate {
+            aggregate {
+               count
+            }
          }
       }
    }

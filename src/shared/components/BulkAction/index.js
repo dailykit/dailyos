@@ -14,7 +14,6 @@ import { TunnelBody } from './styled'
 
 import { RemoveIcon } from '../../../apps/products/assets/icons'
 import ConfirmationPopup from './confirmationPopup'
-
 import {
    SIMPLE_RECIPE_UPDATE,
    UPDATE_PRODUCTS,

@@ -27,9 +27,15 @@ import AutoGenerate from './AutoGenerate'
 import NextArrow from './NextArrow'
 import PreviousArrow from './PreviousArrow'
 import PlusIconLarge from './PlusIconLarge'
+import PublishIcon from './Publish'
+import UnPublishIcon from './Unpublish'
+import FilterIcon from './Filter'
 
 export {
+   FilterIcon,
+   UnPublishIcon,
    MenuIcon,
+   PublishIcon,
    CloseIcon,
    EditIcon,
    DeleteIcon,
