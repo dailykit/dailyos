@@ -114,7 +114,7 @@ export const StyledCardIngredient = styled.div(
          display: inline-block;
       }
       div#dropdown {
-         padding: 0px 0px 12px 0px;
+         padding: 0px 0px 8px 0px;
       }
       div#calCountIngredient {
          display: inline-block;
@@ -129,7 +129,7 @@ export const StyledCardIngredient = styled.div(
          line-height: 16px;
          margin: 0px 2px 0px 0px;
          letter-spacing: 0.32px;
-         padding: 1px 0px 2.5px 5px;
+         padding: 0px 0px 2.5px 5px;
          color: #ffffff;
       }
       div#chefPay {
@@ -145,7 +145,7 @@ export const StyledCardIngredient = styled.div(
          line-height: 16px;
          margin: 0px 2px 0px 0px;
          letter-spacing: 0.32px;
-         padding: 1px 0px 2.5px 5px;
+         padding: 0px 0px 2.5px 5px;
          color: #ffffff;
       }
    `

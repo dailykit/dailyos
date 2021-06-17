@@ -17,7 +17,7 @@ import {
    Form,
    Spacer,
    ComboButton,
-   Dropdown
+   Dropdown,
 } from '@dailykit/ui'
 
 import {
@@ -33,7 +33,7 @@ import {
    PreviousArrow,
    PlusIconLarge,
 } from '../../../../../assets/icons'
-import {ExternalLink} from '../../../../../../../shared/assets/icons'
+import { ExternalLink } from '../../../../../../../shared/assets/icons'
 import { toast } from 'react-toastify'
 import {
    StyledCardEven,
@@ -286,23 +286,26 @@ const Servings = ({ state }) => {
                >
                   {/* <div id="index">{index + 1}</div> */}
 
-                  <Link
+                  <div
+                     title={option.ingredient.name}
                      style={{
                         display: 'inline-block',
                         width: '156px',
-                        height: 'auto',
-                        paddingBottom: '5px',
-                        overflow: 'auto',
+                        height: '20px',
+                        paddingTop: '2px',
                         whiteSpace: 'nowrap',
-                        overflowY: 'hidden',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
                         textDecorationLine: 'underline',
                         color: '#367BF5',
                      }}
-                     to={`/products/ingredients/${option.ingredient.id}`}
                   >
                      {option.ingredient.name}
+                  </div>
+                  <Link to={`/products/ingredients/${option.ingredient.id}`}>
                      <ExternalLink />
                   </Link>
+
                   <div id="menu">
                      <ContextualMenu>
                         <Context
@@ -314,7 +317,7 @@ const Servings = ({ state }) => {
                      </ContextualMenu>
                   </div>
 
-                  <Spacer size="7px" />
+                  <Spacer size="4px" />
 
                   <div id="dropdown">
                      <Processings state={state} option={option} />
@@ -638,13 +641,23 @@ const Servings = ({ state }) => {
                               </>
                            }
 
-                           <Spacer size="14px" />
-                           <ButtonTile
-                              type="secondary"
-                              text="Add Ingredient"
+                           
+
+                           <ComboButton
+                              style={{
+                                 left: '0',
+                                 position: 'sticky',
+                                 width: '100%',
+                                 display: 'flex',
+                                 justifyContent: 'center',
+                                 fontSize: 'large',
+                              }}
+                              type="ghost"
                               onClick={() => openingredientTunnel(1)}
-                              style={{ left: '0', position: 'sticky' }}
-                           />
+                           >
+                              <PlusIcon color="#367BF5" />
+                              Add Ingredient
+                           </ComboButton>
                         </div>
                         {buttonClickRightRender && (
                            <button
@@ -664,11 +677,18 @@ const Servings = ({ state }) => {
                         )}
                      </div>
                   ) : (
-                     <ButtonTile
-                        type="secondary"
-                        text="Add Servings"
+                     <ComboButton
+                        style={{
+                           width: '100%',
+                           display: 'flex',
+                           justifyContent: 'center',
+                        }}
+                        type="ghost"
                         onClick={() => openTunnel(1)}
-                     />
+                     >
+                        <PlusIcon color="#367BF5" />
+                        Add Servings
+                     </ComboButton>
                   )}
                </div>
             </div>
