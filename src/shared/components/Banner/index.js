@@ -1,7 +1,7 @@
 import React from 'react'
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { webRenderer } from '@dailykit/web-renderer'
-import { GET_BANNER_DATA } from '../../graphql'
+import { GET_BANNER_DATA, UPDATE_BANNER_CLOSE_COUNT } from '../../graphql'
 import { formatWebRendererData } from '../../utils'
 import { IconButton, CloseIcon } from '@dailykit/ui'
 import styled from 'styled-components'
@@ -9,7 +9,6 @@ import styled from 'styled-components'
 const Banner = ({ id }) => {
    const [bannerFiles, setBannerFiles] = React.useState([])
 
-   const handleClose = () => {}
    useSubscription(GET_BANNER_DATA, {
       skip: !id,
       variables: {
@@ -47,24 +46,20 @@ const Banner = ({ id }) => {
       },
    })
 
+   const [updateBannerCloseCount] = useMutation(UPDATE_BANNER_CLOSE_COUNT, {
+      onError: error => console.error(error),
+   })
+
+   const handleClose = args =>
+      updateBannerCloseCount({
+         variables: args,
+      })
+
    return (
       <>
          {bannerFiles.length > 0 &&
             bannerFiles.map(file => (
-               <Wrapper key={`${id}-${file.file.id}`}>
-                  {file.divId === id && (
-                     <>
-                        <CloseButton
-                           onClick={handleClose}
-                           type="ghost"
-                           size="sm"
-                        >
-                           <CloseIcon color="#367BF5" />
-                        </CloseButton>
-                        <div id={`${id}-${file.file.id}`} />
-                     </>
-                  )}
-               </Wrapper>
+               <BannerFile file={file} id={id} handleClose={handleClose} />
             ))}
       </>
    )
@@ -72,9 +67,37 @@ const Banner = ({ id }) => {
 
 export default Banner
 
+const BannerFile = ({ file, id, handleClose }) => {
+   const [isOpen, setIsOpen] = React.useState(true)
+
+   return (
+      <Wrapper key={`${id}-${file.file.id}`} isOpen={isOpen}>
+         {file.divId === id && (
+            <>
+               <CloseButton
+                  onClick={() => {
+                     handleClose({
+                        userEmail: 'test@dailykit.org',
+                        divId: file.divId,
+                        fileId: file.file.id,
+                     })
+                     setIsOpen(false)
+                  }}
+                  type="ghost"
+                  size="sm"
+               >
+                  <CloseIcon color="#367BF5" />
+               </CloseButton>
+               <div id={`${id}-${file.file.id}`} />
+            </>
+         )}
+      </Wrapper>
+   )
+}
+
 const Wrapper = styled.div`
    position: relative;
-   display: block;
+   display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
 `
 const CloseButton = styled(IconButton)`
    position: absolute;

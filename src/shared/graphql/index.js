@@ -187,6 +187,29 @@ export const GET_BANNER_DATA = gql`
       }
    }
 `
+export const UPDATE_BANNER_CLOSE_COUNT = gql`
+   mutation UPDATE_CLOSE_COUNT(
+      $divId: String!
+      $userEmail: String!
+      $fileId: Int!
+   ) {
+      update_ux_user_dailyosDivIdFile(
+         where: {
+            divId: { _eq: $divId }
+            fileId: { _eq: $fileId }
+            userEmail: { _eq: $userEmail }
+         }
+         _inc: { closedCount: 1 }
+      ) {
+         returning {
+            closedCount
+            divId
+            fileId
+            userEmail
+         }
+      }
+   }
+`
 
 export const GET_BOTTOM_BAR_OPTIONS = gql`
    subscription GET_BOTTOM_BAR_OPTIONS($app: [String!]!) {
