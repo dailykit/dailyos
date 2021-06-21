@@ -1,14 +1,18 @@
 import React from 'react'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { webRenderer } from '@dailykit/web-renderer'
-import { GET_BANNER_DATA, UPDATE_BANNER_CLOSE_COUNT } from '../../graphql'
+import {
+   GET_BANNER_DATA,
+   UPDATE_BANNER_CLOSE_COUNT,
+   UPDATE_SHOWN_COUNT,
+} from '../../graphql'
 import { formatWebRendererData } from '../../utils'
 import { IconButton, CloseIcon } from '@dailykit/ui'
 import styled from 'styled-components'
+import useIsOnViewPort from '../../hooks/useIsOnViewport'
 
 const Banner = ({ id }) => {
    const [bannerFiles, setBannerFiles] = React.useState([])
-
    useSubscription(GET_BANNER_DATA, {
       skip: !id,
       variables: {
@@ -69,9 +73,25 @@ export default Banner
 
 const BannerFile = ({ file, id, handleClose }) => {
    const [isOpen, setIsOpen] = React.useState(true)
+   const ref = React.useRef()
+   const isOnViewport = useIsOnViewPort(ref)
+   const [updateShownCount] = useMutation(UPDATE_SHOWN_COUNT, {
+      onError: err => console.error(err),
+      variables: {
+         userEmail: 'test@dailykit.org',
+         divId: file.divId,
+         fileId: file.file.id,
+      },
+   })
+
+   React.useEffect(() => {
+      if (isOnViewport) {
+         updateShownCount()
+      }
+   }, [isOnViewport])
 
    return (
-      <Wrapper key={`${id}-${file.file.id}`} isOpen={isOpen}>
+      <Wrapper key={`${id}-${file.file.id}`} isOpen={isOpen} ref={ref}>
          {file.divId === id && (
             <>
                <CloseButton

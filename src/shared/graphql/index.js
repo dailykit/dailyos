@@ -210,6 +210,29 @@ export const UPDATE_BANNER_CLOSE_COUNT = gql`
       }
    }
 `
+export const UPDATE_SHOWN_COUNT = gql`
+   mutation UPDATE_SHOWN_COUNT(
+      $divId: String!
+      $userEmail: String!
+      $fileId: Int!
+   ) {
+      update_ux_user_dailyosDivIdFile(
+         where: {
+            divId: { _eq: $divId }
+            fileId: { _eq: $fileId }
+            userEmail: { _eq: $userEmail }
+         }
+         _inc: { shownCount: 1 }
+      ) {
+         returning {
+            divId
+            fileId
+            userEmail
+            shownCount
+         }
+      }
+   }
+`
 
 export const GET_BOTTOM_BAR_OPTIONS = gql`
    subscription GET_BOTTOM_BAR_OPTIONS($app: [String!]!) {
