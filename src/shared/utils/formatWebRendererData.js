@@ -16,10 +16,11 @@ export const formatWebRendererData = data => {
             })
             ?.flat(1)
          result.push({
-            elementId: obj.id,
+            elementId: `${obj.divId}-${obj?.file?.id}`,
             filePath: fetchedFile,
             cssPath: fetchedLinkedCssFiles,
             jsPath: fetchedLinkedJsFiles,
+            fileId: obj.file.id,
          })
       })
    }

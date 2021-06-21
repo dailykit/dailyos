@@ -148,6 +148,45 @@ export const GET_BANNER = gql`
       }
    }
 `
+export const GET_BANNER_DATA = gql`
+   subscription ux_dailyosDivId($id: String!, $params: jsonb!) {
+      ux_dailyosDivId(where: { id: { _eq: $id }, isActive: { _eq: true } }) {
+         id
+         isActive
+         dailyosDivIdFiles(where: { isActive: { _eq: true } }) {
+            isActive
+            condition {
+               isValid(args: { params: $params })
+            }
+            divId
+            file {
+               id
+               fileType
+               fileName
+               path
+               linkedCssFiles {
+                  id
+                  position
+                  cssFile {
+                     fileName
+                     fileType
+                     path
+                  }
+               }
+               linkedJsFiles {
+                  id
+                  position
+                  jsFile {
+                     fileName
+                     fileType
+                     path
+                  }
+               }
+            }
+         }
+      }
+   }
+`
 
 export const GET_BOTTOM_BAR_OPTIONS = gql`
    subscription GET_BOTTOM_BAR_OPTIONS($app: [String!]!) {
