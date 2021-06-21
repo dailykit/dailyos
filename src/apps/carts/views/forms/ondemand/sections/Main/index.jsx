@@ -39,24 +39,16 @@ export const Main = () => {
    const [isMenuEmpty, setIsMenuEmpty] = React.useState(false)
    const [hasMenuError, setHasMenuError] = React.useState(false)
    const [isMenuLoading, setIsMenuLoading] = React.useState(true)
-   const [allProducts, setAllProducts] = React.useState([])
-   const [menuStore, setMenuStore] = React.useState(true)
+
+   const [showMenu, setShowMenu] = React.useState(true)
    const [search, setSearch] = React.useState('')
    const [showSearch, setShowSearch] = React.useState(false)
-   const [productId, setProductId] = React.useState([])
+   const [menuProductIds, setMenuProductsIds] = React.useState([])
 
-   const [options] = React.useState([
+   const options = [
       { id: 1, title: 'Menu Store' },
       { id: 2, title: 'All Products' },
-   ])
-   useQuery(QUERIES.PRODUCTS.LIST, {
-      variables: {
-         where: { isPublished: { _eq: true }, isArchived: { _eq: false } },
-      },
-      onCompleted: data => {
-         setAllProducts(data.products)
-      },
-   })
+   ]
 
    const [fetchProducts] = useLazyQuery(QUERIES.PRODUCTS.LIST, {
       onCompleted: ({ products = [] }) => {
@@ -70,7 +62,7 @@ export const Main = () => {
             })
          })
          const productIds = products.map(product => product.id)
-         setProductId(productIds)
+         setMenuProductsIds(productIds)
          setMenu(_menu)
          setIsMenuEmpty(false)
          setHasMenuError(false)
@@ -220,11 +212,11 @@ export const Main = () => {
                <RadioGroup
                   options={options}
                   active={1}
-                  onChange={() => setMenuStore(!menuStore)}
+                  onChange={() => setShowMenu(!showMenu)}
                />
             </Flex>
 
-            {showSearch ? (
+            {showSearch && (
                <SearchBox
                   width="100%"
                   onBlur={() => setShowSearch(false)}
@@ -235,26 +227,23 @@ export const Main = () => {
                   fallBackMessage="You shall not pass!"
                   onChange={e => setSearch(e.target.value)}
                />
-            ) : (
-               ''
             )}
          </Flex>
          <Spacer size="20px" />
-         {menuStore ? (
+         {showMenu ? (
             <Menu
                menu={menu}
-               productId={productId}
+               menuProductIds={menuProductIds}
                renderPrice={renderPrice}
-               allProducts={allProducts}
             />
          ) : (
-            <AllProducts allProducts={allProducts} renderPrice={renderPrice} />
+            <AllProducts renderPrice={renderPrice} />
          )}
       </Styles.Main>
    )
 }
 
-const Menu = ({ menu, productId, renderPrice, allProducts }) => {
+const Menu = ({ menu, menuProductIds, renderPrice }) => {
    const { id: cartId } = useParams()
    const { cart, tunnels, dispatch } = useManual()
 
@@ -284,28 +273,11 @@ const Menu = ({ menu, productId, renderPrice, allProducts }) => {
       fetchPolicy: 'network-only',
    })
 
-   const handleProductWithoutCategory = e => {
-      const { productId } = e.target.dataset
-      if (productId && !loading) {
-         const product = allProducts.find(pdct => pdct.id === +productId)
-         openTunnels(product, productId)
-      }
-   }
-
-   const handleAddProduct = (e, categoryTitle) => {
-      const { productId } = e.target.dataset
-      if (productId && !loading) {
-         const category = menu.find(item => item.title === categoryTitle)
-         const product = category.products.find(pdct => pdct.id === +productId)
-         openTunnels(product, productId)
-      }
-   }
-
-   const openTunnels = (product, productId) => {
+   const openTunnels = product => {
       if (product.isPopupAllowed) {
          dispatch({
             type: 'SET_PRODUCT_ID',
-            payload: productId,
+            payload: product.id,
          })
          switch (product.type) {
             case 'simple':
@@ -347,7 +319,7 @@ const Menu = ({ menu, productId, renderPrice, allProducts }) => {
                      searchProducts({
                         variables: {
                            where: {
-                              id: { _in: productId },
+                              id: { _in: menuProductIds },
                               name: { _ilike: `%${e.target.value}%` },
                            },
                         },
@@ -393,7 +365,7 @@ const Menu = ({ menu, productId, renderPrice, allProducts }) => {
          <Spacer size="10px" />
          {showSearch ? (
             <SearchedResults
-               handleProductWithoutCategory={handleProductWithoutCategory}
+               openTunnels={openTunnels}
                isLoading={isLoading}
                data={searchedResult}
                cart={cart}
@@ -416,11 +388,11 @@ const Menu = ({ menu, productId, renderPrice, allProducts }) => {
                      key={item.title}
                      name={item.title}
                      style={{ height: '100%', overflowY: 'auto' }}
-                     onClick={e => handleAddProduct(e, item.title)}
                   >
                      <Text as="text1">{item.title}</Text>
                      <Spacer size="14px" />
                      <SearchedResults
+                        openTunnels={openTunnels}
                         data={item.products}
                         renderPrice={renderPrice}
                         cart={cart}
@@ -435,11 +407,12 @@ const Menu = ({ menu, productId, renderPrice, allProducts }) => {
    )
 }
 
-const AllProducts = ({ allProducts, renderPrice }) => {
+const AllProducts = ({ renderPrice }) => {
    const { id: cartId } = useParams()
    const { cart, tunnels, dispatch } = useManual()
    const [showSearch, setShowSearch] = React.useState(false)
    const [input, setInput] = React.useState('')
+   const [allProducts, setAllProducts] = React.useState([])
    const [searchedResult, setSearchedResult] = React.useState([])
    const [isLoading, setIsLoading] = React.useState(false)
    const [searchProducts] = useLazyQuery(QUERIES.PRODUCTS.LIST, {
@@ -448,6 +421,15 @@ const AllProducts = ({ allProducts, renderPrice }) => {
          setSearchedResult(data.products)
       },
       fetchPolicy: 'network-only',
+   })
+
+   useQuery(QUERIES.PRODUCTS.LIST, {
+      variables: {
+         where: { isPublished: { _eq: true }, isArchived: { _eq: false } },
+      },
+      onCompleted: data => {
+         setAllProducts(data.products)
+      },
    })
 
    const [insertCartItem, { loading }] = useMutation(
@@ -482,19 +464,11 @@ const AllProducts = ({ allProducts, renderPrice }) => {
 
    const optimisedSearchProducts = debounce(searchProducts, 1000)
 
-   const handleProductWithoutCategory = e => {
-      const { productId } = e.target.dataset
-      if (productId && !loading) {
-         const product = allProducts.find(pdct => pdct.id === +productId)
-         openTunnels(product, productId)
-      }
-   }
-
-   const openTunnels = (product, productId) => {
+   const openTunnels = product => {
       if (product.isPopupAllowed) {
          dispatch({
             type: 'SET_PRODUCT_ID',
-            payload: productId,
+            payload: product.id,
          })
          switch (product.type) {
             case 'simple':
@@ -571,7 +545,7 @@ const AllProducts = ({ allProducts, renderPrice }) => {
          <Spacer size="10px" />
          {showSearch ? (
             <SearchedResults
-               handleProductWithoutCategory={handleProductWithoutCategory}
+               openTunnels={openTunnels}
                isLoading={isLoading}
                data={searchedResult}
                cart={cart}
@@ -593,9 +567,9 @@ const AllProducts = ({ allProducts, renderPrice }) => {
                   style={{
                      height: '1000px',
                   }}
-                  onClick={e => handleProductWithoutCategory(e)}
                >
                   <SearchedResults
+                     openTunnels={openTunnels}
                      data={allProducts}
                      renderPrice={renderPrice}
                      cart={cart}
@@ -612,7 +586,7 @@ const SearchedResults = ({
    cart,
    renderPrice,
    isLoading,
-   handleProductWithoutCategory,
+   openTunnels,
 }) => {
    if (isLoading) {
       return <InlineLoader />
@@ -656,7 +630,7 @@ const SearchedResults = ({
                         variant="secondary"
                         size="sm"
                         data-product-id={product.id}
-                        onClick={e => handleProductWithoutCategory(e)}
+                        onClick={() => openTunnels(product)}
                      >
                         ADD {product.isPopupAllowed && '+'}
                      </TextButton>

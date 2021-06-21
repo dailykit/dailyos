@@ -281,7 +281,6 @@ export const QUERIES = {
             }
          }
       `,
-
       ONE: gql`
          query product($id: Int!) {
             product(id: $id) {
