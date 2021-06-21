@@ -374,11 +374,12 @@ const AllProducts = ({ renderPrice }) => {
    const [input, setInput] = React.useState('')
    const [allProducts, setAllProducts] = React.useState([])
    const [searchedResult, setSearchedResult] = React.useState([])
-   const [isLoading, setIsLoading] = React.useState(false)
-   const [searchProducts] = useLazyQuery(QUERIES.PRODUCTS.LIST, {
+   const [searchProducts, { loading }] = useLazyQuery(QUERIES.PRODUCTS.LIST, {
       onCompleted: data => {
-         setIsLoading(false)
-         setSearchedResult(data.products)
+         if (input) {
+            // hack for race condition
+            setSearchedResult(data.products)
+         }
       },
       fetchPolicy: 'network-only',
    })
@@ -392,24 +393,27 @@ const AllProducts = ({ renderPrice }) => {
       },
    })
 
-   React.useEffect(() => {
-      if (input.trim().length === 0) {
-         setIsLoading(false)
-         setSearchedResult([])
-      } else {
-         optimisedSearchProducts({
+   const optimizedSearchProducts = React.useCallback(
+      debounce(searchProducts, 500),
+      []
+   )
+
+   const handleSearch = value => {
+      setInput(value)
+      if (value.trim()) {
+         optimizedSearchProducts({
             variables: {
                where: {
                   isPublished: { _eq: true },
                   isArchived: { _eq: false },
-                  name: { _ilike: `%${input}%` },
+                  name: { _ilike: `%${value}%` },
                },
             },
          })
+      } else {
+         setSearchedResult([])
       }
-   }, [input])
-
-   const optimisedSearchProducts = debounce(searchProducts, 1000)
+   }
 
    return (
       <>
@@ -426,10 +430,7 @@ const AllProducts = ({ renderPrice }) => {
                   hasReadAccess={true}
                   hasWriteAccess={true}
                   fallBackMessage="You shall not pass!"
-                  onChange={e => {
-                     setInput(e.target.value)
-                     setIsLoading(true)
-                  }}
+                  onChange={e => handleSearch(e.target.value)}
                />
                <IconButton
                   type="ghost"
@@ -466,7 +467,7 @@ const AllProducts = ({ renderPrice }) => {
          <Spacer size="10px" />
          {showSearch ? (
             <ProductCards
-               isLoading={isLoading}
+               isLoading={loading}
                data={searchedResult}
                cart={cart}
                renderPrice={renderPrice}
