@@ -14,8 +14,10 @@ import DragNDrop from './DragNDrop'
 import Popup from './Popup'
 import RichTextEditor from './RichTextEditor'
 import LinkUnitConversionTunnels from './LinkUnitConversionTunnels'
+import ProductCards from './ProductCards'
 
 export {
+   ProductCards,
    Lang,
    Insight,
    Nutrition,

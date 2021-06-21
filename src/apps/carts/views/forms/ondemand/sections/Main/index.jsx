@@ -13,7 +13,6 @@ import {
    Text,
    Flex,
    Filler,
-   TextButton,
    Spacer,
    RadioGroup,
    IconButton,
@@ -21,10 +20,12 @@ import {
 } from '@dailykit/ui'
 
 import { useManual } from '../../state'
-import { buildImageUrl } from '../../../../../utils'
 import { MUTATIONS, QUERIES } from '../../../../../graphql'
 import EmptyIllo from '../../../../../assets/svgs/EmptyIllo'
-import { InlineLoader } from '../../../../../../../shared/components'
+import {
+   InlineLoader,
+   ProductCards,
+} from '../../../../../../../shared/components'
 import {
    calcDiscountedPrice,
    currencyFmt,
@@ -252,19 +253,6 @@ const Menu = ({ menu, menuProductIds, renderPrice }) => {
    const [isLoading, setIsLoading] = React.useState(false)
    const [input, setInput] = React.useState('')
 
-   const [insertCartItem, { loading }] = useMutation(
-      MUTATIONS.CART.ITEM.INSERT,
-      {
-         onCompleted: () => {
-            toast.success('Item added to cart!')
-         },
-         onError: error => {
-            logger(error)
-            toast.error('Failed to add product to cart!')
-         },
-      }
-   )
-
    const [searchProducts] = useLazyQuery(QUERIES.PRODUCTS.LIST, {
       onCompleted: data => {
          setIsLoading(false)
@@ -272,32 +260,6 @@ const Menu = ({ menu, menuProductIds, renderPrice }) => {
       },
       fetchPolicy: 'network-only',
    })
-
-   const openTunnels = product => {
-      if (product.isPopupAllowed) {
-         dispatch({
-            type: 'SET_PRODUCT_ID',
-            payload: product.id,
-         })
-         switch (product.type) {
-            case 'simple':
-               return tunnels.productOptions[1](1)
-            case 'customizable':
-               return tunnels.customizableComponents[1](1)
-            case 'combo':
-               return tunnels.comboComponents[1](1)
-         }
-      } else {
-         insertCartItem({
-            variables: {
-               object: {
-                  ...product.defaultCartItem,
-                  cartId: +cartId,
-               },
-            },
-         })
-      }
-   }
 
    return (
       <>
@@ -364,8 +326,7 @@ const Menu = ({ menu, menuProductIds, renderPrice }) => {
          )}
          <Spacer size="10px" />
          {showSearch ? (
-            <SearchedResults
-               openTunnels={openTunnels}
+            <ProductCards
                isLoading={isLoading}
                data={searchedResult}
                cart={cart}
@@ -391,8 +352,7 @@ const Menu = ({ menu, menuProductIds, renderPrice }) => {
                   >
                      <Text as="text1">{item.title}</Text>
                      <Spacer size="14px" />
-                     <SearchedResults
-                        openTunnels={openTunnels}
+                     <ProductCards
                         data={item.products}
                         renderPrice={renderPrice}
                         cart={cart}
@@ -432,19 +392,6 @@ const AllProducts = ({ renderPrice }) => {
       },
    })
 
-   const [insertCartItem, { loading }] = useMutation(
-      MUTATIONS.CART.ITEM.INSERT,
-      {
-         onCompleted: () => {
-            toast.success('Item added to cart!')
-         },
-         onError: error => {
-            logger(error)
-            toast.error('Failed to add product to cart!')
-         },
-      }
-   )
-
    React.useEffect(() => {
       if (input.trim().length === 0) {
          setIsLoading(false)
@@ -463,32 +410,6 @@ const AllProducts = ({ renderPrice }) => {
    }, [input])
 
    const optimisedSearchProducts = debounce(searchProducts, 1000)
-
-   const openTunnels = product => {
-      if (product.isPopupAllowed) {
-         dispatch({
-            type: 'SET_PRODUCT_ID',
-            payload: product.id,
-         })
-         switch (product.type) {
-            case 'simple':
-               return tunnels.productOptions[1](1)
-            case 'customizable':
-               return tunnels.customizableComponents[1](1)
-            case 'combo':
-               return tunnels.comboComponents[1](1)
-         }
-      } else {
-         insertCartItem({
-            variables: {
-               object: {
-                  ...product.defaultCartItem,
-                  cartId: +cartId,
-               },
-            },
-         })
-      }
-   }
 
    return (
       <>
@@ -544,8 +465,7 @@ const AllProducts = ({ renderPrice }) => {
          )}
          <Spacer size="10px" />
          {showSearch ? (
-            <SearchedResults
-               openTunnels={openTunnels}
+            <ProductCards
                isLoading={isLoading}
                data={searchedResult}
                cart={cart}
@@ -568,8 +488,7 @@ const AllProducts = ({ renderPrice }) => {
                      height: '1000px',
                   }}
                >
-                  <SearchedResults
-                     openTunnels={openTunnels}
+                  <ProductCards
                      data={allProducts}
                      renderPrice={renderPrice}
                      cart={cart}
@@ -581,106 +500,13 @@ const AllProducts = ({ renderPrice }) => {
    )
 }
 
-const SearchedResults = ({
-   data,
-   cart,
-   renderPrice,
-   isLoading,
-   openTunnels,
-}) => {
-   if (isLoading) {
-      return <InlineLoader />
-   }
-   if (data.length === 0) {
-      return (
-         <div
-            style={{
-               display: 'flex',
-               justifyContent: 'center',
-               marginTop: '4rem',
-            }}
-         >
-            <Filler message="no results found" width="200px" height="200px" />
-         </div>
-      )
-   }
-
-   return (
-      <Styles.Cards>
-         {data.map(product => (
-            <Styles.Card key={product.id}>
-               <aside>
-                  {product.assets?.images &&
-                  product.assets?.images?.length > 0 ? (
-                     <img
-                        alt={product.name}
-                        src={buildImageUrl('56x56', product.assets?.images[0])}
-                     />
-                  ) : (
-                     <span>N/A</span>
-                  )}
-               </aside>
-               <Flex as="main" container flexDirection="column">
-                  <Text as="text2">{product.name}</Text>
-                  <Text as="text3">{renderPrice(product)}</Text>
-                  <Spacer size="8px" />
-                  {cart?.paymentStatus === 'PENDING' && (
-                     <TextButton
-                        type="solid"
-                        variant="secondary"
-                        size="sm"
-                        data-product-id={product.id}
-                        onClick={() => openTunnels(product)}
-                     >
-                        ADD {product.isPopupAllowed && '+'}
-                     </TextButton>
-                  )}
-               </Flex>
-            </Styles.Card>
-         ))}
-      </Styles.Cards>
-   )
-}
-
 const Styles = {
    Main: styled.main`
       grid-area: main;
       overflow-y: auto;
       padding: 10px;
    `,
-   Cards: styled.ul`
-      display: grid;
-      grid-gap: 14px;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-   `,
-   Card: styled.li`
-      padding: 4px;
-      display: grid;
-      grid-gap: 8px;
-      min-height: 56px;
-      border-radius: 2px;
-      background: #ffffff;
-      border: 1px solid #ececec;
-      grid-template-columns: auto 1fr;
-      aside {
-         width: 56px;
-         height: 56px;
-         display: flex;
-         background: #eaeaea;
-         align-items: center;
-         justify-content: center;
-         > span {
-            font-size: 14px;
-            color: #ab9e9e;
-         }
-         > img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 2px;
-         }
-      }
-   `,
+
    Filler: styled(Filler)`
       p {
          font-size: 14px;
