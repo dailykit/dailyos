@@ -26,8 +26,10 @@ import DoubleArrowRightIcon from './DoubleArrowRight'
 import CloneIcon from './Clone'
 import RefreshIcon from './Refresh'
 import LinkIcon from './Link'
+import SearchIcon from './Search'
 
 export {
+   SearchIcon,
    AddIcon,
    MenuIcon,
    CloseIcon,
