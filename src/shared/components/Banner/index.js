@@ -10,22 +10,24 @@ import { formatWebRendererData } from '../../utils'
 import { IconButton, CloseIcon } from '@dailykit/ui'
 import styled from 'styled-components'
 import useIsOnViewPort from '../../hooks/useIsOnViewport'
+import { useBanner } from '../../providers'
 
 const Banner = ({ id }) => {
+   const banners = useBanner()
    const [bannerFiles, setBannerFiles] = React.useState([])
    useSubscription(GET_BANNER_DATA, {
       skip: !id,
       variables: {
          id,
-         params: { userEmail: 'test@dailykit.org' },
+         params: { banners },
       },
       onSubscriptionData: async ({
          subscriptionData: { data: { ux_dailyosDivId = [] } = {} } = {},
       }) => {
          const [banner] = ux_dailyosDivId
          const divFiles = banner.dailyosDivIdFiles
-
          const files = divFiles.map(divFile => divFile?.file?.id)
+
          setBannerFiles(divFiles)
 
          if (files.length && divFiles.length) {
@@ -74,11 +76,13 @@ export default Banner
 const BannerFile = ({ file, id, handleClose }) => {
    const [isOpen, setIsOpen] = React.useState(true)
    const ref = React.useRef()
+   const { userEmail } = useBanner()
    const isOnViewport = useIsOnViewPort(ref)
    const [updateShownCount] = useMutation(UPDATE_SHOWN_COUNT, {
+      skip: !userEmail,
       onError: err => console.error(err),
       variables: {
-         userEmail: 'test@dailykit.org',
+         userEmail,
          divId: file.divId,
          fileId: file.file.id,
       },
@@ -97,7 +101,7 @@ const BannerFile = ({ file, id, handleClose }) => {
                <CloseButton
                   onClick={() => {
                      handleClose({
-                        userEmail: 'test@dailykit.org',
+                        userEmail,
                         divId: file.divId,
                         fileId: file.file.id,
                      })
