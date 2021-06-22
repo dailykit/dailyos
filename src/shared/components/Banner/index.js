@@ -5,21 +5,24 @@ import {
    GET_BANNER_DATA,
    UPDATE_BANNER_CLOSE_COUNT,
    UPDATE_SHOWN_COUNT,
+   GET_SHOW_COUNT,
 } from '../../graphql'
 import { formatWebRendererData } from '../../utils'
 import { IconButton, CloseIcon } from '@dailykit/ui'
 import styled from 'styled-components'
 import useIsOnViewPort from '../../hooks/useIsOnViewport'
 import { useBanner } from '../../providers'
+import moment from 'moment'
 
 const Banner = ({ id }) => {
-   const banners = useBanner()
+   const banner = useBanner()
    const [bannerFiles, setBannerFiles] = React.useState([])
+
    useSubscription(GET_BANNER_DATA, {
-      skip: !id,
+      skip: !id || !banner.userEmail,
       variables: {
          id,
-         params: { banners },
+         params: banner,
       },
       onSubscriptionData: async ({
          subscriptionData: { data: { ux_dailyosDivId = [] } = {} } = {},
@@ -27,12 +30,11 @@ const Banner = ({ id }) => {
          const [banner] = ux_dailyosDivId
          const divFiles = banner.dailyosDivIdFiles
          const files = divFiles.map(divFile => divFile?.file?.id)
-
          setBannerFiles(divFiles)
 
          if (files.length && divFiles.length) {
             divFiles.forEach(divFile => {
-               const isValid = divFile.divId === id
+               const isValid = divFile.divId === id && divFile.condition.isValid
 
                const result = formatWebRendererData([divFile])
                if (isValid) {
@@ -53,6 +55,7 @@ const Banner = ({ id }) => {
    })
 
    const [updateBannerCloseCount] = useMutation(UPDATE_BANNER_CLOSE_COUNT, {
+      skip: !banner.userEmail,
       onError: error => console.error(error),
    })
 
@@ -65,7 +68,13 @@ const Banner = ({ id }) => {
       <>
          {bannerFiles.length > 0 &&
             bannerFiles.map(file => (
-               <BannerFile file={file} id={id} handleClose={handleClose} />
+               <BannerFile
+                  key={`${id}-${file.file.id}`}
+                  file={file}
+                  id={id}
+                  handleClose={handleClose}
+                  userEmail={banner.userEmail}
+               />
             ))}
       </>
    )
@@ -73,10 +82,11 @@ const Banner = ({ id }) => {
 
 export default Banner
 
-const BannerFile = ({ file, id, handleClose }) => {
+const BannerFile = ({ file, id, handleClose, userEmail }) => {
    const [isOpen, setIsOpen] = React.useState(true)
+   const [isBeforeOneDay, setIsBeforeOneDay] = React.useState(false)
+
    const ref = React.useRef()
-   const { userEmail } = useBanner()
    const isOnViewport = useIsOnViewPort(ref)
    const [updateShownCount] = useMutation(UPDATE_SHOWN_COUNT, {
       skip: !userEmail,
@@ -89,14 +99,36 @@ const BannerFile = ({ file, id, handleClose }) => {
    })
 
    React.useEffect(() => {
-      if (isOnViewport) {
+      if (isOnViewport && isBeforeOneDay) {
          updateShownCount()
       }
-   }, [isOnViewport])
+   }, [isOnViewport, isBeforeOneDay])
 
+   useSubscription(GET_SHOW_COUNT, {
+      skip: !userEmail,
+      variables: {
+         userEmail,
+         divId: file.divId,
+         fileId: file.file.id,
+      },
+      onSubscriptionData: ({
+         subscriptionData: {
+            data: { ux_user_dailyosDivIdFile = [] } = {},
+         } = {},
+      }) => {
+         const [result] = ux_user_dailyosDivIdFile
+
+         const isBeforeADay = moment(result.lastVisited).isBefore(
+            moment().subtract(1, 'minutes')
+         )
+         setIsBeforeOneDay(isBeforeADay)
+         if (!result.showAgain && result.shownCount > 0) setIsOpen(true)
+      },
+   })
+   console.log(isBeforeOneDay)
    return (
-      <Wrapper key={`${id}-${file.file.id}`} isOpen={isOpen} ref={ref}>
-         {file.divId === id && (
+      <Wrapper isOpen={isOpen} ref={ref}>
+         {file.divId === id && file.condition.isValid && (
             <>
                <CloseButton
                   onClick={() => {

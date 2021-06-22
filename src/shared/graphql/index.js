@@ -233,6 +233,24 @@ export const UPDATE_SHOWN_COUNT = gql`
       }
    }
 `
+export const GET_SHOW_COUNT = gql`
+   query MyQuery($divId: String!, $fileId: Int!, $userEmail: String!) {
+      ux_user_dailyosDivIdFile(
+         where: {
+            divId: { _eq: $divId }
+            fileId: { _eq: $fileId }
+            userEmail: { _eq: $userEmail }
+         }
+      ) {
+         showAgain
+         fileId
+         divId
+         userEmail
+         shownCount
+         lastVisited
+      }
+   }
+`
 
 export const GET_BOTTOM_BAR_OPTIONS = gql`
    subscription GET_BOTTOM_BAR_OPTIONS($app: [String!]!) {
