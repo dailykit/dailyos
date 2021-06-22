@@ -115,39 +115,6 @@ export const TOOLTIPS_BY_APP = gql`
    }
 `
 
-export const GET_BANNER = gql`
-   subscription ux_dailyosDivId($id: String!) {
-      ux_dailyosDivId(where: { id: { _eq: $id } }) {
-         fileId
-         id
-         isActive
-         file {
-            id
-            fileType
-            fileName
-            path
-            linkedCssFiles {
-               id
-               position
-               cssFile {
-                  fileName
-                  fileType
-                  path
-               }
-            }
-            linkedJsFiles {
-               id
-               position
-               jsFile {
-                  fileName
-                  fileType
-                  path
-               }
-            }
-         }
-      }
-   }
-`
 export const GET_BANNER_DATA = gql`
    subscription ux_dailyosDivId($id: String!, $params: jsonb!) {
       ux_dailyosDivId(where: { id: { _eq: $id }, isActive: { _eq: true } }) {

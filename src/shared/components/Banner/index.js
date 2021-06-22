@@ -1,18 +1,10 @@
 import React from 'react'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { webRenderer } from '@dailykit/web-renderer'
-import {
-   GET_BANNER_DATA,
-   UPDATE_BANNER_CLOSE_COUNT,
-   UPDATE_SHOWN_COUNT,
-   GET_SHOW_COUNT,
-} from '../../graphql'
+import { GET_BANNER_DATA, UPDATE_BANNER_CLOSE_COUNT } from '../../graphql'
 import { formatWebRendererData } from '../../utils'
-import { IconButton, CloseIcon } from '@dailykit/ui'
-import styled from 'styled-components'
-import useIsOnViewPort from '../../hooks/useIsOnViewport'
 import { useBanner } from '../../providers'
-import moment from 'moment'
+import BannerFile from './BannerFile'
 
 const Banner = ({ id }) => {
    const banner = useBanner()
@@ -84,82 +76,3 @@ const Banner = ({ id }) => {
 }
 
 export default Banner
-
-const BannerFile = ({ file, id, handleClose, userEmail }) => {
-   const [isOpen, setIsOpen] = React.useState(true)
-   const [isBeforeOneDay, setIsBeforeOneDay] = React.useState(false)
-
-   const ref = React.useRef()
-   const isOnViewport = useIsOnViewPort(ref)
-   const [updateShownCount] = useMutation(UPDATE_SHOWN_COUNT, {
-      skip: !userEmail,
-      onError: err => console.error(err),
-      variables: {
-         userEmail,
-         divId: file.divId,
-         fileId: file.file.id,
-      },
-   })
-
-   React.useEffect(() => {
-      if (isOnViewport && isBeforeOneDay) {
-         updateShownCount()
-      }
-   }, [isOnViewport, isBeforeOneDay])
-
-   useSubscription(GET_SHOW_COUNT, {
-      skip: !userEmail,
-      variables: {
-         userEmail,
-         divId: file.divId,
-         fileId: file.file.id,
-      },
-      onSubscriptionData: ({
-         subscriptionData: {
-            data: { ux_user_dailyosDivIdFile = [] } = {},
-         } = {},
-      }) => {
-         const [result] = ux_user_dailyosDivIdFile
-
-         const isBeforeADay = moment(result.lastVisited).isBefore(
-            moment().subtract(1, 'minutes')
-         )
-         setIsBeforeOneDay(isBeforeADay)
-         if (!result.showAgain && result.shownCount > 0) setIsOpen(true)
-      },
-   })
-
-   return (
-      <Wrapper isOpen={isOpen} ref={ref}>
-         {file.divId === id && file.condition.isValid && (
-            <>
-               <CloseButton
-                  onClick={() => {
-                     handleClose({
-                        userEmail,
-                        divId: file.divId,
-                        fileId: file.file.id,
-                     })
-                     setIsOpen(false)
-                  }}
-                  type="ghost"
-                  size="sm"
-               >
-                  <CloseIcon color="#367BF5" />
-               </CloseButton>
-               <div id={`${id}-${file.file.id}`} />
-            </>
-         )}
-      </Wrapper>
-   )
-}
-
-const Wrapper = styled.div`
-   position: relative;
-   display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
-`
-const CloseButton = styled(IconButton)`
-   position: absolute;
-   right: 0;
-   top: 0;
-`
