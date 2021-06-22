@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import { useParams } from 'react-router'
 import { Element } from 'react-scroll'
 import { useLazyQuery, useMutation, useQuery } from '@apollo/react-hooks'
-import debounce from '../../../../../../../shared/hooks/debounce'
+import debounce from '../../../../../../../shared/utils/debounce'
 import {
    AnchorNav,
    AnchorNavItem,
