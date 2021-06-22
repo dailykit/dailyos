@@ -3,7 +3,7 @@ import { InlineLoader } from '../InlineLoader'
 import { Filler, TextButton, Flex, Text, Spacer } from '@dailykit/ui'
 import styled, { css } from 'styled-components'
 import { buildImageUrl } from '../../../apps/carts/utils'
-import { logger } from '../../../shared/utils'
+import { calcDiscountedPrice, currencyFmt, logger } from '../../../shared/utils'
 import { useParams } from 'react-router'
 import { useManual } from '../../../apps/carts/views/forms/ondemand/state'
 import { toast } from 'react-toastify'
@@ -11,7 +11,7 @@ import { useMutation } from '@apollo/react-hooks'
 import { MUTATIONS } from '../../../apps/carts/graphql'
 
 //used for onDemand only
-const ProductCards = ({ data, renderPrice, isLoading }) => {
+const ProductCards = ({ data, isLoading, input }) => {
    const { id: cartId } = useParams()
    const { cart, tunnels, dispatch } = useManual()
 
@@ -27,6 +27,35 @@ const ProductCards = ({ data, renderPrice, isLoading }) => {
          },
       }
    )
+
+   const renderPrice = product => {
+      if (product.isPopupAllowed) {
+         if (product.discount) {
+            return (
+               <Flex container alignItems="center">
+                  <Styles.Price strike>
+                     {currencyFmt(product.price)}
+                  </Styles.Price>{' '}
+                  <Styles.Price>
+                     {currencyFmt(
+                        calcDiscountedPrice(product.price, product.discount)
+                     )}
+                  </Styles.Price>
+               </Flex>
+            )
+         }
+         return <Styles.Price>{currencyFmt(product.price)}</Styles.Price>
+      } else {
+         const totalPrice =
+            product.defaultCartItem.unitPrice +
+            product.defaultCartItem.childs?.data?.reduce(
+               (acc, op) => acc + op.unitPrice,
+               0
+            )
+
+         return <Styles.Price>{currencyFmt(totalPrice)}</Styles.Price>
+      }
+   }
    const openTunnels = product => {
       if (product.isPopupAllowed) {
          dispatch({
@@ -55,7 +84,7 @@ const ProductCards = ({ data, renderPrice, isLoading }) => {
    if (isLoading) {
       return <InlineLoader />
    }
-   if (data.length === 0) {
+   if (data.length === 0 && input) {
       return (
          <div
             style={{
@@ -142,4 +171,10 @@ const Styles = {
          }
       }
    `,
+   Price: styled.p(
+      ({ strike }) => css`
+         text-decoration-line: ${strike ? 'line-through' : 'none'};
+         margin-right: ${strike ? '1ch' : '0'};
+      `
+   ),
 }

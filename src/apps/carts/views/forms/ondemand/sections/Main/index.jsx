@@ -133,35 +133,6 @@ export const Main = () => {
       },
    })
 
-   const renderPrice = product => {
-      if (product.isPopupAllowed) {
-         if (product.discount) {
-            return (
-               <Flex container alignItems="center">
-                  <Styles.Price strike>
-                     {currencyFmt(product.price)}
-                  </Styles.Price>{' '}
-                  <Styles.Price>
-                     {currencyFmt(
-                        calcDiscountedPrice(product.price, product.discount)
-                     )}
-                  </Styles.Price>
-               </Flex>
-            )
-         }
-         return <Styles.Price>{currencyFmt(product.price)}</Styles.Price>
-      } else {
-         const totalPrice =
-            product.defaultCartItem.unitPrice +
-            product.defaultCartItem.childs?.data?.reduce(
-               (acc, op) => acc + op.unitPrice,
-               0
-            )
-
-         return <Styles.Price>{currencyFmt(totalPrice)}</Styles.Price>
-      }
-   }
-
    if (isMenuLoading) return <InlineLoader />
    if (hasMenuError)
       return (
@@ -232,13 +203,9 @@ export const Main = () => {
          </Flex>
          <Spacer size="20px" />
          {showMenu ? (
-            <Menu
-               menu={menu}
-               menuProductIds={menuProductIds}
-               renderPrice={renderPrice}
-            />
+            <Menu menu={menu} menuProductIds={menuProductIds} />
          ) : (
-            <AllProducts renderPrice={renderPrice} />
+            <AllProducts />
          )}
       </Styles.Main>
    )
@@ -249,14 +216,14 @@ const Menu = ({ menu, menuProductIds, renderPrice }) => {
    const { cart, tunnels, dispatch } = useManual()
 
    const [showSearch, setShowSearch] = React.useState(false)
-   const [searchedResult, setSearchResult] = React.useState([])
+   const [searchedResult, setSearchedResult] = React.useState([])
    const [isLoading, setIsLoading] = React.useState(false)
    const [input, setInput] = React.useState('')
 
    const [searchProducts] = useLazyQuery(QUERIES.PRODUCTS.LIST, {
       onCompleted: data => {
          setIsLoading(false)
-         setSearchResult(data.products)
+         setSearchedResult(data.products)
       },
       fetchPolicy: 'network-only',
    })
@@ -327,6 +294,7 @@ const Menu = ({ menu, menuProductIds, renderPrice }) => {
          <Spacer size="10px" />
          {showSearch ? (
             <ProductCards
+               input={input}
                isLoading={isLoading}
                data={searchedResult}
                cart={cart}
@@ -467,6 +435,7 @@ const AllProducts = ({ renderPrice }) => {
          <Spacer size="10px" />
          {showSearch ? (
             <ProductCards
+               input={input}
                isLoading={loading}
                data={searchedResult}
                cart={cart}
@@ -514,10 +483,4 @@ const Styles = {
          text-align: center;
       }
    `,
-   Price: styled.p(
-      ({ strike }) => css`
-         text-decoration-line: ${strike ? 'line-through' : 'none'};
-         margin-right: ${strike ? '1ch' : '0'};
-      `
-   ),
 }
