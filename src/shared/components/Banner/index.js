@@ -24,32 +24,35 @@ const Banner = ({ id }) => {
          id,
          params: banner,
       },
-      onSubscriptionData: async ({
+      onSubscriptionData: ({
          subscriptionData: { data: { ux_dailyosDivId = [] } = {} } = {},
       }) => {
-         const [banner] = ux_dailyosDivId
-         const divFiles = banner.dailyosDivIdFiles
-         const files = divFiles.map(divFile => divFile?.file?.id)
-         setBannerFiles(divFiles)
+         if (ux_dailyosDivId.length) {
+            const [banner] = ux_dailyosDivId
+            const divFiles = banner.dailyosDivIdFiles
+            const files = divFiles.map(divFile => divFile?.file?.id)
+            setBannerFiles(divFiles)
 
-         if (files.length && divFiles.length) {
-            divFiles.forEach(divFile => {
-               const isValid = divFile.divId === id && divFile.condition.isValid
+            if (files.length && divFiles.length) {
+               divFiles.forEach(divFile => {
+                  const isValid =
+                     divFile.divId === id && divFile.condition.isValid
 
-               const result = formatWebRendererData([divFile])
-               if (isValid) {
-                  webRenderer({
-                     type: 'file',
-                     config: {
-                        uri: process.env.REACT_APP_DATA_HUB_URI,
-                        adminSecret:
-                           process.env.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
-                        expressUrl: process.env.REACT_APP_EXPRESS_URL,
-                     },
-                     fileDetails: result,
-                  })
-               }
-            })
+                  const result = formatWebRendererData([divFile])
+                  if (isValid) {
+                     webRenderer({
+                        type: 'file',
+                        config: {
+                           uri: process.env.REACT_APP_DATA_HUB_URI,
+                           adminSecret:
+                              process.env.REACT_APP_HASURA_GRAPHQL_ADMIN_SECRET,
+                           expressUrl: process.env.REACT_APP_EXPRESS_URL,
+                        },
+                        fileDetails: result,
+                     })
+                  }
+               })
+            }
          }
       },
    })
@@ -125,7 +128,7 @@ const BannerFile = ({ file, id, handleClose, userEmail }) => {
          if (!result.showAgain && result.shownCount > 0) setIsOpen(true)
       },
    })
-   console.log(isBeforeOneDay)
+
    return (
       <Wrapper isOpen={isOpen} ref={ref}>
          {file.divId === id && file.condition.isValid && (
