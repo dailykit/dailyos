@@ -211,7 +211,7 @@ export const Main = () => {
    )
 }
 
-const Menu = ({ menu, menuProductIds, renderPrice }) => {
+const Menu = ({ menu, menuProductIds }) => {
    const { id: cartId } = useParams()
    const { cart, tunnels, dispatch } = useManual()
 
@@ -298,7 +298,6 @@ const Menu = ({ menu, menuProductIds, renderPrice }) => {
                isLoading={isLoading}
                data={searchedResult}
                cart={cart}
-               renderPrice={renderPrice}
             />
          ) : (
             <Element
@@ -320,11 +319,7 @@ const Menu = ({ menu, menuProductIds, renderPrice }) => {
                   >
                      <Text as="text1">{item.title}</Text>
                      <Spacer size="14px" />
-                     <ProductCards
-                        data={item.products}
-                        renderPrice={renderPrice}
-                        cart={cart}
-                     />
+                     <ProductCards data={item.products} cart={cart} />
 
                      <Spacer size="24px" />
                   </Element>
@@ -335,7 +330,7 @@ const Menu = ({ menu, menuProductIds, renderPrice }) => {
    )
 }
 
-const AllProducts = ({ renderPrice }) => {
+const AllProducts = () => {
    const { id: cartId } = useParams()
    const { cart, tunnels, dispatch } = useManual()
    const [showSearch, setShowSearch] = React.useState(false)
@@ -439,7 +434,6 @@ const AllProducts = ({ renderPrice }) => {
                isLoading={loading}
                data={searchedResult}
                cart={cart}
-               renderPrice={renderPrice}
             />
          ) : (
             <Element
@@ -458,11 +452,7 @@ const AllProducts = ({ renderPrice }) => {
                      height: '1000px',
                   }}
                >
-                  <ProductCards
-                     data={allProducts}
-                     renderPrice={renderPrice}
-                     cart={cart}
-                  />
+                  <ProductCards data={allProducts} cart={cart} />
                </Element>
             </Element>
          )}
