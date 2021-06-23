@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import {
    UPDATE_SHOWN_COUNT,
    GET_SHOW_COUNT,
@@ -12,7 +12,6 @@ import { IconButton, CloseIcon } from '@dailykit/ui'
 
 const BannerFile = ({ file, id, handleClose, userEmail }) => {
    const [isOpen, setIsOpen] = React.useState(false)
-   const [isBeforeOneDay, setIsBeforeOneDay] = React.useState(true)
    const ref = React.useRef()
    const isOnViewport = useIsOnViewPort(ref)
 
@@ -21,17 +20,13 @@ const BannerFile = ({ file, id, handleClose, userEmail }) => {
    const [updateShownCount] = useMutation(UPDATE_SHOWN_COUNT, {
       skip: !userEmail,
       onError: err => console.error(err),
-      variables: {
-         userEmail,
-         divId: file.divId,
-         fileId: file.file.id,
-      },
    })
 
    const [updateLastVisited] = useMutation(UPDATE_LAST_VISITED, {
       skip: !userEmail,
       onError: err => console.error(err),
    })
+
    const { data, error, loading } = useQuery(GET_SHOW_COUNT, {
       skip: !userEmail,
       variables: {
@@ -41,88 +36,48 @@ const BannerFile = ({ file, id, handleClose, userEmail }) => {
       },
    })
 
-   //    React.useEffect(() => {
-   //       const isValid =
-   //          data &&
-   //          !loading &&
-   //          !error &&
-   //          !data?.ux_user_dailyosDivIdFile[0]?.showAgain &&
-   //          data?.ux_user_dailyosDivIdFile[0]?.shownCount > 0
-
-   //       console.log(id, file.file.id, isValid)
-   //       if (isValid) {
-   //          setIsOpen(false)
-   //       }
-   //    }, [data, loading, error])
-
    React.useEffect(() => {
       const queryData = data?.ux_user_dailyosDivIdFile[0]
-
-      const isShowAgain = data && !loading && !error && queryData?.showAgain
-      const isNotShowAgain =
+      const isValidShownAgain =
+         data && !loading && !error && queryData?.showAgain
+      const isValidNotShowAgain =
          data &&
          !loading &&
          !error &&
          !queryData?.showAgain &&
-         queryData?.shownCount === 0
+         queryData?.shownCount === 0 &&
+         queryData?.closedCount === 0
 
-      if (isShowAgain || isNotShowAgain) {
+      setLastVisited(queryData?.lastVisited)
+
+      if (isValidShownAgain || isValidNotShowAgain) {
          setIsOpen(true)
+         updateLastVisited({
+            variables: {
+               lastVisited: new Date().toISOString(),
+               userEmail,
+               divId: file.divId,
+               fileId: file.file.id,
+            },
+         })
       }
    }, [data, loading, error])
 
-   //    React.useEffect(() => {
-   //       if (isOnViewport) {
-   //          updateLastVisited({
-   //             variables: {
-   //                userEmail,
-   //                divId: file.divId,
-   //                fileId: file.file.id,
-   //                lastVisited: new Date().toISOString(),
-   //             },
-   //          })
-   //       }
-   //    }, [isOnViewport])
-
    React.useEffect(() => {
-      if (isOnViewport) {
-         updateShownCount()
+      const isBeforeADay = moment(lastVisited).isBefore(
+         moment().subtract(24, 'hours')
+      )
+
+      if (isOnViewport && isBeforeADay) {
+         updateShownCount({
+            variables: {
+               userEmail,
+               divId: file.divId,
+               fileId: file.file.id,
+            },
+         })
       }
-   }, [isOnViewport])
-
-   //    useSubscription(GET_SHOW_COUNT, {
-   //       skip: !userEmail,
-   //       variables: {
-   //          userEmail,
-   //          divId: file.divId,
-   //          fileId: file.file.id,
-   //       },
-
-   //       onSubscriptionData: ({
-   //          subscriptionData: {
-   //             data: { ux_user_dailyosDivIdFile = [] } = {},
-   //          } = {},
-   //       }) => {
-   //          const [result] = ux_user_dailyosDivIdFile
-   //          //  setLastVisited(result.lastVisited)
-   //          //  console.log(id, file.file.id, result.lastVisited)
-   //          //  const isBeforeADay = moment(result.lastVisited).isBefore(
-   //          //     moment().subtract(1, 'minutes')
-   //          //  )
-   //          //  setIsBeforeOneDay(isBeforeADay)
-   //          console.log(
-   //             id,
-   //             file.file.id,
-   //             !result.showAgain && result.shownCount > 0,
-   //             result.shownCount
-   //          )
-   //          if (!result.showAgain) {
-   //             if (result.shownCount > 0) {
-   //                setIsOpen(false)
-   //             }
-   //          }
-   //       },
-   //    })
+   }, [isOnViewport, lastVisited])
 
    return (
       <>

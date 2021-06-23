@@ -200,6 +200,32 @@ export const UPDATE_SHOWN_COUNT = gql`
       }
    }
 `
+
+export const UPDATE_LAST_VISITED = gql`
+   mutation UPDATE_LAST_VISITED(
+      $divId: String!
+      $userEmail: String!
+      $fileId: Int!
+      $lastVisited: timestamptz!
+   ) {
+      update_ux_user_dailyosDivIdFile(
+         where: {
+            divId: { _eq: $divId }
+            fileId: { _eq: $fileId }
+            userEmail: { _eq: $userEmail }
+         }
+         _set: { lastVisited: $lastVisited }
+      ) {
+         returning {
+            divId
+            fileId
+            userEmail
+            shownCount
+            lastVisited
+         }
+      }
+   }
+`
 export const GET_SHOW_COUNT = gql`
    query MyQuery($divId: String!, $fileId: Int!, $userEmail: String!) {
       ux_user_dailyosDivIdFile(
@@ -215,6 +241,7 @@ export const GET_SHOW_COUNT = gql`
          userEmail
          shownCount
          lastVisited
+         closedCount
       }
    }
 `
