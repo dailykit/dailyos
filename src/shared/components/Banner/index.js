@@ -9,7 +9,6 @@ import BannerFile from './BannerFile'
 const Banner = ({ id }) => {
    const banner = useBanner()
    const [bannerFiles, setBannerFiles] = React.useState([])
-
    useSubscription(GET_BANNER_DATA, {
       skip: !id || !banner.userEmail,
       variables: {
