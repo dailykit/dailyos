@@ -171,7 +171,7 @@ const ProductOptionsTunnel = ({
             }}
          />
          <TunnelBody>
-            <Banner id="products-app-products-combo-product-product-options-top" />
+            <Banner id="products-app-products-combo-product-product-options-tunnel-top" />
             {loading ? (
                <InlineLoader />
             ) : (
@@ -280,7 +280,7 @@ const ProductOptionsTunnel = ({
                   ))}
                </>
             )}
-            <Banner id="products-app-products-combo-product-product-options-bottom" />
+            <Banner id="products-app-products-combo-product-product-options-tunnel-bottom" />
          </TunnelBody>
       </>
    )
