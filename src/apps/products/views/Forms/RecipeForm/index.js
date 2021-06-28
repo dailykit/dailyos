@@ -63,9 +63,8 @@ const RecipeForm = () => {
       initialState
    )
 
-   const [productTunnels, openProductsTunnel, closeProductsTunnel] = useTunnel(
-      1
-   )
+   const [productTunnels, openProductsTunnel, closeProductsTunnel] =
+      useTunnel(1)
    const [
       linkedProductsTunnels,
       openLinkedProductsTunnel,
@@ -424,9 +423,11 @@ const RecipeForm = () => {
                         <Servings state={state} />
                         <Spacer size="32px" />
                         <Ingredients state={state} />
+                        <Banner id="products-app-single-ingredient-ingredient-tab-bottom" />
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>
                         <Procedures state={state} />
+                        <Banner id="products-app-single-ingredient-cooking-steps-tab-bottom" />
                      </HorizontalTabPanel>
                   </HorizontalTabPanels>
                </HorizontalTabs>

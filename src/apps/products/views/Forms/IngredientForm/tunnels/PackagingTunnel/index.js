@@ -22,14 +22,15 @@ import { FETCH_PACKAGINGS } from '../../../../../graphql'
 import { TunnelBody } from '../styled'
 
 const PackagingTunnel = ({ closeTunnel }) => {
-   const { ingredientState, ingredientDispatch } = React.useContext(
-      IngredientContext
-   )
+   const { ingredientState, ingredientDispatch } =
+      React.useContext(IngredientContext)
 
    // Subscription
-   const { data: { packagings = [] } = {}, loading, error } = useSubscription(
-      FETCH_PACKAGINGS
-   )
+   const {
+      data: { packagings = [] } = {},
+      loading,
+      error,
+   } = useSubscription(FETCH_PACKAGINGS)
 
    if (error) {
       toast.error('Something went wrong!')
@@ -61,7 +62,7 @@ const PackagingTunnel = ({ closeTunnel }) => {
             tooltip={<Tooltip identifier="packaging_tunnel" />}
          />
          <TunnelBody>
-            <Banner id="products-app-ingredients-packaging-top" />
+            <Banner id="products-app-ingredients-packaging-tunnel-top" />
             {loading ? (
                <InlineLoader />
             ) : (
@@ -100,7 +101,7 @@ const PackagingTunnel = ({ closeTunnel }) => {
                   )}
                </>
             )}
-            <Banner id="products-app-ingredients-packaging-bottom" />
+            <Banner id="products-app-ingredients-packaging-tunnel-bottom" />
          </TunnelBody>
       </>
    )
