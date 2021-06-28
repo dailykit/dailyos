@@ -8,7 +8,7 @@ import {
 import moment from 'moment'
 import useIsOnViewPort from '../../hooks/useIsOnViewport'
 import styled from 'styled-components'
-import { IconButton, CloseIcon } from '@dailykit/ui'
+import { IconButton, RoundedCloseIcon } from '@dailykit/ui'
 
 const BannerFile = ({ file, id, handleClose, userEmail }) => {
    const [isOpen, setIsOpen] = React.useState(false)
@@ -95,7 +95,7 @@ const BannerFile = ({ file, id, handleClose, userEmail }) => {
                   type="ghost"
                   size="sm"
                >
-                  <CloseIcon color="#367BF5" />
+                  <RoundedCloseIcon color="#367BF5" />
                </CloseButton>
                <div id={`${id}-${file.file.id}`} />
             </Wrapper>
