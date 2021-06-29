@@ -9,12 +9,13 @@ import moment from 'moment'
 import useIsOnViewPort from '../../hooks/useIsOnViewport'
 import styled from 'styled-components'
 import { IconButton, RoundedCloseIcon } from '@dailykit/ui'
+import { MaximizeIcon, MinimizeIcon } from '../../assets/icons'
 
 const BannerFile = ({ file, id, handleClose, userEmail }) => {
    const [isOpen, setIsOpen] = React.useState(false)
    const ref = React.useRef()
    const isOnViewport = useIsOnViewPort(ref)
-
+   const [isMinimized, setIsMinimized] = React.useState(false)
    const [lastVisited, setLastVisited] = React.useState(null)
 
    const [updateShownCount] = useMutation(UPDATE_SHOWN_COUNT, {
@@ -83,21 +84,34 @@ const BannerFile = ({ file, id, handleClose, userEmail }) => {
       <>
          {file.divId === id && file.condition.isValid && (
             <Wrapper isOpen={isOpen} ref={ref}>
-               <CloseButton
-                  onClick={() => {
-                     handleClose({
-                        userEmail,
-                        divId: file.divId,
-                        fileId: file.file.id,
-                     })
-                     setIsOpen(false)
-                  }}
-                  type="ghost"
-                  size="sm"
-               >
-                  <RoundedCloseIcon color="#367BF5" />
-               </CloseButton>
-               <div id={`${id}-${file.file.id}`} />
+               <StyledActions>
+                  <h4>{isMinimized ? 'Show Notes' : 'Hide notes'}</h4>
+                  <IconButton
+                     type="ghost"
+                     size="sm"
+                     onClick={() => setIsMinimized(!isMinimized)}
+                  >
+                     {isMinimized ? <MinimizeIcon /> : <MaximizeIcon />}
+                  </IconButton>
+                  <IconButton
+                     onClick={() => {
+                        handleClose({
+                           userEmail,
+                           divId: file.divId,
+                           fileId: file.file.id,
+                        })
+                        setIsOpen(false)
+                     }}
+                     type="ghost"
+                     size="sm"
+                  >
+                     <RoundedCloseIcon color="#367BF5" />
+                  </IconButton>
+               </StyledActions>
+               <div
+                  id={`${id}-${file.file.id}`}
+                  style={{ display: isMinimized ? 'none' : 'block' }}
+               />
             </Wrapper>
          )}
       </>
@@ -108,9 +122,15 @@ const Wrapper = styled.div`
    position: relative;
    display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
 `
-const CloseButton = styled(IconButton)`
+const StyledActions = styled.div`
+   display: flex;
+   align-items: center;
+   height: 40px;
    position: absolute;
+   top: 40px;
    right: 0;
-   top: 0;
+   padding-bottom: 20px;
+   z-index: 99;
 `
+
 export default BannerFile

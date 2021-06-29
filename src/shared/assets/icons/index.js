@@ -26,7 +26,8 @@ import DoubleArrowRightIcon from './DoubleArrowRight'
 import CloneIcon from './Clone'
 import RefreshIcon from './Refresh'
 import LinkIcon from './Link'
-
+import MaximizeIcon from './Maximixe'
+import MinimizeIcon from './Minimize'
 export {
    AddIcon,
    MenuIcon,
@@ -56,6 +57,8 @@ export {
    CloneIcon,
    RefreshIcon,
    LinkIcon,
+   MaximizeIcon,
+   MinimizeIcon,
 }
 
 export * from './Tick'
