@@ -27,7 +27,10 @@ import CloneIcon from './Clone'
 import RefreshIcon from './Refresh'
 import LinkIcon from './Link'
 import ExternalLink from './ExternalLink'
+import SearchIcon from './Search'
+
 export {
+   SearchIcon,
    AddIcon,
    MenuIcon,
    CloseIcon,
