@@ -26,12 +26,12 @@ import { TunnelBody } from '../styled'
 
 const IngredientsTunnel = ({ state, closeTunnel, openTunnel }) => {
    const { recipeDispatch } = React.useContext(RecipeContext)
-   let ingredients_selected_temp = []
    // State for search input
    const [search, setSearch] = React.useState('')
    const [ingredients, setIngredients] = React.useState([])
    let [IngredientsSelected, setIngredientsSelected] = React.useState([])
    const [list, selected, selectOption] = useMultiList(ingredients)
+   
    // Mutation
    const [createSimpleRecipeIngredientProcessings] = useMutation(
       CREATE_SIMPLE_RECIPE_INGREDIENT_PROCESSINGS,
@@ -56,25 +56,35 @@ const IngredientsTunnel = ({ state, closeTunnel, openTunnel }) => {
       },
    })
 
-   const [createIngredient] = useMutation(CREATE_INGREDIENT, {
-      onError: error => {
-         toast.error('Something went wrong!')
-         logger(error)
-      },
-   })
+   const [createIngredient, { loading: creatingIngredient }] = useMutation(
+      CREATE_INGREDIENT,
+      {
+         onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+
+         onCompleted : data => {
+            const tempIngredients = ingredients.map((item)=>{
+               return item
+            })
+            tempIngredients.push({id: data.createIngredient.returning[0].id, title: data.createIngredient.returning[0].name})
+            setIngredients(tempIngredients)
+         }
+      }
+   )
 
    const add = () => {
-      
       setIngredientsSelected([])
-      const tempIngredientSelected=selected.map(item => {
+      const tempIngredientSelected = selected.map(item => {
          return {
-               ingredientId: item.id,
-               simpleRecipeId: state.id,
-            }
+            ingredientId: item.id,
+            simpleRecipeId: state.id,
+         }
       })
       createSimpleRecipeIngredientProcessings({
          variables: {
-            objects: tempIngredientSelected
+            objects: tempIngredientSelected,
          },
       })
    }
@@ -86,15 +96,11 @@ const IngredientsTunnel = ({ state, closeTunnel, openTunnel }) => {
             name: ingredientName,
          },
       })
+      
    }
-   const selectedOption = option => {}
-   const searchedOption = option => console.log(option, 'Adrish Searched')
 
    return (
       <>
-         {/* {console.log(search, 'Adrish Search')}
-         {console.log(ingredients, 'Adrish ingredients')} */}
-
          <TunnelHeader
             title="Select Ingredient"
             close={() => closeTunnel(1)}
@@ -128,6 +134,7 @@ const IngredientsTunnel = ({ state, closeTunnel, openTunnel }) => {
                   <ListOptions
                      search={search}
                      handleOnCreate={quickCreateIngredient}
+                     isCreating={creatingIngredient}
                   >
                      {list
                         .filter(option =>

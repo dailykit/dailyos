@@ -213,7 +213,7 @@ const Servings = ({ state }) => {
                   <></>
                )}
                <div id="menu">
-                  <ContextualMenu>
+                  <ContextualMenu position="left">
                      <Context
                         title="Delete"
                         handleClick={() => remove(option)}
@@ -284,30 +284,34 @@ const Servings = ({ state }) => {
                <StyledCardIngredient
                   buttonClickLeftRender={buttonClickLeftRender}
                >
-                  {/* <div id="index">{index + 1}</div> */}
-
-                  <div
-                     title={option.ingredient.name}
-                     style={{
-                        display: 'inline-block',
-                        width: '156px',
-                        height: '20px',
-                        paddingTop: '2px',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        textDecorationLine: 'underline',
-                        color: '#367BF5',
-                     }}
-                  >
-                     {option.ingredient.name}
+                  <div id="ingredientName" style={{ display: 'inline-block' }}>
+                     <Link
+                        title={option.ingredient.name}
+                        style={{
+                           display: 'inline-block',
+                           width: '156px',
+                           height: '20px',
+                           paddingTop: '2px',
+                           whiteSpace: 'nowrap',
+                           overflow: 'hidden',
+                           textOverflow: 'ellipsis',
+                           color: '#367BF5',
+                        }}
+                        to={`/products/ingredients/${option.ingredient.id}`}
+                     >
+                        {option.ingredient.name}
+                     </Link>
+                     <span>
+                        <Link
+                           to={`/products/ingredients/${option.ingredient.id}`}
+                        >
+                           <ExternalLink />
+                        </Link>
+                     </span>
                   </div>
-                  <Link to={`/products/ingredients/${option.ingredient.id}`}>
-                     <ExternalLink />
-                  </Link>
 
                   <div id="menu">
-                     <ContextualMenu>
+                     <ContextualMenu position="left">
                         <Context
                            title="Delete"
                            handleClick={() =>
@@ -641,8 +645,6 @@ const Servings = ({ state }) => {
                               </>
                            }
 
-                           
-
                            <ComboButton
                               style={{
                                  left: '0',
@@ -694,6 +696,8 @@ const Servings = ({ state }) => {
             </div>
 
             <div></div>
+            
+            
          </>
       </>
    )
@@ -940,7 +944,8 @@ const Processings = ({ state, option }) => {
    }
 
    const quickCreateProcessing = () => {
-      let processingName = search.slice(0, 1).toUpperCase() + search.slice(1)
+      let processingName =
+         search.slice(0, 1).toUpperCase() + search.slice(1).toLowerCase()
       setingredientStateId(option.ingredient.id)
 
       //console.log(ingredientStateId, 'ingredientStateId')
@@ -960,10 +965,9 @@ const Processings = ({ state, option }) => {
    // console.log(option, 'option inside Processing')
    // console.log(defaultName, 'defaultName')
    return (
-      <>
+      <div style={{ width: '190px' }}>
          <Dropdown
             type="single"
-            variant="revamp"
             defaultName={defaultName}
             isLoading={loading}
             defaultOption={option.processing}
@@ -978,7 +982,7 @@ const Processings = ({ state, option }) => {
             }}
             typeName="processing"
          />
-      </>
+      </div>
    )
 }
 
@@ -1054,7 +1058,7 @@ const Sachets = ({ defaultslipName, option, object }) => {
    const quickCreateSachet = async () => {
       if (!search.includes(' '))
          return toast.error('Quantity and Unit should be space separated!')
-      const [quantity, unit] = search.trim().split(' ')
+      const [quantity, unit] = search.toLowerCase().trim().split(' ')
       if (quantity && unit) {
          await upsertMasterUnit({
             variables: {
@@ -1094,8 +1098,6 @@ const Sachets = ({ defaultslipName, option, object }) => {
    }
    const searchedSachetOption = searchedSachet => {
       search = searchedSachet
-
-      //console.log(search, 'Adrish Search')
    }
 
    return (

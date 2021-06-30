@@ -94,7 +94,7 @@ export const Heading = styled.div`
 `
 
 export const StyledCardIngredient = styled.div(
-   ({buttonClickLeftRender}) => css`
+   ({ buttonClickLeftRender }) => css`
       left: 0px;
       position: sticky;
       width: 238px;
@@ -105,10 +105,28 @@ export const StyledCardIngredient = styled.div(
       font-weight: normal;
       font-size: 20px;
       line-height: 16px;
-      padding: ${buttonClickLeftRender?`0px 5px 0px 50px`: `0px 5px 0px 0px`};
+      padding: ${buttonClickLeftRender
+         ? `0px 5px 0px 50px`
+         : `0px 5px 0px 0px`};
       display: inline-block;
       z-index: +10;
-      
+      div#ingredientName {
+         
+         :hover {
+            > span {
+               opacity: 1;
+            }
+            > a {
+               text-decoration-line: underline;
+            }
+         }
+         > a {
+            text-decoration: none;
+         }
+         > span {
+            opacity: 0;
+         }
+      }
       div#menu {
          text-align: right;
          display: inline-block;
