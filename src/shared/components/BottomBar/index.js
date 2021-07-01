@@ -11,7 +11,7 @@ import useQueryParamState from './useQueryParamState'
 
 const BottomBar = () => {
    const [isModalOpen, setIsModalOpen] = React.useState(false)
-   const [isOpen, setIsOpen] = React.useState(false)
+   const [isOpen, setIsOpen] = React.useState(true)
    const bottomBarRef = React.useRef()
    const { width } = useWindowSize()
    const { search } = useLocation()
@@ -21,20 +21,16 @@ const BottomBar = () => {
    const [cssPaths, setCssPaths] = React.useState([])
    const [jsPaths, setJsPaths] = React.useState([])
 
-   const [optionId, setOptionId, deleteOptionId] = useQueryParamState(
-      'optionId'
-   )
+   const [optionId, setOptionId, deleteOptionId] =
+      useQueryParamState('optionId')
    const [
       navigationMenuItemId,
       setNavigationMenuItemId,
       deleteNavigationMenuId,
    ] = useQueryParamState('navigationMenuItemId')
 
-   const {
-      state,
-      addClickedOptionInfo,
-      addClickedOptionMenuInfo,
-   } = useBottomBar()
+   const { state, addClickedOptionInfo, addClickedOptionMenuInfo } =
+      useBottomBar()
 
    const handleBottomBarOptionClick = async option => {
       await addClickedOptionInfo(option)
@@ -85,11 +81,10 @@ const BottomBar = () => {
          )
          if (filtered) {
             handleBottomBarOptionClick(filtered)
-            const [
-               filteredNavMenuItem,
-            ] = filtered?.navigationMenu?.navigationMenuItems.filter(
-               item => item.id === Number(navigationMenuItemId)
-            )
+            const [filteredNavMenuItem] =
+               filtered?.navigationMenu?.navigationMenuItems.filter(
+                  item => item.id === Number(navigationMenuItemId)
+               )
             if (filteredNavMenuItem?.actionId && filteredNavMenuItem) {
                setHasAction(true)
                getMenuItemAction(filteredNavMenuItem)
@@ -102,16 +97,16 @@ const BottomBar = () => {
       <>
          <Styles.Wrapper
             id="wrapper"
-            onMouseOver={() => {
-               if (width > 565) {
-                  setIsOpen(true)
-               }
-            }}
-            onMouseLeave={() => {
-               if (!isModalOpen) {
-                  setIsOpen(false)
-               }
-            }}
+            // onMouseOver={() => {
+            //    if (width > 565) {
+            //       setIsOpen(true)
+            //    }
+            // }}
+            // onMouseLeave={() => {
+            //    if (!isModalOpen) {
+            //       setIsOpen(false)
+            //    }
+            // }}
             onClick={() => {
                setIsModalOpen(false)
                setIsOpen(!isOpen)

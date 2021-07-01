@@ -85,7 +85,7 @@ const BannerFile = ({ file, id, handleClose, userEmail }) => {
          {file.divId === id && file.condition.isValid && (
             <Wrapper isOpen={isOpen} ref={ref}>
                <StyledActions>
-                  <h4>{isMinimized ? 'Show Notes' : 'Hide notes'}</h4>
+                  <h4>{isMinimized ? 'Show note' : 'Hide note'}</h4>
                   <IconButton
                      type="ghost"
                      size="sm"
@@ -121,6 +121,11 @@ const BannerFile = ({ file, id, handleClose, userEmail }) => {
 const Wrapper = styled.div`
    position: relative;
    display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
+   min-height: 40px;
+   > a {
+      color: #202020;
+   }
+   margin-bottom: 60px;
 `
 const StyledActions = styled.div`
    display: flex;
@@ -130,7 +135,7 @@ const StyledActions = styled.div`
    top: 40px;
    right: 0;
    padding-bottom: 20px;
-   z-index: 99;
+   /* z-index: 10; */
 `
 
 export default BannerFile
