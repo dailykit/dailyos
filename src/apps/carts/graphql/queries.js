@@ -81,7 +81,7 @@ export const QUERIES = {
                         childs {
                            id
                            displayName
-                           unitPrice
+                           price: unitPrice
                            modifierOption {
                               id
                               name

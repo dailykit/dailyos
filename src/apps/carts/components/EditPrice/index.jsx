@@ -1,31 +1,22 @@
 import React from 'react'
-import styled from 'styled-components'
-import { toast } from 'react-toastify'
-import { useParams } from 'react-router'
-import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { useMutation } from '@apollo/react-hooks'
 import {
-   Filler,
+   ButtonGroup,
    Flex,
    Form,
-   IconButton,
+   Popup,
    Spacer,
    Text,
    TextButton,
-   Popup,
-   ButtonGroup,
-   ButtonTile,
 } from '@dailykit/ui'
-
-import { CloseIcon, EditIcon } from '../../../../shared/assets/icons'
-import { MUTATIONS, QUERIES } from '../../graphql'
-import { currencyFmt, logger } from '../../../../shared/utils'
+import { toast } from 'react-toastify'
+import { currencyFmt } from '../../../../shared/utils'
+import { MUTATIONS } from '../../graphql'
 
 const EditPrice = ({ product }) => {
-   const [visible, setVisible] = React.useState(false)
-   const [isEdit, setIsEdit] = React.useState(false)
    const [showPrimary, setShowPrimary] = React.useState(false)
    const [updatedPrice, setUpdatedPrice] = React.useState({
-      value: product.price,
+      value: product.price + '',
       meta: {
          errors: [],
          isTouched: false,
@@ -37,8 +28,9 @@ const EditPrice = ({ product }) => {
       onCompleted: () => toast.success('Successfully updated the price'),
       onError: () => toast.error('Failed to update the price of product.'),
    })
-   const validate = e => {
-      const { value } = e.target
+
+   const validate = () => {
+      const { value } = updatedPrice
       if (value === '') {
          setUpdatedPrice({
             ...updatedPrice,
@@ -83,85 +75,42 @@ const EditPrice = ({ product }) => {
             isTouched: true,
          },
       })
+      setShowPrimary(true)
    }
+
    return (
       <>
-         <Flex container alignItems="center" justifyContent="space-between">
-            {isEdit ? (
-               <Flex
-                  container
-                  alignItems="center"
-                  justifyContent="space-between"
-               >
-                  <Form.Group>
-                     <Form.Number
-                        value={updatedPrice.value}
-                        onChange={e =>
-                           setUpdatedPrice({
-                              ...updatedPrice,
-                              value: e.target.value,
-                           })
-                        }
-                        onBlur={validate}
-                        hasError={
-                           updatedPrice.meta.isTouched &&
-                           !updatedPrice.meta.isValid
-                        }
-                     />
-                     {updatedPrice.meta.isTouched &&
-                        !updatedPrice.meta.isValid &&
-                        updatedPrice.meta.errors.map((error, index) => (
-                           <Form.Error justifyContent="center" key={index}>
-                              {error}
-                           </Form.Error>
-                        ))}
-                  </Form.Group>
-                  <Spacer size="2px" xAxis />
-                  <IconButton
-                     type="ghost"
-                     size="sm"
-                     onClick={() => setIsEdit(!isEdit)}
-                  >
-                     <CloseIcon color="#ec3333" />
-                  </IconButton>
-                  <TextButton
-                     type="ghost"
-                     size="sm"
-                     disabled={
-                        !updatedPrice.meta.isValid || !updatedPrice.value
-                     }
-                     onClick={() => {
-                        setIsEdit(!isEdit)
-                        setShowPrimary(!showPrimary)
-                     }}
-                  >
-                     Update
-                  </TextButton>
-               </Flex>
-            ) : (
-               <Text
-                  as="text3"
-                  // style={{ marginLeft: '8px' }}
-                  onMouseOver={() => setVisible(!visible)}
-               >
-                  Price: {currencyFmt(product.price || product.unitPrice)}
-               </Text>
-            )}
-
+         <Flex container alignItems="center">
+            <Text as="text2">$</Text>
+            <Form.Text
+               value={updatedPrice.value}
+               name="price"
+               onBlur={validate}
+               onChange={e =>
+                  setUpdatedPrice({
+                     ...updatedPrice,
+                     value: e.target.value,
+                  })
+               }
+               variant="revamp-sm"
+               placeholder="enter price"
+            />
             <Spacer xAxis size="20px" />
             <Popup
                show={showPrimary}
                clickOutsidePopup={() => setShowPrimary(false)}
             >
                <Popup.Actions>
-                  <Popup.Text type="primary">
-                     Closing this file will not save any changes!
-                  </Popup.Text>
+                  <Popup.Text type="primary"></Popup.Text>
                   <Popup.Close
                      closePopup={() => setShowPrimary(!showPrimary)}
                   />
                </Popup.Actions>
-               <Popup.ConfirmText>Are you sure?</Popup.ConfirmText>
+               <Spacer size="12px" />
+               <Popup.ConfirmText>
+                  Do you want to update the price to{' '}
+                  {`${currencyFmt(updatedPrice.value)}`}?
+               </Popup.ConfirmText>
                <Popup.Actions>
                   <ButtonGroup align="left">
                      <TextButton
@@ -183,33 +132,17 @@ const EditPrice = ({ product }) => {
                            }
                         }}
                      >
-                        Yes! change the price
+                        Yes
                      </TextButton>
                      <TextButton
                         type="ghost"
                         onClick={() => setShowPrimary(!showPrimary)}
                      >
-                        Don't want to change
+                        Cancel
                      </TextButton>
                   </ButtonGroup>
                </Popup.Actions>
             </Popup>
-
-            {visible ? (
-               <IconButton
-                  type="ghost"
-                  size="sm"
-                  onClick={() => {
-                     setIsEdit(!isEdit)
-
-                     setVisible(!visible)
-                  }}
-               >
-                  <EditIcon />
-               </IconButton>
-            ) : (
-               ''
-            )}
          </Flex>
       </>
    )

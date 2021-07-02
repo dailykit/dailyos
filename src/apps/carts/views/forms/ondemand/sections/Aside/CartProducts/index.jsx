@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { toast } from 'react-toastify'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { LoyaltyPoints, Coupon } from '../../../../../../components'
-import { Filler, Flex, IconButton, Spacer, Text } from '@dailykit/ui'
+import { Filler, Flex, Form, IconButton, Spacer, Text } from '@dailykit/ui'
 
 import { useManual } from '../../../state'
 import { buildImageUrl } from '../../../../../../utils'
@@ -91,19 +91,7 @@ const ProductCard = ({ product, cart }) => {
       onError: () => toast.error('Failed to delete the product.'),
    })
 
-   const [update] = useMutation(MUTATIONS.PRODUCT.PRICE.UPDATE, {
-      onCompleted: () => toast.success('Successfully updated the price'),
-      onError: () => toast.error('Failed to update the price of product.'),
-   })
-
-   const [updatedPrice, setUpdatedPrice] = React.useState({
-      value: product.price,
-      meta: {
-         errors: [],
-         isTouched: false,
-         isValid: true,
-      },
-   })
+   console.log('Product: ', product)
 
    return (
       <Styles.Card>
@@ -161,20 +149,22 @@ const ProductCard = ({ product, cart }) => {
                            </Text>
                         </div>
 
-                        <div style={{ marginLeft: '8px' }}>
-                           {item.childs.length > 0 &&
-                              item.childs.map(modi => (
-                                 <div style={{ marginLeft: '8px' }}>
+                        {item.childs.some(op => op.modifierOption) && (
+                           <div style={{ marginLeft: '16px' }}>
+                              <Text as="subtitle">Modifiers</Text>
+                              {item.childs.map(option => (
+                                 <>
                                     <Text
                                        as="text2"
                                        style={{ color: '#808080' }}
                                     >
-                                       {modi.modifierOption?.name}
+                                       {option.modifierOption?.name}
                                     </Text>
-                                    <EditPrice product={modi} />
-                                 </div>
+                                    <EditPrice product={option} />
+                                 </>
                               ))}
-                        </div>
+                           </div>
+                        )}
                      </Flex>
                   </>
                ))}
