@@ -465,3 +465,13 @@ export const INCREMENTS_IN_PRODUCT_OPTIONS = gql`
       }
    }
 `
+
+export const MOF = {
+   CREATE: gql`
+      mutation CreateMode($object: ingredient_modeOfFulfillment_insert_input!) {
+         createModeOfFulfillment(object: $object) {
+            id
+         }
+      }
+   `,
+}

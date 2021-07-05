@@ -9,6 +9,7 @@ import EditPackagingTunnel from './EditPackagingTunnel'
 import PhotoTunnel from './PhotoTunnel'
 import PriceTunnel from './PriceTunnel'
 import LinkedRecipesTunnel from './LinkedRecipesTunnel'
+import ItemTypeTunnel from './ItemTypeTunnel'
 
 export {
    ProcessingsTunnel,
@@ -22,4 +23,5 @@ export {
    PhotoTunnel,
    PriceTunnel,
    LinkedRecipesTunnel,
+   ItemTypeTunnel,
 }

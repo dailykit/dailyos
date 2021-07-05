@@ -27,11 +27,13 @@ import {
    EditPackagingTunnel,
    EditSachetTunnel,
    ItemTunnel,
+   ItemTypeTunnel,
    PackagingTunnel,
    SachetTunnel,
 } from '../../tunnels'
 import { logger } from '../../../../../../../shared/utils'
 import { Tooltip, ErrorBoundary } from '../../../../../../../shared/components'
+import ItemListTunnel from '../../tunnels/ItemListTunnel'
 
 const Sachets = ({ state, openNutritionTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
@@ -78,19 +80,19 @@ const Sachets = ({ state, openNutritionTunnel }) => {
    return (
       <>
          <Tunnels tunnels={sachetTunnels}>
-            <Tunnel layer={1} size="lg">
+            <Tunnel layer={1} size="sm">
                <SachetTunnel
                   state={state}
                   openTunnel={openSachetTunnel}
                   closeTunnel={closeSachetTunnel}
                />
             </Tunnel>
-            <Tunnel layer={2}>
+            {/* <Tunnel layer={2}>
                <ItemTunnel closeTunnel={closeSachetTunnel} />
             </Tunnel>
             <Tunnel layer={3}>
                <PackagingTunnel closeTunnel={closeSachetTunnel} />
-            </Tunnel>
+            </Tunnel> */}
          </Tunnels>
          <Tunnels tunnels={editSachetTunnels}>
             <Tunnel layer={1} size="sm">
@@ -99,7 +101,7 @@ const Sachets = ({ state, openNutritionTunnel }) => {
                   closeTunnel={closeEditSachetTunnel}
                />
             </Tunnel>
-            <Tunnel layer={2} size="lg">
+            <Tunnel layer={2}>
                <EditModeTunnel
                   state={state}
                   closeTunnel={closeEditSachetTunnel}
@@ -107,9 +109,18 @@ const Sachets = ({ state, openNutritionTunnel }) => {
                />
             </Tunnel>
             <Tunnel layer={3}>
-               <EditItemTunnel closeTunnel={closeEditSachetTunnel} />
+               <ItemTypeTunnel
+                  closeTunnel={closeEditSachetTunnel}
+                  openTunnel={openEditSachetTunnel}
+               />
             </Tunnel>
             <Tunnel layer={4}>
+               <ItemListTunnel
+                  closeTunnel={closeEditSachetTunnel}
+                  openTunnel={openEditSachetTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={5}>
                <EditPackagingTunnel closeTunnel={closeEditSachetTunnel} />
             </Tunnel>
          </Tunnels>
@@ -191,6 +202,7 @@ const Sachets = ({ state, openNutritionTunnel }) => {
                      <StyledDisplay>
                         <Sachet
                            state={state}
+                           openSachetTunnel={openSachetTunnel}
                            openEditSachetTunnel={openEditSachetTunnel}
                            openNutritionTunnel={openNutritionTunnel}
                         />

@@ -10,6 +10,9 @@ import {
    Spacer,
    Collapsible,
    ComboButton,
+   Tunnels,
+   Tunnel,
+   useTunnel,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
 
@@ -25,13 +28,22 @@ import {
    Tooltip,
 } from '../../../../../../../shared/components'
 import { useDnd } from '../../../../../../../shared/components/DragNDrop/useDnd'
+import { ItemTypeTunnel } from '../../tunnels'
+import ItemListTunnel from '../../tunnels/ItemListTunnel'
 
-const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
+const Sachet = ({
+   state,
+   openNutritionTunnel,
+   openSachetTunnel,
+   openEditSachetTunnel,
+}) => {
    const { initiatePriority } = useDnd()
 
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
+
+   const [tunnels, openItemTunnel, closeItemTunnel] = useTunnel(2)
 
    const [sachet, setSachet] = React.useState(
       state.ingredientProcessings[ingredientState.processingIndex]
@@ -123,38 +135,42 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
                : null,
          },
       })
-      ingredientDispatch({
-         type: 'CURRENT_MODE',
-         payload: mode.type,
-      })
       openEditSachetTunnel(2)
    }
 
-   const renderModeType = type => {
-      switch (type) {
-         case 'realTime':
-            return 'Real Time'
-         case 'plannedLot':
-            return 'Planned Lot'
-         default:
-            return 'Invalid mode!'
+   const renderModeType = mode => {
+      if (mode.sachetItem) {
+         return 'Planned Lot'
       }
+      if (mode.bulkItem) {
+         return 'Real-time'
+      }
+      return '-'
    }
 
    const renderItemName = mode => {
-      if (!mode.sachetItem && !mode.bulkItem) return 'No item linked!'
-      switch (mode.type) {
-         case 'realTime':
-            return `${mode.bulkItem.supplierItem.name} ${mode.bulkItem.processingName}`
-         case 'plannedLot':
-            return `${mode.sachetItem.bulkItem.supplierItem.name} ${mode.sachetItem.bulkItem.processingName} ${mode.sachetItem.unitSize} ${mode.sachetItem.unit}`
-         default:
-            return 'Invalid mode!'
+      if (mode.sachetItem) {
+         return `${mode.sachetItem.bulkItem.supplierItem.name} ${mode.sachetItem.bulkItem.processingName} ${mode.sachetItem.unitSize} ${mode.sachetItem.unit}`
       }
+      if (mode.bulkItem) {
+         return `${mode.bulkItem.supplierItem.name} ${mode.bulkItem.processingName}`
+      }
+      return '-'
    }
 
    return (
       <>
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1}>
+               <ItemTypeTunnel
+                  closeTunnel={closeItemTunnel}
+                  openTunnel={openItemTunnel}
+               />
+            </Tunnel>
+            <Tunnel layer={2}>
+               <ItemListTunnel closeTunnel={closeItemTunnel} />
+            </Tunnel>
+         </Tunnels>
          <Container bottom="32">
             <Grid>
                <Flex container alignItems="center">
@@ -174,13 +190,14 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
                   justifyContent="space-between"
                >
                   <Flex container alignItems="center">
-                     <Text as="subtitle">Active: </Text>{' '}
-                     <Text as="title">
-                        {sachet.liveModeOfFulfillment?.type === 'realTime' &&
-                           'Real Time'}
-                        {sachet.liveModeOfFulfillment?.type === 'plannedLot' &&
-                           'Planned Lot'}
-                     </Text>
+                     {!!sachet.liveModeOfFulfillment && (
+                        <>
+                           <Text as="subtitle">Active: </Text>{' '}
+                           <Text as="title">
+                              {renderModeType(sachet.liveModeOfFulfillment)}
+                           </Text>
+                        </>
+                     )}
                   </Flex>
                   <IconButton
                      type="ghost"
@@ -201,7 +218,7 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
                <Collapsible
                   key={mode.id}
                   isDraggable
-                  title={renderModeType(mode.type)}
+                  title={renderModeType(mode)}
                   head={
                      <Flex
                         container
@@ -306,6 +323,19 @@ const Sachet = ({ state, openNutritionTunnel, openEditSachetTunnel }) => {
                />
             ))}
          </DragNDrop>
+         <Container top="32">
+            <ButtonTile
+               type="secondary"
+               text="Add Item"
+               onClick={() => {
+                  ingredientDispatch({
+                     type: 'SACHET_ID',
+                     payload: sachet.id,
+                  })
+                  openItemTunnel(1)
+               }}
+            />
+         </Container>
          <Container top="32">
             <Flex container maxWidth="200px">
                <Text as="subtitle"> Cost </Text>
