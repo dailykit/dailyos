@@ -87,12 +87,6 @@ const Sachets = ({ state, openNutritionTunnel }) => {
                   closeTunnel={closeSachetTunnel}
                />
             </Tunnel>
-            {/* <Tunnel layer={2}>
-               <ItemTunnel closeTunnel={closeSachetTunnel} />
-            </Tunnel>
-            <Tunnel layer={3}>
-               <PackagingTunnel closeTunnel={closeSachetTunnel} />
-            </Tunnel> */}
          </Tunnels>
          <Tunnels tunnels={editSachetTunnels}>
             <Tunnel layer={1} size="sm">
