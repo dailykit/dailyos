@@ -334,6 +334,7 @@ const Product = () => {
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
                            {renderOptions()}
+                           <Banner id="products-app-create-product-options-tab-bottom" />
                         </HorizontalTabPanel>
                      </HorizontalTabPanels>
                   </HorizontalTabs>

@@ -28,6 +28,7 @@ import RefreshIcon from './Refresh'
 import LinkIcon from './Link'
 import MaximizeIcon from './Maximixe'
 import MinimizeIcon from './Minimize'
+import PlayIcon from './Play'
 export {
    AddIcon,
    MenuIcon,
@@ -59,6 +60,7 @@ export {
    LinkIcon,
    MaximizeIcon,
    MinimizeIcon,
+   PlayIcon,
 }
 
 export * from './Tick'

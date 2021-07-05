@@ -150,6 +150,7 @@ export const GET_BANNER_DATA = gql`
                   }
                }
             }
+            content
          }
       }
    }
