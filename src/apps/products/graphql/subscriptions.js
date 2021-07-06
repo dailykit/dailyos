@@ -135,6 +135,10 @@ export const S_INGREDIENT = gql`
                   bulkItem {
                      id
                      processingName
+                     committed
+                     onHand
+                     awaiting
+                     unit
                      supplierItem {
                         id
                         name
@@ -144,6 +148,9 @@ export const S_INGREDIENT = gql`
                      id
                      unitSize
                      unit
+                     committed
+                     onHand
+                     awaiting
                      bulkItem {
                         id
                         processingName

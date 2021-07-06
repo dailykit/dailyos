@@ -158,6 +158,16 @@ const Sachet = ({
       return '-'
    }
 
+   const renderInventoryQuantity = (mode, category) => {
+      if (mode.bulkItem) {
+         return `${mode.bulkItem[category]} ${mode.bulkItem.unit}`
+      }
+      if (mode.sachetItem) {
+         return `${mode.sachetItem[category]} ${mode.sachetItem.unit}`
+      }
+      return '-'
+   }
+
    return (
       <>
          <Tunnels tunnels={tunnels}>
@@ -296,6 +306,7 @@ const Sachet = ({
                         height="60px"
                         margin="8px 0 0 0"
                         width="100%"
+                        justifyContent="space-between"
                      >
                         <Flex container alignItems="center">
                            <Flex>
@@ -315,6 +326,28 @@ const Sachet = ({
                               <Text as="p">
                                  {mode.operationConfig?.labelTemplate?.name ||
                                     '-'}
+                              </Text>
+                           </Flex>
+                        </Flex>
+                        <Flex container alignItems="center">
+                           <Flex>
+                              <Text as="subtitle">On Hand</Text>
+                              <Text as="p">
+                                 {renderInventoryQuantity(mode, 'onHand')}
+                              </Text>
+                           </Flex>
+                           <Spacer xAxis size="24px" />
+                           <Flex>
+                              <Text as="subtitle">Awaiting</Text>
+                              <Text as="p">
+                                 {renderInventoryQuantity(mode, 'awaiting')}
+                              </Text>
+                           </Flex>
+                           <Spacer xAxis size="24px" />
+                           <Flex>
+                              <Text as="subtitle">Committed</Text>
+                              <Text as="p">
+                                 {renderInventoryQuantity(mode, 'committed')}
                               </Text>
                            </Flex>
                         </Flex>
