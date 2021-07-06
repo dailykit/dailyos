@@ -30,6 +30,7 @@ import {
 import { useDnd } from '../../../../../../../shared/components/DragNDrop/useDnd'
 import { ItemTypeTunnel } from '../../tunnels'
 import ItemListTunnel from '../../tunnels/ItemListTunnel'
+import { DeleteIcon } from '../../../../../../../shared/assets/icons'
 
 const Sachet = ({
    state,
@@ -79,8 +80,12 @@ const Sachet = ({
 
    // Mutation
    const [updateMode] = useMutation(UPDATE_MODE, {
-      onCompleted: () => {
-         toast.success('Mode updated!')
+      onCompleted: data => {
+         if (data.updateModeOfFulfillment?.isArchived) {
+            toast.success('Item deleted successfully!')
+         } else {
+            toast.success('Item updated successfully!')
+         }
       },
       onError: error => {
          toast.error('Something went wrong!')
@@ -136,6 +141,17 @@ const Sachet = ({
          },
       })
       openEditSachetTunnel(2)
+   }
+
+   const deleteMOF = mode => {
+      updateMode({
+         variables: {
+            id: mode.id,
+            set: {
+               isArchived: true,
+            },
+         },
+      })
    }
 
    const renderModeType = mode => {
@@ -289,12 +305,21 @@ const Sachet = ({
                                  Make Available
                               </ComboButton>
                            )}
-                           <Spacer xAxis size="24px" />
+                           <Spacer xAxis size="16px" />
                            <IconButton
                               type="ghost"
+                              size="sm"
                               onClick={() => editMOF(mode)}
                            >
                               <EditIcon color="#00A7E1" />
+                           </IconButton>
+                           <Spacer xAxis size="8px" />
+                           <IconButton
+                              type="ghost"
+                              size="sm"
+                              onClick={() => deleteMOF(mode)}
+                           >
+                              <DeleteIcon color="#FF5A52" />
                            </IconButton>
                         </Flex>
                      </Flex>

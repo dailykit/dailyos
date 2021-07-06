@@ -108,6 +108,7 @@ export const UPDATE_MODE = gql`
    ) {
       updateModeOfFulfillment(pk_columns: { id: $id }, _set: $set) {
          id
+         isArchived
       }
    }
 `
