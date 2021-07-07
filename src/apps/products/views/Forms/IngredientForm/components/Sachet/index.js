@@ -94,21 +94,20 @@ const Sachet = ({
    })
 
    // Handlers
-   const setLive = (mode, val) => {
-      if (val) {
-         if (!(mode.operationConfig && (mode.bulkItem || mode.sachetItem))) {
-            return toast.error('Mode not configured!')
-         }
+   const setPublished = (mode, val) => {
+      if (!mode.isLive) {
+         return toast.error('Mode is not available!')
       }
       return updateMode({
          variables: {
             id: mode.id,
             set: {
-               isLive: val,
+               isPublished: val,
             },
          },
       })
    }
+
    const editMOF = mode => {
       ingredientDispatch({
          type: 'EDIT_MODE',
@@ -152,6 +151,20 @@ const Sachet = ({
             },
          },
       })
+   }
+
+   const renderLiveMOF = (id, modes = []) => {
+      const liveMode = modes.find(mode => mode.id === id)
+      if (liveMode) {
+         if (liveMode.sachetItem) {
+            return `${liveMode.sachetItem.bulkItem.supplierItem.name} ${liveMode.sachetItem.bulkItem.processingName} ${liveMode.sachetItem.unitSize} ${liveMode.sachetItem.unit}`
+         }
+         if (liveMode.bulkItem) {
+            return `${liveMode.bulkItem.supplierItem.name} ${liveMode.bulkItem.processingName}`
+         }
+         return 'NA'
+      }
+      return 'NA'
    }
 
    const renderModeType = mode => {
@@ -216,14 +229,14 @@ const Sachet = ({
                   justifyContent="space-between"
                >
                   <Flex container alignItems="center">
-                     {!!sachet.liveModeOfFulfillment && (
-                        <>
-                           <Text as="subtitle">Active: </Text>{' '}
-                           <Text as="title">
-                              {renderModeType(sachet.liveModeOfFulfillment)}
-                           </Text>
-                        </>
-                     )}
+                     <Text as="subtitle">Active: </Text>
+                     <Spacer xAxis size="8px" />
+                     <Text as="text2">
+                        {renderLiveMOF(
+                           sachet.liveMOF,
+                           sachet.modeOfFulfillments
+                        )}
+                     </Text>
                   </Flex>
                   <IconButton
                      type="ghost"
@@ -278,11 +291,13 @@ const Sachet = ({
                            <Spacer xAxis size="24px" />
                         </Flex>
                         <Flex container alignItems="center">
-                           {mode.isLive ? (
+                           {mode.isPublished ? (
                               <ComboButton
                                  type="ghost"
                                  size="sm"
-                                 onClick={() => setLive(mode, !mode.isLive)}
+                                 onClick={() =>
+                                    setPublished(mode, !mode.isPublished)
+                                 }
                               >
                                  <CloseIcon
                                     color="#36B6E2"
@@ -295,7 +310,9 @@ const Sachet = ({
                               <ComboButton
                                  type="outline"
                                  size="sm"
-                                 onClick={() => setLive(mode, !mode.isLive)}
+                                 onClick={() =>
+                                    setPublished(mode, !mode.isPublished)
+                                 }
                               >
                                  <TickIcon
                                     color="#36B6E2"
