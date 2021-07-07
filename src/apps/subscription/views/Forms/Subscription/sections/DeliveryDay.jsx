@@ -39,14 +39,15 @@ const DeliveryDay = ({ id }) => {
    const [areasTotal, setAreasTotal] = React.useState(0)
    const [customersTotal, setCustomersTotal] = React.useState(0)
    const [occurencesTotal, setOccurencesTotal] = React.useState(0)
-   const { error, loading, data: { subscription = {} } = {} } = useSubscription(
-      SUBSCRIPTION,
-      {
-         variables: {
-            id,
-         },
-      }
-   )
+   const {
+      error,
+      loading,
+      data: { subscription = {} } = {},
+   } = useSubscription(SUBSCRIPTION, {
+      variables: {
+         id,
+      },
+   })
 
    if (loading) return <InlineLoader />
    if (error) {
@@ -102,6 +103,7 @@ const DeliveryDay = ({ id }) => {
                </HorizontalTabPanel>
             </HorizontalTabPanels>
          </HorizontalTabs>
+         <Banner id="subscription-app-subscription-details-servings-subscription-listing-bottom" />
          <ErrorBoundary rootRoute="/subscription/subscriptions">
             <Tunnels tunnels={tunnels}>
                <Tunnel layer="1">
