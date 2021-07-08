@@ -9,6 +9,8 @@ import moment from 'moment'
 import useIsOnViewPort from '../../hooks/useIsOnViewport'
 import ActionButtons from './components/ActionButtons'
 import { Wrapper } from './styles'
+import { toast } from 'react-toastify'
+import { logger } from '../../utils'
 
 const BannerFile = ({ file, id, handleClose, userEmail }) => {
    const [isOpen, setIsOpen] = React.useState(true)
@@ -18,12 +20,20 @@ const BannerFile = ({ file, id, handleClose, userEmail }) => {
 
    const [updateShownCount] = useMutation(UPDATE_SHOWN_COUNT, {
       skip: !userEmail,
-      onError: err => console.error(err),
+      onError: err => {
+         toast.error('Something went wrong !')
+         logger(err)
+         return null
+      },
    })
 
    const [updateLastVisited] = useMutation(UPDATE_LAST_VISITED, {
       skip: !userEmail,
-      onError: err => console.error(err),
+      onError: err => {
+         toast.error('Something went wrong !')
+         logger(err)
+         return null
+      },
    })
 
    const { data, error, loading } = useQuery(GET_SHOW_COUNT, {
@@ -83,7 +93,6 @@ const BannerFile = ({ file, id, handleClose, userEmail }) => {
          {file.divId === id && file.condition.isValid && (
             <>
                <ActionButtons isMinimized={isOpen} setIsMinimized={setIsOpen} />
-
                <div
                   id={`${id}-${file.file.id}`}
                   style={{ display: isOpen ? 'block ' : 'none' }}
