@@ -16,6 +16,10 @@ const Styles = {
       display: flex;
       justify-content: center;
       cursor: pointer;
+      position: absolute;
+      top: -44px;
+      z-index: -1;
+      left: 45%;
    `,
 
    OptionsWrapper: styled.div`

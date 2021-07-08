@@ -1,49 +1,43 @@
 import React from 'react'
-import styled from 'styled-components'
 
 const MenuIcon = ({ isOpen }) => {
    return (
       <>
          {isOpen ? (
             <svg
-               width="130"
-               height="42"
-               viewBox="0 0 130 42"
+               width="86"
+               height="47"
+               viewBox="0 0 86 47"
                fill="none"
                xmlns="http://www.w3.org/2000/svg"
             >
-               <g clipPath="url(#clip0)">
-                  <g filter="url(#filter0_ddddii)">
-                     <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M75.1981 34C78.1516 31.2605 80 27.3461 80 23C80 14.7157 73.2843 8 65 8C56.7157 8 50 14.7157 50 23C50 27.3461 51.8484 31.2605 54.8019 34H33.6788C28.0088 34 22.7798 37.0582 20 42H110C106.89 37.0233 101.435 34 95.566 34H75.1981Z"
-                        fill="white"
-                     />
-                  </g>
-                  <g filter="url(#filter1_ddiiii)">
-                     <circle cx="65" cy="23" r="11" fill="white" />
-                  </g>
+               <g filter="url(#filter0_ddddii)">
+                  <circle cx="43" cy="20" r="14" fill="url(#paint0_linear)" />
+               </g>
+               <g filter="url(#filter1_ddiiii)">
+                  <circle cx="43" cy="20" r="11" fill="white" />
+               </g>
+               <path
+                  d="M38 20.4257C38 20.662 38.1045 20.8878 38.2854 21.0398L42.4854 24.5678C42.783 24.8177 43.217 24.8177 43.5146 24.5678L47.7146 21.0398C47.8955 20.8878 48 20.662 48 20.4257V20.4257C48 19.7402 47.1941 19.3651 46.6761 19.8141L43.5239 22.5459C43.2233 22.8065 42.7767 22.8065 42.4761 22.5459L39.3239 19.8141C38.8059 19.3651 38 19.7402 38 20.4257V20.4257Z"
+                  fill="#919699"
+               />
+               <path
+                  d="M40 17.3608C40 17.5137 40.062 17.6599 40.1719 17.7661L42.583 20.0969C42.8155 20.3217 43.1845 20.3217 43.417 20.0969L45.8281 17.7661C45.938 17.6599 46 17.5137 46 17.3608V17.3608C46 16.8586 45.3928 16.6071 45.0377 16.9623L43.4243 18.5757C43.19 18.81 42.81 18.81 42.5757 18.5757L40.9623 16.9623C40.6072 16.6071 40 16.8586 40 17.3608V17.3608Z"
+                  fill="#919699"
+               />
+               <g filter="url(#filter2_ddddii)">
                   <path
-                     fillRule="evenodd"
-                     clipRule="evenodd"
-                     d="M65.0005 26.958L68.854 23.1045C69.0493 22.9092 69.0493 22.5926 68.854 22.3973C68.6588 22.2021 68.3422 22.2021 68.1469 22.3973L65.0005 25.5438L61.854 22.3973C61.6588 22.2021 61.3422 22.2021 61.1469 22.3973C60.9517 22.5926 60.9517 22.9092 61.1469 23.1045L65.0005 26.958Z"
-                     fill="#919699"
-                  />
-                  <path
-                     fillRule="evenodd"
-                     clipRule="evenodd"
-                     d="M67.0892 20.8042L65.0005 22.5791L62.9118 20.8042C62.6967 20.6214 62.6967 20.3055 62.9118 20.1227C63.1028 19.9605 63.3982 19.9605 63.5892 20.1227L65.0005 21.3221L66.4118 20.1227C66.6028 19.9605 66.8982 19.9605 67.0892 20.1227C67.3043 20.3055 67.3043 20.6214 67.0892 20.8042Z"
-                     fill="#919699"
+                     d="M3 44C3 38.4772 7.47715 34 13 34H73C78.5228 34 83 38.4772 83 44V44H3V44Z"
+                     fill="url(#paint1_linear)"
                   />
                </g>
                <defs>
                   <filter
                      id="filter0_ddddii"
-                     x="5"
-                     y="-7"
-                     width="123"
-                     height="67"
+                     x="23"
+                     y="0"
+                     width="41"
+                     height="41"
                      filterUnits="userSpaceOnUse"
                      colorInterpolationFilters="sRGB"
                   >
@@ -53,11 +47,11 @@ const MenuIcon = ({ isOpen }) => {
                         type="matrix"
                         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
                      />
-                     <feOffset dx="5" dy="5" />
-                     <feGaussianBlur stdDeviation="6.5" />
+                     <feOffset dx="2" dy="2" />
+                     <feGaussianBlur stdDeviation="2.5" />
                      <feColorMatrix
                         type="matrix"
-                        values="0 0 0 0 0.788235 0 0 0 0 0.788235 0 0 0 0 0.788235 0 0 0 0.9 0"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.9 0"
                      />
                      <feBlend
                         mode="normal"
@@ -69,8 +63,8 @@ const MenuIcon = ({ isOpen }) => {
                         type="matrix"
                         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
                      />
-                     <feOffset dx="-5" dy="-5" />
-                     <feGaussianBlur stdDeviation="5" />
+                     <feOffset dx="-2" dy="-2" />
+                     <feGaussianBlur stdDeviation="2" />
                      <feColorMatrix
                         type="matrix"
                         values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.9 0"
@@ -85,11 +79,11 @@ const MenuIcon = ({ isOpen }) => {
                         type="matrix"
                         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
                      />
-                     <feOffset dx="5" dy="-5" />
-                     <feGaussianBlur stdDeviation="5" />
+                     <feOffset dx="2" dy="-2" />
+                     <feGaussianBlur stdDeviation="2" />
                      <feColorMatrix
                         type="matrix"
-                        values="0 0 0 0 0.788235 0 0 0 0 0.788235 0 0 0 0 0.788235 0 0 0 0.2 0"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.2 0"
                      />
                      <feBlend
                         mode="normal"
@@ -101,11 +95,11 @@ const MenuIcon = ({ isOpen }) => {
                         type="matrix"
                         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
                      />
-                     <feOffset dx="-5" dy="5" />
-                     <feGaussianBlur stdDeviation="5" />
+                     <feOffset dx="-2" dy="2" />
+                     <feGaussianBlur stdDeviation="2" />
                      <feColorMatrix
                         type="matrix"
-                        values="0 0 0 0 0.788235 0 0 0 0 0.788235 0 0 0 0 0.788235 0 0 0 0.2 0"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.2 0"
                      />
                      <feBlend
                         mode="normal"
@@ -134,7 +128,7 @@ const MenuIcon = ({ isOpen }) => {
                      />
                      <feColorMatrix
                         type="matrix"
-                        values="0 0 0 0 0.788235 0 0 0 0 0.788235 0 0 0 0 0.788235 0 0 0 0.5 0"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.5 0"
                      />
                      <feBlend
                         mode="normal"
@@ -167,8 +161,8 @@ const MenuIcon = ({ isOpen }) => {
                   </filter>
                   <filter
                      id="filter1_ddiiii"
-                     x="51"
-                     y="9"
+                     x="29"
+                     y="6"
                      width="28"
                      height="28"
                      filterUnits="userSpaceOnUse"
@@ -184,7 +178,7 @@ const MenuIcon = ({ isOpen }) => {
                      <feGaussianBlur stdDeviation="1" />
                      <feColorMatrix
                         type="matrix"
-                        values="0 0 0 0 0.85098 0 0 0 0 0.85098 0 0 0 0 0.85098 0 0 0 0.5 0"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.5 0"
                      />
                      <feBlend
                         mode="normal"
@@ -219,8 +213,8 @@ const MenuIcon = ({ isOpen }) => {
                         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
                         result="hardAlpha"
                      />
-                     <feOffset dx="3" dy="3" />
-                     <feGaussianBlur stdDeviation="4" />
+                     <feOffset dx="1" dy="1" />
+                     <feGaussianBlur stdDeviation="1.5" />
                      <feComposite
                         in2="hardAlpha"
                         operator="arithmetic"
@@ -229,7 +223,7 @@ const MenuIcon = ({ isOpen }) => {
                      />
                      <feColorMatrix
                         type="matrix"
-                        values="0 0 0 0 0.85098 0 0 0 0 0.85098 0 0 0 0 0.85098 0 0 0 0.9 0"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.9 0"
                      />
                      <feBlend
                         mode="normal"
@@ -242,8 +236,8 @@ const MenuIcon = ({ isOpen }) => {
                         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
                         result="hardAlpha"
                      />
-                     <feOffset dx="-3" dy="-3" />
-                     <feGaussianBlur stdDeviation="3" />
+                     <feOffset dx="-1" dy="-1" />
+                     <feGaussianBlur stdDeviation="1" />
                      <feComposite
                         in2="hardAlpha"
                         operator="arithmetic"
@@ -265,8 +259,8 @@ const MenuIcon = ({ isOpen }) => {
                         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
                         result="hardAlpha"
                      />
-                     <feOffset dx="3" dy="-3" />
-                     <feGaussianBlur stdDeviation="3" />
+                     <feOffset dx="1" dy="-1" />
+                     <feGaussianBlur stdDeviation="1" />
                      <feComposite
                         in2="hardAlpha"
                         operator="arithmetic"
@@ -275,7 +269,7 @@ const MenuIcon = ({ isOpen }) => {
                      />
                      <feColorMatrix
                         type="matrix"
-                        values="0 0 0 0 0.85098 0 0 0 0 0.85098 0 0 0 0 0.85098 0 0 0 0.2 0"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.2 0"
                      />
                      <feBlend
                         mode="normal"
@@ -288,8 +282,8 @@ const MenuIcon = ({ isOpen }) => {
                         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
                         result="hardAlpha"
                      />
-                     <feOffset dx="-3" dy="3" />
-                     <feGaussianBlur stdDeviation="3" />
+                     <feOffset dx="-1" dy="1" />
+                     <feGaussianBlur stdDeviation="1" />
                      <feComposite
                         in2="hardAlpha"
                         operator="arithmetic"
@@ -298,7 +292,7 @@ const MenuIcon = ({ isOpen }) => {
                      />
                      <feColorMatrix
                         type="matrix"
-                        values="0 0 0 0 0.85098 0 0 0 0 0.85098 0 0 0 0 0.85098 0 0 0 0.2 0"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.2 0"
                      />
                      <feBlend
                         mode="normal"
@@ -306,52 +300,192 @@ const MenuIcon = ({ isOpen }) => {
                         result="effect6_innerShadow"
                      />
                   </filter>
-                  <clipPath id="clip0">
-                     <rect width="130" height="42" fill="white" />
-                  </clipPath>
+                  <filter
+                     id="filter2_ddddii"
+                     x="0"
+                     y="31"
+                     width="86"
+                     height="16"
+                     filterUnits="userSpaceOnUse"
+                     colorInterpolationFilters="sRGB"
+                  >
+                     <feFlood floodOpacity="0" result="BackgroundImageFix" />
+                     <feColorMatrix
+                        in="SourceAlpha"
+                        type="matrix"
+                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                     />
+                     <feOffset dx="1" dy="1" />
+                     <feGaussianBlur stdDeviation="1" />
+                     <feColorMatrix
+                        type="matrix"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.9 0"
+                     />
+                     <feBlend
+                        mode="normal"
+                        in2="BackgroundImageFix"
+                        result="effect1_dropShadow"
+                     />
+                     <feColorMatrix
+                        in="SourceAlpha"
+                        type="matrix"
+                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                     />
+                     <feOffset dx="-1" dy="-1" />
+                     <feGaussianBlur stdDeviation="1" />
+                     <feColorMatrix
+                        type="matrix"
+                        values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.9 0"
+                     />
+                     <feBlend
+                        mode="normal"
+                        in2="effect1_dropShadow"
+                        result="effect2_dropShadow"
+                     />
+                     <feColorMatrix
+                        in="SourceAlpha"
+                        type="matrix"
+                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                     />
+                     <feOffset dx="1" dy="-1" />
+                     <feGaussianBlur stdDeviation="1" />
+                     <feColorMatrix
+                        type="matrix"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.2 0"
+                     />
+                     <feBlend
+                        mode="normal"
+                        in2="effect2_dropShadow"
+                        result="effect3_dropShadow"
+                     />
+                     <feColorMatrix
+                        in="SourceAlpha"
+                        type="matrix"
+                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                     />
+                     <feOffset dx="-1" dy="1" />
+                     <feGaussianBlur stdDeviation="1" />
+                     <feColorMatrix
+                        type="matrix"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.2 0"
+                     />
+                     <feBlend
+                        mode="normal"
+                        in2="effect3_dropShadow"
+                        result="effect4_dropShadow"
+                     />
+                     <feBlend
+                        mode="normal"
+                        in="SourceGraphic"
+                        in2="effect4_dropShadow"
+                        result="shape"
+                     />
+                     <feColorMatrix
+                        in="SourceAlpha"
+                        type="matrix"
+                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                        result="hardAlpha"
+                     />
+                     <feOffset dx="-1" dy="-1" />
+                     <feGaussianBlur stdDeviation="1" />
+                     <feComposite
+                        in2="hardAlpha"
+                        operator="arithmetic"
+                        k2="-1"
+                        k3="1"
+                     />
+                     <feColorMatrix
+                        type="matrix"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.5 0"
+                     />
+                     <feBlend
+                        mode="normal"
+                        in2="shape"
+                        result="effect5_innerShadow"
+                     />
+                     <feColorMatrix
+                        in="SourceAlpha"
+                        type="matrix"
+                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                        result="hardAlpha"
+                     />
+                     <feOffset dx="1" dy="1" />
+                     <feGaussianBlur stdDeviation="1" />
+                     <feComposite
+                        in2="hardAlpha"
+                        operator="arithmetic"
+                        k2="-1"
+                        k3="1"
+                     />
+                     <feColorMatrix
+                        type="matrix"
+                        values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.3 0"
+                     />
+                     <feBlend
+                        mode="normal"
+                        in2="effect5_innerShadow"
+                        result="effect6_innerShadow"
+                     />
+                  </filter>
+                  <linearGradient
+                     id="paint0_linear"
+                     x1="29"
+                     y1="6"
+                     x2="57"
+                     y2="34"
+                     gradientUnits="userSpaceOnUse"
+                  >
+                     <stop stop-color="white" />
+                     <stop offset="1" stop-color="white" />
+                  </linearGradient>
+                  <linearGradient
+                     id="paint1_linear"
+                     x1="3"
+                     y1="34"
+                     x2="5.46154"
+                     y2="53.6923"
+                     gradientUnits="userSpaceOnUse"
+                  >
+                     <stop stop-color="white" />
+                     <stop offset="1" stop-color="white" />
+                  </linearGradient>
                </defs>
             </svg>
          ) : (
             <svg
-               width="130"
-               height="42"
-               viewBox="0 0 130 42"
+               width="86"
+               height="47"
+               viewBox="0 0 86 47"
                fill="none"
                xmlns="http://www.w3.org/2000/svg"
             >
-               <g clipPath="url(#clip0)">
-                  <rect width="130" height="42" fill="white" />
-                  <g filter="url(#filter0_ddddii)">
-                     <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M75.1981 34C78.1516 31.2605 80 27.3461 80 23C80 14.7157 73.2843 8 65 8C56.7157 8 50 14.7157 50 23C50 27.3461 51.8484 31.2605 54.8019 34H33.6788C28.0088 34 22.7798 37.0582 20 42H110C106.89 37.0233 101.435 34 95.566 34H75.1981Z"
-                        fill="white"
-                     />
-                  </g>
-                  <g filter="url(#filter1_ddiiii)">
-                     <circle cx="65" cy="23" r="11" fill="white" />
-                  </g>
+               <g filter="url(#filter0_ddddii)">
+                  <circle cx="43" cy="20" r="14" fill="url(#paint0_linear)" />
+               </g>
+               <g filter="url(#filter1_ddiiii)">
+                  <circle cx="43" cy="20" r="11" fill="white" />
+               </g>
+               <path
+                  d="M38 20.5743C38 20.338 38.1045 20.1122 38.2854 19.9602L42.4854 16.4322C42.783 16.1823 43.217 16.1823 43.5146 16.4322L47.7146 19.9602C47.8955 20.1122 48 20.338 48 20.5743V20.5743C48 21.2598 47.1941 21.6349 46.6761 21.1859L43.5239 18.4541C43.2233 18.1935 42.7767 18.1935 42.4761 18.4541L39.3239 21.1859C38.8059 21.6349 38 21.2598 38 20.5743V20.5743Z"
+                  fill="#919699"
+               />
+               <path
+                  d="M40 23.6392C40 23.4863 40.062 23.3401 40.1719 23.2339L42.583 20.9031C42.8155 20.6783 43.1845 20.6783 43.417 20.9031L45.8281 23.2339C45.938 23.3401 46 23.4863 46 23.6392V23.6392C46 24.1414 45.3928 24.3929 45.0377 24.0377L43.4243 22.4243C43.19 22.19 42.81 22.19 42.5757 22.4243L40.9623 24.0377C40.6072 24.3929 40 24.1414 40 23.6392V23.6392Z"
+                  fill="#919699"
+               />
+               <g filter="url(#filter2_ddddii)">
                   <path
-                     fillRule="evenodd"
-                     clipRule="evenodd"
-                     d="M65.0005 20.001L68.854 23.8545C69.0493 24.0498 69.0493 24.3664 68.854 24.5616C68.6588 24.7569 68.3422 24.7569 68.1469 24.5616L65.0005 21.4152L61.854 24.5616C61.6588 24.7569 61.3422 24.7569 61.1469 24.5616C60.9517 24.3664 60.9517 24.0498 61.1469 23.8545L65.0005 20.001Z"
-                     fill="#919699"
-                  />
-                  <path
-                     fillRule="evenodd"
-                     clipRule="evenodd"
-                     d="M67.0892 26.1548L65.0005 24.3799L62.9118 26.1548C62.6967 26.3376 62.6967 26.6534 62.9118 26.8362C63.1028 26.9985 63.3982 26.9985 63.5892 26.8362L65.0005 25.6369L66.4118 26.8362C66.6028 26.9985 66.8982 26.9985 67.0892 26.8362C67.3043 26.6534 67.3043 26.3376 67.0892 26.1548Z"
-                     fill="#919699"
+                     d="M3 44C3 38.4772 7.47715 34 13 34H73C78.5228 34 83 38.4772 83 44V44H3V44Z"
+                     fill="url(#paint1_linear)"
                   />
                </g>
                <defs>
                   <filter
                      id="filter0_ddddii"
-                     x="5"
-                     y="-7"
-                     width="123"
-                     height="67"
+                     x="23"
+                     y="0"
+                     width="41"
+                     height="41"
                      filterUnits="userSpaceOnUse"
                      colorInterpolationFilters="sRGB"
                   >
@@ -361,11 +495,11 @@ const MenuIcon = ({ isOpen }) => {
                         type="matrix"
                         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
                      />
-                     <feOffset dx="5" dy="5" />
-                     <feGaussianBlur stdDeviation="6.5" />
+                     <feOffset dx="2" dy="2" />
+                     <feGaussianBlur stdDeviation="2.5" />
                      <feColorMatrix
                         type="matrix"
-                        values="0 0 0 0 0.788235 0 0 0 0 0.788235 0 0 0 0 0.788235 0 0 0 0.9 0"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.9 0"
                      />
                      <feBlend
                         mode="normal"
@@ -377,8 +511,8 @@ const MenuIcon = ({ isOpen }) => {
                         type="matrix"
                         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
                      />
-                     <feOffset dx="-5" dy="-5" />
-                     <feGaussianBlur stdDeviation="5" />
+                     <feOffset dx="-2" dy="-2" />
+                     <feGaussianBlur stdDeviation="2" />
                      <feColorMatrix
                         type="matrix"
                         values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.9 0"
@@ -393,11 +527,11 @@ const MenuIcon = ({ isOpen }) => {
                         type="matrix"
                         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
                      />
-                     <feOffset dx="5" dy="-5" />
-                     <feGaussianBlur stdDeviation="5" />
+                     <feOffset dx="2" dy="-2" />
+                     <feGaussianBlur stdDeviation="2" />
                      <feColorMatrix
                         type="matrix"
-                        values="0 0 0 0 0.788235 0 0 0 0 0.788235 0 0 0 0 0.788235 0 0 0 0.2 0"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.2 0"
                      />
                      <feBlend
                         mode="normal"
@@ -409,11 +543,11 @@ const MenuIcon = ({ isOpen }) => {
                         type="matrix"
                         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
                      />
-                     <feOffset dx="-5" dy="5" />
-                     <feGaussianBlur stdDeviation="5" />
+                     <feOffset dx="-2" dy="2" />
+                     <feGaussianBlur stdDeviation="2" />
                      <feColorMatrix
                         type="matrix"
-                        values="0 0 0 0 0.788235 0 0 0 0 0.788235 0 0 0 0 0.788235 0 0 0 0.2 0"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.2 0"
                      />
                      <feBlend
                         mode="normal"
@@ -442,7 +576,7 @@ const MenuIcon = ({ isOpen }) => {
                      />
                      <feColorMatrix
                         type="matrix"
-                        values="0 0 0 0 0.788235 0 0 0 0 0.788235 0 0 0 0 0.788235 0 0 0 0.5 0"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.5 0"
                      />
                      <feBlend
                         mode="normal"
@@ -475,8 +609,8 @@ const MenuIcon = ({ isOpen }) => {
                   </filter>
                   <filter
                      id="filter1_ddiiii"
-                     x="51"
-                     y="9"
+                     x="29"
+                     y="6"
                      width="28"
                      height="28"
                      filterUnits="userSpaceOnUse"
@@ -492,7 +626,7 @@ const MenuIcon = ({ isOpen }) => {
                      <feGaussianBlur stdDeviation="1" />
                      <feColorMatrix
                         type="matrix"
-                        values="0 0 0 0 0.85098 0 0 0 0 0.85098 0 0 0 0 0.85098 0 0 0 0.5 0"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.5 0"
                      />
                      <feBlend
                         mode="normal"
@@ -527,8 +661,8 @@ const MenuIcon = ({ isOpen }) => {
                         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
                         result="hardAlpha"
                      />
-                     <feOffset dx="3" dy="3" />
-                     <feGaussianBlur stdDeviation="4" />
+                     <feOffset dx="1" dy="1" />
+                     <feGaussianBlur stdDeviation="1.5" />
                      <feComposite
                         in2="hardAlpha"
                         operator="arithmetic"
@@ -537,7 +671,7 @@ const MenuIcon = ({ isOpen }) => {
                      />
                      <feColorMatrix
                         type="matrix"
-                        values="0 0 0 0 0.85098 0 0 0 0 0.85098 0 0 0 0 0.85098 0 0 0 0.9 0"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.9 0"
                      />
                      <feBlend
                         mode="normal"
@@ -550,8 +684,8 @@ const MenuIcon = ({ isOpen }) => {
                         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
                         result="hardAlpha"
                      />
-                     <feOffset dx="-3" dy="-3" />
-                     <feGaussianBlur stdDeviation="3" />
+                     <feOffset dx="-1" dy="-1" />
+                     <feGaussianBlur stdDeviation="1" />
                      <feComposite
                         in2="hardAlpha"
                         operator="arithmetic"
@@ -573,8 +707,8 @@ const MenuIcon = ({ isOpen }) => {
                         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
                         result="hardAlpha"
                      />
-                     <feOffset dx="3" dy="-3" />
-                     <feGaussianBlur stdDeviation="3" />
+                     <feOffset dx="1" dy="-1" />
+                     <feGaussianBlur stdDeviation="1" />
                      <feComposite
                         in2="hardAlpha"
                         operator="arithmetic"
@@ -583,7 +717,7 @@ const MenuIcon = ({ isOpen }) => {
                      />
                      <feColorMatrix
                         type="matrix"
-                        values="0 0 0 0 0.85098 0 0 0 0 0.85098 0 0 0 0 0.85098 0 0 0 0.2 0"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.2 0"
                      />
                      <feBlend
                         mode="normal"
@@ -596,8 +730,8 @@ const MenuIcon = ({ isOpen }) => {
                         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
                         result="hardAlpha"
                      />
-                     <feOffset dx="-3" dy="3" />
-                     <feGaussianBlur stdDeviation="3" />
+                     <feOffset dx="-1" dy="1" />
+                     <feGaussianBlur stdDeviation="1" />
                      <feComposite
                         in2="hardAlpha"
                         operator="arithmetic"
@@ -606,7 +740,7 @@ const MenuIcon = ({ isOpen }) => {
                      />
                      <feColorMatrix
                         type="matrix"
-                        values="0 0 0 0 0.85098 0 0 0 0 0.85098 0 0 0 0 0.85098 0 0 0 0.2 0"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.2 0"
                      />
                      <feBlend
                         mode="normal"
@@ -614,9 +748,155 @@ const MenuIcon = ({ isOpen }) => {
                         result="effect6_innerShadow"
                      />
                   </filter>
-                  <clipPath id="clip0">
-                     <rect width="130" height="42" fill="white" />
-                  </clipPath>
+                  <filter
+                     id="filter2_ddddii"
+                     x="0"
+                     y="31"
+                     width="86"
+                     height="16"
+                     filterUnits="userSpaceOnUse"
+                     colorInterpolationFilters="sRGB"
+                  >
+                     <feFlood floodOpacity="0" result="BackgroundImageFix" />
+                     <feColorMatrix
+                        in="SourceAlpha"
+                        type="matrix"
+                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                     />
+                     <feOffset dx="1" dy="1" />
+                     <feGaussianBlur stdDeviation="1" />
+                     <feColorMatrix
+                        type="matrix"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.9 0"
+                     />
+                     <feBlend
+                        mode="normal"
+                        in2="BackgroundImageFix"
+                        result="effect1_dropShadow"
+                     />
+                     <feColorMatrix
+                        in="SourceAlpha"
+                        type="matrix"
+                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                     />
+                     <feOffset dx="-1" dy="-1" />
+                     <feGaussianBlur stdDeviation="1" />
+                     <feColorMatrix
+                        type="matrix"
+                        values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.9 0"
+                     />
+                     <feBlend
+                        mode="normal"
+                        in2="effect1_dropShadow"
+                        result="effect2_dropShadow"
+                     />
+                     <feColorMatrix
+                        in="SourceAlpha"
+                        type="matrix"
+                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                     />
+                     <feOffset dx="1" dy="-1" />
+                     <feGaussianBlur stdDeviation="1" />
+                     <feColorMatrix
+                        type="matrix"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.2 0"
+                     />
+                     <feBlend
+                        mode="normal"
+                        in2="effect2_dropShadow"
+                        result="effect3_dropShadow"
+                     />
+                     <feColorMatrix
+                        in="SourceAlpha"
+                        type="matrix"
+                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                     />
+                     <feOffset dx="-1" dy="1" />
+                     <feGaussianBlur stdDeviation="1" />
+                     <feColorMatrix
+                        type="matrix"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.2 0"
+                     />
+                     <feBlend
+                        mode="normal"
+                        in2="effect3_dropShadow"
+                        result="effect4_dropShadow"
+                     />
+                     <feBlend
+                        mode="normal"
+                        in="SourceGraphic"
+                        in2="effect4_dropShadow"
+                        result="shape"
+                     />
+                     <feColorMatrix
+                        in="SourceAlpha"
+                        type="matrix"
+                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                        result="hardAlpha"
+                     />
+                     <feOffset dx="-1" dy="-1" />
+                     <feGaussianBlur stdDeviation="1" />
+                     <feComposite
+                        in2="hardAlpha"
+                        operator="arithmetic"
+                        k2="-1"
+                        k3="1"
+                     />
+                     <feColorMatrix
+                        type="matrix"
+                        values="0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0 0.937255 0 0 0 0.5 0"
+                     />
+                     <feBlend
+                        mode="normal"
+                        in2="shape"
+                        result="effect5_innerShadow"
+                     />
+                     <feColorMatrix
+                        in="SourceAlpha"
+                        type="matrix"
+                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                        result="hardAlpha"
+                     />
+                     <feOffset dx="1" dy="1" />
+                     <feGaussianBlur stdDeviation="1" />
+                     <feComposite
+                        in2="hardAlpha"
+                        operator="arithmetic"
+                        k2="-1"
+                        k3="1"
+                     />
+                     <feColorMatrix
+                        type="matrix"
+                        values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.3 0"
+                     />
+                     <feBlend
+                        mode="normal"
+                        in2="effect5_innerShadow"
+                        result="effect6_innerShadow"
+                     />
+                  </filter>
+                  <linearGradient
+                     id="paint0_linear"
+                     x1="29"
+                     y1="6"
+                     x2="57"
+                     y2="34"
+                     gradientUnits="userSpaceOnUse"
+                  >
+                     <stop stop-color="white" />
+                     <stop offset="1" stop-color="white" />
+                  </linearGradient>
+                  <linearGradient
+                     id="paint1_linear"
+                     x1="3"
+                     y1="34"
+                     x2="5.46154"
+                     y2="53.6923"
+                     gradientUnits="userSpaceOnUse"
+                  >
+                     <stop stop-color="white" />
+                     <stop offset="1" stop-color="white" />
+                  </linearGradient>
                </defs>
             </svg>
          )}
