@@ -25,6 +25,7 @@ import {
    HorizontalTabList,
    HorizontalTabPanel,
    HorizontalTabPanels,
+   DropdownButton,
 } from '@dailykit/ui'
 
 import { Products } from './sections'
@@ -40,7 +41,6 @@ import {
    Tooltip,
    ErrorState,
    InlineLoader,
-   DropdownButton,
    Banner,
 } from '../../../../shared/components'
 
@@ -80,17 +80,18 @@ const Order = () => {
       }
    )
 
-   const { loading, error, data: { order = {} } = {} } = useSubscription(
-      QUERIES.ORDER.DETAILS,
-      {
-         variables: {
-            id: params.id,
-         },
-         onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
-            setIsThirdParty(Boolean(data?.order?.thirdPartyOrderId))
-         },
-      }
-   )
+   const {
+      loading,
+      error,
+      data: { order = {} } = {},
+   } = useSubscription(QUERIES.ORDER.DETAILS, {
+      variables: {
+         id: params.id,
+      },
+      onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
+         setIsThirdParty(Boolean(data?.order?.thirdPartyOrderId))
+      },
+   })
 
    const {
       loading: productsLoading,

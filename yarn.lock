@@ -1355,10 +1355,10 @@
     react-tag-autocomplete "^5.7.1"
     tabulator-tables "4.7.2"
 
-"@dailykit/ui@0.8.44":
-  version "0.8.44"
-  resolved "https://registry.yarnpkg.com/@dailykit/ui/-/ui-0.8.44.tgz#b1dbf46dd3b2daeab2bec24b3909b15e74ab8c02"
-  integrity sha512-OM7QAQAFlDkUj/oGE72Ysyi0bROhhqzKM0snz9vncezIq/hVNWJAdwCsbc7kX7FIQXrz7Oup7yScCK00i+cGfQ==
+"@dailykit/ui@^0.8.59":
+  version "0.8.59"
+  resolved "https://registry.yarnpkg.com/@dailykit/ui/-/ui-0.8.59.tgz#450a3ffbb1229870d81ab6789af777fdb21feb2e"
+  integrity sha512-gqYFuPynwoOzuE59kOfb7YnCLrh3Hf0By2Dcf+CrNdYRzi/NyX4PSIw9TUWNcQQonzfVKxL5Xi5o3WOJeP0QVQ==
   dependencies:
     "@storybook/cli" "^6.1.18"
     concurrently "^5.3.0"
@@ -12174,7 +12174,7 @@ react-app-polyfill@^1.0.6:
     regenerator-runtime "^0.13.3"
     whatwg-fetch "^3.0.0"
 
-react-beautiful-dnd@^13.0.0:
+react-beautiful-dnd@^13.1.0:
   version "13.1.0"
   resolved "https://registry.yarnpkg.com/react-beautiful-dnd/-/react-beautiful-dnd-13.1.0.tgz#ec97c81093593526454b0de69852ae433783844d"
   integrity sha512-aGvblPZTJowOWUNiwd6tNfEpgkX5OxmpqxHKNW/4VmvZTNTbeiq7bA3bn5T+QSF2uibXB0D1DmJsb1aC/+3cUA==

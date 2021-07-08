@@ -38,9 +38,15 @@ export const FilterTunnel = () => {
       dispatch({
          type: 'SET_FILTER',
          payload: {
-            [field]: {
-               ...state.orders.where[field],
-               [op]: datetime,
+            cart: {
+               ...state?.where?.cart,
+               order: {
+                  ...(state?.where?.cart?.order || {}),
+                  [field]: {
+                     ...(state?.where?.cart?.order?.[field] || ''),
+                     [op]: datetime,
+                  },
+               },
             },
          },
       })
@@ -60,7 +66,7 @@ export const FilterTunnel = () => {
          />
          <Banner id="order-app-filter-tunnel-top" />
          <Wrapper padding="16px" overflowY="auto" height="calc(100% - 105px)">
-            <Flex container alignItems="center" justifyContent="space-between">
+            {/* <Flex container alignItems="center" justifyContent="space-between">
                <Text as="h3">Ready By</Text>
                <IconButton
                   size="sm"
@@ -115,6 +121,7 @@ export const FilterTunnel = () => {
                />
             </Flex>
             <Spacer size="16px" />
+             */}
             <Flex container alignItems="center" justifyContent="space-between">
                <Text as="h3">Fulfillment Time</Text>
                <IconButton
@@ -134,10 +141,12 @@ export const FilterTunnel = () => {
                   }}
                   value={
                      isValidDateTime(
-                        state.orders.where?.fulfillmentTimestamp?._gte
+                        state.orders.where?.cart?.order?.fulfillmentTimestamp
+                           ?._gte
                      )
                         ? formatDateTime(
-                             state.orders.where?.fulfillmentTimestamp?._gte
+                             state.orders.where?.cart?.order
+                                ?.fulfillmentTimestamp?._gte
                           )
                         : ''
                   }
@@ -228,14 +237,23 @@ export const FilterTunnel = () => {
                      id="greater_than"
                      name="greater_than"
                      placeholder="greater than"
-                     value={state.orders.where?.amountPaid?._gte || ''}
+                     value={
+                        state.orders.where?.cart?.order?.amountPaid?._gte ?? ''
+                     }
                      onChange={e =>
                         dispatch({
                            type: 'SET_FILTER',
                            payload: {
-                              amountPaid: {
-                                 ...state.orders.where?.amountPaid,
-                                 _gte: Number(e.target.value),
+                              cart: {
+                                 ...state.orders.where?.cart,
+                                 order: {
+                                    ...(state.orders.where?.cart?.order || {}),
+                                    amountPaid: {
+                                       ...state.orders.where?.cart?.order
+                                          ?.amountPaid,
+                                       _gte: Number(e.target.value),
+                                    },
+                                 },
                               },
                            },
                         })
@@ -251,14 +269,23 @@ export const FilterTunnel = () => {
                      id="less_than"
                      name="less_than"
                      placeholder="less than"
-                     value={state.orders.where?.amountPaid?._lte || ''}
+                     value={
+                        state.orders.where?.cart?.order?.amountPaid?._lte ?? ''
+                     }
                      onChange={e =>
                         dispatch({
                            type: 'SET_FILTER',
                            payload: {
-                              amountPaid: {
-                                 ...state.orders.where?.amountPaid,
-                                 _lte: Number(e.target.value),
+                              cart: {
+                                 ...state.orders.where?.cart,
+                                 order: {
+                                    ...(state.orders.where?.cart?.order || {}),
+                                    amountPaid: {
+                                       ...state.orders.where?.cart?.order
+                                          ?.amountPaid,
+                                       _lte: Number(e.target.value),
+                                    },
+                                 },
                               },
                            },
                         })
@@ -286,11 +313,12 @@ export const FilterTunnel = () => {
                   options={fulfillmentTypes}
                   searchedOption={() => {}}
                   defaultValue={
-                     state.orders.where?.fulfillmentType?._eq
+                     state.orders.where?.cart?.order?.fulfillmentType?._eq
                         ? fulfillmentTypes.findIndex(
                              type =>
                                 type.title ===
-                                state.orders.where?.fulfillmentType?._eq
+                                state.orders.where?.cart?.order?.fulfillmentType
+                                   ?._eq
                           ) + 1
                         : null
                   }
@@ -298,7 +326,15 @@ export const FilterTunnel = () => {
                   selectedOption={option =>
                      dispatch({
                         type: 'SET_FILTER',
-                        payload: { fulfillmentType: { _eq: option.title } },
+                        payload: {
+                           cart: {
+                              ...state.orders.where?.cart,
+                              order: {
+                                 ...(state.orders.where?.cart?.order || {}),
+                                 fulfillmentType: { _eq: option.title },
+                              },
+                           },
+                        },
                      })
                   }
                />

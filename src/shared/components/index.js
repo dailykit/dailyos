@@ -16,8 +16,10 @@ import RichTextEditor from './RichTextEditor'
 import LinkUnitConversionTunnels from './LinkUnitConversionTunnels'
 import Banner from './Banner'
 import Modal from './Modal'
+import ProductCards from './ProductCards'
 
 export {
+   ProductCards,
    Lang,
    Insight,
    Nutrition,
@@ -40,7 +42,6 @@ export {
 export * from './AssetUploader'
 export * from './InlineLoader'
 export * from './Flex'
-export * from './DropdownButton'
 export * from './ScrollSection'
 export * from './OperationConfig'
 export * from './Tooltip'

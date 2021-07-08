@@ -10,6 +10,7 @@ export const SIMPLE_RECIPE_UPDATE = gql`
       }
    }
 `
+
 export const UPDATE_PRODUCTS = gql`
    mutation UpdateProducts($ids: [Int!], $_set: products_product_set_input) {
       updateProducts(where: { id: { _in: $ids } }, _set: $_set) {
@@ -40,6 +41,16 @@ export const CONCATENATE_STRING_COLUMN = gql`
       concatenateColumn(args: $concatDataString) {
          message
          success
+      }
+   }
+`
+export const UPDATE_PRODUCT_OPTIONS = gql`
+   mutation updateProductOptions(
+      $ids: [Int!]
+      $_set: products_productOption_set_input!
+   ) {
+      updateProductOptions(where: { id: { _in: $ids } }, _set: $_set) {
+         affected_rows
       }
    }
 `

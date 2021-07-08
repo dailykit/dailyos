@@ -29,7 +29,10 @@ import LinkIcon from './Link'
 import MaximizeIcon from './Maximixe'
 import MinimizeIcon from './Minimize'
 import PlayIcon from './Play'
+import SearchIcon from './Search'
+
 export {
+   SearchIcon,
    AddIcon,
    MenuIcon,
    CloseIcon,

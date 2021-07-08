@@ -13,7 +13,7 @@ const options = {
       sort: true, //persist column sorting
       filter: true, //persist filter sorting
       page: true, //persist page
-      columns: true, //persist columns
+      columns: false, //persist columns
    },
    persistenceMode: 'local',
    // pagination: 'local',

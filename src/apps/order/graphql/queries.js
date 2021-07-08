@@ -636,6 +636,7 @@ export const QUERIES = {
                         id
                         status
                         cart {
+                           id
                            orderId
                         }
                      }

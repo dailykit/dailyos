@@ -5,6 +5,7 @@ export const MODIFIERS = {
       mutation CreateModifier($object: onDemand_modifier_insert_input!) {
          createModifier(object: $object) {
             id
+            title: name
          }
       }
    `,
@@ -15,6 +16,7 @@ export const MODIFIER = {
       mutation UpdateName($id: Int!, $_set: onDemand_modifier_set_input) {
          updateModifier(pk_columns: { id: $id }, _set: $_set) {
             id
+            title: name
          }
       }
    `,

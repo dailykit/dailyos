@@ -186,8 +186,11 @@ export const S_RECIPES = gql`
          cuisine
          isValid
          isPublished
-         simpleRecipeYields(where: { isArchived: { _eq: false } }) {
-            id
+
+         simpleRecipeYields: simpleRecipeYields_aggregate {
+            aggregate {
+               count
+            }
          }
       }
    }
@@ -462,17 +465,31 @@ export const S_SIMPLE_RECIPES_FROM_INGREDIENT_AGGREGATE = gql`
 `
 
 export const INGREDIENT_CATEGORIES_INGREDIENTS_AGGREGATE = gql`
-subscription IngredientCategoryIngredientsAggregate {
-   ingredientCategories {
-     name 
-     title: name
-     ingredients_aggregate {
-       aggregate {
-         count
-         description : count
-       }
-     }
+   subscription IngredientCategoryIngredientsAggregate {
+      ingredientCategories {
+         name
+         title: name
+         ingredients_aggregate {
+            aggregate {
+               count
+               description: count
+            }
+         }
+      }
    }
- }
 `
-
+export const PRODUCT_OPTIONS = gql`
+   subscription ProductOptions {
+      productOptions(where: { isArchived: { _eq: false } }) {
+         discount
+         id
+         label
+         price
+         quantity
+         product {
+            name
+         }
+         type
+      }
+   }
+`

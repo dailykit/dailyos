@@ -251,6 +251,7 @@ const Ingredients = ({ state }) => {
 export default Ingredients
 
 const CollapsibleHead = ({ ingredient, processing, deleteIngredient }) => {
+   console.log(processing, 'processing log')
    return (
       <Flex
          container
@@ -259,9 +260,13 @@ const CollapsibleHead = ({ ingredient, processing, deleteIngredient }) => {
          width="100%"
       >
          <Flex container alignItems="center">
-            <Text as="h3">{ingredient.name}</Text>
+            <Text as="h3" title={ingredient?.name || 'Ingredient'}>
+               {ingredient?.name || 'N/A'}
+            </Text>
             <Spacer xAxis size="16px" />
-            <Text as="p">{processing.name}</Text>
+            <Text as="p" title={processing?.name || 'Processing'}>
+               {processing?.name || 'N/A'}
+            </Text>
          </Flex>
          <IconButton type="ghost" onClick={deleteIngredient}>
             <DeleteIcon color="#FF5A52" />
