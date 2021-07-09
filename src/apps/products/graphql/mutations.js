@@ -108,6 +108,7 @@ export const UPDATE_MODE = gql`
    ) {
       updateModeOfFulfillment(pk_columns: { id: $id }, _set: $set) {
          id
+         isArchived
       }
    }
 `
@@ -465,3 +466,13 @@ export const INCREMENTS_IN_PRODUCT_OPTIONS = gql`
       }
    }
 `
+
+export const MOF = {
+   CREATE: gql`
+      mutation CreateMode($object: ingredient_modeOfFulfillment_insert_input!) {
+         createModeOfFulfillment(object: $object) {
+            id
+         }
+      }
+   `,
+}

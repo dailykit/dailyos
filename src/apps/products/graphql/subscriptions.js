@@ -106,17 +106,17 @@ export const S_INGREDIENT = gql`
                quantity
                nutritionalInfo
                cost
-               liveModeOfFulfillment {
-                  id
-                  type
-               }
-               modeOfFulfillments(order_by: { position: desc_nulls_last }) {
+               liveMOF
+               modeOfFulfillments(
+                  where: { isArchived: { _eq: false } }
+                  order_by: { position: desc_nulls_last }
+               ) {
                   id
                   accuracy
+                  isPublished
                   isLive
                   position
                   cost
-                  type
                   operationConfig {
                      id
                      station {
@@ -135,6 +135,10 @@ export const S_INGREDIENT = gql`
                   bulkItem {
                      id
                      processingName
+                     committed
+                     onHand
+                     awaiting
+                     unit
                      supplierItem {
                         id
                         name
@@ -144,6 +148,9 @@ export const S_INGREDIENT = gql`
                      id
                      unitSize
                      unit
+                     committed
+                     onHand
+                     awaiting
                      bulkItem {
                         id
                         processingName
