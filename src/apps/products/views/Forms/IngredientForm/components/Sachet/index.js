@@ -192,7 +192,7 @@ const Sachet = ({
          return `${mode.bulkItem[category]} ${mode.bulkItem.unit}`
       }
       if (mode.sachetItem) {
-         return `${mode.sachetItem[category]} ${mode.sachetItem.unit}`
+         return `${mode.sachetItem[category]} pkt`
       }
       return '-'
    }
