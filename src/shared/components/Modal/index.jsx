@@ -87,46 +87,47 @@ export default function Modal({
 
    return (
       <Styles.ModalWrapper show={isOpen} hasContent={hasContent}>
-         <Styles.ModalBody>
-            <Styles.MenuArea ref={ref}>
-               <Styles.MenuAreaHeader>
-                  <Flex
-                     container
-                     alignItems="center"
-                     justifyContent="center"
-                     width="100%"
-                  >
-                     <h2>{optionMenu?.title || 'Title'}</h2>
-                     <Styles.CloseButton onClick={() => setIsModalOpen(false)}>
-                        <ClearIcon color="#fff" />
-                     </Styles.CloseButton>
-                  </Flex>
-                  <p>{optionMenu?.description || 'Description'}</p>
-               </Styles.MenuAreaHeader>
+         <Styles.MenuArea ref={ref}>
+            <Styles.MenuAreaHeader>
+               <Flex
+                  container
+                  alignItems="center"
+                  justifyContent="center"
+                  width="100%"
+               >
+                  <h2>{optionMenu?.title || 'Title'}</h2>
+                  <Styles.CloseButton onClick={() => setIsModalOpen(false)}>
+                     <ClearIcon color="#fff" />
+                  </Styles.CloseButton>
+               </Flex>
+               <p>{optionMenu?.description || 'Description'}</p>
+            </Styles.MenuAreaHeader>
+            <Styles.MenuBody>
                <TreeView
                   data={optionMenu?.navigationMenuItems}
                   clickHandler={handleMenuItemClick}
                />
-            </Styles.MenuArea>
-            <Styles.ContentArea
-               hasContent={hasContent}
-               isContentOpen={isContentOpen}
-               ref={contentRef}
+            </Styles.MenuBody>
+         </Styles.MenuArea>
+         <Styles.ContentArea
+            hasContent={hasContent}
+            isContentOpen={isContentOpen}
+            ref={contentRef}
+         >
+            <ComboButton
+               type="solid"
+               variant="secondary"
+               size="sm"
+               onClick={() => {
+                  deleteNavigationMenuId('navigationMenuItemId')
+                  setIsContentOpen(false)
+               }}
             >
-               <ComboButton
-                  type="ghost"
-                  size="sm"
-                  onClick={() => {
-                     deleteNavigationMenuId('navigationMenuItemId')
-                     setIsContentOpen(false)
-                  }}
-               >
-                  <ClearIcon color="#45484C" />
-                  Close
-               </ComboButton>
-               <div id="content_area" />
-            </Styles.ContentArea>
-         </Styles.ModalBody>
+               <ClearIcon color="#45484C" />
+               Close
+            </ComboButton>
+            <div id="content_area" />
+         </Styles.ContentArea>
       </Styles.ModalWrapper>
    )
 }

@@ -3,16 +3,20 @@ import styled from 'styled-components'
 
 const Styles = {
    ModalWrapper: styled.div`
-      width: ${({ hasContent }) => (hasContent ? '100vw' : '100%')};
-      background: ${({ hasContent }) =>
-         hasContent ? 'rgba(255, 255, 255, 0.13)' : 'none'};
+      position: absolute;
+      padding: 0 8px;
+      top: 60px;
+      bottom: 42px;
+      left: 0;
+      right: 0;
+      display: ${({ show }) => (show ? 'flex' : 'none')};
       backdrop-filter: ${({ hasContent }) =>
          hasContent ? 'blur(11.37px)' : 'none'};
-      bottom: 0;
-      position: absolute;
-      top: 42px;
-      left: 0;
-      display: ${({ show }) => (show ? 'block' : 'none')};
+
+      @media only screen and (max-width: 565px) {
+         justify-content: center;
+         padding-bottom: 0;
+      }
    `,
    ModalHeader: styled.div`
       position: absolute;
@@ -26,18 +30,9 @@ const Styles = {
       }
    `,
 
-   ModalBody: styled.div`
-      display: flex;
-      padding: 32px;
-      height: calc(100% - 20px);
-      width: 100%;
-      @media only screen and (max-width: 565px) {
-         justify-content: center;
-         padding-bottom: 0;
-      }
-   `,
    MenuArea: styled.div`
       min-width: 330px;
+      width: 330px;
       background: #320e3b;
       border-radius: 30px;
       color: #fff;
@@ -70,12 +65,25 @@ const Styles = {
          }
       }
    `,
+   MenuBody: styled.div`
+      height: calc(100% - 90px);
+      overflow-y: auto;
+      ::-webkit-scrollbar {
+         width: 6px;
+      }
+      ::-webkit-scrollbar-thumb {
+         background-color: rgba(196, 196, 196, 0.9);
+         border-radius: 4px;
+      }
+   `,
+
    ContentArea: styled.div`
       width: 100%;
       padding: 16px;
       overflow: auto;
       display: ${({ hasContent, isContentOpen }) =>
          hasContent && isContentOpen ? 'block' : 'none'};
+      margin-top: 16px;
       @media only screen and (max-width: 565px) {
          position: absolute;
          bottom: 0;
@@ -91,7 +99,7 @@ const Styles = {
          text-transform: uppercase;
          position: absolute;
          top: 0;
-         right: 30px;
+         right: 16px;
       }
       div#content-area {
          overflow: auto;
