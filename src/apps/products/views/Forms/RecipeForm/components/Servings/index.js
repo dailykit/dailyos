@@ -18,6 +18,7 @@ import {
    Spacer,
    ComboButton,
    Dropdown,
+   Popup,
 } from '@dailykit/ui'
 
 import {
@@ -67,6 +68,7 @@ import {
 } from '../../../../../graphql'
 import { ServingsTunnel, IngredientsTunnel } from '../../tunnels'
 import { RecipeContext } from '../../../../../context/recipe'
+import { Nutrition } from '../../../../../../../shared/components'
 import { Button } from 'react-scroll'
 import { constant, stubFalse } from 'lodash'
 
@@ -132,7 +134,6 @@ const Servings = ({ state }) => {
       useLazyQuery(DERIVE_SACHETS_FROM_BASE_YIELD, {
          onCompleted: data => {
             const [response] = data.simpleRecipe_deriveIngredientSachets
-            //console.log({ response })
             if (response && response.success) {
                toast.success(response.message)
             } else {
@@ -166,9 +167,12 @@ const Servings = ({ state }) => {
          },
          fetchPolicy: 'cache-and-network',
       })
+   const [showNutritionalInfo, setShowNutritionalInfo] = React.useState(false)
+   const [selectedNutrition, setSelectedNutrition] = React.useState(null)
 
    const options =
       state.simpleRecipeYields?.map((option, index) => {
+         console.log(option, 'option')
          const autoGenerate = recipeYield => {
             console.log({ recipeYield })
             if (recipeYield.id && recipeYield.baseYieldId) {
@@ -242,11 +246,24 @@ const Servings = ({ state }) => {
                </div>
 
                <p> {option.yield.label} </p>
-               <div id="calCount">
-                  <CalCount /> 2%
+               <div
+                  id="calCount"
+                  onClick={() => {
+                     setShowNutritionalInfo(!showNutritionalInfo)
+                     if (option.nutritionalInfo) {
+                        setSelectedNutrition(option.nutritionalInfo)
+                     } else {
+                        setSelectedNutrition(null)
+                     }
+                  }}
+               >
+                  <CalCount />{' '}
+                  {option.nutritionalInfo === null
+                     ? 'N/A'
+                     : option.nutritionalInfo.calories + ' cal'}
                </div>
                <div id="foodCost">
-                  <FoodCost /> 2$
+                  <FoodCost /> {option.cost}$
                </div>
                <div id="yield">
                   <Yield /> 2kg
@@ -340,6 +357,8 @@ const Servings = ({ state }) => {
                   let defaultSachetOption = {}
                   let defaultslipName = ''
                   let visibility = ''
+                  let cost = null
+                  let nutritionalInfo = {}
                   option.linkedSachets.map((item, index) => {
                      if (item.simpleRecipeYield.id == object.id) {
                         defaultslipName = item.slipName
@@ -347,6 +366,11 @@ const Servings = ({ state }) => {
                         defaultSachetOption = {
                            id: item.ingredientSachet.id,
                            title: `${item.ingredientSachet.quantity} ${item.ingredientSachet.unit}`,
+                        }
+                        cost = item.ingredientSachet.cost
+                        if (item.ingredientSachet.nutritionalInfo !== null) {
+                           nutritionalInfo =
+                              item.ingredientSachet.nutritionalInfo
                         }
                      }
                   })
@@ -361,6 +385,8 @@ const Servings = ({ state }) => {
                            <Spacer size="3px" />
                            <div id="sachetDetails">
                               <SachetDetails
+                                 cost={cost}
+                                 nutritionalInfo={nutritionalInfo}
                                  yieldId={object.id}
                                  ingredientProcessingRecordId={option.id}
                                  slipName={defaultslipName}
@@ -396,8 +422,6 @@ const Servings = ({ state }) => {
 
    const onButtonClickLeft = () => {
       setButtonClickLeft(++buttonClickLeft)
-      console.log(buttonClickLeft, 'buttonClickLeft')
-      console.log(buttonClickRight, 'buttonClickRight')
       recipeForm.current.scrollLeft -= 160
       if (buttonClickLeft > 0) {
          setButtonClickRightRender(true)
@@ -442,6 +466,29 @@ const Servings = ({ state }) => {
                   />
                </Tunnel>
             </Tunnels>
+            <Popup
+               show={showNutritionalInfo}
+               clickOutsidePopup={() => setShowNutritionalInfo(false)}
+            >
+               <Popup.Actions>
+                  <Popup.Text type="NutritionalInfo">
+                     Nutritional Info
+                  </Popup.Text>
+                  <Popup.Close
+                     closePopup={() =>
+                        setShowNutritionalInfo(!showNutritionalInfo)
+                     }
+                  />
+               </Popup.Actions>
+               <Popup.ConfirmText>
+                  {selectedNutrition !== null ? (
+                     <Nutrition data={selectedNutrition} />
+                  ) : (
+                     <>No Nutritional Info!</>
+                  )}
+               </Popup.ConfirmText>
+            </Popup>
+
             <div
                style={{
                   display: 'grid',
@@ -597,7 +644,7 @@ const Servings = ({ state }) => {
                                     paddingTop: '0px',
                                     left: '0',
                                     position: 'sticky',
-                                    zIndex: '+10',
+                                    zIndex: '+5',
                                     background: '#F4F4F4',
                                  }}
                                  type="solid"
@@ -620,7 +667,7 @@ const Servings = ({ state }) => {
                                        left: '0',
                                        position: 'sticky',
                                        overflowX: 'hidden',
-                                       zIndex: '+20',
+                                       zIndex: '+5',
                                        display: 'inline-block',
                                        width: '27px',
                                        height: '27px',
@@ -693,11 +740,8 @@ const Servings = ({ state }) => {
                      </ComboButton>
                   )}
                </div>
+               <div></div>
             </div>
-
-            <div></div>
-            
-            
          </>
       </>
    )
@@ -706,6 +750,8 @@ const Servings = ({ state }) => {
 export default Servings
 
 const SachetDetails = ({
+   cost,
+   nutritionalInfo,
    yieldId,
    slipName,
    ingredientProcessingRecordId,
@@ -717,6 +763,10 @@ const SachetDetails = ({
       slipName,
       isVisible,
    })
+   const [showNutritionalInfoSachet, setShowNutritionalInfoSachet] =
+      React.useState(false)
+   const [selectedNutritionSachet, setSelectedNutritionSachet] =
+      React.useState(null)
    const [name, setName] = React.useState(slipName)
    const [visibility, setVisibility] = React.useState(isVisible)
 
@@ -772,6 +822,26 @@ const SachetDetails = ({
 
    return (
       <>
+         <Popup
+            show={showNutritionalInfoSachet}
+            clickOutsidePopup={() => setShowNutritionalInfoSachet(false)}
+         >
+            <Popup.Actions>
+               <Popup.Text type="NutritionalInfo">Nutritional Info</Popup.Text>
+               <Popup.Close
+                  closePopup={() =>
+                     setShowNutritionalInfoSachet(!showNutritionalInfoSachet)
+                  }
+               />
+            </Popup.Actions>
+            <Popup.ConfirmText>
+               {selectedNutritionSachet !== null ? (
+                  <Nutrition data={selectedNutritionSachet} />
+               ) : (
+                  <>No Nutritional Info!</>
+               )}
+            </Popup.ConfirmText>
+         </Popup>
          <div style={{ width: '150px' }}>
             <Form.Text
                id={`slipName-${yieldId}`}
@@ -785,47 +855,61 @@ const SachetDetails = ({
                disabled={disabled}
             />
          </div>
+         <div style={{ display: 'inline-block', width: '130px' }}>
+            <div
+               style={{
+                  display: 'inline-block',
+                  minWidth: '36px',
+                  height: '16px',
+                  background: '#F6C338',
+                  cursor: 'help',
+                  borderRadius: '40px',
+                  fontFamily: 'Roboto',
+                  fontStyle: 'normal',
+                  fontWeight: 'bold',
+                  fontSize: '11px',
+                  lineHeight: '16px',
+                  margin: '0px 2px 0px 0px',
+                  letterSpacing: '0.32px',
+                  padding: '1px 5px 2.5px 5px',
+                  color: '#FFFFFF',
+               }}
+               onClick={() => {
+                  setShowNutritionalInfoSachet(!showNutritionalInfoSachet)
+                  if (Object.keys(nutritionalInfo).length !== 0) {
+                     setSelectedNutritionSachet(nutritionalInfo)
+                  } else {
+                     setSelectedNutritionSachet(null)
+                  }
+               }}
+            >
+               <CalCount />{' '}
+               {Object.keys(nutritionalInfo).length === 0
+                  ? 'N/A'
+                  : `${nutritionalInfo.calories} cal`}
+            </div>
+            <div
+               style={{
+                  display: 'inline-block',
+                  minWidth: '36px',
+                  height: '16px',
+                  background: '#8AC03B',
+                  borderRadius: '40px',
+                  fontFamily: 'Roboto',
+                  fontStyle: 'normal',
+                  fontWeight: 'bold',
+                  fontSize: '11px',
+                  lineHeight: '16px',
+                  margin: '0px 0px 0px 2px',
+                  letterSpacing: '0.32px',
+                  padding: '1px 5px 2.5px 5px',
+                  color: '#FFFFFF',
+               }}
+            >
+               <FoodCost /> {cost === null ? 'N/A' : `${cost} $`}
+            </div>
+         </div>
 
-         <div
-            style={{
-               display: 'inline-block',
-               width: '36px',
-               height: '16px',
-               background: '#F6C338',
-               borderRadius: '40px',
-               fontFamily: 'Roboto',
-               fontStyle: 'normal',
-               fontWeight: 'bold',
-               fontSize: '11px',
-               lineHeight: '16px',
-               margin: '0px 2px 0px 0px',
-               letterSpacing: '0.32px',
-               padding: '1px 0px 2.5px 5px',
-               color: '#FFFFFF',
-            }}
-         >
-            <CalCount /> 2%
-         </div>
-         <div
-            style={{
-               display: 'inline-block',
-               width: '36px',
-               height: '16px',
-               background: '#8AC03B',
-               borderRadius: '40px',
-               fontFamily: 'Roboto',
-               fontStyle: 'normal',
-               fontWeight: 'bold',
-               fontSize: '11px',
-               lineHeight: '16px',
-               margin: '0px 55px 0px 2px',
-               letterSpacing: '0.32px',
-               padding: '1px 5px 2.5px 5px',
-               color: '#FFFFFF',
-            }}
-         >
-            <FoodCost /> 2$
-         </div>
          {disabled ? (
             <></>
          ) : visibility ? (

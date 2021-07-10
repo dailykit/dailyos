@@ -265,6 +265,8 @@ export const S_RECIPE = gql`
                   id
                   unit
                   quantity
+                  cost
+                  nutritionalInfo
                }
                simpleRecipeYield {
                   id

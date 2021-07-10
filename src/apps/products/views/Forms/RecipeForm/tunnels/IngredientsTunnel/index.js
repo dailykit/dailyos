@@ -68,7 +68,7 @@ const IngredientsTunnel = ({ state, closeTunnel, openTunnel }) => {
             const tempIngredients = ingredients.map((item)=>{
                return item
             })
-            tempIngredients.push({id: data.createIngredient.returning[0].id, title: data.createIngredient.returning[0].name})
+            tempIngredients.unshift({id: data.createIngredient.returning[0].id, title: data.createIngredient.returning[0].name})
             setIngredients(tempIngredients)
          }
       }

@@ -33,9 +33,12 @@ export const StyledCardEven = styled.div(
       }
       div#calCount {
          display: inline-block;
-         width: 36px;
+         text-align: left;
+         min-width: 50px;
          height: 16px;
          background: #f6c338;
+         border: none;
+         cursor: help;
          border-radius: 40px;
          font-family: Roboto;
          font-style: normal;
@@ -49,7 +52,7 @@ export const StyledCardEven = styled.div(
       }
       div#foodCost {
          display: inline-block;
-         width: 36px;
+         min-width: 36px;
          height: 16px;
          background: #8ac03b;
          border-radius: 40px;
@@ -65,7 +68,7 @@ export const StyledCardEven = styled.div(
       }
       div#yield {
          display: inline-block;
-         width: 44px;
+         min-width: 44px;
          height: 16px;
          background: #555b6e;
          border-radius: 40px;
@@ -109,9 +112,8 @@ export const StyledCardIngredient = styled.div(
          ? `0px 5px 0px 50px`
          : `0px 5px 0px 0px`};
       display: inline-block;
-      z-index: +10;
+      z-index: +5;
       div#ingredientName {
-         
          :hover {
             > span {
                opacity: 1;
