@@ -36,7 +36,8 @@ const Nutrition = ({ data, vertical = false }) => {
                      <span>{data?.saturatedFat}g</span>
                   </span>
                   <h5>
-                     {Math.round((parseInt(data?.saturatedFat, 10) / 20) * 100)}%
+                     {Math.round((parseInt(data?.saturatedFat, 10) / 20) * 100)}
+                     %
                   </h5>
                </Row>
                <Row inset hidden={!(data?.totalFat && data?.transFat)}>
@@ -51,7 +52,8 @@ const Nutrition = ({ data, vertical = false }) => {
                      <span>{data?.cholesterol}mg</span>
                   </h5>
                   <h5>
-                     {Math.round((parseInt(data?.cholesterol, 10) / 300) * 100)}%
+                     {Math.round((parseInt(data?.cholesterol, 10) / 300) * 100)}
+                     %
                   </h5>
                </Row>
                <Row hidden={!data?.sodium}>
@@ -89,7 +91,8 @@ const Nutrition = ({ data, vertical = false }) => {
                      <span>{data?.dietaryFibre}g</span>
                   </span>
                   <h5>
-                     {Math.round((parseInt(data?.dietaryFibre, 10) / 28) * 100)}%
+                     {Math.round((parseInt(data?.dietaryFibre, 10) / 28) * 100)}
+                     %
                   </h5>
                </Row>
                <Row inset hidden={!(data?.totalCarbohydrates && data?.sugars)}>
@@ -99,7 +102,8 @@ const Nutrition = ({ data, vertical = false }) => {
                </Row>
                <Row hidden={!data?.protein}>
                   <h5>
-                     {t(address.concat('protein'))} <span>{data?.protein}g</span>
+                     {t(address.concat('protein'))}{' '}
+                     <span>{data?.protein}g</span>
                   </h5>
                </Row>
                <Rule />
@@ -122,6 +126,14 @@ const Nutrition = ({ data, vertical = false }) => {
                {t(address.concat('iron'))} {data?.iron}%
             </span>
          </Row>
+         {data?.excludes?.length > 0 && (
+            <>
+               <h3>Excludes</h3>
+               {data?.excludes.map((item, index) => {
+                  return <h4>{item}</h4>
+               })}
+            </>
+         )}
       </Container>
    )
 }

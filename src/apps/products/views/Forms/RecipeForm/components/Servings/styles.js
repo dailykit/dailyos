@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 
 export const StyledCardEven = styled.div(
-   ({ index, baseYieldId }) => css`
+   ({ index, baseYieldId, nutritionIsInSync }) => css`
       height: 85px;
       width: 160px;
       padding: 5px 5px 5px 5px;
@@ -36,7 +36,7 @@ export const StyledCardEven = styled.div(
          text-align: left;
          min-width: 50px;
          height: 16px;
-         background: #f6c338;
+         background: ${nutritionIsInSync?`#f6c338`: `#ff5b52`};
          border: none;
          cursor: help;
          border-radius: 40px;

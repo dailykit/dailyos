@@ -161,6 +161,17 @@ export const CREATE_SIMPLE_RECIPE_YIELDS = gql`
    }
 `
 
+export const UPDATE_NUTRITIONINFO = gql`
+   mutation UpdateNutritionInfo($simpleRecipeYieldIds: [Int!]!) {
+      calculateNutitionalInfo(simpleRecipeYieldIds: $simpleRecipeYieldIds) {
+      message
+      success
+      }
+   } 
+`
+
+
+
 export const DELETE_SIMPLE_RECIPE_YIELD = gql`
    mutation DeleteSimpleRecipeYield($id: Int!) {
       updateSimpleRecipeYield(
@@ -176,9 +187,8 @@ export const DELETE_SIMPLE_RECIPE_YIELD = gql`
 
 export const DELETE_SIMPLE_RECIPE_INGREDIENT_PROCESSINGS = gql`
    mutation DeleteSimpleRecipeIngredientProcessings($ids: [Int!]!) {
-      updateSimpleRecipeIngredientProcessings(
+      deleteSimpleRecipeIngredientProcessings(
          where: { id: { _in: $ids } }
-         _set: { isArchived: true }
       ) {
          returning {
             id

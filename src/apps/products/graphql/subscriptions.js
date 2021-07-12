@@ -293,6 +293,8 @@ export const S_RECIPE = gql`
             baseYieldId
             cost
             nutritionalInfo
+            nutritionId
+            nutritionIsInSync
          }
       }
    }

@@ -65,6 +65,7 @@ import {
    UPDATE_RECIPE,
    PROCESSINGS,
    SACHETS,
+   UPDATE_NUTRITIONINFO,
 } from '../../../../../graphql'
 import { ServingsTunnel, IngredientsTunnel } from '../../tunnels'
 import { RecipeContext } from '../../../../../context/recipe'
@@ -169,6 +170,7 @@ const Servings = ({ state }) => {
       })
    const [showNutritionalInfo, setShowNutritionalInfo] = React.useState(false)
    const [selectedNutrition, setSelectedNutrition] = React.useState(null)
+   const [selectedYieldId, setSelectedYieldId] = React.useState(null)
 
    const options =
       state.simpleRecipeYields?.map((option, index) => {
@@ -196,6 +198,7 @@ const Servings = ({ state }) => {
                key={index}
                index={index}
                id={option.id}
+               nutritionIsInSync={option.nutritionIsInSync}
             >
                <Serving />
                <div id="Serving">{option.yield.serving}</div>
@@ -255,6 +258,7 @@ const Servings = ({ state }) => {
                      } else {
                         setSelectedNutrition(null)
                      }
+                     setSelectedYieldId(option.id)
                   }}
                >
                   <CalCount />{' '}
@@ -274,7 +278,7 @@ const Servings = ({ state }) => {
 
    const ingredientsOptions =
       state.simpleRecipeIngredients?.map((option, index) => {
-         //console.log(option, 'Adrish option')
+         console.log(option, 'Adrish option')
          const deleteIngredientProcessing = id => {
             const isConfirmed = window.confirm(
                'Are you sure you want to delete this ingredient?'
@@ -354,6 +358,7 @@ const Servings = ({ state }) => {
 
                {state.simpleRecipeYields?.map((object, index) => {
                   // console.log(defaultSachetOption, 'Adrish defaultSachetOption')
+                  //console.log(object, "sachet object")
                   let defaultSachetOption = {}
                   let defaultslipName = ''
                   let visibility = ''
@@ -449,6 +454,23 @@ const Servings = ({ state }) => {
       }
    }
 
+   const [updateNutritionInfo] = useMutation(UPDATE_NUTRITIONINFO, {
+      onCompleted: () => {
+         toast.success('Nutrition updated!')
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+   const nutritionInfo = () => {
+      updateNutritionInfo({
+         variables: {
+            simpleRecipeYieldIds: [selectedYieldId],
+         },
+      })
+   }
+
    return (
       <>
          {/* {console.log(ingredientProcessings, 'Adrish Processings')} */}
@@ -473,7 +495,16 @@ const Servings = ({ state }) => {
                <Popup.Actions>
                   <Popup.Text type="NutritionalInfo">
                      Nutritional Info
+                     <ComboButton
+                        type="ghost"
+                        size="sm"
+                        onClick={() => nutritionInfo()}
+                     >
+                        <AutoGenerate />
+                        <div style={{ color: '#202020' }}>Sync</div>
+                     </ComboButton>
                   </Popup.Text>
+
                   <Popup.Close
                      closePopup={() =>
                         setShowNutritionalInfo(!showNutritionalInfo)
@@ -1096,6 +1127,7 @@ const Sachets = ({ defaultslipName, option, object }) => {
          },
       }
    )
+
    let sachetDisabled = false
    const [sachets, setSachets] = React.useState([])
 
