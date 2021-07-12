@@ -62,6 +62,7 @@ const Banner = ({ id }) => {
 
    return (
       <>
+         <small>{id}</small>
          {!loading &&
             bannerFiles.length > 0 &&
             bannerFiles.map((file, index) => {

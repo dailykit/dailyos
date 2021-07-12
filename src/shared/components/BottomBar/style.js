@@ -5,7 +5,7 @@ const Styles = {
    Wrapper: styled.div`
       width: 100%;
       position: fixed;
-      z-index: 4;
+      z-index: 1010;
       bottom: 0;
       left: 0;
       @media only screen and (max-width: 565px) {
@@ -18,7 +18,7 @@ const Styles = {
       cursor: pointer;
       position: absolute;
       top: -44px;
-      z-index: -1;
+      z-index: 1009;
       left: 45%;
    `,
 

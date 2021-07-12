@@ -71,6 +71,7 @@ const Styled = {
       padding: 0 8px;
       font-size: 16px;
       font-weight: 700;
+      cursor: pointer;
    `,
    Decorator: styled.div`
       .plate {

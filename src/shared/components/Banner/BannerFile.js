@@ -90,6 +90,7 @@ const BannerFile = ({ file, id, handleClose, userEmail }) => {
 
    return (
       <Wrapper ref={ref}>
+         <small>{id}</small>
          {file.divId === id && file.condition.isValid && (
             <>
                <ActionButtons isMinimized={isOpen} setIsMinimized={setIsOpen} />

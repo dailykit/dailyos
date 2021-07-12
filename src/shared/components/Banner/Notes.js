@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link, useHistory } from 'react-router-dom'
 import { PlayIcon } from '../../assets/icons'
 import { Glass, Plate, Plant1, Plant2 } from './assets/illustrations'
 import ActionButtons from './components/ActionButtons'
@@ -35,6 +36,7 @@ export default Notes
 
 const Note = ({ note }) => {
    const [isGifOpen, setIsGifOpen] = React.useState(false)
+   const history = useHistory()
 
    return (
       <Styled.Item noMargin={!!!note.pointCount}>
@@ -44,7 +46,9 @@ const Note = ({ note }) => {
          <Styled.Text>
             {note.description}
             {note.tutorialLink && (
-               <Styled.TutorialLink target="_blank" href={note.tutorialLink}>
+               <Styled.TutorialLink
+                  onClick={() => history.push(note.tutorialLink)}
+               >
                   Watch Tutorial
                </Styled.TutorialLink>
             )}

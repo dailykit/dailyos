@@ -12,6 +12,7 @@ const Styles = {
       display: ${({ show }) => (show ? 'flex' : 'none')};
       backdrop-filter: ${({ hasContent }) =>
          hasContent ? 'blur(11.37px)' : 'none'};
+      z-index: 99999999;
 
       @media only screen and (max-width: 565px) {
          justify-content: center;
