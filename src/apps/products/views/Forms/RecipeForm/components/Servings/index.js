@@ -47,6 +47,7 @@ import {
    Tooltip,
    InlineLoader,
    DragNDrop,
+   NutritionTunnel,
 } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import {
@@ -79,6 +80,8 @@ const Servings = ({ state }) => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [ingredientsTunnel, openingredientTunnel, closeingredientTunnel] =
       useTunnel(2)
+   const [nutritionTunnels, openNutritionTunnel, closeNutritionTunnel] =
+      useTunnel(3)
    const [buttonClickRightRender, setButtonClickRightRender] =
       React.useState(false)
    const [buttonClickLeftRender, setButtonClickLeftRender] =
@@ -488,6 +491,17 @@ const Servings = ({ state }) => {
                   />
                </Tunnel>
             </Tunnels>
+            <Tunnels tunnels={nutritionTunnels}>
+               <Tunnel layer={1} size="md">
+                  <NutritionTunnel
+                     tunnels={nutritionTunnels}
+                     closeTunnel={closeNutritionTunnel}
+                     onSave={value => {console.log(value)}}
+                     value={{}}
+                     perDynamic={true}
+                  />
+               </Tunnel>
+            </Tunnels>
             <Popup
                show={showNutritionalInfo}
                clickOutsidePopup={() => setShowNutritionalInfo(false)}
@@ -504,7 +518,14 @@ const Servings = ({ state }) => {
                         <div style={{ color: '#202020' }}>Sync</div>
                      </ComboButton>
                   </Popup.Text>
-
+                  <ComboButton
+                     type="ghost"
+                     size="sm"
+                     onClick={() => openNutritionTunnel(1)}
+                  >
+                     <PlusIcon />
+                     <div style={{ color: '#202020' }}>Add Nutritional Info</div>
+                  </ComboButton>
                   <Popup.Close
                      closePopup={() =>
                         setShowNutritionalInfo(!showNutritionalInfo)
