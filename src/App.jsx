@@ -122,8 +122,8 @@ const App = () => {
                         </AppItem>
                      ))}
                   </AppList>
-                  {/* <FullOccurrenceReport /> */}
-               <Banner id="app-home-bottom" />
+                  <FullOccurrenceReport />
+                  <Banner id="app-home-bottom" />
                </Route>
                <Route path="/inventory" component={Inventory} />
                <Route path="/safety" component={Safety} />

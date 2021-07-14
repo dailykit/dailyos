@@ -8,8 +8,10 @@ import { useWindowSize } from '../../hooks/useWindowSize'
 import { useLocation } from 'react-router'
 import qs from 'query-string'
 import useQueryParamState from './useQueryParamState'
+import { useHistory } from 'react-router-dom'
 
 const BottomBar = () => {
+   const history = useHistory()
    const [isModalOpen, setIsModalOpen] = React.useState(false)
    const [isOpen, setIsOpen] = React.useState(true)
    const bottomBarRef = React.useRef()
@@ -92,6 +94,18 @@ const BottomBar = () => {
          }
       }
    }, [search])
+
+   React.useEffect(() => {
+      var element = document.getElementById('root')
+      element.addEventListener('navigator', function (e) {
+         const pathname = e.detail.pathname.replace('/apps', '')
+         history.push({ pathname, search: e.detail.query })
+      })
+      return () =>
+         element.removeEventListener('navigator', () => {
+            console.log('unmount event listener......')
+         })
+   }, [])
 
    return (
       <>

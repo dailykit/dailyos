@@ -27,6 +27,15 @@
       <div id="root"></div>
       <div id="notifications"></div>
       <div id="popups"></div>
+      <script>
+         const rootDiv = document.getElementById('root')
+         const onNavigate = (pathname, query) => {
+            const event = new CustomEvent('navigator', {
+               detail: { pathname, query },
+            })
+            rootDiv.dispatchEvent(event)
+         }
+      </script>
       <script
          async
          type="text/javascript"

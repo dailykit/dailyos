@@ -30,8 +30,9 @@ const Banner = ({ id }) => {
             setBannerFiles(divFiles)
             if (files.length && divFiles.length) {
                divFiles.forEach(divFile => {
-                  const isValid =
+                  const isValid = Boolean(
                      divFile.divId === id && divFile.condition.isValid
+                  )
                   if (divFile.file) {
                      const result = formatWebRendererData([divFile])
                      if (isValid) {
@@ -62,7 +63,6 @@ const Banner = ({ id }) => {
 
    return (
       <>
-         <small>{id}</small>
          {!loading &&
             bannerFiles.length > 0 &&
             bannerFiles.map((file, index) => {
