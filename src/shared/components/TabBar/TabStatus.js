@@ -4,7 +4,6 @@ import Styles from './styled'
 
 const TabStatus = () => {
    const { tabs, closeAllTabs } = useTabs()
-   console.log(tabs)
    return (
       <Styles.TabStatus>
          <span>{tabs.length} opened tabs</span>

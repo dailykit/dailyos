@@ -1,16 +1,29 @@
 const options = {
    cellVertAlign: 'middle',
-   layout: 'fitColumns',
+   // layout: 'fitColumns',
    autoResize: true,
    maxHeight: 420,
-   resizableColumns: false,
-   virtualDomBuffer: 80,
+   resizableColumns: true,
+   virtualDomBuffer: 20,
+   persistenceID: 'recipe_table',
    placeholder: 'No Data Available',
-   persistence: false,
-   persistenceMode: 'cookie',
-   pagination: 'local',
-   paginationSize: 10,
+   index: 'id',
+   persistence: true,
+   persistenceMode: 'local',
+   selectablePersistence: true,
+   persistence: {
+      group: false,
+      sort: true, //persist column sorting
+      filter: true, //persist filter sorting
+      page: true, //persist page
+      columns: true, //persist columns
+   },
+   layout: 'fitDataStretch',
+   resizableColumns: true,
+   movableColumns: true,
    tooltips: true,
+   downloadDataFormatter: data => data,
+   downloadReady: (fileContents, blob) => blob,
 }
 
 export default options

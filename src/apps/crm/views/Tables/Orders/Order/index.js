@@ -48,11 +48,11 @@ const OrderInfo = () => {
          brandId: context.brandId,
       },
       onCompleted: ({ brand: { brand_Orders = [] } = {} } = {}) => {
-         const quantity = combineCartItems(brand_Orders[0]?.cart?.cartItemViews)
+         const quantity = combineCartItems(brand_Orders[0]?.cart?.cartItems)
             .length
          console.log('quantity', quantity)
          setOrderData(brand_Orders[0])
-         const result = brand_Orders[0]?.cart?.cartItemViews?.map(item => {
+         const result = brand_Orders[0]?.cart?.cartItems?.map(item => {
             return {
                products: item?.displayName || 'N/A',
                servings: quantity || 'N/A',

@@ -167,6 +167,18 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
             },
          },
          {
+            field: 'isDemo',
+            title: 'Demo',
+            formatter: 'tickCross',
+            headerTooltip: column => {
+               const identifier = 'listing_delivery_areas_column_isDemo'
+               return (
+                  tooltip(identifier)?.description ||
+                  column.getDefinition().title
+               )
+            },
+         },
+         {
             width: 150,
             title: 'Actions',
             headerFilter: false,

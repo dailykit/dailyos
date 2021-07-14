@@ -82,7 +82,7 @@ const Listing = ({ type, setTotal }) => {
          subscriptionData: { data: { productOptions: options = {} } = {} } = {},
       }) => {
          const total = options.nodes.reduce(
-            (b, a) => b + a.cartItemViews_aggregate.aggregate.count,
+            (b, a) => b + a.cartItems_aggregate.aggregate.count,
             0
          )
          setTotal(existing => ({ ...existing, [type.title]: total }))
@@ -111,14 +111,14 @@ const Listing = ({ type, setTotal }) => {
                      {node.displayName.split('->').pop().trim()}
                   </Text>
                   <Text as="subtitle">
-                     Total: {node.cartItemViews_aggregate?.aggregate?.count}
+                     Total: {node.cartItems_aggregate?.aggregate?.count}
                   </Text>
                </aside>
                <main>
-                  {node.cartItemViews_aggregate?.aggregate?.count === 0 ? (
+                  {node.cartItems_aggregate?.aggregate?.count === 0 ? (
                      <span>No order items.</span>
                   ) : (
-                     <Cards nodes={node.cartItemViews_aggregate?.nodes || []} />
+                     <Cards nodes={node.cartItems_aggregate?.nodes || []} />
                   )}
                </main>
             </Product>

@@ -655,6 +655,38 @@ export const MASTER = {
          }
       `,
    },
+   INGREDIENT_CATEGORY: {
+      LIST: gql`
+         subscription ingredientCategories {
+            ingredientCategories {
+               name
+            }
+         }
+      `,
+      AGGREGATE: gql`
+         subscription ingredientCategoriesAggregate {
+            ingredientCategoriesAggregate {
+               aggregate {
+                  count
+               }
+            }
+         }
+      `,
+      CREATE: gql`
+         mutation insertIngredientCategory($name: String!) {
+            createIngredientCategory(object: { name: $name }) {
+               name
+            }
+         }
+      `,
+      DELETE: gql`
+         mutation deleteIngredientCategory($name: String!) {
+            deleteIngredientCategory(name: $name) {
+               name
+            }
+         }
+      `,
+   },
 }
 
 export const DEVICES = {

@@ -2,6 +2,7 @@ import MenuIcon from './Menu'
 import CloseIcon from './Close'
 import EditIcon from './Edit'
 import DeleteIcon from './Delete'
+import RemoveIcon from './Remove'
 import AddIcon from './Add'
 import CodeIcon from './Code'
 import UserIcon from './User'
@@ -15,9 +16,15 @@ import DollarIcon from './Dollar'
 import InfoIcon from './Info'
 import LinkIcon from './Link'
 import MinusIcon from './Minus'
+import PublishIcon from './Publish'
+import UnPublishIcon from './Unpublish'
+import FilterIcon from './Filter'
 
 export {
+   FilterIcon,
+   UnPublishIcon,
    MenuIcon,
+   PublishIcon,
    CloseIcon,
    EditIcon,
    DeleteIcon,
@@ -34,4 +41,5 @@ export {
    InfoIcon,
    LinkIcon,
    MinusIcon,
+   RemoveIcon,
 }

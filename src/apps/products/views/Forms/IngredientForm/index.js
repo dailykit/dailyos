@@ -9,6 +9,7 @@ import {
    Tunnel,
    Tunnels,
    useTunnel,
+   Dropdown,
 } from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
@@ -24,6 +25,9 @@ import {
    S_INGREDIENT,
    S_SIMPLE_RECIPES_FROM_INGREDIENT_AGGREGATE,
    UPDATE_INGREDIENT,
+   INGREDIENT_CATEGORIES_INGREDIENTS_AGGREGATE,
+   INGREDIENT_INGREDIENT_CATEGORY_UPDATE,
+   INGREDIENT_CATEGORY_CREATE,
 } from '../../../graphql'
 import { Processings, Stats } from './components'
 import validator from './validators'
@@ -69,6 +73,30 @@ const IngredientForm = () => {
    })
    const [state, setState] = React.useState({})
    const [linkedRecipesCount, setLinkedRecipesCount] = React.useState(0)
+   const [options, setOptions] = React.useState([])
+   const [
+      searchIngredientCategory,
+      setSearchIngredientCategory,
+   ] = React.useState('')
+
+   const selectedOption = option => {
+      updateIngredientCategory({
+         variables: { id: { _eq: state.id }, category: option.title },
+      })
+   }
+   const searchedOption = option => {
+      setSearchIngredientCategory(option)
+   }
+
+   const addIngredientCategory = () => {
+      _addIngredientCategory({
+         variables: {
+            name: searchIngredientCategory,
+         },
+      })
+
+      setSearchIngredientCategory('')
+   }
 
    // Subscriptions
    const { loading, error } = useSubscription(S_INGREDIENT, {
@@ -76,7 +104,6 @@ const IngredientForm = () => {
          id: ingredientId,
       },
       onSubscriptionData: data => {
-         console.log(data.subscriptionData.data)
          setState(data.subscriptionData.data.ingredient)
          setTitle({
             ...title,
@@ -88,6 +115,23 @@ const IngredientForm = () => {
          })
       },
    })
+
+   useSubscription(INGREDIENT_CATEGORIES_INGREDIENTS_AGGREGATE, {
+      onSubscriptionData: data => {
+         let newOptions = []
+         data.subscriptionData.data.ingredientCategories.forEach((item, i) => {
+            const ingredientData = { id: i }
+            ingredientData.title = item.name
+            ingredientData.description =
+               'This is used ' +
+               item.ingredients_aggregate.aggregate.count +
+               ' times'
+            newOptions = [...newOptions, ingredientData]
+         })
+         setOptions(newOptions)
+      },
+   })
+
    useSubscription(S_SIMPLE_RECIPES_FROM_INGREDIENT_AGGREGATE, {
       variables: {
          where: {
@@ -119,6 +163,29 @@ const IngredientForm = () => {
       },
    })
 
+   const [updateIngredientCategory] = useMutation(
+      INGREDIENT_INGREDIENT_CATEGORY_UPDATE,
+      {
+         onCompleted: () => {
+            toast.success('Updated!')
+         },
+         onError: () => {
+            toast.error('Something went wrong!')
+            logger(error)
+         },
+      }
+   )
+
+   const [_addIngredientCategory] = useMutation(INGREDIENT_CATEGORY_CREATE, {
+      onCompleted: () => {
+         toast.success('Ingredient category added!')
+      },
+      onError: error => {
+         toast.error('Failed to add ingredient category!')
+         logger(error)
+      },
+   })
+
    React.useEffect(() => {
       if (!tab && !loading && !isEmpty(title.value)) {
          addTab(title.value, `/products/ingredients/${ingredientId}`)
@@ -143,27 +210,6 @@ const IngredientForm = () => {
       }
       setTitle({
          ...title,
-         meta: {
-            isTouched: true,
-            errors,
-            isValid,
-         },
-      })
-   }
-   const updateCategory = () => {
-      const { isValid, errors } = validator.name(category.value)
-      if (isValid) {
-         updateIngredient({
-            variables: {
-               id: state.id,
-               set: {
-                  category: category.value,
-               },
-            },
-         })
-      }
-      setCategory({
-         ...category,
          meta: {
             isTouched: true,
             errors,
@@ -234,24 +280,22 @@ const IngredientForm = () => {
                   <Form.Label htmlFor="category" title="category">
                      Category
                   </Form.Label>
-                  <Form.Text
-                     id="category"
-                     name="category"
-                     value={category.value}
-                     placeholder="Enter ingredient category"
-                     onChange={e =>
-                        setCategory({ ...category, value: e.target.value })
-                     }
-                     onBlur={updateCategory}
-                     hasError={
-                        !category.meta.isValid && category.meta.isTouched
-                     }
-                  />
-                  {category.meta.isTouched &&
-                     !category.meta.isValid &&
-                     category.meta.errors.map((error, index) => (
-                        <Form.Error key={index}>{error}</Form.Error>
-                     ))}
+                  {options && (
+                     <Dropdown
+                        type="single"
+                        variant="revamp"
+                        addOption={addIngredientCategory}
+                        options={options}
+                        defaultOption={
+                           options.find(
+                              item => item.title === category.value
+                           ) || null
+                        }
+                        searchedOption={searchedOption}
+                        selectedOption={selectedOption}
+                        typeName="category"
+                     />
+                  )}
                </Form.Group>
             </InputTextWrapper>
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import { Flex, Text, Spacer } from '@dailykit/ui'
-import { useSubscription } from '@apollo/react-hooks'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 
 import tableOptions from '../../../../tableOption'
@@ -20,16 +20,27 @@ const Customers = ({ id, setCustomersTotal }) => {
    const {
       error,
       loading,
-      data: { subscription_customers = [] } = {},
-   } = useSubscription(SUBSCRIPTION_CUSTOMERS, {
+      data: { subscription_customers = {} } = {},
+   } = useQuery(SUBSCRIPTION_CUSTOMERS, {
       variables: { id },
-      onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
-         setCustomersTotal(
-            data.subscription_customers.customers.aggregate.count
-         )
+      onCompleted: ({ subscription_customers = {} }) => {
+         setCustomersTotal(subscription_customers.customers.aggregate.count)
       },
    })
    const columns = [
+      {
+         frozen: true,
+         title: 'Email',
+         field: 'customer.email',
+         headerFilter: true,
+         headerFilterPlaceholder: 'Search by email...',
+         headerTooltip: column => {
+            const identifier = 'listing_customers_column_email'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
       {
          title: 'Name',
          headerFilter: true,
@@ -43,24 +54,52 @@ const Customers = ({ id, setCustomersTotal }) => {
          },
       },
       {
-         title: 'Email',
-         field: 'email',
+         title: 'Phone Number',
          headerFilter: true,
-         headerFilterPlaceholder: 'Search by email...',
+         field: 'customer.platform_customer.phoneNumber',
+         headerFilterPlaceholder: 'Search by phone numbers...',
          headerTooltip: column => {
-            const identifier = 'listing_customers_column_email'
+            const identifier = 'listing_customers_column_phone'
             return (
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
       },
       {
-         title: 'Phone Number',
-         headerFilter: true,
-         field: 'customer.phoneNumber',
-         headerFilterPlaceholder: 'Search by phone numbers...',
+         title: 'Subscription Cancelled',
+         field: 'isSubscriptionCancelled',
+         formatter: 'tickCross',
          headerTooltip: column => {
-            const identifier = 'listing_customers_column_phone'
+            const identifier =
+               'listing_customers_column_isSubscriptionCancelled'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+      {
+         title: 'Pause Period',
+         formatter: ({ _cell }) => {
+            const { pausePeriod = {} } = _cell.row.getData()
+            if (Object.keys(pausePeriod || {}).length > 0) {
+               return `${pausePeriod?.startDate} - ${pausePeriod?.endDate}`
+            } else {
+               return 'N/A'
+            }
+         },
+         headerTooltip: column => {
+            const identifier = 'listing_customers_column_pause_period'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+
+      {
+         title: 'Brand',
+         field: 'brand.title',
+         headerTooltip: column => {
+            const identifier = 'listing_customers_column_brand'
             return (
                tooltip(identifier)?.description || column.getDefinition().title
             )
@@ -90,6 +129,7 @@ const Customers = ({ id, setCustomersTotal }) => {
                layout: 'fitColumns',
                pagination: 'local',
                paginationSize: 10,
+               groupBy: 'brand.title',
             }}
          />
       </>
@@ -101,10 +141,11 @@ export default Customers
 const CustomerName = ({ cell: { _cell } }) => {
    const data = _cell.row.getData()
 
-   if (!data.customer?.firstName) return 'N/A'
+   if (!data.customer?.platform_customer?.firstName) return 'N/A'
    return (
       <div>
-         {data.customer?.firstName} {data.customer?.lastName}
+         {data.customer?.platform_customer?.firstName}{' '}
+         {data.customer?.platform_customer?.lastName}
       </div>
    )
 }

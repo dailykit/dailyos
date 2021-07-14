@@ -1,5 +1,13 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Flex, Form, TunnelHeader } from '@dailykit/ui'
+import {
+   ButtonTile,
+   Flex,
+   Form,
+   Select,
+   Spacer,
+   TunnelHeader,
+   useTunnel,
+} from '@dailykit/ui'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
@@ -13,6 +21,7 @@ import {
 } from '../../../../../graphql'
 import { validators } from '../../../../../utils/validators'
 import { Highlight, StyledInputGroup, TunnelBody } from '../styled'
+import { DELETE_SUPPLIER_ITEM_UNIT_CONVERSION } from '../../../../../graphql/mutations'
 
 const address = 'apps.inventory.views.forms.item.tunnels.info.'
 
@@ -82,6 +91,19 @@ export default function InfoTunnel({ close, formState }) {
          close()
       },
    })
+
+   const [removeLinkedConversion] = useMutation(
+      DELETE_SUPPLIER_ITEM_UNIT_CONVERSION,
+      {
+         onCompleted: () => {
+            toast.success('Conversion removed!')
+         },
+         onError: error => {
+            logger(error)
+            toast.error('Something went wrong!')
+         },
+      }
+   )
 
    const isObjectValid = () => {
       if (!itemName.value || !itemName.meta.isValid) return 'invalid item name'
@@ -326,6 +348,7 @@ export default function InfoTunnel({ close, formState }) {
                         {unit.meta.isTouched && !unit.meta.isValid && (
                            <Form.Error>{unit.meta.errors[0]}</Form.Error>
                         )}
+                        <Spacer size="16px" />
                      </Form.Group>
                      <Form.Group>
                         <Form.Label title="unit price" htmlFor="unitPrice">

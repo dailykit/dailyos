@@ -1,4 +1,5 @@
 import React from 'react'
+import moment from 'moment'
 import styled from 'styled-components'
 import { Text, Flex, Spacer } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
@@ -17,9 +18,9 @@ const DateSection = () => {
    )
 
    function isDayDisabled(day) {
-      return !occurrences_dates
-         .map(node => new Date(node.date))
-         .some(disabledDay => DateUtils.isSameDay(day, disabledDay))
+      return !occurrences_dates.some(
+         node => node.date === moment(day).format('YYYY-MM-DD')
+      )
    }
 
    const handleDayClick = (day, { selected }) => {
