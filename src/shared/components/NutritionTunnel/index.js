@@ -134,6 +134,12 @@ const NutritionTunnel = ({
          <Tunnel layer={1} size="md">
             <TunnelHeader
                title={title || 'Add Nutrition'}
+               extraButtons={[
+                  {
+                     title: 'Reset',
+                     action: () => alert('Action2 triggered!')
+                  }
+               ]}
                right={{ action: save, title: 'Save' }}
                close={() => closeTunnel(1)}
                tooltip={<Tooltip identifier="nutrition_tunnel" />}
