@@ -102,6 +102,9 @@ const ServingsTunnel = ({ state, closeTunnel }) => {
             serving: +object.serving.value.trim(),
             label: object.label.value.trim(),
          },
+         nutritionInfo: {
+            data: {},
+         },
       }))
       createYields({
          variables: {
