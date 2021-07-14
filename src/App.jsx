@@ -13,6 +13,7 @@ import {
    Lang,
    RedirectBanner,
    Sidebar,
+   InsightDashboard,
    AddressTunnel,
 } from './shared/components'
 
@@ -117,6 +118,14 @@ const App = () => {
                         </AppItem>
                      ))}
                   </AppList>
+                  <InsightDiv>
+                     <InsightDashboard
+                        appTitle="global"
+                        moduleTitle="dashboard"
+                        includeChart
+                        showInTunnel={false}
+                     />
+                  </InsightDiv>
                   <FullOccurrenceReport />
                </Route>
                <Route path="/inventory" component={Inventory} />
@@ -202,4 +211,7 @@ const Layout = styled.div`
    @media only screen and (max-width: 767px) {
       grid-template-columns: ${({ open }) => (open ? '100vw' : '48px 1fr')};
    }
+`
+const InsightDiv = styled.div`
+   padding: 1rem;
 `

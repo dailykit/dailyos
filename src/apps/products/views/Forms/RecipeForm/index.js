@@ -22,6 +22,7 @@ import {
    ErrorState,
    InlineLoader,
    Tooltip,
+   InsightDashboard,
 } from '../../../../../shared/components'
 import { logger, randomSuffix } from '../../../../../shared/utils'
 import { CloseIcon, EyeIcon, TickIcon } from '../../../assets/icons'
@@ -405,6 +406,7 @@ const RecipeForm = () => {
                      <HorizontalTab>Basic Details</HorizontalTab>
                      <HorizontalTab>Ingredients</HorizontalTab>
                      <HorizontalTab>Cooking Steps</HorizontalTab>
+                     <HorizontalTab>Insights</HorizontalTab>
                   </HorizontalTabList>
                   <HorizontalTabPanels>
                      <HorizontalTabPanel>
@@ -423,6 +425,16 @@ const RecipeForm = () => {
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>
                         <Procedures state={state} />
+                     </HorizontalTabPanel>
+                     <HorizontalTabPanel>
+                        <InsightDashboard
+                           appTitle="Products App"
+                           moduleTitle="Recipe Page"
+                           variables={{
+                              recipeId,
+                           }}
+                           showInTunnel={false}
+                        />
                      </HorizontalTabPanel>
                   </HorizontalTabPanels>
                </HorizontalTabs>

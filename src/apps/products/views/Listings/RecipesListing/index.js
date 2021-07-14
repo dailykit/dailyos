@@ -22,6 +22,7 @@ import {
    ErrorState,
    InlineLoader,
    Tooltip,
+   InsightDashboard,
 } from '../../../../../shared/components'
 import { useTabs } from '../../../../../shared/providers'
 import { logger, randomSuffix } from '../../../../../shared/utils'
@@ -457,6 +458,11 @@ class DataTable extends React.Component {
                options={{ ...tableOptions, reactiveData: true }}
                data-custom-attr="test-custom-attribute"
                className="custom-css-class"
+            />
+            <InsightDashboard
+               appTitle="Products App"
+               moduleTitle="Recipe Listing"
+               showInTunnel={false}
             />
          </>
       )

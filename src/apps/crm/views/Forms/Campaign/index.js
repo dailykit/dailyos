@@ -257,17 +257,6 @@ const CampaignForm = () => {
                                  <ConditionComp />
                                  <RewardComp />
                               </div>
-                              <StyledInsight>
-                                 <InsightDashboard
-                                    appTitle="CRM App"
-                                    moduleTitle="Campaign Page"
-                                    variables={{
-                                       campaignId: campaignId,
-                                       today: today,
-                                       fromDate: fromDate,
-                                    }}
-                                 />
-                              </StyledInsight>
                            </Flex>
                         </StyledComp>
                      </HorizontalTabPanel>
@@ -278,7 +267,12 @@ const CampaignForm = () => {
                         <InsightDashboard
                            appTitle="CRM App"
                            moduleTitle="Campaign Page"
-                           variables={{ campaignId: campaignId }}
+                           variables={{
+                              campaignId: campaignId,
+                              today: today,
+                              fromDate: fromDate,
+                           }}
+                           showInTunnel={false}
                         />
                      </HorizontalTabPanel>
                   </HorizontalTabPanels>
