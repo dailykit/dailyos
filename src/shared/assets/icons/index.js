@@ -29,6 +29,7 @@ import LinkIcon from './Link'
 import MaximizeIcon from './Maximixe'
 import MinimizeIcon from './Minimize'
 import PlayIcon from './Play'
+import ExternalLink from './ExternalLink'
 import SearchIcon from './Search'
 
 export {
@@ -64,6 +65,7 @@ export {
    MaximizeIcon,
    MinimizeIcon,
    PlayIcon,
+   ExternalLink,
 }
 
 export * from './Tick'
