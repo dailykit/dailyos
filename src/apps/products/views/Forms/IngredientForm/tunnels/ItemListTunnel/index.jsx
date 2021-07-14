@@ -1,5 +1,5 @@
 import React from 'react'
-import { useLazyQuery } from '@apollo/react-hooks'
+import { useLazyQuery, useMutation } from '@apollo/react-hooks'
 import {
    Filler,
    List,
@@ -18,10 +18,10 @@ import {
 } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { IngredientContext } from '../../../../../context/ingredient'
-import { BULK_ITEMS, SACHET_ITEMS } from '../../../../../graphql'
+import { BULK_ITEMS, MOF, SACHET_ITEMS } from '../../../../../graphql'
 import { TunnelBody } from '../styled'
 
-const ItemTunnel = ({ closeTunnel }) => {
+const ItemListTunnel = ({ closeTunnel }) => {
    const { ingredientState, ingredientDispatch } = React.useContext(
       IngredientContext
    )
@@ -30,6 +30,8 @@ const ItemTunnel = ({ closeTunnel }) => {
 
    const [list, current, selectOption] = useSingleList(items)
 
+   const TUNNEL_NUMBER = ingredientState.editMode ? 4 : 2
+
    // Queries for fetching items
    const [fetchBulkItems, { loading: bulkItemsLoading }] = useLazyQuery(
       BULK_ITEMS,
@@ -37,7 +39,7 @@ const ItemTunnel = ({ closeTunnel }) => {
          onCompleted: data => {
             const updatedItems = data.bulkItems.map(item => {
                return {
-                  id: item.id,
+                  ...item,
                   title: `${item.supplierItem.name} ${item.processingName}`,
                }
             })
@@ -56,7 +58,7 @@ const ItemTunnel = ({ closeTunnel }) => {
          onCompleted: data => {
             const updatedItems = data.sachetItems.map(item => {
                return {
-                  id: item.id,
+                  ...item,
                   title: `${item.bulkItem.supplierItem.name} ${item.bulkItem.processingName} - ${item.unitSize} ${item.unit}`,
                }
             })
@@ -71,36 +73,75 @@ const ItemTunnel = ({ closeTunnel }) => {
    )
 
    React.useEffect(() => {
-      if (ingredientState.currentMode === 'realTime') {
+      if (ingredientState.itemType === 'bulk') {
          fetchBulkItems()
       } else {
          fetchSupplierItems()
       }
    }, [])
 
-   React.useEffect(() => {
-      if (Object.keys(current).length) {
-         ingredientDispatch({
-            type: 'MODE',
-            payload: {
-               mode: ingredientState.currentMode,
-               name:
-                  ingredientState.currentMode === 'realTime'
-                     ? 'bulkItem'
-                     : 'sachetItem',
-               value: current,
-            },
-         })
-         closeTunnel(2)
+   // Mutation
+   const [create, { loading: creating }] = useMutation(MOF.CREATE, {
+      onCompleted: () => {
+         if (!ingredientState.editMode) {
+            toast.success('Item added successfully!')
+         }
+         closeTunnel(TUNNEL_NUMBER)
+         closeTunnel(TUNNEL_NUMBER - 1)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
+   const add = () => {
+      if (current?.id && !creating) {
+         if (ingredientState.editMode) {
+            ingredientDispatch({
+               type: 'EDIT_MODE',
+               payload: {
+                  ...ingredientState.editMode,
+                  sachetItem:
+                     ingredientState.itemType === 'sachet' ? current : null,
+                  bulkItem:
+                     ingredientState.itemType === 'bulk' ? current : null,
+               },
+            })
+            closeTunnel(TUNNEL_NUMBER)
+            closeTunnel(TUNNEL_NUMBER - 1)
+         } else {
+            create({
+               variables: {
+                  object: {
+                     ingredientSachetId: ingredientState.sachetId,
+                     sachetItemId:
+                        ingredientState.itemType === 'sachet'
+                           ? current.id
+                           : null,
+                     bulkItemId:
+                        ingredientState.itemType === 'bulk' ? current.id : null,
+                  },
+               },
+            })
+         }
       }
-   }, [current])
+   }
+
+   const renderButtonText = () => {
+      if (ingredientState.editMode) {
+         return 'Update'
+      }
+      return creating ? 'Adding...' : 'Add'
+   }
 
    return (
       <>
          <TunnelHeader
             title="Select Item"
-            close={() => closeTunnel(2)}
+            close={() => closeTunnel(TUNNEL_NUMBER)}
             tooltip={<Tooltip identifier="sachet_item_tunnel" />}
+            right={{ action: add, title: renderButtonText() }}
          />
          <TunnelBody>
             <Banner id="products-app-ingredients-item-tunnel-top" />
@@ -155,4 +196,4 @@ const ItemTunnel = ({ closeTunnel }) => {
    )
 }
 
-export default ItemTunnel
+export default ItemListTunnel

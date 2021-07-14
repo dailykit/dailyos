@@ -16,6 +16,7 @@ import {
    ErrorState,
    InlineLoader,
    Tooltip,
+   InsightDashboard,
 } from '../../../../../shared/components'
 import { ResponsiveFlex } from '../styled'
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
@@ -38,9 +39,11 @@ const CollectionsListing = () => {
    const tableRef = React.useRef()
 
    // Queries
-   const { data: { collections = [] } = {}, loading, error } = useSubscription(
-      S_COLLECTIONS
-   )
+   const {
+      data: { collections = [] } = {},
+      loading,
+      error,
+   } = useSubscription(S_COLLECTIONS)
 
    React.useEffect(() => {
       if (!tab) {
@@ -189,6 +192,11 @@ const CollectionsListing = () => {
                options={tableOptions}
             />
          )}
+         <InsightDashboard
+            appTitle="Menu App"
+            moduleTitle="Collection Listing"
+            showInTunnel={false}
+         />
          <Banner id="menu-app-collections-listing-bottom" />
       </ResponsiveFlex>
    )

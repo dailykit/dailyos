@@ -22,6 +22,7 @@ import {
    ErrorState,
    InlineLoader,
    Tooltip,
+   InsightDashboard,
 } from '../../../../../shared/components'
 import FilterIcon from '../../../assets/icons/Filter'
 
@@ -265,6 +266,11 @@ class DataTable extends React.Component {
                }}
                data-custom-attr="test-custom-attribute"
                className="custom-css-class"
+            />
+            <InsightDashboard
+               appTitle="Products App"
+               moduleTitle="Ingredient Listing"
+               showInTunnel={false}
             />
          </>
       )

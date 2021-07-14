@@ -35,6 +35,7 @@ import {
    ErrorState,
    InlineLoader,
    ErrorBoundary,
+   InsightDashboard,
 } from '../../../../../../shared/components'
 import { TickIcon, CloseIcon } from '../../../../../../shared/assets/icons'
 import {
@@ -61,32 +62,33 @@ const Title = () => {
          logger(error)
       },
    })
-   const { error, loading, data: { title = {} } = {} } = useSubscription(
-      TITLE,
-      {
-         variables: {
-            id: params.id,
-         },
-         onSubscriptionData: ({
-            subscriptionData: { data: { title: node = {} } = {} },
-         }) => {
-            if (isEmpty(node)) return
+   const {
+      error,
+      loading,
+      data: { title = {} } = {},
+   } = useSubscription(TITLE, {
+      variables: {
+         id: params.id,
+      },
+      onSubscriptionData: ({
+         subscriptionData: { data: { title: node = {} } = {} },
+      }) => {
+         if (isEmpty(node)) return
 
-            dispatch({
-               type: 'SET_TITLE',
-               payload: {
-                  id: node.id,
-                  title: node.title,
-                  isActive: node.isActive,
-                  defaultServing: { id: node.defaultSubscriptionServingId },
-               },
-            })
-            if (!tab) {
-               addTab(node.title, `/subscription/subscriptions/${node.id}`)
-            }
-         },
-      }
-   )
+         dispatch({
+            type: 'SET_TITLE',
+            payload: {
+               id: node.id,
+               title: node.title,
+               isActive: node.isActive,
+               defaultServing: { id: node.defaultSubscriptionServingId },
+            },
+         })
+         if (!tab) {
+            addTab(node.title, `/subscription/subscriptions/${node.id}`)
+         }
+      },
+   })
 
    const handleChange = e => {
       dispatch({

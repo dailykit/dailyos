@@ -252,17 +252,6 @@ const CouponForm = () => {
                                  <ConditionComp />
                                  <RewardComp />
                               </div>
-                              <StyledInsight>
-                                 <InsightDashboard
-                                    appTitle="CRM App"
-                                    moduleTitle="Coupon Page"
-                                    variables={{
-                                       couponId: couponId,
-                                       today: today,
-                                       fromDate: fromDate,
-                                    }}
-                                 />
-                              </StyledInsight>
                            </Flex>
                         </StyledComp>
                      </HorizontalTabPanel>
@@ -273,7 +262,12 @@ const CouponForm = () => {
                         <InsightDashboard
                            appTitle="CRM App"
                            moduleTitle="Coupon Page"
-                           variables={{ couponId: couponId }}
+                           variables={{
+                              couponId: couponId,
+                              today: today,
+                              fromDate: fromDate,
+                           }}
+                           showInTunnel={false}
                         />
                      </HorizontalTabPanel>
                   </HorizontalTabPanels>

@@ -49,7 +49,7 @@ const EditPackagingTunnel = ({ closeTunnel }) => {
                packaging: current,
             },
          })
-         closeTunnel(4)
+         closeTunnel(5)
       }
    }, [current])
 
@@ -57,7 +57,7 @@ const EditPackagingTunnel = ({ closeTunnel }) => {
       <>
          <TunnelHeader
             title="Select Packaging"
-            close={() => closeTunnel(4)}
+            close={() => closeTunnel(5)}
             tooltip={<Tooltip identifier="packaging_tunnel" />}
          />
          <TunnelBody>

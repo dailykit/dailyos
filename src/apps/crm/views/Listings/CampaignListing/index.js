@@ -23,7 +23,12 @@ import {
 } from '../../../graphql'
 import { StyledWrapper } from './styled'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
-import { Tooltip, InlineLoader, Banner } from '../../../../../shared/components'
+import {
+   Tooltip,
+   InlineLoader,
+   InsightDashboard,
+   Banner,
+} from '../../../../../shared/components'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import CampaignTypeTunnel from './Tunnel'
@@ -52,9 +57,11 @@ const CampaignListing = () => {
       },
    })
 
-   const { data: campaignTotal, loading, error2 } = useSubscription(
-      CAMPAIGN_TOTAL
-   )
+   const {
+      data: campaignTotal,
+      loading,
+      error2,
+   } = useSubscription(CAMPAIGN_TOTAL)
 
    if (error1 || error2) {
       toast.error('Something went wrong !')
@@ -244,6 +251,11 @@ const CampaignListing = () => {
                ref={tableRef}
             />
          )}
+         <InsightDashboard
+            appTitle="CRM App"
+            moduleTitle="Campaign Listing"
+            showInTunnel={false}
+         />
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
                <CampaignTypeTunnel close={closeTunnel} />

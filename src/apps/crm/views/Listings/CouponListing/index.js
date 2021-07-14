@@ -21,7 +21,12 @@ import {
 } from '../../../graphql'
 import { StyledWrapper } from './styled'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
-import { Tooltip, InlineLoader, Banner } from '../../../../../shared/components'
+import {
+   Tooltip,
+   InlineLoader,
+   InsightDashboard,
+   Banner,
+} from '../../../../../shared/components'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { currencyFmt, logger, randomSuffix } from '../../../../../shared/utils'
 import options from '../../tableOptions'
@@ -295,6 +300,11 @@ const CouponListing = () => {
                ref={tableRef}
             />
          )}
+         <InsightDashboard
+            appTitle="CRM App"
+            moduleTitle="Coupon Listing"
+            showInTunnel={false}
+         />
          <Banner id="crm-app-coupons-listing-bottom" />
       </StyledWrapper>
    )

@@ -20,6 +20,7 @@ import {
    ErrorState,
    InlineLoader,
    Tooltip,
+   InsightDashboard,
 } from '../../../../../shared/components'
 import { logger } from '../../../../../shared/utils'
 import { useTabs } from '../../../../../shared/providers'
@@ -219,7 +220,14 @@ const CollectionForm = () => {
                            <Availability state={state} />
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
-                           Insights coming soon!
+                           <InsightDashboard
+                              appTitle="Menu App"
+                              moduleTitle="Collection Page"
+                              variables={{
+                                 collectionId,
+                              }}
+                              showInTunnel={false}
+                           />
                         </HorizontalTabPanel>
                      </HorizontalTabPanels>
                   </HorizontalTabs>

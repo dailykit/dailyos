@@ -26,7 +26,12 @@ import {
 // third party imports
 import { useTranslation } from 'react-i18next'
 // shared dir imports
-import { Banner, InlineLoader, Tooltip } from '../../../../../shared/components'
+import {
+   InlineLoader,
+   Tooltip,
+   InsightDashboard,
+   Banner,
+} from '../../../../../shared/components'
 import { useTabs, useTooltip } from '../../../../../shared/providers'
 // local imports
 import { AddIcon } from '../../../assets/icons'
@@ -58,10 +63,8 @@ const ProductsListing = () => {
    const [view, setView] = React.useState('simple')
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
    const [selectedRows, setSelectedRows] = React.useState([])
-   const [
-      isProductOptionTableVisible,
-      setIsProductOptionTableVisible,
-   ] = React.useState(false)
+   const [isProductOptionTableVisible, setIsProductOptionTableVisible] =
+      React.useState(false)
    const options = [
       { id: 'simple', title: 'Simple' },
       { id: 'customizable', title: t(address.concat('customizable')) },
@@ -690,6 +693,11 @@ const ProductOptions = forwardRef(
                rowDeselected={handleRowDeselection}
                data-custom-attr="test-custom-attribute"
                className="custom-css-class"
+            />
+            <InsightDashboard
+               appTitle="Products App"
+               moduleTitle="Product Listing"
+               showInTunnel={false}
             />
          </>
       )
