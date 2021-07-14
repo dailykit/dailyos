@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const Layout = styled.div`
    height: 100vh;
    > main {
-      height: 100%;
+      height: calc(100% - 48px);
       overflow-y: auto;
    }
 `

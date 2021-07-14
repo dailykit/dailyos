@@ -11,7 +11,7 @@ export const Styles = {
       border: 1px solid #f2f3f3;
       backdrop-filter: blur(44.37px);
       border-radius: 10px;
-      z-index: 10;
+      z-index: 99999;
       > span:nth-child(1) {
          margin: 8px;
       }
