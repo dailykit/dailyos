@@ -13,16 +13,30 @@ import {
 } from '@dailykit/ui'
 import { Tooltip } from '../Tooltip'
 
-const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
+const NutritionTunnel = ({
+   tunnels,
+   title,
+   closeTunnel,
+   value,
+   onSave,
+   perDynamic=false,
+}) => {
    const [state, dispatch] = React.useReducer(reducer, initialState)
 
    const validate = e => {
       let isValid = true
       let errors = []
-      if (Number.isNaN(e.target.value) || +e.target.value < 0) {
+      if (
+         e.target.value.indexOf(' ') >= 0 === true &&
+         e.target.value.indexOf(',') >= 0 === false
+      ) {
+         isValid = false
+         errors = [...errors, 'Different values should be separated by a comma']
+      } else if (Number.isNaN(e.target.value) || +e.target.value < 0) {
          isValid = false
          errors = [...errors, 'Invalid input!']
       }
+
       dispatch({
          type: 'SET_ERRORS',
          payload: {
@@ -84,6 +98,8 @@ const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
             vitaminC: +state.vitaminC.value || 0,
             calcium: +state.calcium.value || 0,
             iron: +state.iron.value || 0,
+            excludes: state.excludes.value || '',
+            allergens: state.allergens.value || '',
          })
          closeTunnel(1)
       } else {
@@ -115,9 +131,15 @@ const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
 
    return (
       <Tunnels tunnels={tunnels}>
-         <Tunnel layer={1} size="sm">
+         <Tunnel layer={1} size="md">
             <TunnelHeader
                title={title || 'Add Nutrition'}
+               extraButtons={[
+                  {
+                     title: 'Reset',
+                     action: () => alert('Action2 triggered!')
+                  }
+               ]}
                right={{ action: save, title: 'Save' }}
                close={() => closeTunnel(1)}
                tooltip={<Tooltip identifier="nutrition_tunnel" />}
@@ -127,10 +149,38 @@ const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
                height="calc(100vh - 106px)"
                style={{ overflow: 'auto' }}
             >
-               <HelperText
-                  type="hint"
-                  message={`Add values per ${state.per.value} gms`}
-               />
+               {!perDynamic ? (
+                  <HelperText
+                     type="hint"
+                     message={`Add values per 100 gms`}
+                  />
+               ) : (
+                  <Flex container alignItems="end" margin="0 0 16px 0">
+                     <Form.Group>
+                        <Form.Label htmlFor="per" title="per">
+                           Per
+                        </Form.Label>
+                        <Form.Number
+                           id="per"
+                           name="per"
+                           onChange={onChange}
+                           onBlur={validate}
+                           value={state.per.value}
+                           placeholder="Enter per"
+                           hasError={
+                              state.per.meta.isTouched &&
+                              !state.per.meta.isValid
+                           }
+                        />
+                        {state.per.meta.isTouched &&
+                           !state.per.meta.isValid &&
+                           state.per.meta.errors.map((error, index) => (
+                              <Form.Error key={index}>{error}</Form.Error>
+                           ))}
+                     </Form.Group>
+                  </Flex>
+               )}
+
                <Spacer size="16px" />
                <Flex container alignItems="end" margin="0 0 16px 0">
                   <Form.Group>
@@ -541,6 +591,56 @@ const NutritionTunnel = ({ tunnels, title, closeTunnel, value, onSave }) => {
                   <Spacer xAxis size="8px" />
                   <Text as="title">%</Text>
                </Flex>
+               <Flex container alignItems="end" margin="0 0 16px 0">
+                  <Form.Group>
+                     <Form.Label htmlFor="excludes" title="excludes">
+                        Excludes
+                     </Form.Label>
+                     <Form.Text
+                        id="excludes"
+                        name="excludes"
+                        onChange={onChange}
+                        onBlur={validate}
+                        value={state.excludes.value}
+                        placeholder="Enter excludes"
+                        hasError={
+                           state.excludes.isTouched &&
+                           !state.excludes.meta.isValid
+                        }
+                     />
+                     {state.excludes.meta.isTouched &&
+                        !state.excludes.meta.isValid &&
+                        state.excludes.meta.errors.map((error, index) => (
+                           <Form.Error key={index}>{error}</Form.Error>
+                        ))}
+                  </Form.Group>
+                  <Spacer xAxis size="8px" />
+               </Flex>
+               <Flex container alignItems="end" margin="0 0 16px 0">
+                  <Form.Group>
+                     <Form.Label htmlFor="allergens" title="allergens">
+                        Allergens
+                     </Form.Label>
+                     <Form.Text
+                        id="allergens"
+                        name="allergens"
+                        onChange={onChange}
+                        onBlur={validate}
+                        value={state.allergens.value}
+                        placeholder="Enter allergens"
+                        hasError={
+                           state.allergens.isTouched &&
+                           !state.allergens.meta.isValid
+                        }
+                     />
+                     {state.allergens.meta.isTouched &&
+                        !state.allergens.meta.isValid &&
+                        state.allergens.meta.errors.map((error, index) => (
+                           <Form.Error key={index}>{error}</Form.Error>
+                        ))}
+                  </Form.Group>
+                  <Spacer xAxis size="8px" />
+               </Flex>
             </Flex>
          </Tunnel>
       </Tunnels>
@@ -551,7 +651,7 @@ export default NutritionTunnel
 
 const initialState = {
    per: {
-      value: 100,
+      value: '',
       meta: {
          isTouched: false,
          isValid: true,
@@ -663,6 +763,22 @@ const initialState = {
       },
    },
    iron: {
+      value: '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   },
+   excludes: {
+      value: '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   },
+   allergens: {
       value: '',
       meta: {
          isTouched: false,

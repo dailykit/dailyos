@@ -13,6 +13,7 @@ import {
    Tooltip,
    ErrorState,
    InlineLoader,
+   InsightDashboard,
 } from '../../../../../shared/components'
 import { ResponsiveFlex } from '../../../../../shared/components/ResponsiveFlex'
 
@@ -57,6 +58,19 @@ export const Subscriptions = () => {
          headerFilterPlaceholder: 'Search titles...',
          headerTooltip: column => {
             const identifier = 'listing_subscription_column_title'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
+      {
+         width: 150,
+         title: 'Demo',
+         field: 'isDemo',
+         headerFilter: true,
+         formatter: 'tickCross',
+         headerTooltip: column => {
+            const identifier = 'listing_subscription_column_isDemo'
             return (
                tooltip(identifier)?.description || column.getDefinition().title
             )
@@ -108,9 +122,15 @@ export const Subscriptions = () => {
                ref={tableRef}
                columns={columns}
                rowClick={rowClick}
-               options={{ ...options, pagination: 'local', paginationSize: 10 }}
+               options={{ ...options, layout: 'fitColumns', maxHeight: 480 }}
             />
          )}
+
+         <InsightDashboard
+            appTitle="Subscription App"
+            moduleTitle="Subcription Listing"
+            showInTunnel={false}
+         />
       </ResponsiveFlex>
    )
 }

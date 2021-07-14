@@ -130,6 +130,8 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
                {serving.id === state.title.defaultServing.id && (
                   <Tag>Default</Tag>
                )}
+               <Spacer size="14px" xAxis />
+               {serving.isDemo && <Tag>Demo</Tag>}
             </Stack>
             <Stack>
                {serving.isValid ? (
@@ -164,7 +166,7 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
                   type="outline"
                   onClick={() => editServing()}
                >
-                  <EditIcon />
+                  <EditIcon size={14} />
                </IconButton>
             </Stack>
          </Flex>

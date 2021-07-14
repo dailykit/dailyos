@@ -9,7 +9,14 @@ export const INGREDIENTS_COUNT = gql`
       }
    }
 `
-
+export const CUISINES_NAMES = gql`
+   subscription Cuisines {
+      cuisineNames {
+         id
+         title: name
+      }
+   }
+`
 export const S_INGREDIENTS = gql`
    subscription Ingredients {
       ingredients(
@@ -50,8 +57,18 @@ export const S_PROCESSINGS = gql`
    subscription Processings($where: ingredient_ingredientProcessing_bool_exp) {
       ingredientProcessings(where: $where) {
          id
+         ingredientId
          title: processingName
-         processingName
+      }
+   }
+`
+export const S_PROCESSINGS_ID = gql`
+   subscription IngredientProcessings($_eq: Int!) {
+      simpleRecipeIngredientProcessings(
+         where: { simpleRecipeId: { _eq: $_eq } }
+      ) {
+         ingredientId
+         processingId
       }
    }
 `
@@ -66,6 +83,10 @@ export const S_SACHETS = gql`
          ingredient {
             id
             name
+         }
+         ingredientProcessingId
+         recipeYields {
+            recipeYieldId
          }
       }
    }
@@ -99,17 +120,17 @@ export const S_INGREDIENT = gql`
                quantity
                nutritionalInfo
                cost
-               liveModeOfFulfillment {
-                  id
-                  type
-               }
-               modeOfFulfillments(order_by: { position: desc_nulls_last }) {
+               liveMOF
+               modeOfFulfillments(
+                  where: { isArchived: { _eq: false } }
+                  order_by: { position: desc_nulls_last }
+               ) {
                   id
                   accuracy
+                  isPublished
                   isLive
                   position
                   cost
-                  type
                   operationConfig {
                      id
                      station {
@@ -128,6 +149,10 @@ export const S_INGREDIENT = gql`
                   bulkItem {
                      id
                      processingName
+                     committed
+                     onHand
+                     awaiting
+                     unit
                      supplierItem {
                         id
                         name
@@ -137,6 +162,9 @@ export const S_INGREDIENT = gql`
                      id
                      unitSize
                      unit
+                     committed
+                     onHand
+                     awaiting
                      bulkItem {
                         id
                         processingName
@@ -176,10 +204,14 @@ export const S_RECIPES = gql`
          name
          author
          cookingTime
+         cuisine
          isValid
          isPublished
-         simpleRecipeYields(where: { isArchived: { _eq: false } }) {
-            id
+
+         simpleRecipeYields: simpleRecipeYields_aggregate {
+            aggregate {
+               count
+            }
          }
       }
    }
@@ -240,6 +272,8 @@ export const S_RECIPE = gql`
                   id
                   unit
                   quantity
+                  cost
+                  nutritionalInfo
                }
                simpleRecipeYield {
                   id
@@ -259,6 +293,8 @@ export const S_RECIPE = gql`
             baseYieldId
             cost
             nutritionalInfo
+            nutritionId
+            nutritionIsInSync
          }
       }
    }
@@ -454,17 +490,31 @@ export const S_SIMPLE_RECIPES_FROM_INGREDIENT_AGGREGATE = gql`
 `
 
 export const INGREDIENT_CATEGORIES_INGREDIENTS_AGGREGATE = gql`
-subscription IngredientCategoryIngredientsAggregate {
-   ingredientCategories {
-     name 
-     title: name
-     ingredients_aggregate {
-       aggregate {
-         count
-         description : count
-       }
-     }
+   subscription IngredientCategoryIngredientsAggregate {
+      ingredientCategories {
+         name
+         title: name
+         ingredients_aggregate {
+            aggregate {
+               count
+               description: count
+            }
+         }
+      }
    }
- }
 `
-
+export const PRODUCT_OPTIONS = gql`
+   subscription ProductOptions {
+      productOptions(where: { isArchived: { _eq: false } }) {
+         discount
+         id
+         label
+         price
+         quantity
+         product {
+            name
+         }
+         type
+      }
+   }
+`

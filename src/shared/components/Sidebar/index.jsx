@@ -45,7 +45,7 @@ export const Sidebar = ({ setOpen }) => {
                         {app.title}
                      </Styles.AppTitle>
 
-                     {routes[app.title].length > 0 && (
+                     {routes[app.title]?.length > 0 && (
                         <Styles.Arrow
                            type="ghost"
                            size="sm"

@@ -22,6 +22,7 @@ import {
    ErrorState,
    InlineLoader,
    Tooltip,
+   InsightDashboard,
 } from '../../../../../shared/components'
 import { logger, randomSuffix } from '../../../../../shared/utils'
 import { CloseIcon, EyeIcon, TickIcon } from '../../../assets/icons'
@@ -205,15 +206,15 @@ const RecipeForm = () => {
    }
    const toggleSubRecipe = () => {
       const val = !state.isSubRecipe
-         updateRecipe({
-            variables: {
-               id: state.id,
-               set: {
-                  isSubRecipe: val,
-               },
+      updateRecipe({
+         variables: {
+            id: state.id,
+            set: {
+               isSubRecipe: val,
             },
-         })
-      }
+         },
+      })
+   }
    const clone = () => {
       if (cloning) return
       const clonedRecipe = {
@@ -378,9 +379,11 @@ const RecipeForm = () => {
                      name="subRecipe"
                      value={state.isSubRecipe}
                      onChange={toggleSubRecipe}
-                  > <Flex container alignItems="center">
+                  >
+                     {' '}
+                     <Flex container alignItems="center">
                         Sub Recipe
-                  <Spacer xAxis size="16px" />
+                        <Spacer xAxis size="16px" />
                         <Tooltip identifier="sub_publish" />
                      </Flex>
                   </Form.Toggle>
@@ -405,6 +408,7 @@ const RecipeForm = () => {
                      <HorizontalTab>Basic Details</HorizontalTab>
                      <HorizontalTab>Ingredients</HorizontalTab>
                      <HorizontalTab>Cooking Steps</HorizontalTab>
+                     <HorizontalTab>Insights</HorizontalTab>
                   </HorizontalTabList>
                   <HorizontalTabPanels>
                      <HorizontalTabPanel>
@@ -418,11 +422,19 @@ const RecipeForm = () => {
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>
                         <Servings state={state} />
-                        <Spacer size="32px" />
-                        <Ingredients state={state} />
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>
                         <Procedures state={state} />
+                     </HorizontalTabPanel>
+                     <HorizontalTabPanel>
+                        <InsightDashboard
+                           appTitle="Products App"
+                           moduleTitle="Recipe Page"
+                           variables={{
+                              recipeId,
+                           }}
+                           showInTunnel={false}
+                        />
                      </HorizontalTabPanel>
                   </HorizontalTabPanels>
                </HorizontalTabs>

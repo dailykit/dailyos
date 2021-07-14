@@ -22,9 +22,11 @@ import {
 } from './components'
 
 import { ErrorBoundary } from '../../shared/components'
+import { useAccess, useTabs } from '../../shared/providers'
 import BottomQuickInfoBar from './components/BottomQuickInfoBar'
 
 const App = () => {
+   const { isSuperUser } = useAccess()
    const { state, dispatch } = useOrder()
    const { state: configState } = useConfig()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -40,26 +42,23 @@ const App = () => {
    const [position, setPosition] = React.useState('left')
 
    React.useEffect(() => {
-      if (configState.current_station?.id) {
+      if (!isSuperUser && configState.current_station?.id) {
          dispatch({
             type: 'SET_FILTER',
             payload: {
-               _or: [
-                  {
-                     cart: {
-                        ...state.orders?.where?.cart,
-                        cartItemViews: {
-                           productOption: {
-                              operationConfig: {
-                                 stationId: {
-                                    _eq: configState.current_station?.id,
-                                 },
-                              },
+               cart: {
+                  ...state.orders?.where?.cart,
+                  cartItems: {
+                     ...(state.orders?.where?.cart?.cartItems || {}),
+                     productOption: {
+                        operationConfig: {
+                           stationId: {
+                              _eq: configState.current_station?.id,
                            },
                         },
                      },
                   },
-               ],
+               },
             },
          })
       }

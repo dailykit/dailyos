@@ -31,8 +31,11 @@ import LogoutIcon from './Logout'
 import ChevronLeft from './ChevronLeft'
 import RefreshIcon from './Refresh'
 import LinkIcon from './Link'
+import ExternalLink from './ExternalLink'
+import SearchIcon from './Search'
 
 export {
+   SearchIcon,
    AddIcon,
    MenuIcon,
    CloseIcon,
@@ -66,10 +69,16 @@ export {
    LogoutIcon,
    RefreshIcon,
    LinkIcon,
+   ExternalLink
 }
 
 export * from './Tick'
 export * from './ChevronUp'
 export * from './ChevronDown'
+export * from './ChevronLeft'
 export * from './Printer'
 export * from './Tooltip'
+export * from './Circle'
+export * from './CircleChecked'
+export * from './Square'
+export * from './SquareChecked'

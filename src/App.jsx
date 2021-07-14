@@ -4,10 +4,17 @@ import Loadable from 'react-loadable'
 import { Loader } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 import { Switch, Route, Link } from 'react-router-dom'
-
+import FullOccurrenceReport from './shared/components/FullOccurrenceReport'
 import { isKeycloakSupported } from './shared/utils'
-import { TabBar, Lang, RedirectBanner } from './shared/components'
-import { AppItem, AppList, Layout } from './styled'
+import {
+   TabBar,
+   Lang,
+   RedirectBanner,
+   Sidebar,
+   InsightDashboard,
+   AddressTunnel,
+} from './shared/components'
+import { AppItem, AppList, Layout, InsightDiv } from './styled'
 
 const APPS = gql`
    subscription apps {
@@ -73,6 +80,10 @@ const Editor = Loadable({
    loader: () => import('./apps/editor'),
    loading: Loader,
 })
+const Carts = Loadable({
+   loader: () => import('./apps/carts'),
+   loading: Loader,
+})
 
 const App = () => {
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
@@ -96,6 +107,15 @@ const App = () => {
                         </AppItem>
                      ))}
                   </AppList>
+                  <InsightDiv>
+                     <InsightDashboard
+                        appTitle="global"
+                        moduleTitle="dashboard"
+                        includeChart
+                        showInTunnel={false}
+                     />
+                  </InsightDiv>
+                  <FullOccurrenceReport />
                </Route>
                <Route path="/inventory" component={Inventory} />
                <Route path="/safety" component={Safety} />
@@ -109,10 +129,10 @@ const App = () => {
                <Route path="/brands" component={Brands} />
                <Route path="/content" component={Content} />
                <Route path="/editor" component={Editor} />
+               <Route path="/carts" component={Carts} />
             </Switch>
          </main>
          {/* {!isKeycloakSupported() && <RedirectBanner />} */}
-         {/* <Lang /> */}
       </Layout>
    )
 }

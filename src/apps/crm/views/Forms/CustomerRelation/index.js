@@ -129,7 +129,7 @@ const CustomerRelation = ({ match }) => {
          brandId: context.brandId,
       },
       onError: error => {
-         toast.error('Something went wrong4')
+         toast.error('Something went wrong!')
          logger(error)
       },
    })
@@ -178,11 +178,11 @@ const CustomerRelation = ({ match }) => {
       })
    }
 
-   useEffect(() => {
-      if (!tab) {
-         history.push('/crm/customers')
-      }
-   }, [history, tab])
+   // useEffect(() => {
+   //    if (!tab) {
+   //       history.push('/crm/customers')
+   //    }
+   // }, [history, tab])
 
    const setActiveCard = card => {
       dispatch({
@@ -198,9 +198,9 @@ const CustomerRelation = ({ match }) => {
       setActiveCard('Orders')
    }, [])
 
-   if (context.brandId !== prevBrandId.current) {
-      closeAllTabs()
-   }
+   // if (context.brandId !== prevBrandId.current) {
+   //    closeAllTabs()
+   // }
 
    const renderTable = React.useCallback(() => {
       switch (tab?.data?.activeCard) {

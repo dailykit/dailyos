@@ -4,6 +4,7 @@ import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import {
+   Tag,
    Form,
    Text,
    Flex,
@@ -33,6 +34,7 @@ import {
    ErrorState,
    InlineLoader,
    ErrorBoundary,
+   InsightDashboard,
 } from '../../../../../../shared/components'
 import { TickIcon, CloseIcon } from '../../../../../../shared/assets/icons'
 import {
@@ -174,7 +176,18 @@ const Title = () => {
                      <Form.Error key={index}>{node}</Form.Error>
                   ))}
             </Form.Group>
+            {title?.isDemo && <Tag>Demo</Tag>}
             <Flex container alignItems="center">
+               <Flex container alignItems="center">
+                  <InsightDashboard
+                     appTitle="Subscription App"
+                     moduleTitle="Subscription Page"
+                     variables={{
+                        subscriptionId: params?.id,
+                     }}
+                  />
+               </Flex>
+               <Spacer size="16px" xAxis />
                {title.isValid ? (
                   <Flex container flex="1" alignItems="center">
                      <TickIcon size={20} color="green" />

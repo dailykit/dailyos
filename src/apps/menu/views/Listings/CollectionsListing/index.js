@@ -15,6 +15,7 @@ import {
    ErrorState,
    InlineLoader,
    Tooltip,
+   InsightDashboard,
 } from '../../../../../shared/components'
 import { ResponsiveFlex } from '../styled'
 import { AddIcon, DeleteIcon } from '../../../assets/icons'
@@ -187,6 +188,11 @@ const CollectionsListing = () => {
                options={tableOptions}
             />
          )}
+         <InsightDashboard
+            appTitle="Menu App"
+            moduleTitle="Collection Listing"
+            showInTunnel={false}
+         />
       </ResponsiveFlex>
    )
 }

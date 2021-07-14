@@ -43,3 +43,6 @@ export const AppItem = styled.li`
       }
    }
 `
+export const InsightDiv = styled.div`
+   padding: 1rem;
+`

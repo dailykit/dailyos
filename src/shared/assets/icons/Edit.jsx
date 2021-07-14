@@ -1,6 +1,6 @@
 import React from 'react'
 
-const EditIcon = ({ size = 16, color = '#fff' }) => (
+const EditIcon = ({ size = 16, color = '#367BF5' }) => (
    <svg
       width={size}
       height={size}
