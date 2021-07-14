@@ -26,7 +26,11 @@ import {
 // third party imports
 import { useTranslation } from 'react-i18next'
 // shared dir imports
-import { InlineLoader, Tooltip } from '../../../../../shared/components'
+import {
+   InlineLoader,
+   Tooltip,
+   InsightDashboard,
+} from '../../../../../shared/components'
 import { useTabs, useTooltip } from '../../../../../shared/providers'
 // local imports
 import { AddIcon } from '../../../assets/icons'
@@ -688,6 +692,11 @@ const ProductOptions = forwardRef(
                rowDeselected={handleRowDeselection}
                data-custom-attr="test-custom-attribute"
                className="custom-css-class"
+            />
+            <InsightDashboard
+               appTitle="Products App"
+               moduleTitle="Product Listing"
+               showInTunnel={false}
             />
          </>
       )
