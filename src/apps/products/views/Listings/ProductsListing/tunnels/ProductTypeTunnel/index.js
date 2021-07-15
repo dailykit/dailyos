@@ -42,7 +42,7 @@ export default function ProductTypeTunnel({ close }) {
       <>
          <TunnelHeader
             title={t(address.concat('select type of product'))}
-            close={() => close(1)}
+            close={() => close(3)}
             tooltip={
                <Tooltip identifier="products_listing_products_type_tunnel" />
             }

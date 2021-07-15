@@ -1,5 +1,5 @@
 import React from 'react'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import {
    Spacer,
    TunnelHeader,
@@ -14,7 +14,14 @@ import { TunnelBody } from './styled'
 
 import { RemoveIcon } from '../../../apps/products/assets/icons'
 import ConfirmationPopup from './confirmationPopup'
-import { SIMPLE_RECIPE_UPDATE } from './mutation'
+import {
+   SIMPLE_RECIPE_UPDATE,
+   UPDATE_PRODUCTS,
+   UPDATE_INGREDIENTS,
+   CONCATENATE_ARRAY_COLUMN,
+   CONCATENATE_STRING_COLUMN,
+   UPDATE_PRODUCT_OPTIONS,
+} from './mutation'
 
 const BulkActions = ({
    children,
@@ -25,9 +32,13 @@ const BulkActions = ({
    setBulkActions,
    clearAllActions,
    close,
+
+   additionalBulkAction = {},
+   additionalFunction,
 }) => {
    const [showPopup, setShowPopup] = React.useState(false)
    const [popupHeading, setPopupHeading] = React.useState('')
+   //mutation
    const [simpleRecipeUpdate] = useMutation(SIMPLE_RECIPE_UPDATE, {
       onCompleted: () => {
          toast.success('Update Successfully')
@@ -38,22 +49,148 @@ const BulkActions = ({
          //  logger(error)
       },
    })
+
+   const [updateProducts] = useMutation(UPDATE_PRODUCTS, {
+      onCompleted: () => {
+         toast.success('Update Successfully')
+         close(1)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         //  logger(error)
+      },
+   })
+
+   const [updateIngredients] = useMutation(UPDATE_INGREDIENTS, {
+      onCompleted: () => {
+         toast.success('Update Successfully')
+         close(1)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         //  logger(error)
+      },
+   })
+   const [updateProductOptions] = useMutation(UPDATE_PRODUCT_OPTIONS, {
+      onCompleted: () => {
+         toast.success('Update Successfully')
+         close(1)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+      },
+   })
+   const [concatenateArrayColumn] = useLazyQuery(CONCATENATE_ARRAY_COLUMN, {
+      onCompleted: () => {
+         toast.success('Update Successfully')
+         close(1)
+      },
+      onError: () => {
+         toast.error('Something went wrong!')
+      },
+   })
+   const [concatenateStringColumn, { loading, error }] = useLazyQuery(
+      CONCATENATE_STRING_COLUMN,
+      {
+         onCompleted: () => {
+            toast.success('Update Successfully')
+            close(1)
+         },
+         onError: () => {
+            toast.error('Something went wrong!')
+         },
+      }
+   )
+
    const getMutation = table => {
       switch (table) {
          case 'Recipe':
             return simpleRecipeUpdate
             break
+         case 'Product':
+            return updateProducts
+            break
+         case 'Ingredient':
+            return updateIngredients
+            break
+         case 'Product Options':
+            return updateProductOptions
       }
    }
    const handleOnUpdate = () => {
       const fn = getMutation(table)
+      if ('concatData' in bulkActions) {
+         const toBeConcat = Object.keys(bulkActions.concatData)
+         if (toBeConcat.length > 0) {
+            const newConcatData = { ...bulkActions.concatData }
+            toBeConcat.forEach(data => {
+               newConcatData[data].arrayofids =
+                  '(' + selectedRows.map(idx => idx.id).join(',') + ')'
+               newConcatData[data].appendvalue = newConcatData[data].appendvalue
+                  ? newConcatData[data].appendvalue
+                  : []
+               newConcatData[data].prependvalue = newConcatData[data]
+                  .prependvalue
+                  ? newConcatData[data].prependvalue
+                  : []
+               concatenateArrayColumn({
+                  variables: {
+                     concatData: newConcatData[data],
+                  },
+               })
+            })
+         }
+      }
+      if ('concatDataString' in bulkActions) {
+         const toBeConcat = Object.keys(bulkActions.concatDataString)
+         console.log(1)
+         console.log(toBeConcat)
+         if (toBeConcat.length > 0) {
+            console.log(2)
+            const newConcatDataString = { ...bulkActions.concatDataString }
+            toBeConcat.forEach(data => {
+               console.log(3)
+               newConcatDataString[data].arrayofids =
+                  '(' + selectedRows.map(idx => idx.id).join(',') + ')'
+               newConcatDataString[data].appendvalue = newConcatDataString[data]
+                  .appendvalue
+                  ? newConcatDataString[data].appendvalue
+                  : ''
+               newConcatDataString[data].prependvalue = newConcatDataString[
+                  data
+               ].prependvalue
+                  ? newConcatDataString[data].prependvalue
+                  : ''
+               console.log('this is concatDataString', newConcatDataString)
+               concatenateStringColumn({
+                  variables: {
+                     concatDataString: newConcatDataString[data],
+                  },
+               })
+            })
+         }
+      }
+      //additional action use for those action which not to be set.(increment)
+      if (additionalFunction) {
+         console.log('in additional')
+         additionalFunction()
+      }
       if (fn) {
-         fn({
-            variables: {
-               ids: selectedRows.map(idx => idx.id),
-               _set: bulkActions,
-            },
-         })
+         const newBulkAction = { ...bulkActions }
+         if ('concatData' in bulkActions) {
+            delete newBulkAction.concatData
+         }
+         if ('concatDataString' in bulkActions) {
+            delete newBulkAction.concatDataString
+         }
+         if (Object.keys(newBulkAction).length !== 0) {
+            fn({
+               variables: {
+                  ids: selectedRows.map(idx => idx.id),
+                  _set: newBulkAction,
+               },
+            })
+         }
       } else {
          toast.error('Incorrect schema or table name!')
       }
@@ -95,6 +232,7 @@ const BulkActions = ({
                      as="header"
                      alignItems="center"
                      justifyContent="space-between"
+                     padding="0px 0px 10px 0px"
                   >
                      <Text as="h3">{table}</Text>
                      <span
@@ -109,7 +247,13 @@ const BulkActions = ({
                         {selectedRows.length > 1 ? table + 's' : table} selected{' '}
                      </span>
                   </Flex>
-                  <div style={{ height: '400px', overflowY: 'auto' }}>
+                  <div
+                     style={{
+                        height: '48vh',
+                        overflowY: 'auto',
+                        scrollbarWidth: 'thin',
+                     }}
+                  >
                      {selectedRows.map((item, id) => (
                         <div
                            as="title"
@@ -141,7 +285,7 @@ const BulkActions = ({
                      ))}
                   </div>
                </Flex>
-               <Flex width="50%" padding="0px 0px 20px 20px">
+               <Flex width="50%" padding="0px 0px 0px 20px">
                   <Flex
                      container
                      justifyContent="space-between"
@@ -158,8 +302,10 @@ const BulkActions = ({
                         Clear All Actions
                      </TextButton>
                   </Flex>
-                  <Spacer size="16px" />
-                  {children}
+                  <Spacer size="8px" />
+                  <Flex height="44vh" overflowY="auto">
+                     {children}
+                  </Flex>
                   <Spacer size="16px" />
                   <Flex container alignItems="center" justifyContent="flex-end">
                      <TextButton
@@ -167,9 +313,10 @@ const BulkActions = ({
                         size="md"
                         disabled={
                            selectedRows.length > 0 &&
-                           Object.keys(bulkActions).length !== 0
+                           (Object.keys(bulkActions).length !== 0 ||
+                           Object.keys(additionalBulkAction).length !== 0
                               ? false
-                              : true
+                              : true)
                         }
                         onClick={() => {
                            setShowPopup(true)

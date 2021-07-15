@@ -1,3 +1,4 @@
 import ProductTypeTunnel from './ProductTypeTunnel'
-
-export { ProductTypeTunnel }
+import BulkActionsTunnel from './BulkActionTunnel'
+import ProductOptionsBulkAction from './productOptionBTunnel'
+export { ProductTypeTunnel, BulkActionsTunnel, ProductOptionsBulkAction }

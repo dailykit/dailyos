@@ -108,6 +108,7 @@ export const UPDATE_MODE = gql`
    ) {
       updateModeOfFulfillment(pk_columns: { id: $id }, _set: $set) {
          id
+         isArchived
       }
    }
 `
@@ -160,6 +161,17 @@ export const CREATE_SIMPLE_RECIPE_YIELDS = gql`
    }
 `
 
+export const UPDATE_NUTRITIONINFO = gql`
+   mutation UpdateNutritionInfo($simpleRecipeYieldIds: [Int!]!) {
+      calculateNutitionalInfo(simpleRecipeYieldIds: $simpleRecipeYieldIds) {
+      message
+      success
+      }
+   } 
+`
+
+
+
 export const DELETE_SIMPLE_RECIPE_YIELD = gql`
    mutation DeleteSimpleRecipeYield($id: Int!) {
       updateSimpleRecipeYield(
@@ -175,9 +187,8 @@ export const DELETE_SIMPLE_RECIPE_YIELD = gql`
 
 export const DELETE_SIMPLE_RECIPE_INGREDIENT_PROCESSINGS = gql`
    mutation DeleteSimpleRecipeIngredientProcessings($ids: [Int!]!) {
-      updateSimpleRecipeIngredientProcessings(
+      deleteSimpleRecipeIngredientProcessings(
          where: { id: { _in: $ids } }
-         _set: { isArchived: true }
       ) {
          returning {
             id
@@ -348,6 +359,33 @@ export const CREATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING = gql`
    }
 `
 
+export const CREATE_SIMPLE_RECIPE_INGREDIENT_PROCESSINGS = gql`
+   mutation CreateSimpleRecipeIngredientProcessings(
+      $objects: [simpleRecipe_simpleRecipe_ingredient_processing_insert_input!]!
+   ) {
+      createSimpleRecipeIngredientProcessings(objects: $objects) {
+         returning {
+            id
+         }
+      }
+   }
+`
+
+export const UPDATE_SIMPLE_RECIPE_INGREDIENT_PROCESSING = gql`
+   mutation UpdateSimpleRecipeIngredientProcessing(
+      $id: Int!
+      $_set: simpleRecipe_simpleRecipe_ingredient_processing_set_input!
+   ) {
+      updateSimpleRecipeIngredientProcessing(
+         pk_columns: { id: $id }
+         _set: $_set
+      ) {
+         id
+      }
+   }
+`
+
+
 export const INSTRUCTION_SET = {
    CREATE: gql`
       mutation CreateInstructionSet(
@@ -424,11 +462,14 @@ export const CREATE_CUISINE_NAME = gql`
    }
 `
 export const INGREDIENT_INGREDIENT_CATEGORY_UPDATE = gql`
-   mutation updateIngredientCategory($id: Int_comparison_exp! $category: String!) {
-      updateIngredient(where: {id: $id}, _set: {category: $category}) {
-        affected_rows
+   mutation updateIngredientCategory(
+      $id: Int_comparison_exp!
+      $category: String!
+   ) {
+      updateIngredient(where: { id: $id }, _set: { category: $category }) {
+         affected_rows
       }
-    }
+   }
 `
 
 export const INGREDIENT_CATEGORY_CREATE = gql`
@@ -438,3 +479,38 @@ export const INGREDIENT_CATEGORY_CREATE = gql`
       }
    }
 `
+
+export const INCREASE_PRICE_AND_DISCOUNT = gql`
+   mutation increasePriceAndDiscount(
+      $price: numeric!
+      $discount: numeric!
+      $ids: [Int!]
+   ) {
+      updateProducts(
+         where: { id: { _in: $ids } }
+         _inc: { price: $price, discount: $discount }
+      ) {
+         affected_rows
+      }
+   }
+`
+export const INCREMENTS_IN_PRODUCT_OPTIONS = gql`
+   mutation IncrementsInProductOptions(
+      $_inc: products_productOption_inc_input!
+      $_in: [Int!]
+   ) {
+      updateProductOptions(where: { id: { _in: $_in } }, _inc: $_inc) {
+         affected_rows
+      }
+   }
+`
+
+export const MOF = {
+   CREATE: gql`
+      mutation CreateMode($object: ingredient_modeOfFulfillment_insert_input!) {
+         createModeOfFulfillment(object: $object) {
+            id
+         }
+      }
+   `,
+}

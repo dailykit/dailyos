@@ -21,11 +21,12 @@ import {
    ProcessProduct,
 } from './components'
 
-import { useTabs } from '../../shared/providers'
 import { ErrorBoundary } from '../../shared/components'
+import { useAccess, useTabs } from '../../shared/providers'
 import BottomQuickInfoBar from './components/BottomQuickInfoBar'
 
 const App = () => {
+   const { isSuperUser } = useAccess()
    const { state, dispatch } = useOrder()
    const { addTab, setRoutes } = useTabs()
    const { state: configState } = useConfig()
@@ -62,26 +63,23 @@ const App = () => {
    }, [])
 
    React.useEffect(() => {
-      if (configState.current_station?.id) {
+      if (!isSuperUser && configState.current_station?.id) {
          dispatch({
             type: 'SET_FILTER',
             payload: {
-               _or: [
-                  {
-                     cart: {
-                        ...state.orders?.where?.cart,
-                        cartItemViews: {
-                           productOption: {
-                              operationConfig: {
-                                 stationId: {
-                                    _eq: configState.current_station?.id,
-                                 },
-                              },
+               cart: {
+                  ...state.orders?.where?.cart,
+                  cartItems: {
+                     ...(state.orders?.where?.cart?.cartItems || {}),
+                     productOption: {
+                        operationConfig: {
+                           stationId: {
+                              _eq: configState.current_station?.id,
                            },
                         },
                      },
                   },
-               ],
+               },
             },
          })
       }

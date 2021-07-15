@@ -28,7 +28,6 @@ export const Sidebar = ({ links, toggle, open }) => {
    const [isCreateNewOpen, setIsCreateNewOpen] = React.useState(false)
    const { user, logout } = useAuth()
 
-   console.log(apps)
    return (
       <>
          {open ? (

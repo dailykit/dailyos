@@ -1,6 +1,6 @@
 const options = {
    cellVertAlign: 'middle',
-   layout: 'fitColumns',
+   // layout: 'fitColumns',
    autoResize: true,
    maxHeight: 420,
    resizableColumns: false,
@@ -13,14 +13,8 @@ const options = {
    selectablePersistence: true,
    persistence: {
       group: true,
-      // group:{
-      //    groupBy: true,  //persist only the groupBy setting
-      //    groupStartOpen: true,
-      //    groupHeader: true,
-      // },
       sort: true, //persist column sorting
       filter: true, //persist filter sorting
-      // group: true, //persist row grouping
       page: true, //persist page
       columns: true, //persist columns
    },

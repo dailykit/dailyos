@@ -25,6 +25,7 @@ import {
    HorizontalTabList,
    HorizontalTabPanel,
    HorizontalTabPanels,
+   DropdownButton,
 } from '@dailykit/ui'
 
 import { Products } from './sections'
@@ -40,7 +41,6 @@ import {
    Tooltip,
    ErrorState,
    InlineLoader,
-   DropdownButton,
 } from '../../../../shared/components'
 
 const isPickup = value => ['ONDEMAND_PICKUP', 'PREORDER_PICKUP'].includes(value)
@@ -338,6 +338,12 @@ const Order = () => {
       return <ErrorState message="Failed to fetch order details!" />
    }
    const types = groupBy(products, 'productOptionType')
+   if (isEmpty(order))
+      return (
+         <Flex>
+            <Filler message="No order details found!" />
+         </Flex>
+      )
    return (
       <Flex>
          <Spacer size="16px" />

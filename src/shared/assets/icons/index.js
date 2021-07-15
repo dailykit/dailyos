@@ -26,8 +26,11 @@ import DoubleArrowRightIcon from './DoubleArrowRight'
 import CloneIcon from './Clone'
 import RefreshIcon from './Refresh'
 import LinkIcon from './Link'
+import ExternalLink from './ExternalLink'
+import SearchIcon from './Search'
 
 export {
+   SearchIcon,
    AddIcon,
    MenuIcon,
    CloseIcon,
@@ -56,10 +59,16 @@ export {
    CloneIcon,
    RefreshIcon,
    LinkIcon,
+   ExternalLink
 }
 
 export * from './Tick'
 export * from './ChevronUp'
 export * from './ChevronDown'
+export * from './ChevronLeft'
 export * from './Printer'
 export * from './Tooltip'
+export * from './Circle'
+export * from './CircleChecked'
+export * from './Square'
+export * from './SquareChecked'

@@ -42,7 +42,7 @@ const ReferralPlansListing = () => {
                      // where={{ amountPaid: { _lte: 2 } }}
                      // limit={2}
                      // order={{ amountPaid: 'desc' }}
-                     variables={{ amountVar: 90 }}
+                     // variables={{ amountVar: 90 }}
                   />
                </Flex>
             )
