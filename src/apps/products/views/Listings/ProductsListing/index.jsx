@@ -30,6 +30,7 @@ import {
    InlineLoader,
    Tooltip,
    InsightDashboard,
+   Banner,
 } from '../../../../../shared/components'
 import { useTabs, useTooltip } from '../../../../../shared/providers'
 // local imports
@@ -62,10 +63,8 @@ const ProductsListing = () => {
    const [view, setView] = React.useState('simple')
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
    const [selectedRows, setSelectedRows] = React.useState([])
-   const [
-      isProductOptionTableVisible,
-      setIsProductOptionTableVisible,
-   ] = React.useState(false)
+   const [isProductOptionTableVisible, setIsProductOptionTableVisible] =
+      React.useState(false)
    const options = [
       { id: 'simple', title: 'Simple' },
       { id: 'customizable', title: t(address.concat('customizable')) },
@@ -152,6 +151,7 @@ const ProductsListing = () => {
                justifyContent="space-between"
                height="72px"
             >
+               <Banner id="products-app-products-listing-top" />
                <Flex container alignItems="center">
                   <Text as="h2">{t(address.concat('products'))}</Text>
                   <Tooltip identifier="products_list_heading" />
@@ -189,6 +189,7 @@ const ProductsListing = () => {
                   isProductOptionTableVisible={isProductOptionTableVisible}
                />
             )}
+            <Banner id="products-app-products-listing-bottom" />
          </ResponsiveFlex>
       </>
    )

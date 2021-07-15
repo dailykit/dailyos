@@ -13,6 +13,7 @@ import {
    Tooltip,
    ErrorState,
    InlineLoader,
+   Banner,
    InsightDashboard,
 } from '../../../../../shared/components'
 import { ResponsiveFlex } from '../../../../../shared/components/ResponsiveFlex'
@@ -21,9 +22,11 @@ export const Subscriptions = () => {
    const { tooltip } = useTooltip()
    const tableRef = React.useRef()
    const { tab, addTab } = useTabs()
-   const { error, loading, data: { titles = [] } = {} } = useSubscription(
-      TITLES
-   )
+   const {
+      error,
+      loading,
+      data: { titles = [] } = {},
+   } = useSubscription(TITLES)
    const [upsertTitle] = useMutation(UPSERT_SUBSCRIPTION_TITLE, {
       onCompleted: ({ upsertSubscriptionTitle = {} }) => {
          const { id, title } = upsertSubscriptionTitle
@@ -99,6 +102,7 @@ export const Subscriptions = () => {
 
    return (
       <ResponsiveFlex maxWidth="1280px" margin="0 auto">
+         <Banner id="subscription-app-subscriptions-listing-top" />
          <Flex
             container
             as="header"
@@ -131,6 +135,7 @@ export const Subscriptions = () => {
             moduleTitle="Subcription Listing"
             showInTunnel={false}
          />
+         <Banner id="subscription-app-subscriptions-listing-bottom" />
       </ResponsiveFlex>
    )
 }

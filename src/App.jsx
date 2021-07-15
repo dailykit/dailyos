@@ -8,6 +8,7 @@ import { Switch, Route, Link, useLocation } from 'react-router-dom'
 import FullOccurrenceReport from './shared/components/FullOccurrenceReport'
 import { useTabs } from './shared/providers'
 import { isKeycloakSupported } from './shared/utils'
+
 import {
    TabBar,
    Lang,
@@ -15,7 +16,9 @@ import {
    Sidebar,
    InsightDashboard,
    AddressTunnel,
+   Banner,
 } from './shared/components'
+import BottomBar from './shared/components/BottomBar'
 
 const APPS = gql`
    subscription apps {
@@ -89,6 +92,7 @@ const Carts = Loadable({
 const App = () => {
    const location = useLocation()
    const { routes, setRoutes } = useTabs()
+
    const [open, toggle] = React.useState(false)
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
 
@@ -106,6 +110,7 @@ const App = () => {
          <main>
             <Switch>
                <Route path="/" exact>
+                  <Banner id="app-home-top" />
                   <AppList open={open}>
                      {apps.map(app => (
                         <AppItem key={app.id}>
@@ -127,6 +132,7 @@ const App = () => {
                      />
                   </InsightDiv>
                   <FullOccurrenceReport />
+                  <Banner id="app-home-bottom" />
                </Route>
                <Route path="/inventory" component={Inventory} />
                <Route path="/safety" component={Safety} />
@@ -145,6 +151,7 @@ const App = () => {
          </main>
          {/* {!isKeycloakSupported() && <RedirectBanner />} */}
          <Lang />
+         <BottomBar />
       </Layout>
    )
 }

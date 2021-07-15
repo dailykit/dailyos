@@ -32,6 +32,7 @@ import {
 import { Processings, Stats } from './components'
 import validator from './validators'
 import {
+   Banner,
    ErrorState,
    InlineLoader,
    Tooltip,
@@ -74,10 +75,8 @@ const IngredientForm = () => {
    const [state, setState] = React.useState({})
    const [linkedRecipesCount, setLinkedRecipesCount] = React.useState(0)
    const [options, setOptions] = React.useState([])
-   const [
-      searchIngredientCategory,
-      setSearchIngredientCategory,
-   ] = React.useState('')
+   const [searchIngredientCategory, setSearchIngredientCategory] =
+      React.useState('')
 
    const selectedOption = option => {
       updateIngredientCategory({
@@ -244,6 +243,7 @@ const IngredientForm = () => {
       <IngredientContext.Provider
          value={{ ingredientState, ingredientDispatch }}
       >
+         <Banner id="products-app-single-ingredient-top" />
          <Tunnels tunnels={linkedRecipesTunnels}>
             <Tunnel layer={1} size="sm">
                <LinkedRecipesTunnel
@@ -358,6 +358,7 @@ const IngredientForm = () => {
             <Spacer size="32px" />
             <Processings state={state} />
          </Flex>
+         <Banner id="products-app-single-ingredient-bottom" />
       </IngredientContext.Provider>
    )
 }

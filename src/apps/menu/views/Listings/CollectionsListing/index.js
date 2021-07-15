@@ -12,6 +12,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import {
+   Banner,
    ErrorState,
    InlineLoader,
    Tooltip,
@@ -38,9 +39,11 @@ const CollectionsListing = () => {
    const tableRef = React.useRef()
 
    // Queries
-   const { data: { collections = [] } = {}, loading, error } = useSubscription(
-      S_COLLECTIONS
-   )
+   const {
+      data: { collections = [] } = {},
+      loading,
+      error,
+   } = useSubscription(S_COLLECTIONS)
 
    React.useEffect(() => {
       if (!tab) {
@@ -155,6 +158,7 @@ const CollectionsListing = () => {
 
    return (
       <ResponsiveFlex maxWidth="1280px" margin="0 auto">
+         <Banner id="menu-app-collections-listing-top" />
          <Flex
             container
             alignItems="center"
@@ -193,6 +197,7 @@ const CollectionsListing = () => {
             moduleTitle="Collection Listing"
             showInTunnel={false}
          />
+         <Banner id="menu-app-collections-listing-bottom" />
       </ResponsiveFlex>
    )
 }

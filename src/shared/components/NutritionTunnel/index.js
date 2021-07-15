@@ -12,6 +12,7 @@ import {
    HelperText,
 } from '@dailykit/ui'
 import { Tooltip } from '../Tooltip'
+import Banner from '../Banner'
 
 const NutritionTunnel = ({
    tunnels,
@@ -144,6 +145,7 @@ const NutritionTunnel = ({
                close={() => closeTunnel(1)}
                tooltip={<Tooltip identifier="nutrition_tunnel" />}
             />
+            <Banner id="nutrition-tunnel-top" />
             <Flex
                padding="16px"
                height="calc(100vh - 106px)"
@@ -642,6 +644,7 @@ const NutritionTunnel = ({
                   <Spacer xAxis size="8px" />
                </Flex>
             </Flex>
+            <Banner id="nutrition-tunnel-bottom" />
          </Tunnel>
       </Tunnels>
    )

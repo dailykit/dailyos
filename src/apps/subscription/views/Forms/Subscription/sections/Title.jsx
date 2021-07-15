@@ -30,6 +30,7 @@ import { Header, Wrapper } from '../styled'
 import { logger } from '../../../../../../shared/utils'
 import { useTabs } from '../../../../../../shared/providers'
 import {
+   Banner,
    Tooltip,
    ErrorState,
    InlineLoader,
@@ -61,32 +62,33 @@ const Title = () => {
          logger(error)
       },
    })
-   const { error, loading, data: { title = {} } = {} } = useSubscription(
-      TITLE,
-      {
-         variables: {
-            id: params.id,
-         },
-         onSubscriptionData: ({
-            subscriptionData: { data: { title: node = {} } = {} },
-         }) => {
-            if (isEmpty(node)) return
+   const {
+      error,
+      loading,
+      data: { title = {} } = {},
+   } = useSubscription(TITLE, {
+      variables: {
+         id: params.id,
+      },
+      onSubscriptionData: ({
+         subscriptionData: { data: { title: node = {} } = {} },
+      }) => {
+         if (isEmpty(node)) return
 
-            dispatch({
-               type: 'SET_TITLE',
-               payload: {
-                  id: node.id,
-                  title: node.title,
-                  isActive: node.isActive,
-                  defaultServing: { id: node.defaultSubscriptionServingId },
-               },
-            })
-            if (!tab) {
-               addTab(node.title, `/subscription/subscriptions/${node.id}`)
-            }
-         },
-      }
-   )
+         dispatch({
+            type: 'SET_TITLE',
+            payload: {
+               id: node.id,
+               title: node.title,
+               isActive: node.isActive,
+               defaultServing: { id: node.defaultSubscriptionServingId },
+            },
+         })
+         if (!tab) {
+            addTab(node.title, `/subscription/subscriptions/${node.id}`)
+         }
+      },
+   })
 
    const handleChange = e => {
       dispatch({
@@ -150,133 +152,127 @@ const Title = () => {
       return <ErrorState message="Failed to fetch title details!" />
    }
    return (
-      <Wrapper>
-         <Header>
-            <Form.Group>
-               <Form.Label htmlFor="title" title="title">
+      <>
+         <Banner id="subscription-app-create-subscription-form-top" />
+         <Wrapper>
+            <Header>
+               <Form.Group>
+                  <Form.Label htmlFor="title" title="title">
+                     <Flex container alignItems="center">
+                        Subscription Title*
+                        <Tooltip identifier="form_subscription_field_title" />
+                     </Flex>
+                  </Form.Label>
+                  <Form.Text
+                     id="title"
+                     name="title"
+                     value={state.title.title}
+                     placeholder="Enter the title"
+                     onBlur={e => saveTitle(e)}
+                     onChange={e => handleChange(e)}
+                     hasError={
+                        state.title.meta.isTouched && !state.title.meta.isValid
+                     }
+                  />
+                  {state.title.meta.isTouched &&
+                     !state.title.meta.isValid &&
+                     state.title.meta.errors.map((node, index) => (
+                        <Form.Error key={index}>{node}</Form.Error>
+                     ))}
+               </Form.Group>
+               {title?.isDemo && <Tag>Demo</Tag>}
+               <Flex container alignItems="center">
+                  {title.isValid ? (
+                     <Flex container flex="1" alignItems="center">
+                        <TickIcon size={20} color="green" />
+                        <Spacer size="8px" xAxis />
+                        <Text as="subtitle">All good!</Text>
+                     </Flex>
+                  ) : (
+                     <Flex container flex="1" alignItems="center">
+                        <CloseIcon size={20} color="red" />
+                        <Spacer size="8px" xAxis />
+                        <Text as="subtitle">
+                           Must have atleast one active servings!
+                        </Text>
+                     </Flex>
+                  )}
+                  <Spacer size="16px" xAxis />
                   <Flex container alignItems="center">
-                     Subscription Title*
-                     <Tooltip identifier="form_subscription_field_title" />
+                     <Form.Toggle
+                        name="publish_title"
+                        onChange={toggleIsActive}
+                        value={state.title.isActive}
+                     >
+                        Publish
+                     </Form.Toggle>
+                     <Tooltip identifier="form_station_subscription_title_publish" />
                   </Flex>
-               </Form.Label>
-               <Form.Text
-                  id="title"
-                  name="title"
-                  value={state.title.title}
-                  placeholder="Enter the title"
-                  onBlur={e => saveTitle(e)}
-                  onChange={e => handleChange(e)}
-                  hasError={
-                     state.title.meta.isTouched && !state.title.meta.isValid
-                  }
-               />
-               {state.title.meta.isTouched &&
-                  !state.title.meta.isValid &&
-                  state.title.meta.errors.map((node, index) => (
-                     <Form.Error key={index}>{node}</Form.Error>
-                  ))}
-            </Form.Group>
-            {title?.isDemo && <Tag>Demo</Tag>}
-            <Flex container alignItems="center">
-               <Flex container alignItems="center">
-                  <InsightDashboard
-                     appTitle="Subscription App"
-                     moduleTitle="Subscription Page"
-                     variables={{
-                        subscriptionId: params?.id,
-                     }}
-                  />
                </Flex>
-               <Spacer size="16px" xAxis />
-               {title.isValid ? (
-                  <Flex container flex="1" alignItems="center">
-                     <TickIcon size={20} color="green" />
-                     <Spacer size="8px" xAxis />
-                     <Text as="subtitle">All good!</Text>
-                  </Flex>
-               ) : (
-                  <Flex container flex="1" alignItems="center">
-                     <CloseIcon size={20} color="red" />
-                     <Spacer size="8px" xAxis />
-                     <Text as="subtitle">
-                        Must have atleast one active servings!
-                     </Text>
-                  </Flex>
-               )}
-               <Spacer size="16px" xAxis />
-               <Flex container alignItems="center">
-                  <Form.Toggle
-                     name="publish_title"
-                     onChange={toggleIsActive}
-                     value={state.title.isActive}
-                  >
-                     Publish
-                  </Form.Toggle>
-                  <Tooltip identifier="form_station_subscription_title_publish" />
-               </Flex>
-            </Flex>
-         </Header>
-         <Flex
-            as="section"
-            height="calc(100% - 89px)"
-            padding="0 14px 14px 14px"
-         >
+            </Header>
             <Flex
-               container
-               as="header"
-               height="48px"
-               alignItems="center"
-               justifyContent="space-between"
+               as="section"
+               height="calc(100% - 89px)"
+               padding="0 14px 14px 14px"
             >
-               <Flex container alignItems="center">
-                  <Text as="title">Servings</Text>
-                  <Tooltip identifier="form_subscription_section_servings_heading" />
-               </Flex>
-               <IconButton
-                  size="sm"
-                  type="outline"
-                  onClick={() => toggleServingTunnel('ADD_SERVING')}
+               <Flex
+                  container
+                  as="header"
+                  height="48px"
+                  alignItems="center"
+                  justifyContent="space-between"
                >
-                  <PlusIcon />
-               </IconButton>
+                  <Flex container alignItems="center">
+                     <Text as="title">Servings</Text>
+                     <Tooltip identifier="form_subscription_section_servings_heading" />
+                  </Flex>
+                  <IconButton
+                     size="sm"
+                     type="outline"
+                     onClick={() => toggleServingTunnel('ADD_SERVING')}
+                  >
+                     <PlusIcon />
+                  </IconButton>
+               </Flex>
+               <SectionTabs
+                  id="servingTabs"
+                  onChange={index => setTabIndex(index)}
+               >
+                  <SectionTabList id="servingTabList">
+                     {title?.servings.map(serving => (
+                        <SectionTab key={serving.id}>
+                           <Text as="title">{serving.size}</Text>
+                        </SectionTab>
+                     ))}
+                  </SectionTabList>
+                  <SectionTabPanels id="servingTabPanels">
+                     {title?.servings.map((serving, index) => (
+                        <SectionTabPanel key={serving.id}>
+                           {tabIndex === index && (
+                              <Serving
+                                 id={serving.id}
+                                 isActive={tabIndex === index}
+                                 toggleServingTunnel={toggleServingTunnel}
+                              />
+                           )}
+                        </SectionTabPanel>
+                     ))}
+                  </SectionTabPanels>
+               </SectionTabs>
             </Flex>
-            <SectionTabs
-               id="servingTabs"
-               onChange={index => setTabIndex(index)}
-            >
-               <SectionTabList id="servingTabList">
-                  {title?.servings.map(serving => (
-                     <SectionTab key={serving.id}>
-                        <Text as="title">{serving.size}</Text>
-                     </SectionTab>
-                  ))}
-               </SectionTabList>
-               <SectionTabPanels id="servingTabPanels">
-                  {title?.servings.map((serving, index) => (
-                     <SectionTabPanel key={serving.id}>
-                        {tabIndex === index && (
-                           <Serving
-                              id={serving.id}
-                              isActive={tabIndex === index}
-                              toggleServingTunnel={toggleServingTunnel}
-                           />
-                        )}
-                     </SectionTabPanel>
-                  ))}
-               </SectionTabPanels>
-            </SectionTabs>
-         </Flex>
-         <ErrorBoundary rootRoute="/subscription/subscriptions">
-            <Tunnels tunnels={tunnels}>
-               <Tunnel layer={1}>
-                  <ServingTunnel
-                     closeTunnel={closeTunnel}
-                     servingTunnelState={servingTunnelState}
-                  />
-               </Tunnel>
-            </Tunnels>
-         </ErrorBoundary>
-      </Wrapper>
+            <ErrorBoundary rootRoute="/subscription/subscriptions">
+               <Tunnels tunnels={tunnels}>
+                  <Tunnel layer={1}>
+                     <ServingTunnel
+                        closeTunnel={closeTunnel}
+                        servingTunnelState={servingTunnelState}
+                     />
+                  </Tunnel>
+               </Tunnels>
+            </ErrorBoundary>
+         </Wrapper>
+         <Banner id="subscription-app-create-subscription-form-bottom" />
+      </>
    )
 }
 
@@ -392,6 +388,7 @@ const ServingTunnel = ({ servingTunnelState, closeTunnel }) => {
                <Tooltip identifier="form_subscription_tunnel_serving_create" />
             }
          />
+         <Banner id="subscription-app-create-subscription-form-add-serving-tunnel-top" />
          <Flex padding="16px">
             <Form.Group>
                <Form.Label htmlFor="serving" title="serving">
@@ -434,6 +431,7 @@ const ServingTunnel = ({ servingTunnelState, closeTunnel }) => {
                </Flex>
             </Form.Toggle>
          </Flex>
+         <Banner id="subscription-app-create-subscription-form-add-serving-tunnel-bottom" />
       </>
    )
 }

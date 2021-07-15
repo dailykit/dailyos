@@ -26,6 +26,9 @@ import DoubleArrowRightIcon from './DoubleArrowRight'
 import CloneIcon from './Clone'
 import RefreshIcon from './Refresh'
 import LinkIcon from './Link'
+import MaximizeIcon from './Maximixe'
+import MinimizeIcon from './Minimize'
+import PlayIcon from './Play'
 import ExternalLink from './ExternalLink'
 import SearchIcon from './Search'
 
@@ -59,7 +62,10 @@ export {
    CloneIcon,
    RefreshIcon,
    LinkIcon,
-   ExternalLink
+   MaximizeIcon,
+   MinimizeIcon,
+   PlayIcon,
+   ExternalLink,
 }
 
 export * from './Tick'

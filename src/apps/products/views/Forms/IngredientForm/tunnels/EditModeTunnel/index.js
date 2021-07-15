@@ -15,6 +15,7 @@ import { toast } from 'react-toastify'
 import {
    OperationConfig,
    Tooltip,
+   Banner,
 } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { EditIcon } from '../../../../../assets/icons'
@@ -127,6 +128,7 @@ const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
             tooltip={<Tooltip identifier="edit_mode_tunnel" />}
          />
          <TunnelBody>
+            <Banner id="products-app-ingredients-edit-mode-tunnel-top" />
             <Flex margin="0 0 20px 0">
                <Text as="subtitle">Mode of Fulfillment</Text>
                <Text as="text1">{renderModeType(mode)}</Text>
@@ -317,7 +319,9 @@ const EditModeTunnel = ({ closeTunnel, openTunnel }) => {
                      </td>
                   </tr>
                </tbody>
+            </StyledTable>
             </StyledTable> */}
+            <Banner id="products-app-ingredients-edit-mode-tunnel-bottom" />
          </TunnelBody>
       </>
    )
