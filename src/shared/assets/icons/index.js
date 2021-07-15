@@ -22,8 +22,13 @@ import RectangularIcon from './Rectangular'
 import RoundedCloseIcon from './RoundedClose'
 import RoundedMenuIcon from './RoundedMenu'
 import HomeIcon from './Home'
-import DoubleArrowRightIcon from './DoubleArrowRight'
+import DoubleArrowIcon from './DoubleArrow'
 import CloneIcon from './Clone'
+import NotificationIcon from './Notification'
+import StoreIcon from './Store'
+import DailykitIcon from './Dailykit'
+import LogoutIcon from './Logout'
+import ChevronLeft from './ChevronLeft'
 import RefreshIcon from './Refresh'
 import LinkIcon from './Link'
 import MaximizeIcon from './Maximixe'
@@ -38,6 +43,7 @@ export {
    MenuIcon,
    CloseIcon,
    ChevronRight,
+   ChevronLeft,
    EditIcon,
    DeleteIcon,
    LeftIcon,
@@ -58,8 +64,12 @@ export {
    RoundedCloseIcon,
    RoundedMenuIcon,
    HomeIcon,
-   DoubleArrowRightIcon,
+   DoubleArrowIcon,
    CloneIcon,
+   NotificationIcon,
+   StoreIcon,
+   DailykitIcon,
+   LogoutIcon,
    RefreshIcon,
    LinkIcon,
    MaximizeIcon,
