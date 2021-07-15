@@ -25,6 +25,7 @@ import {
    Tooltip,
    InlineLoader,
    InsightDashboard,
+   Banner,
 } from '../../../../../shared/components'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
 import { currencyFmt, logger, randomSuffix } from '../../../../../shared/utils'
@@ -272,6 +273,7 @@ const CouponListing = () => {
    if (loading || listLoading) return <InlineLoader />
    return (
       <StyledWrapper>
+         <Banner id="crm-app-coupons-listing-top" />
          <Flex container alignItems="center" justifyContent="space-between">
             <Flex container height="80px" alignItems="center">
                <Text as="h2">
@@ -303,6 +305,7 @@ const CouponListing = () => {
             moduleTitle="Coupon Listing"
             showInTunnel={false}
          />
+         <Banner id="crm-app-coupons-listing-bottom" />
       </StyledWrapper>
    )
 }

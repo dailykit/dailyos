@@ -6,6 +6,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import { Switch, Route, Link } from 'react-router-dom'
 import FullOccurrenceReport from './shared/components/FullOccurrenceReport'
 import { isKeycloakSupported } from './shared/utils'
+
 import {
    TabBar,
    Lang,
@@ -13,8 +14,10 @@ import {
    Sidebar,
    InsightDashboard,
    AddressTunnel,
+   Banner,
 } from './shared/components'
 import { AppItem, AppList, Layout, InsightDiv } from './styled'
+import BottomBar from './shared/components/BottomBar'
 
 const APPS = gql`
    subscription apps {
@@ -86,6 +89,10 @@ const Carts = Loadable({
 })
 
 const App = () => {
+   const location = useLocation()
+   const { routes, setRoutes } = useTabs()
+
+   const [open, toggle] = React.useState(false)
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
 
    if (loading) return <Loader />
@@ -95,7 +102,8 @@ const App = () => {
          <main>
             <Switch>
                <Route path="/" exact>
-                  <AppList>
+                  <Banner id="app-home-top" />
+                  <AppList open={open}>
                      {apps.map(app => (
                         <AppItem key={app.id}>
                            <Link to={app.route}>
@@ -116,6 +124,7 @@ const App = () => {
                      />
                   </InsightDiv>
                   <FullOccurrenceReport />
+                  <Banner id="app-home-bottom" />
                </Route>
                <Route path="/inventory" component={Inventory} />
                <Route path="/safety" component={Safety} />
@@ -133,6 +142,8 @@ const App = () => {
             </Switch>
          </main>
          {/* {!isKeycloakSupported() && <RedirectBanner />} */}
+         <Lang />
+         <BottomBar />
       </Layout>
    )
 }

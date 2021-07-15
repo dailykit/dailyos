@@ -16,6 +16,7 @@ import {
    InlineLoader,
    OperationConfig,
    Tooltip,
+   Banner,
 } from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { IngredientContext } from '../../../../../context/ingredient'
@@ -187,6 +188,7 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
             tooltip={<Tooltip identifier="add_sachet_tunnel" />}
          />
          <TunnelBody>
+            <Banner id="products-app-ingredients-sachet-tunnel-top" />
             {units.length ? (
                <>
                   <Flex maxWidth="300px">
@@ -262,6 +264,7 @@ const SachetTunnel = ({ state, closeTunnel, openTunnel }) => {
                   height="500px"
                />
             )}
+            <Banner id="products-app-ingredients-sachet-tunnel-bottom" />
          </TunnelBody>
       </>
    )

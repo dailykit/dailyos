@@ -29,6 +29,7 @@ import {
 } from './components'
 import { logger } from '../../../../../shared/utils'
 import {
+   Banner,
    Tooltip,
    InlineLoader,
    InsightDashboard,
@@ -172,6 +173,7 @@ const CouponForm = () => {
             toggle,
          }}
       >
+         <Banner id="crm-app-coupons-coupon-details-top" />
          <StyledWrapper>
             <InputWrapper>
                <Flex
@@ -272,6 +274,7 @@ const CouponForm = () => {
                </HorizontalTabs>
             </StyledDiv>
          </StyledWrapper>
+         <Banner id="crm-app-coupons-coupon-details-bottom" />
       </CouponContext.Provider>
    )
 }

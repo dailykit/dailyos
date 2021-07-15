@@ -19,6 +19,7 @@ import { isEmpty, stubTrue } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import {
+   Banner,
    ErrorState,
    InlineLoader,
    Tooltip,
@@ -63,9 +64,8 @@ const RecipeForm = () => {
       initialState
    )
 
-   const [productTunnels, openProductsTunnel, closeProductsTunnel] = useTunnel(
-      1
-   )
+   const [productTunnels, openProductsTunnel, closeProductsTunnel] =
+      useTunnel(1)
    const [
       linkedProductsTunnels,
       openLinkedProductsTunnel,
@@ -303,6 +303,7 @@ const RecipeForm = () => {
                   />
                </Tunnel>
             </Tunnels>
+            <Banner id="products-app-recipes-create-recipe-top" />
             <ResponsiveFlex
                container
                justifyContent="space-between"
@@ -422,9 +423,13 @@ const RecipeForm = () => {
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>
                         <Servings state={state} />
+                        <Spacer size="32px" />
+                        <Ingredients state={state} />
+                        <Banner id="products-app-single-ingredient-ingredient-tab-bottom" />
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>
                         <Procedures state={state} />
+                        <Banner id="products-app-single-ingredient-cooking-steps-tab-bottom" />
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>
                         <InsightDashboard
@@ -439,6 +444,7 @@ const RecipeForm = () => {
                   </HorizontalTabPanels>
                </HorizontalTabs>
             </Flex>
+            <Banner id="products-app-recipes-create-recipe-bottom" />
          </>
       </RecipeContext.Provider>
    )

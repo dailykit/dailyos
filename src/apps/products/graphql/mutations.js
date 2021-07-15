@@ -479,6 +479,7 @@ export const INGREDIENT_CATEGORY_CREATE = gql`
       }
    }
 `
+
 export const INCREASE_PRICE_AND_DISCOUNT = gql`
    mutation increasePriceAndDiscount(
       $price: numeric!

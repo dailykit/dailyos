@@ -30,6 +30,7 @@ import {
    Tooltip,
    InlineLoader,
    InsightDashboard,
+   Banner,
 } from '../../../../../shared/components'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { useTooltip, useTabs } from '../../../../../shared/providers'
@@ -47,10 +48,8 @@ const CustomerListing = () => {
    const [customerCount, setCustomerCount] = useState(0)
    const [revenue, setRevenue] = useState(0)
    // const [groups, setGroups] = useState(['subscriber'])
-   const [
-      uniqueSubscriptionFilterValues,
-      setUniqueSubscriptionFilterValues,
-   ] = useState({})
+   const [uniqueSubscriptionFilterValues, setUniqueSubscriptionFilterValues] =
+      useState({})
    const groupByOptions = [
       { id: 1, title: 'Plan Title', payLoad: 'planTitle' },
       { id: 2, title: 'Serving Size', payLoad: 'servings' },
@@ -584,6 +583,7 @@ const CustomerListing = () => {
    if (loading || customerCountLoading || listloading) return <InlineLoader />
    return (
       <StyledWrapper>
+         <Banner id="crm-app-customers-listing-top" />
          <Flex
             container
             alignItems="center"
@@ -679,6 +679,7 @@ const CustomerListing = () => {
             moduleTitle="Customer Listing"
             showInTunnel={false}
          />
+         <Banner id="crm-app-customers-listing-bottom" />
       </StyledWrapper>
    )
 }

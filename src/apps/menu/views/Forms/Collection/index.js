@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import {
+   Banner,
    ErrorState,
    InlineLoader,
    Tooltip,
@@ -145,6 +146,7 @@ const CollectionForm = () => {
             <CollectionContext.Provider
                value={{ collectionState, collectionDispatch }}
             >
+               <Banner id="menu-app-collections-collection-details-top" />
                <Flex
                   as="header"
                   container
@@ -230,6 +232,7 @@ const CollectionForm = () => {
                      </HorizontalTabPanels>
                   </HorizontalTabs>
                </Flex>
+               <Banner id="menu-app-collections-collection-details-bottom" />
             </CollectionContext.Provider>
          )}
       </>

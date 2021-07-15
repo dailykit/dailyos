@@ -14,7 +14,11 @@ import {
    Tag,
 } from '@dailykit/ui'
 import { toast } from 'react-toastify'
-import { InlineLoader, Tooltip } from '../../../../../../../shared/components'
+import {
+   InlineLoader,
+   Tooltip,
+   Banner,
+} from '../../../../../../../shared/components'
 import { logger } from '../../../../../../../shared/utils'
 import { RecipeContext } from '../../../../../context/recipe'
 import {
@@ -108,6 +112,7 @@ const IngredientsTunnel = ({ state, closeTunnel, openTunnel }) => {
             tooltip={<Tooltip identifier="ingredients_tunnel" />}
          />
          <TunnelBody>
+            <Banner id="products-app-recipes-ingredients-tunnel-top" />
             {loading ? (
                <InlineLoader />
             ) : (
@@ -156,6 +161,7 @@ const IngredientsTunnel = ({ state, closeTunnel, openTunnel }) => {
                   </ListOptions>
                </List>
             )}
+            <Banner id="products-app-recipes-ingredients-tunnel-bottom" />
          </TunnelBody>
       </>
    )

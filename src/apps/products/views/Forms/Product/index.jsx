@@ -16,6 +16,7 @@ import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import {
+   Banner,
    ErrorState,
    InlineLoader,
    Tooltip,
@@ -228,6 +229,7 @@ const Product = () => {
       <ProductProvider>
          <ModifiersProvider>
             <InventoryBundleProvider>
+               <Banner id="products-app-single-product-top" />
                <ResponsiveFlex>
                   <Form.Group>
                      <Form.Label htmlFor="title" title="title">
@@ -334,6 +336,7 @@ const Product = () => {
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
                            {renderOptions()}
+                           <Banner id="products-app-create-product-options-tab-bottom" />
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
                            <InsightDashboard
@@ -348,6 +351,7 @@ const Product = () => {
                      </HorizontalTabPanels>
                   </HorizontalTabs>
                </Flex>
+               <Banner id="products-app-single-product-bottom" />
             </InventoryBundleProvider>
          </ModifiersProvider>
       </ProductProvider>
